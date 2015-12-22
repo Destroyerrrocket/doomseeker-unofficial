@@ -38,4 +38,42 @@ class ChocolateDoomGameInfo
 		static QList<GameMode> gameModes();
 };
 
+/**
+ * @brief Following code was copy-pasted from Chocolate Doom source.
+ */
+namespace ChocolateDoom
+{
+
+// The "mission" controls what game we are playing.
+
+typedef enum
+{
+	doom,            // Doom 1
+	doom2,           // Doom 2
+	pack_tnt,        // Final Doom: TNT: Evilution
+	pack_plut,       // Final Doom: The Plutonia Experiment
+	pack_chex,       // Chex Quest (modded doom)
+	pack_hacx,       // Hacx (modded doom2)
+	heretic,         // Heretic
+	hexen,           // Hexen
+	strife,          // Strife
+
+	none
+} GameMission_t;
+
+// The "mode" allows more accurate specification of the game mode we are
+// in: eg. shareware vs. registered.  So doom1.wad and doom.wad are the
+// same mission, but a different mode.
+
+typedef enum
+{
+	shareware,       // Doom/Heretic shareware
+	registered,      // Doom/Heretic registered
+	commercial,      // Doom II/Hexen
+	retail,          // Ultimate Doom
+	indetermined     // Unknown.
+} GameMode_t;
+
+} // close namespace
+
 #endif

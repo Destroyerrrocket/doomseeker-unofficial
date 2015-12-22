@@ -23,6 +23,7 @@
 #include "chocolatedoomserver.h"
 
 #include "chocolatedoomgamehost.h"
+#include "chocolatedoomgameinfo.h"
 #include "chocolatedoomgamerunner.h"
 #include "chocolatedoomengineplugin.h"
 #include "global.h"
@@ -85,33 +86,68 @@ Server::Response ChocolateDoomServer::readRequest(const QByteArray &data)
 	gameMission = READINT8(&in[pos++]);
 	setName(QString(&in[pos]));
 
-	switch(game)
-	{
-		default:
-		case 0: //shareware
-			setIwad("doom1.wad");
-			break;
-		case 1: //registered
-		case 3: //retail
-			setIwad("doom.wad");
-			break;
-		case 2: //commercial
-			switch(gameMission)
-			{
-				default:
-				case 1:
-					setIwad("doom2.wad");
-					break;
-				case 2:
-					setIwad("tnt.wad");
-					break;
-				case 3:
-					setIwad("plutonia.wad");
-					break;
-			}
-			break;
-	}
+	interpretIwad(gameMission, game);
 	return RESPONSE_GOOD;
+}
+
+void ChocolateDoomServer::interpretIwad(int mission, int gameMode)
+{
+	using namespace ChocolateDoom;
+
+	switch(mission)
+	{
+	case doom:
+		if (gameMode == shareware)
+		{
+			setIwad("doom1.wad");
+		}
+		else
+		{
+			setIwad("doom.wad");
+		}
+		break;
+	case doom2:
+		setIwad("doom2.wad");
+		break;
+	case pack_tnt:
+		setIwad("tnt.wad");
+		break;
+	case pack_plut:
+		setIwad("plutonia.wad");
+		break;
+	case pack_chex:
+		setIwad("chex.wad");
+		break;
+	case pack_hacx:
+		setIwad("hacx.wad");
+		break;
+	case heretic:
+		if (gameMode == shareware)
+		{
+			setIwad("heretic1.wad");
+		}
+		else
+		{
+			setIwad("heretic.wad");
+		}
+		break;
+	case hexen:
+		setIwad("hexen.wad");
+		break;
+	case strife:
+		if (gameMode == shareware)
+		{
+			setIwad("strife0.wad");
+		}
+		else
+		{
+			setIwad("strife.wad");
+		}
+		break;
+	default:
+		setIwad("");
+		break;
+	}
 }
 
 QByteArray ChocolateDoomServer::createSendRequest()

@@ -48,6 +48,9 @@ class ChocolateDoomServer : public Server
 
 		QByteArray createSendRequest();
 		Response readRequest(const QByteArray &data);
+
+	private:
+		void interpretIwad(int mission, int gameMode);
 };
 
 #endif /* __CHOCOLATEDOOMSERVER_H__ */
