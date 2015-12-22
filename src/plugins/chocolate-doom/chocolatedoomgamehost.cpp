@@ -30,6 +30,7 @@
 ChocolateDoomGameHost::ChocolateDoomGameHost()
 : GameHost(ChocolateDoomEnginePlugin::staticInstance())
 {
+	setArgForServerLaunch("-server");
 }
 
 void ChocolateDoomGameHost::addExtra()

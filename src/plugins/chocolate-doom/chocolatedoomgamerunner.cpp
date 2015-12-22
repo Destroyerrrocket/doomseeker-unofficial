@@ -74,6 +74,7 @@ void ChocolateDoomGameClientRunner::configureEmptyServer()
 void ChocolateDoomGameClientRunner::joinPopulatedServer()
 {
 	IwadAndWadsPickerDialog *dialog = new IwadAndWadsPickerDialog(NULL);
+	dialog->setWindowTitle(tr("Join Chocolate Doom game"));
 	dialog->setIwadByName(server->iwad());
 	if (dialog->exec() == QDialog::Accepted)
 	{
