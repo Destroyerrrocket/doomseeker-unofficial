@@ -49,6 +49,7 @@ set(UI_FILES
 	gui/serverdetailsdock.ui
 	gui/serverfilterdock.ui
 	gui/wadseekerinterface.ui
+	gui/widgets/filepickwidget.ui
 	gui/widgets/importantmessageswidget.ui
 	gui/widgets/serverconsole.ui
 )
@@ -146,6 +147,7 @@ set(HEADER_FILES
 	gui/widgets/createserverdialogpage.h
 	gui/widgets/dndfilesystemlistview.h
 	gui/widgets/engineplugincombobox.h
+	gui/widgets/filepickwidget.h
 	gui/widgets/fontbutton.h
 	gui/widgets/iconlabel.h
 	gui/widgets/importantmessageswidget.h
@@ -212,6 +214,7 @@ set(HEADER_FILES
 	pathfinder/casesensitivefsfileseeker.h
 	pathfinder/filealias.h
 	pathfinder/filesearchpath.h
+	pathfinder/pathfind.h
 	pathfinder/pathfinder.h
 	pathfinder/wadpathfinder.h
 	patternlist.h
@@ -231,6 +234,7 @@ set(HEADER_FILES
 	serverapi/gamecreateparams.h
 	serverapi/gameexefactory.h
 	serverapi/gameexeretriever.h
+	serverapi/gamefile.h
 	serverapi/gamehost.h
 	serverapi/joinerror.h
 	serverapi/masterclient.h
@@ -367,6 +371,7 @@ set(SOURCE_FILES
 	gui/widgets/createserverdialogpage.cpp
 	gui/widgets/dndfilesystemlistview.cpp
 	gui/widgets/engineplugincombobox.cpp
+	gui/widgets/filepickwidget.cpp
 	gui/widgets/fontbutton.cpp
 	gui/widgets/iconlabel.cpp
 	gui/widgets/importantmessageswidget.cpp
@@ -431,6 +436,7 @@ set(SOURCE_FILES
 	pathfinder/casesensitivefsfileseeker.cpp
 	pathfinder/filealias.cpp
 	pathfinder/filesearchpath.cpp
+	pathfinder/pathfind.cpp
 	pathfinder/pathfinder.cpp
 	pathfinder/wadpathfinder.cpp
 	patternlist.cpp
@@ -449,6 +455,7 @@ set(SOURCE_FILES
 	serverapi/gamecreateparams.cpp
 	serverapi/gameexefactory.cpp
 	serverapi/gameexeretriever.cpp
+	serverapi/gamefile.cpp
 	serverapi/gamehost.cpp
 	serverapi/joinerror.cpp
 	serverapi/masterclient.cpp

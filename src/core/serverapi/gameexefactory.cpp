@@ -24,12 +24,14 @@
 
 #include "plugins/engineplugin.h"
 #include "serverapi/exefile.h"
+#include "serverapi/gamefile.h"
 
 DClass<GameExeFactory>
 {
 public:
 	EnginePlugin* plugin;
 
+	GameFileList (GameExeFactory::*gameFiles)() const;
 	ExeFile* (GameExeFactory::*offline)();
 	ExeFile* (GameExeFactory::*server)();
 };
@@ -40,6 +42,7 @@ GameExeFactory::GameExeFactory(EnginePlugin* plugin)
 {
 	d->plugin = plugin;
 
+	set_gameFiles(&GameExeFactory::gameFiles_default);
 	set_offline(&GameExeFactory::offline_default);
 	set_server(&GameExeFactory::server_default);
 }
@@ -48,12 +51,34 @@ GameExeFactory::~GameExeFactory()
 {
 }
 
+POLYMORPHIC_DEFINE_CONST(GameFileList, GameExeFactory, gameFiles, (), ());
 POLYMORPHIC_DEFINE(ExeFile*, GameExeFactory, offline, (), ());
 POLYMORPHIC_DEFINE(ExeFile*, GameExeFactory, server, (), ());
 
 EnginePlugin* GameExeFactory::plugin()
 {
 	return d->plugin;
+}
+
+GameFileList GameExeFactory::gameFiles_default() const
+{
+	QList<GameFile> list;
+	if (d->plugin->data()->clientOnly)
+	{
+		list << GameFile::exe("BinaryPath", tr("game"), d->plugin->data()->clientExeName);
+	}
+	else
+	{
+		list << GameFile::exe("BinaryPath", tr("client"), d->plugin->data()->clientExeName);
+		list << GameFile::exe("ServerBinaryPath", tr("server"), d->plugin->data()->serverExeName);
+	}
+	GameFileList result;
+	foreach (GameFile file, list)
+	{
+		file.setSearchSuffixes(d->plugin->data()->gameFileSearchSuffixes);
+		result << file;
+	}
+	return result;
 }
 
 ExeFile* GameExeFactory::offline_default()

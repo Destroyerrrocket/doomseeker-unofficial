@@ -69,6 +69,9 @@ ZandronumEnginePlugin::ZandronumEnginePlugin()
 #if defined(Q_OS_WIN32) || defined(Q_OS_MAC)
 		EP_ClientOnly,
 #endif
+		EP_ClientExeName, "zandronum",
+		EP_ServerExeName, "zandronum-server",
+		EP_GameFileSearchSuffixes, "zandronum",
 		EP_DontCreateDMFlagsPagesAutomatic,
 		EP_DefaultServerPort, 10666,
 		EP_DefaultMaster, "master.zandronum.com:15300",
@@ -85,32 +88,12 @@ ZandronumEnginePlugin::ZandronumEnginePlugin()
 
 void ZandronumEnginePlugin::setupConfig(IniSection &config) const
 {
-	// Default to where the automatic installations install to.
-#ifdef Q_OS_WIN32
-	QString programFilesDirectory = DataPaths::programFilesDirectory(DataPaths::x86);
-	QString trimPattern = QString("\\/");
-	QStringList paths;
-
-	paths << "." << "..";
-	paths << gDefaultDataPaths->workingDirectory() + "\\..";
-	paths << gDefaultDataPaths->workingDirectory();
-	paths << Strings::trimr(programFilesDirectory, trimPattern) + "\\Zandronum";
-
-	PathFinder pf(paths);
-	config.createSetting("BinaryPath", pf.findFile("zandronum.exe"));
-#else
-	QString paths = QString("/usr/bin;/usr/local/bin;/usr/share/bin;/usr/games/zandronum;/usr/local/games/zandronum;/usr/share/games/zandronum;") + gDefaultDataPaths->workingDirectory() + ";.";
-	PathFinder pf(paths.split(";"));
-	config.createSetting("BinaryPath", pf.findFile("zandronum"));
-	config.createSetting("ServerBinaryPath", pf.findFile("zandronum-server"));
-#endif
-
 	config.createSetting("Masterserver", data()->defaultMaster);
 	config.createSetting("EnableTesting", true);
 	config.createSetting("AllowServersToDisplayMyCountry", false);
 }
 
-ConfigurationBaseBox *ZandronumEnginePlugin::configuration(QWidget *parent) const
+ConfigurationBaseBox *ZandronumEnginePlugin::configuration(QWidget *parent)
 {
 	return new EngineZandronumConfigBox(staticInstance(), *data()->pConfig, parent);
 }

@@ -26,6 +26,7 @@
 #include "pathfinder/caseinsensitivefsfileseeker.h"
 #include "pathfinder/casesensitivefsfileseeker.h"
 #include "pathfinder/filesearchpath.h"
+#include "datapaths.h"
 #include "log.h"
 #include "strings.h"
 #include <QDir>
@@ -98,6 +99,30 @@ PathFinder::PathFinder(const QStringList& paths)
 
 PathFinder::~PathFinder()
 {
+}
+
+PathFinder PathFinder::genericPathFinder(const QStringList &suffixes)
+{
+	QStringList paths;
+#if defined(Q_OS_WIN32)
+	paths << "." << ".."
+		<< gDefaultDataPaths->workingDirectory()
+		<< gDefaultDataPaths->workingDirectory() + "/.."
+		<< DataPaths::programFilesDirectory(DataPaths::x64)
+		<< DataPaths::programFilesDirectory(DataPaths::x86);
+#else
+	paths << "/usr/bin" << "/usr/local/bin" << "/usr/share/bin"
+		<< "/usr/games/" << "/usr/local/games/"
+		<< "/usr/share/games/" << gDefaultDataPaths->workingDirectory() << ".";
+#endif
+	foreach (const QString &path, QStringList(paths))
+	{
+		foreach (const QString &suffix, suffixes)
+		{
+			paths << Strings::combinePaths(path, suffix);
+		}
+	}
+	return PathFinder(paths);
 }
 
 void PathFinder::addPrioritySearchDir(const QString& dir)

@@ -27,20 +27,17 @@
 #include "global.h"
 #include "serverapi/polymorphism.h"
 #include <QObject>
+#include <QList>
 
 class EnginePlugin;
 class ExeFile;
+class GameFileList;
 class Server;
 
 
 /**
  * @ingroup group_pluginapi
  * @brief Returns executable file retrievers from plugins to Doomseeker.
- *
- * This class has been designed so that it can be extended freely without
- * risk of breaking the ABI. ABI may be broken if some methods are found as
- * obsolete. These methods should be marked as deprecated, but still supported.
- * In the future they will eventually be removed.
  *
  * ExeFile for client executable (for server joining purposes) is returned
  * by instances of Server, as this usually needs access to the Server
@@ -60,6 +57,17 @@ class MAIN_EXPORT GameExeFactory : public QObject
 		virtual ~GameExeFactory();
 
 		/**
+		 * @brief @b [Virtual] List of all game files associated with this
+		 * game.
+		 *
+		 * This list is used to generate path configurators in plugin
+		 * configuration box.
+		 *
+		 * Read doc for GameFile.
+		 */
+		GameFileList gameFiles() const;
+
+		/**
 		 * @brief @b [Virtual] Instantiates retriever for offline game
 		 *        executable.
 		 *
@@ -67,7 +75,6 @@ class MAIN_EXPORT GameExeFactory : public QObject
 		 * of plugin's config.
 		 */
 		ExeFile* offline();
-		POLYMORPHIC_SETTER_DECLARE(ExeFile*, GameExeFactory, offline, ());
 		/**
 		 * @brief Gets EnginePlugin associated with this object.
 		 */
@@ -81,10 +88,15 @@ class MAIN_EXPORT GameExeFactory : public QObject
 		 * should be used for hosting servers.
 		 */
 		ExeFile* server();
-		POLYMORPHIC_SETTER_DECLARE(ExeFile*, GameExeFactory, server, ());
 
 	protected:
+		POLYMORPHIC_SETTER_DECLARE_CONST(GameFileList, GameExeFactory, gameFiles, ());
+		GameFileList gameFiles_default() const;
+
+		POLYMORPHIC_SETTER_DECLARE(ExeFile*, GameExeFactory, offline, ());
 		ExeFile* offline_default();
+
+		POLYMORPHIC_SETTER_DECLARE(ExeFile*, GameExeFactory, server, ());
 		ExeFile* server_default();
 
 	private:

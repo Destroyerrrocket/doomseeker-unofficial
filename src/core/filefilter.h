@@ -31,8 +31,9 @@ class FileFilter : public QObject
 Q_OBJECT;
 
 public:
+	static QString allFilesFilter();
 	static QString executableFilesFilter();
-
+	static QString executableFileTypeName();
 };
 
 #endif

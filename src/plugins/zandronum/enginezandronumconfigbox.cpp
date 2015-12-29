@@ -34,7 +34,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 
-EngineZandronumConfigBox::EngineZandronumConfigBox(const EnginePlugin* plugin, IniSection& cfg, QWidget* parent)
+EngineZandronumConfigBox::EngineZandronumConfigBox(EnginePlugin* plugin, IniSection& cfg, QWidget* parent)
 : EngineConfigurationBaseBox(plugin, cfg, parent)
 {
 	// Create the testing box, we might as well do this in code.

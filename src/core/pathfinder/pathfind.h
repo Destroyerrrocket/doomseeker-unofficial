@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// filefilter.cpp
+// pathfind.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,29 +20,19 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "filefilter.h"
+#ifndef id82392785_6608_4e45_9e65_905e8d266187
+#define id82392785_6608_4e45_9e65_905e8d266187
 
-QString FileFilter::allFilesFilter()
-{
-	return tr("All files(*)");
-}
+#include <QString>
+#include "pathfinder/pathfinder.h"
 
-QString FileFilter::executableFilesFilter()
+class GameFile;
+
+namespace PathFind
 {
-#if defined(Q_OS_WIN32)
-	return tr("Runnable files (*.exe;*.bat;*.com);;") + allFilesFilter();
-#else
-	// Other platforms do not have an extension for their binary files.
-	return allFilesFilter();
+	QString findExe(const PathFinder &pathFinder, const QString &name);
+	QString findGameFile(const QStringList &knownPaths, const GameFile &gameFile);
+	QString findGameFile(const PathFinder &pathFinder, const GameFile &gameFile);
+};
+
 #endif
-
-}
-
-QString FileFilter::executableFileTypeName()
-{
-#if defined(Q_OS_WIN32)
-	return tr("executable");
-#else
-	return tr("binary");
-#endif
-}

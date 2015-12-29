@@ -48,6 +48,9 @@ VavoomEnginePlugin::VavoomEnginePlugin()
 		EP_DefaultServerPort, 26000,
 		EP_MasterClient, new VavoomMasterClient(),
 		EP_DefaultMaster, "altdeath.com:26001",
+		EP_ServerExeName, "vavoom-dedicated",
+		EP_ClientExeName, "vavoom",
+		EP_GameFileSearchSuffixes, "vavoom",
 		EP_Done
 	);
 }

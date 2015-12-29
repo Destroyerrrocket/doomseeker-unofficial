@@ -55,6 +55,9 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 		EP_SupportsRandomMapRotation,
 		EP_InGameFileDownloads,
 		EP_DemoExtension, true, "odd",
+		EP_ClientExeName, "odamex",
+		EP_ServerExeName, "odasrv",
+		EP_GameFileSearchSuffixes, "odamex",
 		EP_Done
 	);
 }

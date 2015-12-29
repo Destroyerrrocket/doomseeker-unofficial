@@ -39,6 +39,8 @@ class FileUtils
 		static bool containsPath(const QStringList &candidates,
 			const QString &path);
 
+		static Qt::CaseSensitivity comparisonSensitivity();
+
 		/**
 		 * @brief Deletes all files in specified directory.
 		 *

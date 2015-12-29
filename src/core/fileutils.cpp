@@ -44,6 +44,15 @@ QByteArray FileUtils::md5(const QString &path)
 	return QByteArray();
 }
 
+Qt::CaseSensitivity FileUtils::comparisonSensitivity()
+{
+#if defined(Q_OS_WIN32)
+	return Qt::CaseInsensitive;
+#else
+	return Qt::CaseSensitive;
+#endif
+}
+
 bool FileUtils::containsPath(const QStringList &candidates, const QString &path)
 {
 	foreach (const QString &candidate, candidates)

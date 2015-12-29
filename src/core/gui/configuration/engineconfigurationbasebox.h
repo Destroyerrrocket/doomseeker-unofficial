@@ -60,7 +60,7 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox
 		 * @param parent
 		 *     Parent widget, most likely configuration dialog box.
 		 */
-		EngineConfigurationBaseBox(const EnginePlugin *plugin, IniSection &cfg, QWidget *parent=NULL);
+		EngineConfigurationBaseBox(EnginePlugin *plugin, IniSection &cfg, QWidget *parent=NULL);
 		virtual ~EngineConfigurationBaseBox();
 
 		QIcon icon() const;
@@ -77,31 +77,24 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox
 		 * @brief Add a new, custom widget below the standard ones.
 		 */
 		void addWidget(QWidget *widget);
-		/**
-		 * @brief Open file browse dialog and update "input" when successful.
-		 *
-		 * @param input
-		 *     A QLineEdit widget which contents are changed when user
-		 *     picks a valid file.
-		 * @param type
-		       Name of executable type, displayed in browser's title.
-		 */
-		void browseForBinary(QLineEdit *input, const QString &type);
 		void saveSettings();
 
 	private:
 		DPtr<EngineConfigurationBaseBox> d;
+		friend class PrivData<EngineConfigurationBaseBox>;
 
+		QStringList collectKnownGameFilePaths() const;
+		void makeFileBrowsers();
 		QString currentCustomParameters() const;
-		void makeClientOnly();
 		void removeStoredCustomParametersFromConfig(const QString &parameters);
 		void removeStoredCustomParametersFromWidget(const QString &parameters);
+		void showError(const QString &error);
 
 	private slots:
-		void browseForClientBinary();
-		void browseForServerBinary();
+		void autoFindNeighbouringPaths();
 		void removeCurrentCustomParametersFromStorage();
 		void saveCustomParameters();
+		void showFindFailError();
 		void updateCustomParametersSaveState();
 };
 

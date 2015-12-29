@@ -23,18 +23,40 @@
 
 #include "engineconfigurationbasebox.h"
 #include "ui_engineconfigurationbasebox.h"
+#include "gui/widgets/filepickwidget.h"
 #include "ini/ini.h"
 #include "plugins/engineplugin.h"
+#include "serverapi/gameexefactory.h"
+#include "serverapi/gamefile.h"
 #include "filefilter.h"
 
 #include <QFileDialog>
+#include <QTimer>
 
 DClass<EngineConfigurationBaseBox> : public Ui::EngineConfigurationBaseBox
 {
 	public:
+		class KnownNeighbours : public FilePickWidget::NeighbourStrategy
+		{
+		public:
+			DPtr<::EngineConfigurationBaseBox> *wrapper;
+			KnownNeighbours(DPtr<::EngineConfigurationBaseBox> *wrapper)
+			{
+				this->wrapper = wrapper;
+			}
+			QStringList neighbours()
+			{
+				return (*wrapper)->parent->collectKnownGameFilePaths();
+			}
+		};
+
+
+		::EngineConfigurationBaseBox *parent;
 		IniSection *config;
-		const EnginePlugin *plugin;
+		EnginePlugin *plugin;
 		bool clientOnly;
+		QList<FilePickWidget*> filePickers;
+		QTimer errorTimer;
 
 		QStringList readStoredCustomParameters() const
 		{
@@ -52,27 +74,30 @@ DClass<EngineConfigurationBaseBox> : public Ui::EngineConfigurationBaseBox
 		}
 };
 
-DPointered(EngineConfigurationBaseBox)
+DPointeredNoCopy(EngineConfigurationBaseBox)
 
-EngineConfigurationBaseBox::EngineConfigurationBaseBox(const EnginePlugin *plugin, IniSection &cfg, QWidget *parent)
+
+EngineConfigurationBaseBox::EngineConfigurationBaseBox(EnginePlugin *plugin, IniSection &cfg, QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
+	d->parent = this;
 	d->plugin = plugin;
 	d->config = &cfg;
 	d->setupUi(this);
+
+	d->lblError->hide();
+	d->errorTimer.setInterval(5000);
+	d->errorTimer.setSingleShot(true);
+	this->connect(&d->errorTimer, SIGNAL(timeout()), d->lblError, SLOT(hide()));
 
 	// Prevent combo box stretching.
 	d->cboCustomParameters->setMinimumContentsLength(25);
 	d->cboCustomParameters->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
 
-	if(plugin->data()->clientOnly)
-		makeClientOnly();
+	makeFileBrowsers();
 
 	if(!plugin->data()->hasMasterClient())
 		d->masterAddressBox->hide();
-
-	this->connect(d->btnBrowseClientBinary, SIGNAL( clicked() ), SLOT( browseForClientBinary() ));
-	this->connect(d->btnBrowseServerBinary, SIGNAL( clicked() ), SLOT( browseForServerBinary() ));
 }
 
 EngineConfigurationBaseBox::~EngineConfigurationBaseBox()
@@ -86,24 +111,35 @@ void EngineConfigurationBaseBox::addWidget(QWidget *widget)
 	layout()->addItem(d->verticalSpacer);
 }
 
-void EngineConfigurationBaseBox::browseForBinary(QLineEdit *input, const QString &type)
+void EngineConfigurationBaseBox::autoFindNeighbouringPaths()
 {
-	QString filepath = QFileDialog::getOpenFileName(this,
-		tr("Doomseeker - choose %1 %2").arg(d->plugin->data()->name).arg(type),
-		QString(), FileFilter::executableFilesFilter());
-	if (!filepath.isEmpty())
-		input->setText(filepath);
+	auto picker = qobject_cast<FilePickWidget*>(sender());
+	if (QFileInfo(picker->path()).isFile())
+	{
+		QStringList knownPaths = collectKnownGameFilePaths();
+		foreach (FilePickWidget *picker, d->filePickers)
+		{
+			if (picker->isEmpty())
+			{
+				picker->blockSignals(true);
+				picker->findPath();
+				picker->blockSignals(false);
+			}
+		}
+	}
 }
 
-void EngineConfigurationBaseBox::browseForClientBinary()
+QStringList EngineConfigurationBaseBox::collectKnownGameFilePaths() const
 {
-	browseForBinary(d->leClientBinaryPath, tr("client binary"));
-
-}
-
-void EngineConfigurationBaseBox::browseForServerBinary()
-{
-	browseForBinary(d->leServerBinaryPath, tr("server binary"));
+	QStringList knownPaths;
+	foreach (const FilePickWidget *picker, d->filePickers)
+	{
+		if (!picker->isEmpty())
+		{
+			knownPaths << picker->path();
+		}
+	}
+	return knownPaths;
 }
 
 QString EngineConfigurationBaseBox::currentCustomParameters() const
@@ -116,12 +152,22 @@ QIcon EngineConfigurationBaseBox::icon() const
 	return d->plugin->icon();
 }
 
-void EngineConfigurationBaseBox::makeClientOnly()
+void EngineConfigurationBaseBox::makeFileBrowsers()
 {
-	d->clientOnly = true;
+	QSharedPointer<FilePickWidget::NeighbourStrategy> neighbours(
+			new PrivData<EngineConfigurationBaseBox>::KnownNeighbours(&d));
+	QList<GameFile> files = d->plugin->gameExe()->gameFiles().asQList();
+	foreach (const GameFile &file, files)
+	{
+		FilePickWidget *widget = new FilePickWidget(d->exePickArea);
+		widget->setFile(file);
+		widget->setNeighbourStrategy(neighbours);
+		this->connect(widget, SIGNAL(findFailed()), SLOT(showFindFailError()));
+		this->connect(widget, SIGNAL(pathChanged()), SLOT(autoFindNeighbouringPaths()));
 
-	d->lblClientBinary->setText(tr("Path to executable:"));
-	d->serverBinaryBox->hide();
+		d->exePickArea->layout()->addWidget(widget);
+		d->filePickers << widget;
+	}
 }
 
 QString EngineConfigurationBaseBox::name() const
@@ -136,13 +182,18 @@ const EnginePlugin *EngineConfigurationBaseBox::plugin() const
 
 void EngineConfigurationBaseBox::readSettings()
 {
-	d->leClientBinaryPath->setText(d->config->value("BinaryPath").toString());
+	foreach (FilePickWidget *filePicker, d->filePickers)
+	{
+		filePicker->blockSignals(true);
+		filePicker->load(*d->config);
+		filePicker->blockSignals(false);
+	}
+
 	d->cboCustomParameters->clear();
 	d->cboCustomParameters->addItems(d->readStoredCustomParameters());
 	d->cboCustomParameters->setEditText(d->config->value("CustomParameters").toString());
 	if(d->plugin->data()->hasMasterClient())
 		d->leMasterserverAddress->setText(d->config->value("Masterserver").toString());
-	d->leServerBinaryPath->setText(d->config->value("ServerBinaryPath").toString());
 
 	updateCustomParametersSaveState();
 }
@@ -186,20 +237,27 @@ void EngineConfigurationBaseBox::saveCustomParameters()
 
 void EngineConfigurationBaseBox::saveSettings()
 {
-	QString executable;
-
-	executable = d->leClientBinaryPath->text();
-	d->config->setValue("BinaryPath", executable);
-	if (!d->clientOnly)
+	foreach (FilePickWidget *filePicker, d->filePickers)
 	{
-		executable = d->leServerBinaryPath->text();
+		filePicker->save(*d->config);
 	}
-	d->config->setValue("ServerBinaryPath", executable);
 	d->config->setValue("CustomParameters", currentCustomParameters());
 	if (d->plugin->data()->hasMasterClient())
 	{
 		d->config->setValue("Masterserver", d->leMasterserverAddress->text());
 	}
+}
+
+void EngineConfigurationBaseBox::showError(const QString &error)
+{
+	d->lblError->setText(error);
+	d->lblError->show();
+	d->errorTimer.start();
+}
+
+void EngineConfigurationBaseBox::showFindFailError()
+{
+	showError(tr("Failed to automatically find file.\nYou may need to use the browse button."));
 }
 
 QString EngineConfigurationBaseBox::title() const

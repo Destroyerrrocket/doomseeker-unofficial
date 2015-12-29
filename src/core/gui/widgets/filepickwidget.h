@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// filefilter.cpp
+// filepickwidget.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,29 +20,59 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "filefilter.h"
+#ifndef id36ca3802_cdbb_4c12_b4fe_eafa3bc1f790
+#define id36ca3802_cdbb_4c12_b4fe_eafa3bc1f790
 
-QString FileFilter::allFilesFilter()
-{
-	return tr("All files(*)");
-}
+#include "dptr.h"
+#include <QSharedPointer>
+#include <QWidget>
 
-QString FileFilter::executableFilesFilter()
+class GameFile;
+class IniSection;
+
+class FilePickWidget : public QWidget
 {
-#if defined(Q_OS_WIN32)
-	return tr("Runnable files (*.exe;*.bat;*.com);;") + allFilesFilter();
-#else
-	// Other platforms do not have an extension for their binary files.
-	return allFilesFilter();
+	Q_OBJECT;
+
+public:
+	class NeighbourStrategy
+	{
+	public:
+		virtual ~NeighbourStrategy() {}
+		virtual QStringList neighbours()
+		{
+			return QStringList();
+		};
+	};
+
+
+	FilePickWidget(QWidget *parent);
+	~FilePickWidget();
+
+	bool isEmpty() const;
+	void setFile(const GameFile &file);
+	void setNeighbourStrategy(QSharedPointer<NeighbourStrategy> strategy);
+	QString path() const;
+
+	void load(const IniSection &cfg);
+	void save(IniSection &cfg);
+
+public slots:
+	void findPath();
+
+signals:
+	void findFailed();
+	void pathChanged();
+
+private:
+	DPtr<FilePickWidget> d;
+
+	bool canSearch() const;
+
+private slots:
+	void browsePath();
+	void emitPathChangedIfChanged();
+	void trackEdit();
+};
+
 #endif
-
-}
-
-QString FileFilter::executableFileTypeName()
-{
-#if defined(Q_OS_WIN32)
-	return tr("executable");
-#else
-	return tr("binary");
-#endif
-}

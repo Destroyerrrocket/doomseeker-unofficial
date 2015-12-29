@@ -114,7 +114,44 @@ class MAIN_EXPORT EnginePlugin
 			/**
 			 * @brief MasterClient object.
 			 */
-			EP_MasterClient
+			EP_MasterClient,
+			/**
+			 * @brief File name for game's client (main) executable.
+			 *
+			 * If defined it will be used to generate default list of
+			 * GameExeFactory::gameFiles().
+			 *
+			 * Platform specific file extension doesn't need to be specified.
+			 */
+			EP_ClientExeName,
+			/**
+			 * @brief File name for game's server executable if game has any.
+			 *
+			 * If defined it will be used to generate default list of
+			 * GameExeFactory::gameFiles().
+			 *
+			 * If EP_ClientOnly is set to true this setting has no effect.
+			 *
+			 * Platform specific file extension doesn't need to be specified.
+			 */
+			EP_ServerExeName,
+			/**
+			 * @brief Default search suffixes used to automatically find
+			 * game files.
+			 *
+			 * Doomseeker may help user in finding necessary game files, such as
+			 * executables, by appending these suffixes to certain default
+			 * search paths (such as Program Files directory or
+			 * /usr/share/games). These paths may differ per platform.
+			 *
+			 * This is a const char* string where multiple suffixes can be
+			 * separated with a semicolon ';'.
+			 *
+			 * Example for Windows platform: a "MyGame" suffix will prompt
+			 * Doomseeker to search for game files in
+			 * "C:/Program Files (x86)/MyGame" and "C:/Program Files/MyGame".
+			 */
+			EP_GameFileSearchSuffixes
 		};
 
 		/// Reimplement if you want to perform some ini initialization manually.
@@ -166,16 +203,21 @@ class MAIN_EXPORT EnginePlugin
 				bool createDMFlagsPagesAutomatic;
 				bool clientOnly;
 				/**
-				 * @brief Factory of executable retrievers objects.
+				 * @brief Factory of executable retrievers ExeFile objects.
 				 *
 				 * By default this is a simple instance of GameExeFactory.
-				 * If custom behavior is needed, plugins shouldn't overwrite
-				 * the class or the contents of the pointer, but instead
-				 * public setter methods should be used to set appropriate
-				 * strategies. Refer to GameExeFactory doc for more details.
+				 * If custom behavior is needed, plugins should overwrite
+				 * this instance with own pointer.
+				 *
+				 * This factory should be set only once during plugin
+				 * initialization and then left untouched.
 				 */
-				GameExeFactory *gameExeFactory;
+				QScopedPointer<GameExeFactory> gameExeFactory;
 				Broadcast *broadcast;
+
+				QString clientExeName;
+				QString serverExeName;
+				QStringList gameFileSearchSuffixes;
 
 				Data();
 
@@ -207,7 +249,7 @@ class MAIN_EXPORT EnginePlugin
 		/**
 		 *	@brief Engine's configuration widget.
 		 */
-		virtual ConfigurationBaseBox* configuration(QWidget *parent) const;
+		virtual ConfigurationBaseBox* configuration(QWidget *parent);
 
 		/**
 		 * @brief Creates a list of custom Create Game dialog pages.
@@ -234,17 +276,14 @@ class MAIN_EXPORT EnginePlugin
 
 		const Data *data() const { return d; }
 		const QPixmap &icon() const { return *d->icon; }
-		void setConfig(IniSection &cfg) const;
+		void setConfig(IniSection &cfg);
 
 		/**
 		 * @brief Game settings flags.
 		 */
 		virtual QList<DMFlagsSection> dmFlags() const;
 
-		GameExeFactory *gameExe()
-		{
-			return data()->gameExeFactory;
-		}
+		GameExeFactory *gameExe();
 
 		/**
 		 * @brief Creates an instance of GameHost derivative class.
@@ -312,7 +351,9 @@ class MAIN_EXPORT EnginePlugin
 		 * in Debug mode). start() is a safer place to do this. It's
 		 * also a good place to start LAN broadcast capture.
 		 *
-		 * Default implementation does nothing.
+		 * Default implementation does nothing but reimplementations
+		 * should still call the original implementation for future
+		 * compatibility.
 		 */
 		virtual void start();
 
@@ -322,9 +363,13 @@ class MAIN_EXPORT EnginePlugin
 		 *        a ServerPtr.
 		 */
 		virtual ServerPtr mkServer(const QHostAddress &address, unsigned short port) const = 0;
+		void initDefaultGameFiles();
 
 	private:
 		Data *d;
+
+		QStringList collectKnownPaths(const IniSection &ini) const;
+		void findGameFiles(IniSection &ini);
 };
 
 #endif

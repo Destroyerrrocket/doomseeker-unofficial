@@ -162,7 +162,7 @@ void DoomseekerConfigurationDialog::openConfiguration(const EnginePlugin *openPl
 
 	for(unsigned i = 0; i < gPlugins->numPlugins(); ++i)
 	{
-		const EnginePlugin* pPluginInfo = gPlugins->info(i);
+		EnginePlugin* pPluginInfo = gPlugins->info(i);
 
 		// Create the config box.
 		ConfigurationBaseBox* pConfigurationBox = pPluginInfo->configuration(&configDialog);

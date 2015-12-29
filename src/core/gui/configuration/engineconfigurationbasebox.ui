@@ -11,72 +11,51 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_6">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
-    <widget class="QLabel" name="lblClientBinary">
-     <property name="text">
-      <string>Path to client binary:</string>
-     </property>
-     <property name="textFormat">
-      <enum>Qt::AutoText</enum>
-     </property>
+    <widget class="QWidget" name="serverBinaryBox" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+     </layout>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLineEdit" name="leClientBinaryPath"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnBrowseClientBinary">
-       <property name="maximumSize">
-        <size>
-         <width>32</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QWidget" name="serverBinaryBox" native="true">
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <property name="margin">
+    <widget class="QWidget" name="exePickArea" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <property name="leftMargin">
        <number>0</number>
       </property>
-      <item>
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>Path to server binary:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QLineEdit" name="leServerBinaryPath"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="btnBrowseServerBinary">
-          <property name="maximumSize">
-           <size>
-            <width>32</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>...</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
      </layout>
     </widget>
    </item>
@@ -126,7 +105,16 @@
    <item>
     <widget class="QWidget" name="masterAddressBox" native="true">
      <layout class="QVBoxLayout" name="verticalLayout_2">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
        <number>0</number>
       </property>
       <item>
@@ -140,6 +128,16 @@
        <widget class="QLineEdit" name="leMasterserverAddress"/>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="lblError">
+     <property name="text">
+      <string>[error]</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>

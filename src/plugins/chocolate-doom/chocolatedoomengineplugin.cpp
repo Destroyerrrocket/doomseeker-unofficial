@@ -43,6 +43,9 @@ ChocolateDoomEnginePlugin::ChocolateDoomEnginePlugin()
 		EP_DefaultMaster, "master.chocolate-doom.org:2342",
 		EP_DefaultServerPort, 2342,
 		EP_MasterClient, new ChocolateDoomMasterClient(),
+		EP_ServerExeName, "chocolate-doom",
+		EP_ClientExeName, "chocolate-doom",
+		EP_GameFileSearchSuffixes, "chocolate-doom;chocolate doom;chocolatedoom;chocolate_doom",
 		EP_Done
 	);
 }

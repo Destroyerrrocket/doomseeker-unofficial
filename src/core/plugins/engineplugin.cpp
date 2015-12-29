@@ -24,8 +24,10 @@
 #include "gui/configuration/engineconfigurationbasebox.h"
 #include "ini/ini.h"
 #include "irc/entities/ircnetworkentity.h"
+#include "pathfinder/pathfind.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/gameexefactory.h"
+#include "serverapi/gamefile.h"
 #include "serverapi/gamehost.h"
 #include "serverapi/server.h"
 #include "log.h"
@@ -65,7 +67,7 @@ EnginePlugin::EnginePlugin()
 {
 	d = new Data;
 
-	d->gameExeFactory = new GameExeFactory(this);
+	d->gameExeFactory.reset(new GameExeFactory(this));
 
 	// At the moment I can't think of how we would support any ABI other than
 	// the current, but I suppose we might as well keep track of it?
@@ -76,11 +78,10 @@ EnginePlugin::~EnginePlugin()
 {
 	delete d->icon;
 	delete d->pConfig;
-	delete d->gameExeFactory;
 	delete d;
 }
 
-ConfigurationBaseBox* EnginePlugin::configuration(QWidget *parent) const
+ConfigurationBaseBox* EnginePlugin::configuration(QWidget *parent)
 {
 	return new EngineConfigurationBaseBox(this, *d->pConfig, parent);
 }
@@ -88,6 +89,11 @@ ConfigurationBaseBox* EnginePlugin::configuration(QWidget *parent) const
 QList<DMFlagsSection> EnginePlugin::dmFlags() const
 {
 	return QList<DMFlagsSection>();
+}
+
+GameExeFactory* EnginePlugin::gameExe()
+{
+	return data()->gameExeFactory.data();
 }
 
 GameHost* EnginePlugin::gameHost()
@@ -201,6 +207,18 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 			case EP_RefreshThreshold:
 				d->refreshThreshold = va_arg(va, unsigned int);
 				break;
+			case EP_ClientExeName:
+				d->clientExeName = va_arg(va, const char*);
+				break;
+			case EP_ServerExeName:
+				d->serverExeName = va_arg(va, const char*);
+				break;
+			case EP_GameFileSearchSuffixes:
+			{
+				QString suffixes = va_arg(va, const char*);
+				d->gameFileSearchSuffixes = suffixes.split(";", QString::SkipEmptyParts);
+				break;
+			}
 		}
 	}
 
@@ -228,13 +246,40 @@ ServerPtr EnginePlugin::server(const QHostAddress &address, unsigned short port)
 	return server;
 }
 
-void EnginePlugin::setConfig(IniSection &ini) const
+void EnginePlugin::setConfig(IniSection &ini)
 {
 	d->pConfig = new IniSection(ini);
 
 	ini.createSetting("Masterserver", data()->defaultMaster);
+	findGameFiles(ini);
 
 	setupConfig(ini);
+}
+
+void EnginePlugin::findGameFiles(IniSection &ini)
+{
+	foreach (const GameFile &file, gameExe()->gameFiles().asQList())
+	{
+		if (!ini.hasSetting(file.configName()))
+		{
+			QString path = PathFind::findGameFile(collectKnownPaths(ini), file);
+			ini[file.configName()] = path;
+		}
+	}
+}
+
+QStringList EnginePlugin::collectKnownPaths(const IniSection &ini) const
+{
+	QStringList paths;
+	foreach (const GameFile &file, data()->gameExeFactory->gameFiles().asQList())
+	{
+		QString path = ini.retrieveSetting(file.configName()).valueString();
+		if (!path.isEmpty())
+		{
+			paths << path;
+		}
+	}
+	return paths;
 }
 
 void EnginePlugin::start()

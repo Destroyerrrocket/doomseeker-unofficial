@@ -82,8 +82,16 @@ class MAIN_EXPORT PathFinder
 {
 	public:
 		/**
+		 * @brief Generic PathFinder that looks in PATH and other common dirs.
+		 *
+		 * This PathFinder is suitable for finding game executables. What dirs
+		 * are searched depends on the platform.
+		 */
+		static PathFinder genericPathFinder(const QStringList &suffixes);
+
+		/**
 		 * @brief Constructs PathFinder where paths are read from program
-		 *        configuration.
+		 *        configuration from file (WAD) path list setting.
 		 */
 		PathFinder();
 		/**
