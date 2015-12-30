@@ -30,7 +30,7 @@
       <widget class="EnginePluginComboBox" name="cboEngine"/>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="labelVersion">
+      <widget class="QLabel" name="labelExecutable">
        <property name="text">
         <string>Executable:</string>
        </property>
@@ -39,7 +39,17 @@
      <item row="1" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout_7">
        <item>
-        <widget class="QLineEdit" name="leExecutable"/>
+        <widget class="QComboBox" name="executableInput">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QPushButton" name="btnBrowseExecutable">
@@ -74,6 +84,31 @@
          </property>
          <property name="text">
           <string>Lock</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lblExecWarning">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>This map isn't present on map list. Game may misbehave.</string>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="../../../../media/resources.qrc">:/icons/exclamation.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

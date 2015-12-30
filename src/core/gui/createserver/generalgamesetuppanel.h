@@ -30,10 +30,9 @@
 class CreateServerDialog;
 class EnginePlugin;
 class GameCreateParams;
+class GameFileList;
 class GameMode;
 class Ini;
-class Message;
-class Server;
 
 class GeneralGameSetupPanel : public QWidget
 {
@@ -45,7 +44,7 @@ public:
 
 	GameMode currentGameMode() const;
 	EnginePlugin *currentPlugin() const;
-	void fillInParams(GameCreateParams &params, bool offline);
+	void fillInParams(GameCreateParams &params);
 	void loadConfig(Ini &config, bool loadingPrevious);
 	QString mapName() const;
 	void saveConfig(Ini &config);
@@ -64,12 +63,13 @@ protected:
 private:
 	DPtr<GeneralGameSetupPanel> d;
 
-	QString pathToExe(bool offline);
-	QString pathToClientExe(Server* server, Message& message);
-	QString pathToOfflineExe(Message& message);
-	QString pathToServerExe(Message& message);
+	GameFileList gameExecutables() const;
 
+	QString pathToExe();
+
+	void reloadExecutables();
 	bool setEngine(const QString &engineName);
+	void setExecWarning(const QString &msg);
 
 private slots:
 	void browseExecutable();

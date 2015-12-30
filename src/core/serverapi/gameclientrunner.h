@@ -159,10 +159,12 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		void addExtra_default();
 
 		/**
-		 * @brief Sets working directory and path to executable in out put
-		 *        CommandLineInfo.
+		 * @brief @b [Virtual] Sets working directory and path to executable in
+		 *        out put CommandLineInfo.
 		 */
 		void addGamePaths();
+		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, addGamePaths, ());
+		void addGamePaths_default();
 		/**
 		 * @brief @b [Virtual] Adds in-game password to the args list.
 		 *
@@ -365,6 +367,9 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		void setArgForOptionalWadLoading(const QString& arg);
 		void setArgForPort(const QString& arg);
 		void setArgForPwadLoading(const QString& arg);
+
+		void setExecutable(const QString &path);
+		void setWorkingDir(const QString &path);
 
 		/**
 		 * @brief Apply error that is passed to the launching routine and

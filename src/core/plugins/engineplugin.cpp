@@ -256,6 +256,11 @@ void EnginePlugin::setConfig(IniSection &ini)
 	setupConfig(ini);
 }
 
+void EnginePlugin::setGameExeFactory(QSharedPointer<GameExeFactory> factory)
+{
+	d->gameExeFactory = factory;
+}
+
 void EnginePlugin::findGameFiles(IniSection &ini)
 {
 	foreach (const GameFile &file, gameExe()->gameFiles().asQList())

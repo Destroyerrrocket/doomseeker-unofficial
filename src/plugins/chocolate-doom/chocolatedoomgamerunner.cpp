@@ -22,17 +22,22 @@
 //------------------------------------------------------------------------------
 #include "chocolatedoomgamerunner.h"
 
+#include "chocolatedoomgameexefactory.h"
 #include "chocolatedoomgameinfo.h"
 #include "chocolatedoomserver.h"
 #include <gui/createserver/iwadandwadspickerdialog.h>
 #include <serverapi/createserverdialogapi.h>
-#include "serverapi/playerslist.h"
+#include <serverapi/gamefile.h>
+#include <serverapi/playerslist.h>
+#include <ini/inisection.h>
+#include <QFileInfo>
 
 ChocolateDoomGameClientRunner::ChocolateDoomGameClientRunner(
 	QSharedPointer<ChocolateDoomServer> server)
 : GameClientRunner(server)
 {
 	this->server = server;
+	set_addGamePaths(&ChocolateDoomGameClientRunner::addGamePaths);
 	set_createCommandLineArguments(&ChocolateDoomGameClientRunner::createCommandLineArguments);
 }
 
@@ -54,6 +59,19 @@ void ChocolateDoomGameClientRunner::createCommandLineArguments()
 	}
 }
 
+void ChocolateDoomGameClientRunner::addGamePaths()
+{
+	if (!overwriteExecutable.isEmpty())
+	{
+		setExecutable(overwriteExecutable);
+		setWorkingDir(QFileInfo(overwriteExecutable).path());
+	}
+	else
+	{
+		addGamePaths_default();
+	}
+}
+
 void ChocolateDoomGameClientRunner::configureEmptyServer()
 {
 	CreateServerDialogApi *csd = CreateServerDialogApi::createNew(NULL);
@@ -61,8 +79,7 @@ void ChocolateDoomGameClientRunner::configureEmptyServer()
 	csd->makeRemoteGameSetup(plugin());
 	if(csd->dialog()->exec() == QDialog::Accepted)
 	{
-		QString tmp;
-		csd->fillInCommandLineArguments(tmp, args());
+		csd->fillInCommandLineArguments(overwriteExecutable, args());
 	}
 	else
 	{
@@ -71,10 +88,25 @@ void ChocolateDoomGameClientRunner::configureEmptyServer()
 	delete csd;
 }
 
+QStringList ChocolateDoomGameClientRunner::executables() const
+{
+	QStringList paths;
+	GameFile executableForIwad = ChocolateDoomGameExeFactory::executableForIwad(server->iwad());
+	paths << plugin()->data()->pConfig->value(executableForIwad.configName()).toString();
+	foreach (const GameFile &file, ChocolateDoomGameExeFactory::gameFiles().asQList())
+	{
+		paths << plugin()->data()->pConfig->value(file.configName()).toString();
+	}
+	paths = paths.filter(QRegExp("\\S+"));
+	paths.removeDuplicates();
+	return paths;
+}
+
 void ChocolateDoomGameClientRunner::joinPopulatedServer()
 {
 	IwadAndWadsPickerDialog *dialog = new IwadAndWadsPickerDialog(NULL);
 	dialog->setWindowTitle(tr("Join Chocolate Doom game"));
+	dialog->setExecutables(executables());
 	dialog->setIwadByName(server->iwad());
 	if (dialog->exec() == QDialog::Accepted)
 	{

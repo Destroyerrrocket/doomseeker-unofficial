@@ -133,6 +133,7 @@ DClass<GameClientRunner>
 
 		void (GameClientRunner::*addConnectCommand)();
 		void (GameClientRunner::*addExtra)();
+		void (GameClientRunner::*addGamePaths)();
 		void (GameClientRunner::*addInGamePassword)();
 		void (GameClientRunner::*addIwad)();
 		void (GameClientRunner::*addPassword)();
@@ -143,6 +144,7 @@ DPointered(GameClientRunner)
 
 POLYMORPHIC_DEFINE(void, GameClientRunner, addConnectCommand, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, addExtra, (), ());
+POLYMORPHIC_DEFINE(void, GameClientRunner, addGamePaths, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, addInGamePassword, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, addIwad, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, addPassword, (), ());
@@ -151,6 +153,7 @@ POLYMORPHIC_DEFINE(void, GameClientRunner, createCommandLineArguments, (), ());
 GameClientRunner::GameClientRunner(ServerPtr server)
 {
 	set_addConnectCommand(&GameClientRunner::addConnectCommand_default);
+	set_addGamePaths(&GameClientRunner::addGamePaths_default);
 	set_addExtra(&GameClientRunner::addExtra_default);
 	set_addInGamePassword(&GameClientRunner::addInGamePassword_default);
 	set_addIwad(&GameClientRunner::addIwad_default);
@@ -191,7 +194,7 @@ void GameClientRunner::addDemoRecordCommand()
 	args() << argForDemoRecord() << demoName();
 }
 
-void GameClientRunner::addGamePaths()
+void GameClientRunner::addGamePaths_default()
 {
 	GamePaths paths = gamePaths();
 	if (!paths.isValid())
@@ -218,8 +221,8 @@ void GameClientRunner::addGamePaths()
 		return;
 	}
 
-	d->cli->executable = paths.clientExe;
-	d->cli->applicationDir = applicationDir;
+	setExecutable(paths.clientExe);
+	setWorkingDir(applicationDir.path());
 }
 
 void GameClientRunner::addInGamePassword_default()
@@ -572,6 +575,16 @@ void GameClientRunner::setArgForPwadLoading(const QString& arg)
 void GameClientRunner::setArgForDemoRecord(const QString& arg)
 {
 	d->argDemoRecord = arg;
+}
+
+void GameClientRunner::setExecutable(const QString &path)
+{
+	d->cli->executable = path;
+}
+
+void GameClientRunner::setWorkingDir(const QString &path)
+{
+	d->cli->applicationDir = path;
 }
 
 JoinError GameClientRunner::joinError() const

@@ -48,9 +48,14 @@
  */
 class MAIN_EXPORT IwadAndWadsPickerDialog : public QDialog
 {
+	Q_OBJECT;
+
 public:
 	IwadAndWadsPickerDialog(QWidget *parent);
 	virtual ~IwadAndWadsPickerDialog();
+
+	QString executable() const;
+	void setExecutables(const QStringList &executables);
 
 	/**
 	 * @brief List of file paths (excluding IWAD) that were picked by
@@ -75,6 +80,9 @@ public:
 
 private:
 	DPtr<IwadAndWadsPickerDialog> d;
+
+private slots:
+	void browseExecutable();
 };
 
 #endif

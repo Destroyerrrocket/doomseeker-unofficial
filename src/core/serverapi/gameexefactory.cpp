@@ -62,23 +62,23 @@ EnginePlugin* GameExeFactory::plugin()
 
 GameFileList GameExeFactory::gameFiles_default() const
 {
-	QList<GameFile> list;
+	GameFile tmplate = GameFile().setSearchSuffixes(d->plugin->data()->gameFileSearchSuffixes);
+	GameFileList list;
 	if (d->plugin->data()->clientOnly)
 	{
-		list << GameFile::exe("BinaryPath", tr("game"), d->plugin->data()->clientExeName);
+		list << GameFile(tmplate).setConfigName("BinaryPath").setNiceName(tr("game"))
+			.setFileName(d->plugin->data()->clientExeName)
+			.setCsoModesExecutable(true);
 	}
 	else
 	{
-		list << GameFile::exe("BinaryPath", tr("client"), d->plugin->data()->clientExeName);
-		list << GameFile::exe("ServerBinaryPath", tr("server"), d->plugin->data()->serverExeName);
+		list << GameFile(tmplate).setConfigName("BinaryPath").setNiceName(tr("client"))
+			.setFileName(d->plugin->data()->clientExeName)
+			.setClientExecutable(true).setOfflineExecutable(true);
+		list << GameFile(tmplate).setConfigName("ServerBinaryPath").setNiceName(tr("server"))
+			.setFileName(d->plugin->data()->serverExeName).setServerExecutable(true);
 	}
-	GameFileList result;
-	foreach (GameFile file, list)
-	{
-		file.setSearchSuffixes(d->plugin->data()->gameFileSearchSuffixes);
-		result << file;
-	}
-	return result;
+	return list;
 }
 
 ExeFile* GameExeFactory::offline_default()

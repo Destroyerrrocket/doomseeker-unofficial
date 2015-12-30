@@ -24,10 +24,12 @@
 #include "plugins/engineplugin.h"
 
 #include "chocolatedoomengineplugin.h"
+#include "chocolatedoomgameexefactory.h"
 #include "chocolatedoomgamehost.h"
 #include "chocolatedoomgameinfo.h"
 #include "chocolatedoommasterclient.h"
 #include "chocolatedoomserver.h"
+#include <QSharedPointer>
 
 INSTALL_PLUGIN(ChocolateDoomEnginePlugin)
 
@@ -63,4 +65,10 @@ QList<GameMode> ChocolateDoomEnginePlugin::gameModes() const
 ServerPtr ChocolateDoomEnginePlugin::mkServer(const QHostAddress &address, unsigned short port) const
 {
 	return ServerPtr(new ChocolateDoomServer(address, port));
+}
+
+void ChocolateDoomEnginePlugin::start()
+{
+	EnginePlugin::start();
+	setGameExeFactory(QSharedPointer<GameExeFactory>(new ChocolateDoomGameExeFactory(this)));
 }

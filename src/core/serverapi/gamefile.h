@@ -44,35 +44,88 @@
  * Apart from these, the configName can be anything you want and anything your
  * plugin needs. Remember however that choosing a distinct name is important to
  * avoid collisions with any future standard names.
+ *
+ * There are three types of executables recognised by Doomseeker:
+ * isClientExecutable(), isServerExecutable() and isOfflineExecutable().
+ * One executable can be all of these at the same time or the game might have
+ * separate executables for each mode. Setting one of these to true also implies
+ * isExecutable(). If plugin doesn't specify its own list of GameFile then
+ * Doomseeker will assume some defaults depending on plugin's EP_ClientOnly
+ * flag. The defaults are as follows:
+ *
+ * - If plugin defines EP_ClientOnly flag then there's only one executable that
+ *   is all: client, server and offline.
+ * - If plugin doesn't define EP_ClientOnly then there are two executables:
+ *   client executable that is both for client and offline modes and server
+ *   executable that is only for hosting (possibly just a console).
+ *
+ * This class follows Builder pattern. All setters return reference to
+ * the called object so that you can chain them together.
+ *
+ * @code
+ * GameFile file;
+ * return file.setNiceName(tr("client")).setConfigName("BinaryPath")
+ *     .setFileName("rungame").setExecutable(true);
+ * @endcode
+ *
  */
 class MAIN_EXPORT GameFile
 {
 public:
-	/**
-	 * @brief Builds GameFile suitable for executable files.
-	 *
-	 * isExecutable() will return true.
-	 */
-	static GameFile exe(const QString &configName, const QString &niceName,
-		const QString &fileName);
-
 	GameFile();
 	virtual ~GameFile();
 
-	/**
-	 * @brief Is this an executable file.
-	 */
-	bool isExecutable() const;
 	/**
 	 * @brief Guesses by file name if this is the same file.
 	 */
 	bool isSameFile(const QString &otherFileName);
 
 	/**
+	 * @brief A valid file has configName().
+	 */
+	bool isValid() const;
+
+	/**
+	 * @brief Is this an executable file.
+	 */
+	bool isExecutable() const;
+
+	/**
+	 * @brief Can this executable be used to join a server.
+	 *
+	 * Implies isExecutable() == true.
+	 */
+	bool isClientExecutable() const;
+	GameFile &setClientExecutable(bool b);
+
+	/**
+	 * @brief Can this executable be used to create server.
+	 *
+	 * Implies isExecutable() == true.
+	 */
+	bool isServerExecutable() const;
+	GameFile &setServerExecutable(bool b);
+
+	/**
+	 * @brief Can this executable be used to play an offline game.
+	 *
+	 * Implies isExecutable() == true.
+	 */
+	bool isOfflineExecutable() const;
+	GameFile &setOfflineExecutable(bool b);
+
+	/**
+	 * @brief CSO - Client, Server, Offline.
+	 *
+	 * Sets all mentioned executable flags at once.
+	 */
+	GameFile &setCsoModesExecutable(bool b);
+
+	/**
 	 * @brief Setting name where path will be stored in plugin's IniSection.
 	 */
 	const QString &configName() const;
-	void setConfigName(const QString &name);
+	GameFile &setConfigName(const QString &name);
 
 	/**
 	 * @brief Name of the file on disk.
@@ -80,14 +133,14 @@ public:
 	 * Platform specific extensions (.exe) are unnecessary.
 	 */
 	const QString &fileName() const;
-	void setFileName(const QString &name);
+	GameFile &setFileName(const QString &name);
 
 	/**
 	 * @brief Descriptive name, ie. "client executable", "server executable",
 	 * etc.
 	 */
 	const QString &niceName() const;
-	void setNiceName(const QString &name);
+	GameFile &setNiceName(const QString &name);
 
 	/**
 	 * @brief Path suffixes that help in automatically finding this file.
@@ -95,7 +148,7 @@ public:
 	 * @see EnginePlugin::InitFeatures::EP_GameFileSearchSuffixes.
 	 */
 	QStringList &searchSuffixes() const;
-	void setSearchSuffixes(const QStringList &suffixes);
+	GameFile &setSearchSuffixes(const QStringList &suffixes);
 
 private:
 	DPtr<GameFile> d;
@@ -108,18 +161,34 @@ private:
  */
 class MAIN_EXPORT GameFileList
 {
-	friend GameFileList& operator<<(GameFileList &list, const GameFile &gameFile);
+	friend MAIN_EXPORT GameFileList& operator<<(GameFileList &list, const GameFile &gameFile);
+	friend MAIN_EXPORT GameFileList& operator<<(GameFileList &list, const GameFileList &other);
 
 public:
 	GameFileList();
 	virtual ~GameFileList();
 
-	void add(const GameFile &gameFile);
+	GameFileList &append(const GameFile &gameFile);
+	GameFileList &append(const GameFileList &list);
 	QList<GameFile> asQList() const;
 	void clear();
+	GameFile findByConfigName(const QString &configName);
+	GameFile first() const;
+	bool isEmpty() const;
+	GameFileList &prepend(const GameFile &gameFile);
 
 private:
 	DPtr<GameFileList> d;
 };
+
+namespace GameFiles
+{
+	GameFileList allCreateGameExecutables(const GameFileList &list);
+	GameFileList allClientExecutables(const GameFileList &list);
+	GameFileList allServerExecutables(const GameFileList &list);
+
+	GameFile defaultClientExecutable(const GameFileList &list);
+	GameFile defaultServerExecutable(const GameFileList &list);
+}
 
 #endif

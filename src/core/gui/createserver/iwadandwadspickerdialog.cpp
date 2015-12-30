@@ -23,6 +23,8 @@
 #include "iwadandwadspickerdialog.h"
 
 #include "ui_iwadandwadspickerdialog.h"
+#include "filefilter.h"
+#include <QFileDialog>
 
 DClass<IwadAndWadsPickerDialog> : public Ui::IwadAndWadsPickerDialog
 {
@@ -38,6 +40,36 @@ IwadAndWadsPickerDialog::IwadAndWadsPickerDialog(QWidget *parent)
 
 IwadAndWadsPickerDialog::~IwadAndWadsPickerDialog()
 {
+}
+
+QString IwadAndWadsPickerDialog::executable() const
+{
+	return d->executableInput->currentText();
+}
+
+void IwadAndWadsPickerDialog::setExecutables(const QStringList &paths)
+{
+	foreach (const QString &path, paths)
+	{
+		if (d->executableInput->findText(path) < 0)
+		{
+			d->executableInput->addItem(path);
+		}
+	}
+}
+
+void IwadAndWadsPickerDialog::browseExecutable()
+{
+	QString path = QFileDialog::getOpenFileName(this, tr("Doomseeker - Browse executable"),
+		executable(), FileFilter::executableFilesFilter());
+	if (!path.isEmpty())
+	{
+		d->executableInput->setCurrentText(path);
+		if (d->executableInput->findText(path) < 0)
+		{
+			d->executableInput->addItem(path);
+		}
+	}
 }
 
 QStringList IwadAndWadsPickerDialog::filePaths() const

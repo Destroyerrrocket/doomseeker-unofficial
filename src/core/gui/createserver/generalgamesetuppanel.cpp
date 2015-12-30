@@ -28,16 +28,12 @@
 #include "gui/createserverdialog.h"
 #include "ini/ini.h"
 #include "plugins/engineplugin.h"
-#include "serverapi/exefile.h"
 #include "serverapi/gamecreateparams.h"
-#include "serverapi/gameexeretriever.h"
-#include "serverapi/message.h"
-#include "serverapi/serverstructs.h"
-#include "serverapi/server.h"
+#include "serverapi/gameexefactory.h"
+#include "serverapi/gamefile.h"
 #include "filefilter.h"
 #include <QFileDialog>
 #include <QFileInfo>
-#include <QHostAddress>
 #include <QMessageBox>
 #include <QTimer>
 #include <cassert>
@@ -48,7 +44,6 @@ public:
 	EnginePlugin *currentEngine;
 	bool iwadSetExplicitly;
 	CreateServerDialog *parentDialog;
-	bool suppressMissingExeErrors;
 	bool remoteGameSetup;
 };
 
@@ -61,8 +56,9 @@ GeneralGameSetupPanel::GeneralGameSetupPanel(QWidget *parent)
 	d->setupUi(this);
 	d->iwadSetExplicitly = false;
 	d->remoteGameSetup = false;
-	d->suppressMissingExeErrors = false;
 	d->parentDialog = NULL;
+
+	setExecWarning("");
 
 	this->connect(d->cboEngine, SIGNAL(currentPluginChanged(EnginePlugin*)),
 		SIGNAL(pluginChanged(EnginePlugin*)));
@@ -72,10 +68,9 @@ GeneralGameSetupPanel::~GeneralGameSetupPanel()
 {
 }
 
-void GeneralGameSetupPanel::fillInParams(GameCreateParams &params, bool offline)
+void GeneralGameSetupPanel::fillInParams(GameCreateParams &params)
 {
-	params.setExecutablePath(pathToExe(offline));
-	params.setHostMode(offline ? GameCreateParams::Offline : GameCreateParams::Host);
+	params.setExecutablePath(pathToExe());
 	params.setIwadPath(d->iwadPicker->currentIwad());
 	params.setPwadsPaths(d->wadsPicker->filePaths());
 	params.setPwadsOptional(d->wadsPicker->fileOptional());
@@ -94,37 +89,22 @@ void GeneralGameSetupPanel::loadConfig(Ini &config, bool loadingPrevious)
 	// General
 	if (!d->remoteGameSetup)
 	{
+		QString currentExecutable = d->executableInput->currentText();
 		QString engineName = general["engine"];
 		const EnginePlugin* prevEngine = d->currentEngine;
 		if(!setEngine(engineName))
 			return;
 
 		bool bChangeExecutable = (prevEngine != d->currentEngine || !d->cbLockExecutable->isChecked());
-
-		// First let's check if we can use executable stored in the server's config.
-		// We will save the path to this executable in a local variable.
-		QString executablePath = "";
-		if (bChangeExecutable)
+		QString executablePath = *general["executable"];
+		QFileInfo fileInfo(executablePath);
+		if (!executablePath.isEmpty() && fileInfo.isFile() && bChangeExecutable)
 		{
-			executablePath = *general["executable"];
-			QFileInfo fileInfo(executablePath);
-			if (!fileInfo.exists())
-			{
-				// Executable cannot be found, display error message and reset
-				// the local variable.
-				QMessageBox::warning(this, tr("Doomseeker - load server config"),
-					tr("Game executable saved in config cannot be found.\n"
-						"Default executable will be used."));
-				Message message;
-				executablePath = pathToServerExe(message);
-			}
+			d->executableInput->setCurrentText(executablePath);
 		}
-
-		// If we successfuly retrieved path from the config we shall
-		// set this path in the line edit control.
-		if (!executablePath.isEmpty())
+		else if (!bChangeExecutable)
 		{
-			d->leExecutable->setText(executablePath);
+			d->executableInput->setCurrentText(currentExecutable);
 		}
 	}
 
@@ -132,7 +112,7 @@ void GeneralGameSetupPanel::loadConfig(Ini &config, bool loadingPrevious)
 	d->spinPort->setValue(general["port"]);
 	d->cboGamemode->setCurrentIndex(general["gamemode"]);
 	d->leMap->setText(general["map"]);
-	
+
 	if (!(loadingPrevious && d->iwadSetExplicitly))
 	{
 		d->iwadPicker->addIwad(general["iwad"]);
@@ -142,7 +122,7 @@ void GeneralGameSetupPanel::loadConfig(Ini &config, bool loadingPrevious)
 	foreach(QString value, general["pwadsOptional"].valueString().split(";"))
 	{
 		optionalWads << (value != "0");
-	}	
+	}
 	d->wadsPicker->setFilePaths(general["pwads"].valueString().split(";"), optionalWads);
 
 	d->cbBroadcastToLAN->setChecked(general["broadcastToLAN"]);
@@ -156,7 +136,7 @@ void GeneralGameSetupPanel::saveConfig(Ini &config)
 {
 	IniSection general = config.section("General");
 	general["engine"] = d->cboEngine->currentText();
-	general["executable"] = d->leExecutable->text();
+	general["executable"] = d->executableInput->currentText();
 	general["name"] = d->leServername->text();
 	general["port"] = d->spinPort->value();
 	general["gamemode"] = d->cboGamemode->currentIndex();
@@ -177,30 +157,8 @@ void GeneralGameSetupPanel::saveConfig(Ini &config)
 void GeneralGameSetupPanel::setupForEngine(EnginePlugin *engine)
 {
 	d->currentEngine = engine;
-	// Executable path
-	Message message;
 
-	if (d->remoteGameSetup)
-	{
-		// When we setup a remote game, we want to use a client
-		// executable to connect to it.
-		ServerPtr server = engine->server(QHostAddress("127.0.0.1"), 1);
-		d->leExecutable->setText(pathToClientExe(server.data(), message));
-	}
-	else
-	{
-		d->leExecutable->setText(pathToServerExe(message));
-	}
-
-	if (message.isError() && !d->suppressMissingExeErrors)
-	{
-		QString caption = tr("Doomseeker - error obtaining server binary");
-		QString error = tr("Server binary for engine \"%1\" cannot be obtained.\n"
-			"Following error has occured:\n%2")
-			.arg(d->currentEngine->data()->name, message.contents());
-
-		QMessageBox::warning(this, caption, error);
-	}
+	reloadExecutables();
 
 	d->spinPort->setValue(d->currentEngine->data()->defaultServerPort);
 
@@ -217,14 +175,12 @@ void GeneralGameSetupPanel::setupForEngine(EnginePlugin *engine)
 
 void GeneralGameSetupPanel::setupForRemoteGame()
 {
-	d->suppressMissingExeErrors = true;
 	d->remoteGameSetup = true;
 	d->cbAllowTheGameToChoosePort->hide();
 	QWidget *disableControls[] =
 	{
-		d->cboEngine, d->leExecutable, d->btnBrowseExecutable, d->btnDefaultExecutable,
-		d->cbLockExecutable, d->leServername, d->spinPort, d->cbBroadcastToLAN,
-		d->cbBroadcastToMaster,
+		d->cboEngine, d->leServername, d->spinPort,
+		d->cbBroadcastToLAN, d->cbBroadcastToMaster,
 
 		NULL
 	};
@@ -253,69 +209,88 @@ QString GeneralGameSetupPanel::mapName() const
 	return d->leMap->text();
 }
 
-QString GeneralGameSetupPanel::pathToExe(bool offline)
+QString GeneralGameSetupPanel::pathToExe()
 {
-	// Since some operating systems have different offline and server binaries
-	// We will see if they are playing offline and switch to the client
-	// binary if the specified executable is the same as what is provided
-	// as the server.
-	Message message;
-	QString offlineExePath = pathToOfflineExe(message);
-	QString serverExePath = pathToServerExe(message);
-	bool bIsLineEditPotiningToServerBinary = (d->leExecutable->text() == serverExePath);
-	bool bShouldUseClientBinary = (offline || d->remoteGameSetup) && message.isIgnore() && bIsLineEditPotiningToServerBinary;
-
-	if (bShouldUseClientBinary)
-	{
-		return offlineExePath;
-	}
-	else
-	{
-		return d->leExecutable->text();
-	}
-}
-
-QString GeneralGameSetupPanel::pathToClientExe(Server* server, Message& message)
-{
-	QScopedPointer<ExeFile> f(server->clientExe());
-	return f->pathToExe(message);
-}
-
-QString GeneralGameSetupPanel::pathToOfflineExe(Message& message)
-{
-	return GameExeRetriever(*d->currentEngine->gameExe()).pathToOfflineExe(message);
-}
-
-QString GeneralGameSetupPanel::pathToServerExe(Message& message)
-{
-	return GameExeRetriever(*d->currentEngine->gameExe()).pathToServerExe(message);
+	return d->executableInput->currentText();
 }
 
 void GeneralGameSetupPanel::browseExecutable()
 {
+	setExecWarning("");
 	QString dialogDir = gConfig.doomseeker.previousCreateServerExecDir;
-	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - Add file"),
+	QString path = QFileDialog::getOpenFileName(this, tr("Doomseeker - Browse executable"),
 		dialogDir, FileFilter::executableFilesFilter());
 
-	if (!strFile.isEmpty())
+	if (!path.isEmpty())
 	{
-		QFileInfo fi(strFile);
+		QFileInfo fi(path);
 		gConfig.doomseeker.previousCreateServerExecDir = fi.absolutePath();
 
-		d->leExecutable->setText(fi.absoluteFilePath());
+		d->executableInput->setCurrentText(fi.absoluteFilePath());
+		if (d->executableInput->findText(path) < 0)
+		{
+			d->executableInput->addItem(path);
+		}
 	}
+}
+
+void GeneralGameSetupPanel::setExecWarning(const QString &msg)
+{
+	d->lblExecWarning->setVisible(!msg.trimmed().isEmpty());
+	d->lblExecWarning->setToolTip(msg);
 }
 
 void GeneralGameSetupPanel::setExecutableToDefault()
 {
-	Message message;
-	d->leExecutable->setText(pathToServerExe(message));
-
-	if (!message.isIgnore())
+	setExecWarning("");
+	IniSection *cfg = currentPlugin()->data()->pConfig;
+	if (cfg == NULL)
 	{
-		QMessageBox::critical(this, tr("Obtaining default server binary path."),
-			message.contents(),QMessageBox::Ok, QMessageBox::Ok);
+		setExecWarning(tr("Plugin doesn't support configuration."));
+		return;
 	}
+
+	GameFileList execs = gameExecutables();
+	if (execs.isEmpty())
+	{
+		if (d->remoteGameSetup)
+		{
+			setExecWarning(tr("Game doesn't define any executables for remote game setup."));
+		}
+		else
+		{
+			setExecWarning(tr("Game doesn't define any executables for game setup."));
+		}
+		return;
+	}
+
+	foreach (const GameFile &candidate, execs.asQList())
+	{
+		QString path = cfg->value(candidate.configName()).toString();
+		if (!path.isEmpty())
+		{
+			d->executableInput->setCurrentText(path);
+			return;
+		}
+	}
+	setExecWarning(tr("Default executable for this game isn't configured."));
+}
+
+GameFileList GeneralGameSetupPanel::gameExecutables() const
+{
+	GameFileList files = currentPlugin()->gameExe()->gameFiles();
+	GameFileList candidates;
+	if (d->remoteGameSetup)
+	{
+		candidates = GameFiles::allClientExecutables(files);
+		candidates.prepend(GameFiles::defaultClientExecutable(files));
+	}
+	else
+	{
+		candidates = GameFiles::allCreateGameExecutables(files);
+		candidates.prepend(GameFiles::defaultServerExecutable(files));
+	}
+	return candidates;
 }
 
 void GeneralGameSetupPanel::onGameModeChanged(int index)
@@ -343,6 +318,38 @@ GameMode GeneralGameSetupPanel::currentGameMode() const
 EnginePlugin *GeneralGameSetupPanel::currentPlugin() const
 {
 	return d->cboEngine->currentPlugin();
+}
+
+void GeneralGameSetupPanel::reloadExecutables()
+{
+	setExecWarning("");
+	QString currentExec = d->executableInput->currentText();
+	d->executableInput->clear();
+	IniSection *cfg = currentPlugin()->data()->pConfig;
+	if (cfg == NULL)
+	{
+		d->executableInput->setCurrentText(currentExec);
+		return;
+	}
+
+	GameFileList files = gameExecutables();
+	foreach (const GameFile &file, files.asQList())
+	{
+		QString path = cfg->value(file.configName()).toString();
+		if (d->executableInput->findText(path) < 0)
+		{
+			d->executableInput->addItem(path);
+		}
+	}
+
+	if (d->executableInput->findText(currentExec) >= 0)
+	{
+		d->executableInput->setCurrentText(currentExec);
+	}
+	else
+	{
+		setExecutableToDefault();
+	}
 }
 
 bool GeneralGameSetupPanel::setEngine(const QString &engineName)

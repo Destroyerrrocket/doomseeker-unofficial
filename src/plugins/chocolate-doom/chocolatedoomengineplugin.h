@@ -34,6 +34,7 @@ class ChocolateDoomEnginePlugin : public EnginePlugin
 		GameHost *gameHost();
 		QList<GameMode> gameModes() const;
 		ServerPtr mkServer(const QHostAddress &address, unsigned short port) const;
+		void start();
 };
 
 #endif

@@ -212,7 +212,7 @@ class MAIN_EXPORT EnginePlugin
 				 * This factory should be set only once during plugin
 				 * initialization and then left untouched.
 				 */
-				QScopedPointer<GameExeFactory> gameExeFactory;
+				QSharedPointer<GameExeFactory> gameExeFactory;
 				Broadcast *broadcast;
 
 				QString clientExeName;
@@ -364,6 +364,7 @@ class MAIN_EXPORT EnginePlugin
 		 */
 		virtual ServerPtr mkServer(const QHostAddress &address, unsigned short port) const = 0;
 		void initDefaultGameFiles();
+		void setGameExeFactory(QSharedPointer<GameExeFactory> factory);
 
 	private:
 		Data *d;

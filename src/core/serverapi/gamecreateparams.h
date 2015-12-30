@@ -46,7 +46,8 @@ class MAIN_EXPORT GameCreateParams
 		{
 			Host,
 			Offline,
-			Demo
+			Demo,
+			Remote
 		};
 
 		GameCreateParams();

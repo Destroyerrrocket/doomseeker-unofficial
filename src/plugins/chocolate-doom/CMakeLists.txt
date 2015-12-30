@@ -10,6 +10,7 @@ set(CHOCOLATEDOOM_QT_FILES
 )
 set(CHOCOLATEDOOM_FILES
 	chocolatedoomengineplugin.cpp
+	chocolatedoomgameexefactory.cpp
 	chocolatedoomgamehost.cpp
 	chocolatedoomgameinfo.cpp
 	chocolatedoomgamerunner.cpp
@@ -20,6 +21,7 @@ set(CHOCOLATEDOOM_FILES
 set(HEADER_FILES
 	${CHOCOLATEDOOM_QT_FILES}
 	chocolatedoomengineplugin.h
+	chocolatedoomgameexefactory.h
 	chocolatedoomgamerunner.h
 )
 

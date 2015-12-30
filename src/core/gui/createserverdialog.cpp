@@ -179,7 +179,15 @@ bool CreateServerDialog::commandLineArguments(QString &executable, QStringList &
 
 bool CreateServerDialog::createHostInfo(GameCreateParams& params, bool offline)
 {
-	d->generalSetupPanel->fillInParams(params, offline);
+	if (d->remoteGameSetup)
+	{
+		params.setHostMode(GameCreateParams::Remote);
+	}
+	else
+	{
+		params.setHostMode(offline ? GameCreateParams::Offline : GameCreateParams::Host);
+	}
+	d->generalSetupPanel->fillInParams(params);
 	d->dmflagsPanel->fillInParams(params);
 
 	if (!fillInParamsFromPluginPages(params))

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chocolatedoomgamerunner.h
+// chocolatedoomgameexefactory.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,33 +18,30 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __CHOCOLATE_DOOM_GAME_RUNNER_H_
-#define __CHOCOLATE_DOOM_GAME_RUNNER_H_
+#ifndef id8fc2daff_3e44_42a2_8d0f_24d807b9a407
+#define id8fc2daff_3e44_42a2_8d0f_24d807b9a407
 
-#include "serverapi/gameclientrunner.h"
-#include "chocolatedoomengineplugin.h"
+#include <dptr.h>
+#include <serverapi/gameexefactory.h>
 
-class ChocolateDoomServer;
+class GameFile;
+class GameFileList;
 
-class ChocolateDoomGameClientRunner : public GameClientRunner
+class ChocolateDoomGameExeFactory : public GameExeFactory
 {
-	public:
-		ChocolateDoomGameClientRunner(QSharedPointer<ChocolateDoomServer> server);
+public:
+	static GameFile executableForIwad(const QString &iwad);
+	static GameFileList gameFiles();
 
-		const EnginePlugin* plugin() const { return ChocolateDoomEnginePlugin::staticInstance(); }
+	ChocolateDoomGameExeFactory(EnginePlugin *plugin);
+	~ChocolateDoomGameExeFactory();
 
-	private:
-		QSharedPointer<ChocolateDoomServer> server;
-		QString overwriteExecutable;
+private:
+	DPtr<ChocolateDoomGameExeFactory> d;
 
-		void addGamePaths();
-		void createCommandLineArguments();
-		void configureEmptyServer();
-		QStringList executables() const;
-		void joinPopulatedServer();
-		void pickExecutableBasingOnIwad();
+	GameFileList gameFiles_() const;
 };
 
 #endif
