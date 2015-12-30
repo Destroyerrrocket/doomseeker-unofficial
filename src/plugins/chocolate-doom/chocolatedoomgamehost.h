@@ -37,6 +37,8 @@ class ChocolateDoomGameHost : public GameHost
 
 	private:
 		Q_DISABLE_COPY(ChocolateDoomGameHost)
+
+		void addWarp();
 };
 
 #endif
