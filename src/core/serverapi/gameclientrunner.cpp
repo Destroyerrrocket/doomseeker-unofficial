@@ -465,7 +465,6 @@ GameClientRunner::GamePaths GameClientRunner::gamePaths()
 		return GamePaths();
 	}
 	result.workingDir = exeFile->workingDirectory(msg);
-	result.offlineExe = pathToOfflineExe(msg);
 	return result;
 }
 
@@ -509,12 +508,6 @@ void GameClientRunner::markPwadAsMissing(const PWad& pwadName)
 PathFinder& GameClientRunner::pathFinder()
 {
 	return d->pathFinder;
-}
-
-QString GameClientRunner::pathToOfflineExe(Message &msg)
-{
-	GameExeRetriever exeRetriever = GameExeRetriever(*d->server->plugin()->gameExe());
-	return exeRetriever.pathToOfflineExe(msg);
 }
 
 const QString& GameClientRunner::pluginName() const

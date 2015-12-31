@@ -67,7 +67,7 @@ QString PathFind::findGameFile(const QStringList &knownPaths, const GameFile &ga
 
 QString PathFind::findGameFile(const PathFinder &pathFinder, const GameFile &gameFile)
 {
-	if (gameFile.isExecutable())
+	if (gameFile.executable() != 0)
 	{
 		return findExe(pathFinder, gameFile.fileName());
 	}

@@ -39,12 +39,14 @@ class Server;
  * @ingroup group_pluginapi
  * @brief Returns executable file retrievers from plugins to Doomseeker.
  *
- * ExeFile for client executable (for server joining purposes) is returned
- * by instances of Server, as this usually needs access to the Server
- * class anyway.
+ * Doomseeker will use this factory to retrieve file lists for operations that
+ * are not directly tied into connecting to specific servers. It expects these
+ * files to be configured by the user.
  *
- * It's a caller responsibility to delete each ExeFile object that gets
- * created here.
+ * When connecting to servers different executables may be required depending on
+ * the Server itself (for example for different game versions). To handle this
+ * case Server::clientExe() returns an ExeFile instance which allows more
+ * flexibility in behavior implementation.
  *
  * @see EnginePlugin::Data
  */
@@ -68,36 +70,13 @@ class MAIN_EXPORT GameExeFactory : public QObject
 		GameFileList gameFiles() const;
 
 		/**
-		 * @brief @b [Virtual] Instantiates retriever for offline game
-		 *        executable.
-		 *
-		 * Default behavior extracts path stored in "BinaryPath" setting
-		 * of plugin's config.
-		 */
-		ExeFile* offline();
-		/**
 		 * @brief Gets EnginePlugin associated with this object.
 		 */
 		EnginePlugin* plugin();
-		/**
-		 * @brief @b [Virtual] Instantiates retriever for server executable.
-		 *
-		 * Default behavior extracts path stored either in "BinaryPath"
-		 * or "ServerBinaryPath" setting of plugin's config. This behavior
-		 * depends on whether plugin declares that a separate executable
-		 * should be used for hosting servers.
-		 */
-		ExeFile* server();
 
 	protected:
 		POLYMORPHIC_SETTER_DECLARE_CONST(GameFileList, GameExeFactory, gameFiles, ());
 		GameFileList gameFiles_default() const;
-
-		POLYMORPHIC_SETTER_DECLARE(ExeFile*, GameExeFactory, offline, ());
-		ExeFile* offline_default();
-
-		POLYMORPHIC_SETTER_DECLARE(ExeFile*, GameExeFactory, server, ());
-		ExeFile* server_default();
 
 	private:
 		DPtr<GameExeFactory> d;

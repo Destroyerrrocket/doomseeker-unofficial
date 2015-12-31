@@ -72,6 +72,19 @@
 class MAIN_EXPORT GameFile
 {
 public:
+	/**
+	 * @ingroup group_pluginapi
+	 * @brief Executable types recognised by Doomseeker.
+	 */
+	enum ExecType
+	{
+		Client = 0x1,
+		Server = 0x2,
+		Offline = 0x4,
+		Cso = Client | Server | Offline,
+		CreateGame = Server | Offline,
+	};
+
 	GameFile();
 	virtual ~GameFile();
 
@@ -86,40 +99,10 @@ public:
 	bool isValid() const;
 
 	/**
-	 * @brief Is this an executable file.
+	 * @brief Executable bit flags mod that compares to ExecType.
 	 */
-	bool isExecutable() const;
-
-	/**
-	 * @brief Can this executable be used to join a server.
-	 *
-	 * Implies isExecutable() == true.
-	 */
-	bool isClientExecutable() const;
-	GameFile &setClientExecutable(bool b);
-
-	/**
-	 * @brief Can this executable be used to create server.
-	 *
-	 * Implies isExecutable() == true.
-	 */
-	bool isServerExecutable() const;
-	GameFile &setServerExecutable(bool b);
-
-	/**
-	 * @brief Can this executable be used to play an offline game.
-	 *
-	 * Implies isExecutable() == true.
-	 */
-	bool isOfflineExecutable() const;
-	GameFile &setOfflineExecutable(bool b);
-
-	/**
-	 * @brief CSO - Client, Server, Offline.
-	 *
-	 * Sets all mentioned executable flags at once.
-	 */
-	GameFile &setCsoModesExecutable(bool b);
+	int executable() const;
+	GameFile &setExecutable(int flags);
 
 	/**
 	 * @brief Setting name where path will be stored in plugin's IniSection.
@@ -187,8 +170,17 @@ namespace GameFiles
 	GameFileList allClientExecutables(const GameFileList &list);
 	GameFileList allServerExecutables(const GameFileList &list);
 
+	/**
+	 * @param execs
+	 *     Binary OR of GameFile::ExecType.
+	 */
+	GameFileList allFlagMatchExecutables(const GameFileList &list, int execs);
+
 	GameFile defaultClientExecutable(const GameFileList &list);
+	GameFile defaultOfflineExecutable(const GameFileList &list);
 	GameFile defaultServerExecutable(const GameFileList &list);
+
+	GameFile preferredOfflineExecutable(const GameFileList &list);
 }
 
 #endif

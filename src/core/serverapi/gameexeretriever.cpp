@@ -22,8 +22,11 @@
 //------------------------------------------------------------------------------
 #include "gameexeretriever.h"
 
-#include "serverapi/exefile.h"
+#include "plugins/engineplugin.h"
 #include "serverapi/gameexefactory.h"
+#include "serverapi/gamefile.h"
+#include "serverapi/message.h"
+#include "ini/inisection.h"
 
 GameExeRetriever::GameExeRetriever(GameExeFactory& factory)
 : factory(factory)
@@ -32,32 +35,18 @@ GameExeRetriever::GameExeRetriever(GameExeFactory& factory)
 
 QString GameExeRetriever::pathToOfflineExe(Message& message)
 {
-	ExeFile* f = factory.offline();
-	QString path = f->pathToExe(message);
-	delete f;
-	return path;
-}
+	GameFile file = GameFiles::preferredOfflineExecutable(factory.gameFiles());
+	if (!file.isValid())
+	{
+		message = Message::customError(tr("Game doesn't define offline executable."));
+		return QString();
+	}
 
-QString GameExeRetriever::pathToServerExe(Message& message)
-{
-	ExeFile* f = factory.server();
-	QString path = f->pathToExe(message);
-	delete f;
-	return path;
-}
-
-QString GameExeRetriever::offlineWorkingDir(Message& message)
-{
-	ExeFile* f = factory.offline();
-	QString path = f->workingDirectory(message);
-	delete f;
-	return path;
-}
-
-QString GameExeRetriever::serverWorkingDir(Message& message)
-{
-	ExeFile* f = factory.server();
-	QString path = f->workingDirectory(message);
-	delete f;
+	QString path = factory.plugin()->data()->pConfig->value(file.configName()).toString();
+	if (path.trimmed().isEmpty())
+	{
+		message = Message::customError(tr("Game offline executable is not configured."));
+		return QString();
+	}
 	return path;
 }

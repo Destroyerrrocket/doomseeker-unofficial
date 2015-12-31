@@ -85,7 +85,7 @@ GameFileList ChocolateDoomGameExeFactory::gameFiles_() const
 GameFileList ChocolateDoomGameExeFactory::gameFiles()
 {
 	GameFileList list;
-	GameFile tmplate = GameFile().setSearchSuffixes(searchSuffixes()).setCsoModesExecutable(true);
+	GameFile tmplate = GameFile().setSearchSuffixes(searchSuffixes()).setExecutable(GameFile::Cso);
 
 	list << GameFile(tmplate).setConfigName("BinaryPath") // Default
 		.setNiceName(tr("Chocolate Doom")).setFileName("chocolate-doom");

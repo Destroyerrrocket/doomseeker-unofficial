@@ -28,9 +28,7 @@ DClass<GameFile>
 {
 public:
 	QString configName;
-	bool clientExecutable;
-	bool serverExecutable;
-	bool offlineExecutable;
+	int executable;
 	QString fileName;
 	QString niceName;
 	QStringList searchSuffixes;
@@ -40,9 +38,7 @@ DPointered(GameFile)
 
 GameFile::GameFile()
 {
-	d->clientExecutable = false;
-	d->serverExecutable = false;
-	d->offlineExecutable = false;
+	d->executable = 0;
 }
 
 GameFile::~GameFile()
@@ -71,54 +67,22 @@ GameFile &GameFile::setFileName(const QString &name)
 	return *this;
 }
 
-bool GameFile::isExecutable() const
+int GameFile::executable() const
 {
-	return isClientExecutable() || isServerExecutable() || isOfflineExecutable();
+	return d->executable;
 }
 
-bool GameFile::isClientExecutable() const
+GameFile &GameFile::setExecutable(int flags)
 {
-	return d->clientExecutable;
-}
-
-GameFile &GameFile::setClientExecutable(bool b)
-{
-	d->clientExecutable = b;
+	d->executable = flags;
 	return *this;
-}
-
-bool GameFile::isServerExecutable() const
-{
-	return d->serverExecutable;
-}
-
-GameFile &GameFile::setServerExecutable(bool b)
-{
-	d->serverExecutable = b;
-	return *this;
-}
-
-bool GameFile::isOfflineExecutable() const
-{
-	return d->offlineExecutable;
-}
-
-GameFile &GameFile::setOfflineExecutable(bool b)
-{
-	d->offlineExecutable = b;
-	return *this;
-}
-
-GameFile &GameFile::setCsoModesExecutable(bool b)
-{
-	return setClientExecutable(b).setServerExecutable(b).setOfflineExecutable(b);
 }
 
 bool GameFile::isSameFile(const QString &otherFileName)
 {
 	QString thisFile = fileName();
 #if defined(Q_OS_WIN32)
-	if (isExecutable())
+	if (executable() != 0)
 	{
 		if (!thisFile.endsWith(".exe"))
 		{
@@ -251,36 +215,25 @@ GameFileList& operator<<(GameFileList &list, const GameFileList &other)
 
 GameFileList GameFiles::allCreateGameExecutables(const GameFileList &list)
 {
-	GameFileList result;
-	foreach (const GameFile &file, list.asQList())
-	{
-		if ((file.isOfflineExecutable() || file.isServerExecutable()) && file.isValid())
-		{
-			result << file;
-		}
-	}
-	return result;
+	return allFlagMatchExecutables(list, GameFile::CreateGame);
 }
 
 GameFileList GameFiles::allClientExecutables(const GameFileList &list)
 {
-	GameFileList result;
-	foreach (const GameFile &file, list.asQList())
-	{
-		if (file.isClientExecutable() && file.isValid())
-		{
-			result << file;
-		}
-	}
-	return result;
+	return allFlagMatchExecutables(list, GameFile::Client);
 }
 
 GameFileList GameFiles::allServerExecutables(const GameFileList &list)
 {
+	return allFlagMatchExecutables(list, GameFile::Server);
+}
+
+GameFileList GameFiles::allFlagMatchExecutables(const GameFileList &list, int execs)
+{
 	GameFileList result;
 	foreach (const GameFile &file, list.asQList())
 	{
-		if (file.isServerExecutable() && file.isValid())
+		if (file.isValid() && (execs & file.executable()))
 		{
 			result << file;
 		}
@@ -292,7 +245,21 @@ GameFile GameFiles::defaultClientExecutable(const GameFileList &list)
 {
 	foreach (const GameFile &file, list.asQList())
 	{
-		if (file.isValid() && file.isClientExecutable() && file.configName() == "BinaryPath")
+		if (file.isValid() && (file.executable() & GameFile::Client)
+			&& file.configName() == "BinaryPath")
+		{
+			return file;
+		}
+	}
+	return GameFile();
+}
+
+GameFile GameFiles::defaultOfflineExecutable(const GameFileList &list)
+{
+	foreach (const GameFile &file, list.asQList())
+	{
+		if (file.isValid() && (file.executable() & GameFile::Offline)
+			&& file.configName() == "BinaryPath")
 		{
 			return file;
 		}
@@ -304,8 +271,25 @@ GameFile GameFiles::defaultServerExecutable(const GameFileList &list)
 {
 	foreach (const GameFile &file, list.asQList())
 	{
-		if (file.isValid() && file.isServerExecutable()
+		if (file.isValid() && (file.executable() & GameFile::Server)
 			&& (file.configName() == "ServerBinaryPath" || file.configName() == "BinaryPath"))
+		{
+			return file;
+		}
+	}
+	return GameFile();
+}
+
+GameFile GameFiles::preferredOfflineExecutable(const GameFileList &list)
+{
+	GameFile candidate = defaultOfflineExecutable(list);
+	if (candidate.isValid())
+	{
+		return candidate;
+	}
+	foreach (const GameFile &file, list.asQList())
+	{
+		if (file.isValid() && (file.executable() & GameFile::Offline))
 		{
 			return file;
 		}

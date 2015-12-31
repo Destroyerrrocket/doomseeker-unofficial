@@ -787,7 +787,7 @@ PathFinder Server::wadPathFinder()
 {
 	PathFinder pathFinder;
 	{
-		GameExeRetriever exeRetriever = GameExeRetriever(*plugin()->gameExe());
+		GameExeRetriever exeRetriever(*plugin()->gameExe());
 		Message msg;
 		pathFinder.addPrioritySearchDir(exeRetriever.pathToOfflineExe(msg));
 	}

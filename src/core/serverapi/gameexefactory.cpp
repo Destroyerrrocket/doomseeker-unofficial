@@ -23,7 +23,6 @@
 #include "gameexefactory.h"
 
 #include "plugins/engineplugin.h"
-#include "serverapi/exefile.h"
 #include "serverapi/gamefile.h"
 
 DClass<GameExeFactory>
@@ -32,8 +31,6 @@ public:
 	EnginePlugin* plugin;
 
 	GameFileList (GameExeFactory::*gameFiles)() const;
-	ExeFile* (GameExeFactory::*offline)();
-	ExeFile* (GameExeFactory::*server)();
 };
 
 DPointered(GameExeFactory)
@@ -43,8 +40,6 @@ GameExeFactory::GameExeFactory(EnginePlugin* plugin)
 	d->plugin = plugin;
 
 	set_gameFiles(&GameExeFactory::gameFiles_default);
-	set_offline(&GameExeFactory::offline_default);
-	set_server(&GameExeFactory::server_default);
 }
 
 GameExeFactory::~GameExeFactory()
@@ -52,8 +47,6 @@ GameExeFactory::~GameExeFactory()
 }
 
 POLYMORPHIC_DEFINE_CONST(GameFileList, GameExeFactory, gameFiles, (), ());
-POLYMORPHIC_DEFINE(ExeFile*, GameExeFactory, offline, (), ());
-POLYMORPHIC_DEFINE(ExeFile*, GameExeFactory, server, (), ());
 
 EnginePlugin* GameExeFactory::plugin()
 {
@@ -68,40 +61,15 @@ GameFileList GameExeFactory::gameFiles_default() const
 	{
 		list << GameFile(tmplate).setConfigName("BinaryPath").setNiceName(tr("game"))
 			.setFileName(d->plugin->data()->clientExeName)
-			.setCsoModesExecutable(true);
+			.setExecutable(GameFile::Cso);
 	}
 	else
 	{
 		list << GameFile(tmplate).setConfigName("BinaryPath").setNiceName(tr("client"))
 			.setFileName(d->plugin->data()->clientExeName)
-			.setClientExecutable(true).setOfflineExecutable(true);
+			.setExecutable(GameFile::Offline | GameFile::Client);
 		list << GameFile(tmplate).setConfigName("ServerBinaryPath").setNiceName(tr("server"))
-			.setFileName(d->plugin->data()->serverExeName).setServerExecutable(true);
+			.setFileName(d->plugin->data()->serverExeName).setExecutable(GameFile::Server);
 	}
 	return list;
-}
-
-ExeFile* GameExeFactory::offline_default()
-{
-	ExeFile *f = new ExeFile();
-	f->setProgramName(d->plugin->data()->name);
-	f->setExeTypeName(tr("offline"));
-	f->setConfigKey("BinaryPath");
-	return f;
-}
-
-ExeFile* GameExeFactory::server_default()
-{
-	ExeFile *f = new ExeFile();
-	f->setProgramName(d->plugin->data()->name);
-	f->setExeTypeName(tr("server"));
-	if (d->plugin->data()->clientOnly)
-	{
-		f->setConfigKey("BinaryPath");
-	}
-	else
-	{
-		f->setConfigKey("ServerBinaryPath");
-	}
-	return f;
 }

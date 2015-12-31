@@ -23,25 +23,24 @@
 #ifndef id64069D4A_A1E8_40DD_A64C81196FC70D9B
 #define id64069D4A_A1E8_40DD_A64C81196FC70D9B
 
+#include <QObject>
 #include <QString>
 
 class GameExeFactory;
 class Message;
-class Server;
 
 /**
  * @brief A convenience wrapper class for GameExeFactory.
  */
-class GameExeRetriever
+class GameExeRetriever : public QObject
 {
+	Q_OBJECT;
+	Q_DISABLE_COPY(GameExeRetriever);
+
 	public:
 		GameExeRetriever(GameExeFactory& factory);
 
 		QString pathToOfflineExe(Message& message);
-		QString pathToServerExe(Message& message);
-
-		QString offlineWorkingDir(Message& message);
-		QString serverWorkingDir(Message& message);
 
 	private:
 		GameExeFactory &factory;
