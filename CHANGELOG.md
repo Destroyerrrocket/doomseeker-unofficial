@@ -1,7 +1,7 @@
 # Change Log
 
 Visit this file cleanly formatted in repository:
-<https://bitbucket.org/Blzut3/doomseeker/src/default/CHANGELOG.md>
+<https://bitbucket.org/Doomseeker/doomseeker/src/default/CHANGELOG.md>
 
 This file follows recommendations in accordance to:
 <http://keepachangelog.com/>
@@ -16,15 +16,29 @@ Tooltip is also refreshed live during server list refresh (it might
 require moving cursor away from the tray icon depending on platform.)
 - Human-readable versions in update packages file names.
 - Redistribute OpenSSL libraries together with Doomseeker.
+- Servers can be filtered by the "testing server" flag.
+- Use global game custom parameters when hosting a server or creating
+offline game. These parameters are used in addition to parameters
+defined in "Custom Parameters" tab in Create Game dialog.
+- Support varying executables for each game instead of just "game.exe"
+or "client/server.exe". Chocolate Doom uses different executables
+depending on IWAD and Doomseeker now supports that.
+- Suggest different game executables in Create Game dialog depending
+on what the plugin for each game declares. Executables can be picked
+from a drop-down list. Zandronum testing executables should also be on
+this list.
+- Added "Install Freedoom" dialog box to main menu (under "File").
 - IRC: Send NOTICEs to channel or priv chat box if such box is open,
 send them to network tab if not.
 - IRC: Consider reply code 338 (RPL_WHOISACTUALLY) a part of /whois
 response.
+- IRC: Parse response codes RPLChannelUrl (328) and
+RPLCreatedTime(329) and forward them to originating channel's
+window.
 - IRC: Parse channel related errors 471-477 (bad password, banned,
 etc.) and forward some of them to current chat box.
 - Windows: Server list refresh progress and Wadseeker download progress
 are now shown in Windows' task bar.
-- Added "Install Freedoom" dialog box to main menu (under "File").
 - Wadseeker: Added "Fetch Freedoom version info" feature to
 WADSEEKER_API.
 - Wadseeker: Added ModInstall class to WADSEEKER_API for mods with
@@ -48,6 +62,9 @@ either server or client game executables.
 require to download Qt libraries everytime anymore.
 - Completely reworked "missing files" dialog. Added "Install Freedoom"
 button if IWAD is missing.
+- To reduce noise in generated command lines, wrap with quotes only
+those arguments that have characters outside of a very narrow, safe
+range.
 
 ### Fixed
 - Don't reset difficulty in "Create Game" dialog when changing game mode.
@@ -62,12 +79,20 @@ getenv(). The new solution should be unicode-aware.
       not to install optional WADs.
     - Treat all files as optional and allow user to select them.
     - JoinCommandLineBuilder was never freed and created a memory leak.
+- Possible buffer overlow in WinMain() when using characters outside
+ASCII range in command line args.
+- Replaced standard dialog buttons in demo manager with custom ones as
+standard naming could be odd depending on platform ("close without
+saving" instead of "delete"/"discard").
+- Remember which PWADs were optional in recorded demos.
 - Wadseeker: Automatically abort queries to sites & services when all
 files are installed.
-
+- Wadseeker: Problems with URLs containing '%' character or non-ASCII
+characters.
+- Chocolate Doom: improved recognition of what IWADs are hosted on servers.
 
 ## [1.0] - 2015-03-22
 - Version 1.0 released. No changelog was keeped before.
 
-[development]: https://bitbucket.org/Blzut3/doomseeker/commits/all
-[1.0]: https://bitbucket.org/Blzut3/doomseeker/commits/tag/1.0
+[development]: https://bitbucket.org/Doomseeker/doomseeker/commits/all
+[1.0]: https://bitbucket.org/Doomseeker/doomseeker/commits/tag/1.0
