@@ -27,42 +27,42 @@
 <context>
     <name>FlagsPage</name>
     <message>
-        <location filename="../createserverdialogpages/flagspage.cpp" line="50"/>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="48"/>
         <source>Flags</source>
         <translation>Flagi</translation>
     </message>
     <message>
-        <location filename="../createserverdialogpages/flagspage.cpp" line="67"/>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="65"/>
         <source>None</source>
         <translation>Brak</translation>
     </message>
     <message>
-        <location filename="../createserverdialogpages/flagspage.cpp" line="68"/>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="66"/>
         <source>Old (ZDoom)</source>
         <translation>Stary (ZDoom)</translation>
     </message>
     <message>
-        <location filename="../createserverdialogpages/flagspage.cpp" line="69"/>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="67"/>
         <source>Hexen</source>
         <translation>Hexen</translation>
     </message>
     <message>
-        <location filename="../createserverdialogpages/flagspage.cpp" line="70"/>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="68"/>
         <source>Strife</source>
         <translation>Strife</translation>
     </message>
     <message>
-        <location filename="../createserverdialogpages/flagspage.cpp" line="123"/>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="121"/>
         <source>Default</source>
         <translation>Domyślnie</translation>
     </message>
     <message>
-        <location filename="../createserverdialogpages/flagspage.cpp" line="124"/>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="122"/>
         <source>No</source>
         <translation>Nie</translation>
     </message>
     <message>
-        <location filename="../createserverdialogpages/flagspage.cpp" line="125"/>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="123"/>
         <source>Yes</source>
         <translation>Tak</translation>
     </message>
@@ -1157,32 +1157,32 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../zandronumengineplugin.cpp" line="150"/>
+        <location filename="../zandronumengineplugin.cpp" line="137"/>
         <source>Time limit:</source>
         <translation>Limit czasu:</translation>
     </message>
     <message>
-        <location filename="../zandronumengineplugin.cpp" line="158"/>
+        <location filename="../zandronumengineplugin.cpp" line="145"/>
         <source>Frag limit:</source>
         <translation>Limit fragów:</translation>
     </message>
     <message>
-        <location filename="../zandronumengineplugin.cpp" line="169"/>
+        <location filename="../zandronumengineplugin.cpp" line="156"/>
         <source>Point limit:</source>
         <translation>Limit punktów:</translation>
     </message>
     <message>
-        <location filename="../zandronumengineplugin.cpp" line="176"/>
+        <location filename="../zandronumengineplugin.cpp" line="163"/>
         <source>Win limit:</source>
         <translation>Limit zwycięstw:</translation>
     </message>
     <message>
-        <location filename="../zandronumengineplugin.cpp" line="181"/>
+        <location filename="../zandronumengineplugin.cpp" line="168"/>
         <source>Duel limit:</source>
         <translation>Limit pojedynków:</translation>
     </message>
     <message>
-        <location filename="../zandronumengineplugin.cpp" line="184"/>
+        <location filename="../zandronumengineplugin.cpp" line="171"/>
         <source>Max. lives:</source>
         <translation>Maks. żyć:</translation>
     </message>
@@ -1195,12 +1195,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TestingProgressDialog</name>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="393"/>
+        <location filename="../zandronumbinaries.cpp" line="398"/>
         <source>Downloading testing binaries...</source>
         <translation>Pobieram binarki testowe ...</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="393"/>
+        <location filename="../zandronumbinaries.cpp" line="398"/>
         <source>Cancel</source>
         <translation>Anuluj</translation>
     </message>
@@ -1305,12 +1305,12 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Nasłuchuję rozgłoszeń serwerów LAN Zandronum.</translation>
     </message>
     <message>
-        <location filename="../zandronumbroadcast.cpp" line="114"/>
+        <location filename="../zandronumbroadcast.cpp" line="115"/>
         <source>Listening to Zandronum&apos;s LAN servers broadcasts on port %1.</source>
         <translation>Nasłuchuję rozgłoszeń serwerów LAN Zandronum na porcie %1.</translation>
     </message>
     <message>
-        <location filename="../zandronumbroadcast.cpp" line="120"/>
+        <location filename="../zandronumbroadcast.cpp" line="121"/>
         <source>Failed to bind Zandronum&apos;s LAN broadcasts listening socket on port %1. Will keep retrying silently.</source>
         <translation>Nie udało się rozpoczęcie nasłuchu rozgłoszeń LAN dla Zandronum na porcie %1. Będą podejmowane ciche próby naprawy.</translation>
     </message>
@@ -1411,30 +1411,30 @@ nie zawiera pliku wykonywalnego Zandronum</translation>
         <translation>Wypakowuję plik: %1</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="309"/>
+        <location filename="../zandronumbinaries.cpp" line="314"/>
         <source>%1
  should be a script file but is a directory!</source>
         <translation>%1
  powinien być plikiem skryptowym, ale jest katalogiem!</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="318"/>
+        <location filename="../zandronumbinaries.cpp" line="323"/>
         <source>You don&apos;t have permissions to execute file: %1
 </source>
         <translation>Nie masz uprawnień aby uruchomić plik: %1</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="365"/>
+        <location filename="../zandronumbinaries.cpp" line="370"/>
         <source>Couldn&apos;t open batch file &quot;%1&quot; for writing</source>
         <translation>Nie można otworzyć pliku skryptowego &quot;%1&quot; do zapisu</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="372"/>
+        <location filename="../zandronumbinaries.cpp" line="377"/>
         <source>Error while writing batch file &quot;%1&quot;</source>
         <translation>Błąd podczas zapisywania pliku skryptowego &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="382"/>
+        <location filename="../zandronumbinaries.cpp" line="387"/>
         <source>Cannot set permissions for file:
 %1</source>
         <translation>Nie można ustawić uprawnień plikowi:
@@ -2229,27 +2229,27 @@ nie zawiera pliku wykonywalnego Zandronum</translation>
 <context>
     <name>ZandronumRConProtocol</name>
     <message>
-        <location filename="../zandronumrconprotocol.cpp" line="67"/>
+        <location filename="../zandronumrconprotocol.cpp" line="68"/>
         <source>Connection attempt ...</source>
         <translation>Próba połączenia ...</translation>
     </message>
     <message>
-        <location filename="../zandronumrconprotocol.cpp" line="75"/>
+        <location filename="../zandronumrconprotocol.cpp" line="76"/>
         <source>Too many failed connection attempts. Aborting.</source>
         <translation>Zbyt wiele nieudanych prób połączenia. Przerywam.</translation>
     </message>
     <message>
-        <location filename="../zandronumrconprotocol.cpp" line="110"/>
+        <location filename="../zandronumrconprotocol.cpp" line="111"/>
         <source>Authenticating ...</source>
         <translation>Autentykacja ...</translation>
     </message>
     <message>
-        <location filename="../zandronumrconprotocol.cpp" line="129"/>
+        <location filename="../zandronumrconprotocol.cpp" line="130"/>
         <source>Too many failed authentication attempts. Aborting.</source>
         <translation>Zbyt wiele nieudanych prób autentykacji. Przerywam.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../zandronumrconprotocol.cpp" line="171"/>
+        <location filename="../zandronumrconprotocol.cpp" line="172"/>
         <source>Delaying for about %n seconds before next authentication attempt.</source>
         <translation>
             <numerusform>Opóźniam na około %n sekundę przed następną próbą autentykacji.</numerusform>
@@ -2258,37 +2258,37 @@ nie zawiera pliku wykonywalnego Zandronum</translation>
         </translation>
     </message>
     <message>
-        <location filename="../zandronumrconprotocol.cpp" line="216"/>
+        <location filename="../zandronumrconprotocol.cpp" line="219"/>
         <source>Failed to establish connection.</source>
         <translation>Nie udało się zestawić połączenia.</translation>
     </message>
     <message>
-        <location filename="../zandronumrconprotocol.cpp" line="219"/>
+        <location filename="../zandronumrconprotocol.cpp" line="222"/>
         <source>Timeout on authentication.</source>
         <translation>Przekroczono czas autentykacji.</translation>
     </message>
     <message>
-        <location filename="../zandronumrconprotocol.cpp" line="237"/>
+        <location filename="../zandronumrconprotocol.cpp" line="240"/>
         <source>You have been banned from this server.</source>
         <translation>Masz bana na tym serwerze.</translation>
     </message>
     <message>
-        <location filename="../zandronumrconprotocol.cpp" line="242"/>
+        <location filename="../zandronumrconprotocol.cpp" line="245"/>
         <source>The protocol appears to be outdated.</source>
         <translation>Protokół wydaje się być przestarzały.</translation>
     </message>
     <message>
-        <location filename="../zandronumrconprotocol.cpp" line="280"/>
+        <location filename="../zandronumrconprotocol.cpp" line="283"/>
         <source>Authentication failure.</source>
         <translation>Błąd autentykacji.</translation>
     </message>
     <message>
-        <location filename="../zandronumrconprotocol.cpp" line="285"/>
+        <location filename="../zandronumrconprotocol.cpp" line="288"/>
         <source>Remote console connection established.</source>
         <translation>Połączenie z konsolą zdalną zestawione.</translation>
     </message>
     <message>
-        <location filename="../zandronumrconprotocol.cpp" line="286"/>
+        <location filename="../zandronumrconprotocol.cpp" line="289"/>
         <source>-----</source>
         <translation>-----</translation>
     </message>
@@ -2296,22 +2296,22 @@ nie zawiera pliku wykonywalnego Zandronum</translation>
 <context>
     <name>ZandronumServer</name>
     <message>
-        <location filename="../zandronumserver.cpp" line="107"/>
+        <location filename="../zandronumserver.cpp" line="110"/>
         <source>Blue</source>
         <translation>Niebieska</translation>
     </message>
     <message>
-        <location filename="../zandronumserver.cpp" line="108"/>
+        <location filename="../zandronumserver.cpp" line="111"/>
         <source>Red</source>
         <translation>Czerwona</translation>
     </message>
     <message>
-        <location filename="../zandronumserver.cpp" line="109"/>
+        <location filename="../zandronumserver.cpp" line="112"/>
         <source>Green</source>
         <translation>Zielona</translation>
     </message>
     <message>
-        <location filename="../zandronumserver.cpp" line="110"/>
+        <location filename="../zandronumserver.cpp" line="113"/>
         <source>Gold</source>
         <translation>Złota</translation>
     </message>
