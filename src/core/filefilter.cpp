@@ -37,12 +37,3 @@ QString FileFilter::executableFilesFilter()
 #endif
 
 }
-
-QString FileFilter::executableFileTypeName()
-{
-#if defined(Q_OS_WIN32)
-	return tr("executable");
-#else
-	return tr("binary");
-#endif
-}

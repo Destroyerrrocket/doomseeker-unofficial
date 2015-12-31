@@ -57,7 +57,7 @@ FilePickWidget::~FilePickWidget()
 void FilePickWidget::browsePath()
 {
 	QString filepath = QFileDialog::getOpenFileName(this,
-		tr("Doomseeker - choose %1 file").arg(FileFilter::executableFileTypeName()),
+		tr("Doomseeker - choose executable file"),
 		d->lePath->text(), FileFilter::executableFilesFilter());
 	if (!filepath.isEmpty())
 	{
@@ -93,7 +93,7 @@ bool FilePickWidget::isEmpty() const
 void FilePickWidget::setFile(const GameFile &file)
 {
 	d->file = file;
-	d->lblTitle->setText(tr("Path to %1 %2:").arg(file.niceName(), FileFilter::executableFileTypeName()));
+	d->lblTitle->setText(tr("Path to %1 executable:").arg(file.niceName()));
 	d->btnFind->setVisible(canSearch());
 }
 

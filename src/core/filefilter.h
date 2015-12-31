@@ -33,7 +33,6 @@ Q_OBJECT;
 public:
 	static QString allFilesFilter();
 	static QString executableFilesFilter();
-	static QString executableFileTypeName();
 };
 
 #endif
