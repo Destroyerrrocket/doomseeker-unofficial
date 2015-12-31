@@ -23,6 +23,7 @@ set(UI_FILES
 	gui/copytextdlg.ui
 	gui/createserver/customparamspanel.ui
 	gui/createserver/dmflagspanel.ui
+	gui/createserver/gameexecutablepicker.ui
 	gui/createserver/gamerulespanel.ui
 	gui/createserver/generalgamesetuppanel.ui
 	gui/createserver/iwadandwadspickerdialog.ui
@@ -101,6 +102,7 @@ set(HEADER_FILES
 	gui/copytextdlg.h
 	gui/createserver/customparamspanel.h
 	gui/createserver/dmflagspanel.h
+	gui/createserver/gameexecutablepicker.h
 	gui/createserver/gamerulespanel.h
 	gui/createserver/generalgamesetuppanel.h
 	gui/createserver/iwadandwadspickerdialog.h
@@ -326,6 +328,7 @@ set(SOURCE_FILES
 	gui/copytextdlg.cpp
 	gui/createserver/customparamspanel.cpp
 	gui/createserver/dmflagspanel.cpp
+	gui/createserver/gameexecutablepicker.cpp
 	gui/createserver/gamerulespanel.cpp
 	gui/createserver/generalgamesetuppanel.cpp
 	gui/createserver/iwadandwadspickerdialog.cpp

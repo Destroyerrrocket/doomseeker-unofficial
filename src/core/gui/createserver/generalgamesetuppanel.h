@@ -67,14 +67,10 @@ private:
 
 	QString pathToExe();
 
-	void reloadExecutables();
 	bool setEngine(const QString &engineName);
-	void setExecWarning(const QString &msg);
 
 private slots:
-	void browseExecutable();
 	void onGameModeChanged(int);
-	void setExecutableToDefault();
 	void updateMapWarningVisibility();
 };
 
