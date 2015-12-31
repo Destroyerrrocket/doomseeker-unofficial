@@ -17,6 +17,7 @@ set(ZANDRONUM_QT_FILES
 	zandronumbinaries.h
 	zandronumbroadcast.h
 	zandronumdmflags.h
+	zandronumgameexefactory.h
 	zandronumgamehost.h
 	zandronumgameinfo.h
 	zandronummasterclient.h
@@ -39,6 +40,7 @@ set(ZANDRONUM_FILES
 	zandronumbroadcast.cpp
 	zandronumdmflags.cpp
 	zandronumengineplugin.cpp
+	zandronumgameexefactory.cpp
 	zandronumgamehost.cpp
 	zandronumgameinfo.cpp
 	zandronumgamerunner.cpp

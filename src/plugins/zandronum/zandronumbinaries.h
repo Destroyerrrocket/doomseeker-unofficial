@@ -38,6 +38,8 @@ class ZandronumClientExeFile : public ExeFile
 	Q_OBJECT
 
 	public:
+		static QString scriptFileExtension();
+
 		ZandronumClientExeFile(const QSharedPointer<const ZandronumServer> &server);
 		~ZandronumClientExeFile();
 

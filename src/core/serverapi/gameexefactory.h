@@ -30,7 +30,7 @@
 #include <QList>
 
 class EnginePlugin;
-class ExeFile;
+class ExeFilePath;
 class GameFileList;
 class Server;
 
@@ -59,6 +59,25 @@ class MAIN_EXPORT GameExeFactory : public QObject
 		virtual ~GameExeFactory();
 
 		/**
+		 * @brief @b [Virtual] Additional paths to any executable that matches
+		 * the bit mask.
+		 *
+		 * Return any paths to any additional executables that may match the
+		 * execType bitmask field. Executables should exist on the local
+		 * machine. These executables will be used by Doomseeker to present
+		 * users with additional choices, for example to pick a different
+		 * executable when creating a new game.
+		 *
+		 * Default implementation does nothing and returns an empty list.
+		 *
+		 * @param execType
+		 *     GameFile::ExecType bitmask field. Return only executables that
+		 *     match this bitmask. Match criteria are to be decided by the
+		 *     plugin.
+		 */
+		QList<ExeFilePath> additionalExecutables(int execType) const;
+
+		/**
 		 * @brief @b [Virtual] List of all game files associated with this
 		 * game.
 		 *
@@ -72,11 +91,14 @@ class MAIN_EXPORT GameExeFactory : public QObject
 		/**
 		 * @brief Gets EnginePlugin associated with this object.
 		 */
-		EnginePlugin* plugin();
+		EnginePlugin* plugin() const;
 
 	protected:
 		POLYMORPHIC_SETTER_DECLARE_CONST(GameFileList, GameExeFactory, gameFiles, ());
 		GameFileList gameFiles_default() const;
+
+		POLYMORPHIC_SETTER_DECLARE_CONST(QList<ExeFilePath>, GameExeFactory, additionalExecutables, (int));
+		QList<ExeFilePath> additionalExecutables_default(int execType) const;
 
 	private:
 		DPtr<GameExeFactory> d;

@@ -121,3 +121,49 @@ QString ExeFile::workingDirectory(Message& message)
 	return fi.absolutePath();
 }
 
+///////////////////////////////////////////////////////////////////////////
+
+DClass<ExeFilePath>
+{
+public:
+	QString path;
+	QString workingDir;
+};
+
+DPointered(ExeFilePath);
+
+ExeFilePath::ExeFilePath()
+{
+}
+
+ExeFilePath::ExeFilePath(const QString &path)
+{
+	d->path = path;
+	d->workingDir = QFileInfo(path).path();
+}
+
+ExeFilePath::~ExeFilePath()
+{
+}
+
+QString ExeFilePath::path() const
+{
+	return d->path;
+}
+
+ExeFilePath &ExeFilePath::setPath(const QString &path)
+{
+	d->path = path;
+	return *this;
+}
+
+QString ExeFilePath::workingDir() const
+{
+	return d->workingDir;
+}
+
+ExeFilePath &ExeFilePath::setWorkingDir(const QString &path)
+{
+	d->workingDir = path;
+	return *this;
+}

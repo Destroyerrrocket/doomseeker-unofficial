@@ -26,6 +26,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "ini/ini.h"
 #include "plugins/engineplugin.h"
+#include "serverapi/exefile.h"
 #include "serverapi/gameexefactory.h"
 #include "serverapi/gamefile.h"
 #include "filefilter.h"
@@ -174,6 +175,14 @@ void GameExecutablePicker::reloadExecutables()
 		if (d->executableInput->findText(path) < 0)
 		{
 			d->executableInput->addItem(path);
+		}
+	}
+	foreach (const ExeFilePath &exe, d->plugin->gameExe()->additionalExecutables(d->allowedExecs))
+	{
+		QFileInfo fileInfo(exe.path());
+		if (fileInfo.isFile())
+		{
+			d->executableInput->addItem(exe.path());
 		}
 	}
 

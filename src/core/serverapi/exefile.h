@@ -140,4 +140,28 @@ class MAIN_EXPORT ExeFile : public QObject
 		QString obtainBinary(Message& message) const;
 };
 
+/**
+ * @ingroup group_pluginapi
+ * @brief A simple executable path & working dir structure.
+ */
+class MAIN_EXPORT ExeFilePath
+{
+public:
+	ExeFilePath();
+	/**
+	 * @brief Infers working dir from path.
+	 */
+	ExeFilePath(const QString &path);
+	virtual ~ExeFilePath();
+
+	QString path() const;
+	ExeFilePath &setPath(const QString &path);
+
+	QString workingDir() const;
+	ExeFilePath &setWorkingDir(const QString &path);
+
+private:
+	DPtr<ExeFilePath> d;
+};
+
 #endif

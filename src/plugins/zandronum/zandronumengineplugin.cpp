@@ -32,6 +32,7 @@
 #include "createserverdialogpages/flagspage.h"
 #include "zandronumbroadcast.h"
 #include "zandronumbinaries.h"
+#include "zandronumgameexefactory.h"
 #include "zandronumgamehost.h"
 #include "zandronumgameinfo.h"
 #include "zandronumengineplugin.h"
@@ -180,5 +181,6 @@ ServerPtr ZandronumEnginePlugin::mkServer(const QHostAddress &address, unsigned 
 void ZandronumEnginePlugin::start()
 {
 	EnginePlugin::start();
+	setGameExeFactory(QSharedPointer<GameExeFactory>(new ZandronumGameExeFactory(this)));
 	d->broadcast->start();
 }

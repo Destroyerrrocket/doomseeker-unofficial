@@ -296,6 +296,11 @@ bool ZandronumClientExeFile::downloadTestingBinaries(const QDir &destination, QW
 #endif
 }
 
+QString ZandronumClientExeFile::scriptFileExtension()
+{
+	return SCRIPT_FILE_EXTENSION;
+}
+
 bool ZandronumClientExeFile::spawnTestingBatchFile(const QString& versionDir, QString& fullPathToFile, Message& message)
 {
 	QString binaryPath = versionDir + '/' + ZANDRONUM_BINARY_NAME;

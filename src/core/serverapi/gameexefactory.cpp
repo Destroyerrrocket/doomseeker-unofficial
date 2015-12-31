@@ -23,6 +23,7 @@
 #include "gameexefactory.h"
 
 #include "plugins/engineplugin.h"
+#include "serverapi/exefile.h"
 #include "serverapi/gamefile.h"
 
 DClass<GameExeFactory>
@@ -30,6 +31,7 @@ DClass<GameExeFactory>
 public:
 	EnginePlugin* plugin;
 
+	QList<ExeFilePath> (GameExeFactory::*additionalExecutables)(int) const;
 	GameFileList (GameExeFactory::*gameFiles)() const;
 };
 
@@ -39,6 +41,7 @@ GameExeFactory::GameExeFactory(EnginePlugin* plugin)
 {
 	d->plugin = plugin;
 
+	set_additionalExecutables(&GameExeFactory::additionalExecutables_default);
 	set_gameFiles(&GameExeFactory::gameFiles_default);
 }
 
@@ -46,11 +49,17 @@ GameExeFactory::~GameExeFactory()
 {
 }
 
+POLYMORPHIC_DEFINE_CONST(QList<ExeFilePath>, GameExeFactory, additionalExecutables, (int execType), (execType));
 POLYMORPHIC_DEFINE_CONST(GameFileList, GameExeFactory, gameFiles, (), ());
 
-EnginePlugin* GameExeFactory::plugin()
+EnginePlugin* GameExeFactory::plugin() const
 {
 	return d->plugin;
+}
+
+QList<ExeFilePath> GameExeFactory::additionalExecutables_default(int execType) const
+{
+	return QList<ExeFilePath>();
 }
 
 GameFileList GameExeFactory::gameFiles_default() const
