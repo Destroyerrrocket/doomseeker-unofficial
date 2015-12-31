@@ -50,6 +50,7 @@ public:
 private:
 	DPtr<GameExecutablePicker> d;
 
+	void add(const QString &path);
 	GameFileList gameExecutables() const;
 	void reloadExecutables();
 	void showWarning(const QString &msg);

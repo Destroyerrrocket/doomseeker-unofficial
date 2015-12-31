@@ -54,6 +54,14 @@ GameExecutablePicker::~GameExecutablePicker()
 {
 }
 
+void GameExecutablePicker::add(const QString &path)
+{
+	if (!path.trimmed().isEmpty() && d->executableInput->findText(path) < 0)
+	{
+		d->executableInput->addItem(path);
+	}
+}
+
 void GameExecutablePicker::browse()
 {
 	showWarning("");
@@ -67,10 +75,7 @@ void GameExecutablePicker::browse()
 		gConfig.doomseeker.previousCreateServerExecDir = fi.absolutePath();
 
 		d->executableInput->setCurrentText(fi.absoluteFilePath());
-		if (d->executableInput->findText(path) < 0)
-		{
-			d->executableInput->addItem(path);
-		}
+		add(path);
 	}
 }
 
@@ -171,18 +176,14 @@ void GameExecutablePicker::reloadExecutables()
 	GameFileList files = gameExecutables();
 	foreach (const GameFile &file, files.asQList())
 	{
-		QString path = cfg->value(file.configName()).toString();
-		if (d->executableInput->findText(path) < 0)
-		{
-			d->executableInput->addItem(path);
-		}
+		add(cfg->value(file.configName()).toString());
 	}
 	foreach (const ExeFilePath &exe, d->plugin->gameExe()->additionalExecutables(d->allowedExecs))
 	{
 		QFileInfo fileInfo(exe.path());
 		if (fileInfo.isFile())
 		{
-			d->executableInput->addItem(exe.path());
+			add(exe.path());
 		}
 	}
 
