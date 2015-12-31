@@ -23,6 +23,7 @@
 #include "chocolatedoomgameexefactory.h"
 
 #include <serverapi/gamefile.h>
+#include <QStringList>
 
 static QStringList searchSuffixes()
 {

@@ -115,7 +115,8 @@ PathFinder PathFinder::genericPathFinder(const QStringList &suffixes)
 		<< "/usr/games/" << "/usr/local/games/"
 		<< "/usr/share/games/" << gDefaultDataPaths->workingDirectory() << ".";
 #endif
-	foreach (const QString &path, QStringList(paths))
+	QStringList pathsCopy(paths);
+	foreach (const QString &path, pathsCopy)
 	{
 		foreach (const QString &suffix, suffixes)
 		{

@@ -39,8 +39,8 @@ DClass<EngineConfigurationBaseBox> : public Ui::EngineConfigurationBaseBox
 		class KnownNeighbours : public FilePickWidget::NeighbourStrategy
 		{
 		public:
-			DPtr<::EngineConfigurationBaseBox> *wrapper;
-			KnownNeighbours(DPtr<::EngineConfigurationBaseBox> *wrapper)
+			DPtr< ::EngineConfigurationBaseBox> *wrapper;
+			KnownNeighbours(DPtr< ::EngineConfigurationBaseBox> *wrapper)
 			{
 				this->wrapper = wrapper;
 			}
@@ -113,7 +113,7 @@ void EngineConfigurationBaseBox::addWidget(QWidget *widget)
 
 void EngineConfigurationBaseBox::autoFindNeighbouringPaths()
 {
-	auto picker = qobject_cast<FilePickWidget*>(sender());
+	FilePickWidget *picker = qobject_cast<FilePickWidget*>(sender());
 	if (QFileInfo(picker->path()).isFile())
 	{
 		QStringList knownPaths = collectKnownGameFilePaths();

@@ -36,7 +36,7 @@ DClass<FilePickWidget> : public Ui::FilePickWidget
 public:
 	bool changed;
 	GameFile file;
-	QSharedPointer<::FilePickWidget::NeighbourStrategy> neighbourStrategy;
+	QSharedPointer< ::FilePickWidget::NeighbourStrategy> neighbourStrategy;
 };
 DPointered(FilePickWidget)
 
