@@ -279,11 +279,6 @@ const QString& Server::email() const
 	return d->email;
 }
 
-void Server::emitUpdated(int response)
-{
-	emit updated(self(), response);
-}
-
 QString Server::engineName() const
 {
 	if (plugin() != NULL)

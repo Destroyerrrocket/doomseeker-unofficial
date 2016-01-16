@@ -759,11 +759,6 @@ class MAIN_EXPORT Server : public QObject
 
 		void clearDMFlags();
 
-		/**
-		 * Wrapper function to allow refresher to emit the updated signal.
-		 */
-		void emitUpdated(int response);
-
 		QByteArray createSendRequest_default();
 		Response readRequest_default(const QByteArray &data);
 
