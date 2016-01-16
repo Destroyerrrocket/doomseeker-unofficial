@@ -7,23 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>44</height>
+    <height>50</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
@@ -56,14 +47,18 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnFind">
-       <property name="maximumSize">
-        <size>
-         <width>32</width>
-         <height>16777215</height>
-        </size>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="text">
+       <property name="toolTip">
         <string>Find</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../../media/resources.qrc">
+         <normaloff>:/icons/magnifier.png</normaloff>:/icons/magnifier.png</iconset>
        </property>
       </widget>
      </item>
@@ -71,7 +66,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../../media/resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>btnBrowse</sender>
