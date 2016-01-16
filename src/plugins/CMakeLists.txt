@@ -1,5 +1,6 @@
 add_subdirectory(chocolate-doom)
 add_subdirectory(odamex)
+add_subdirectory(srb2)
 add_subdirectory(vavoom)
 add_subdirectory(zandronum)
 
@@ -14,4 +15,3 @@ option(BUILD_FAKE_PLUGINS "Build plugins that are used for development purposes 
 if(BUILD_FAKE_PLUGINS)
 	add_subdirectory(fakeplugin)
 endif()
-

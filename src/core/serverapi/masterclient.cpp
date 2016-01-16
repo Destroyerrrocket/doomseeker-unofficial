@@ -84,6 +84,11 @@ MasterClient::~MasterClient()
 	}
 }
 
+QHostAddress MasterClient::address() const
+{
+	return d->address;
+}
+
 void MasterClient::clearServers()
 {
 	d->servers.clear();
@@ -176,6 +181,11 @@ int MasterClient::numServers() const
 ServerPtr MasterClient::operator[](int index) const
 {
 	return d->servers[index];
+}
+
+unsigned short MasterClient::port() const
+{
+	return d->port;
 }
 
 bool MasterClient::preparePacketCache(bool write)

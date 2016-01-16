@@ -185,6 +185,11 @@ class MAIN_EXPORT MasterClient : public QObject
 
 	protected:
 		/**
+		 * @brief Address of the master server.
+		 */
+		QHostAddress address() const;
+
+		/**
 		 * @brief Produce contents of server list request packet that is sent
 		 *        to the master server.
 		 *
@@ -200,6 +205,11 @@ class MAIN_EXPORT MasterClient : public QObject
 
 		POLYMORPHIC_SETTER_DECLARE_CONST(QString, MasterClient, masterBanHelp, ());
 		QString masterBanHelp_default() const;
+
+		/**
+		 * @brief Network port of the master server.
+		 */
+		unsigned short port() const;
 
 		bool preparePacketCache(bool write);
 
