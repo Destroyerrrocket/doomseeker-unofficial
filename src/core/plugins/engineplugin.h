@@ -35,16 +35,18 @@
 #define DOOMSEEKER_ABI_VERSION 2
 
 #define DECLARE_PLUGIN(XEnginePlugin) \
+	friend PLUGIN_EXPORT EnginePlugin *doomSeekerInit(); \
 	public: \
-		static EnginePlugin *staticInstance() { return &__Static_Instance; } \
-	protected: \
-		static XEnginePlugin __Static_Instance;
+		static EnginePlugin *staticInstance() { return __Static_Instance; } \
+	private: \
+		static XEnginePlugin *__Static_Instance;
 
 #define INSTALL_PLUGIN(XEnginePlugin) \
-	XEnginePlugin XEnginePlugin::__Static_Instance; \
+	XEnginePlugin *XEnginePlugin::__Static_Instance; \
 	extern "C" PLUGIN_EXPORT unsigned int doomSeekerABI() { return DOOMSEEKER_ABI_VERSION; } \
 	extern "C" PLUGIN_EXPORT EnginePlugin *doomSeekerInit() \
 	{ \
+		XEnginePlugin::__Static_Instance = new XEnginePlugin(); \
 		return XEnginePlugin::staticInstance(); \
 	}
 
@@ -372,5 +374,7 @@ class MAIN_EXPORT EnginePlugin
 		QStringList collectKnownPaths(const IniSection &ini) const;
 		void findGameFiles(IniSection &ini);
 };
+
+extern "C" PLUGIN_EXPORT EnginePlugin *doomSeekerInit();
 
 #endif
