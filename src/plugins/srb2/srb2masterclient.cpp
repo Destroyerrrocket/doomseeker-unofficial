@@ -164,6 +164,7 @@ QByteArray Srb2MasterClient::createServerListRequest()
 
 void Srb2MasterClient::refreshStarts()
 {
+	MasterClient::refreshStarts();
 	socket.close();
 	socket.connectToHost(address(), port());
 }
