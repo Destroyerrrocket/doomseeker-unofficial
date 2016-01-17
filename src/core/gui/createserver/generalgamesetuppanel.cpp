@@ -158,6 +158,9 @@ void GeneralGameSetupPanel::setupForEngine(EnginePlugin *engine)
 {
 	d->currentEngine = engine;
 
+	d->labelIwad->setVisible(engine->data()->hasIwad);
+	d->iwadPicker->setVisible(engine->data()->hasIwad);
+
 	d->executableInput->setPlugin(engine);
 
 	d->spinPort->setValue(d->currentEngine->data()->defaultServerPort);

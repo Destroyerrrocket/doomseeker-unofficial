@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// srb2gameclientrunner.cpp
+// srb2gamehost.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,21 +20,49 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2016 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "srb2gameclientrunner.h"
+#include "srb2gamehost.h"
 
-#include <datapaths.h>
+#include <serverapi/gamecreateparams.h>
 #include <serverapi/serverstructs.h>
-#include "srb2server.h"
+#include "srb2engineplugin.h"
 
-Srb2GameClientRunner::Srb2GameClientRunner(QSharedPointer<Srb2Server> server)
-: GameClientRunner(server)
+Srb2GameHost::Srb2GameHost()
+: GameHost(Srb2EnginePlugin::staticInstance())
 {
-	this->server = server;
+	setArgForIwadLoading("-file");
+	setArgForDemoPlayback("-playdemo");
 	setArgForDemoRecord("-record");
-	setArgForConnectPassword("-password");
-	set_addExtra(&Srb2GameClientRunner::addExtra);
+	setArgForPort("-udpport");
+	setArgForServerLaunch("-dedicated");
+	set_addIwad(&Srb2GameHost::addIwad);
 }
 
-void Srb2GameClientRunner::addExtra()
+void Srb2GameHost::addExtra()
 {
+	unsigned int modeNum = params().gameMode().index();
+	switch(params().gameMode().index())
+	{
+		default:
+		case GameMode::SGM_Cooperative: modeNum = 0; break;
+		case GameMode::SGM_Deathmatch: modeNum = 3; break;
+		case GameMode::SGM_TeamDeathmatch: modeNum = 4; break;
+		case GameMode::SGM_CTF: modeNum = 7; break;
+	}
+	args() << "-gametype" << QString::number(modeNum);
+	args() << "+servername" << params().name();
+
+	if (!params().map().isEmpty())
+	{
+		args() << "+map" << params().map();
+	}
+
+	if (!params().connectPassword().isEmpty())
+	{
+		args() << "-password" << params().connectPassword();
+	}
+}
+
+void Srb2GameHost::addIwad()
+{
+	// No notion of IWAD.
 }

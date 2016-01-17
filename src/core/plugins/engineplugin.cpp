@@ -51,6 +51,8 @@ EnginePlugin::Data::Data()
 	defaultServerPort = 10666;
 	demoExtensionAutomatic = true;
 	demoExtension = "lmp";
+	hasIwad = true;
+	hasMapList = true;
 	icon = NULL;
 	inGameFileDownloads = false;
 	masterClient = NULL;
@@ -68,6 +70,7 @@ EnginePlugin::EnginePlugin()
 	d = new Data;
 
 	d->gameExeFactory.reset(new GameExeFactory(this));
+	d->difficulty.reset(new DifficultyProvider());
 
 	// At the moment I can't think of how we would support any ABI other than
 	// the current, but I suppose we might as well keep track of it?
@@ -172,6 +175,9 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 				d->demoExtensionAutomatic = va_arg(va, unsigned int);
 				d->demoExtension = va_arg(va, const char*);
 				break;
+			case EP_DifficultyProvider:
+				d->difficulty.reset(va_arg(va, DifficultyProvider*));
+				break;
 			case EP_DontCreateDMFlagsPagesAutomatic:
 				d->createDMFlagsPagesAutomatic = false;
 				break;
@@ -197,6 +203,12 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 			}
 			case EP_MasterClient:
 				d->masterClient = va_arg(va, MasterClient*);
+				break;
+			case EP_NoIwad:
+				d->hasIwad = false;
+				break;
+			case EP_NoMapList:
+				d->hasMapList = false;
 				break;
 			case EP_SupportsRandomMapRotation:
 				d->supportsRandomMapRotation = true;

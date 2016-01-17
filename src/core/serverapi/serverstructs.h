@@ -38,6 +38,61 @@
 
 /**
  * @ingroup group_pluginapi
+ * @brief Game difficulty level definition.
+ */
+class MAIN_EXPORT Difficulty
+{
+public:
+	Difficulty(const QString &name, const QVariant &data = QVariant());
+	virtual ~Difficulty();
+
+	/**
+	 * @brief Arbitrary data to be used by the plugin.
+	 *
+	 * This can be a simple integer which denotes the skill level index.
+	 * "I'm too young to die" is 0 and "NIGHTMARE!" is 4
+	 */
+	const QVariant &data() const;
+	/**
+	 * @brief Human-friendly name of the difficulty level.
+	 *
+	 * Suitable for translation.
+	 */
+	const QString &name() const;
+
+private:
+	DPtr<Difficulty> d;
+};
+
+/**
+ * @brief Creates difficulty levels set.
+ *
+ * Override get() method and return Difficulty levels ordered from
+ * easiest to hardest.
+ *
+ * Doomseeker will disable difficulty settings when empty list is returned.
+ */
+class MAIN_EXPORT DifficultyProvider : public QObject
+{
+	Q_OBJECT;
+
+public:
+	DifficultyProvider();
+	virtual ~DifficultyProvider();
+
+	/**
+	 * @brief Default implementation returns Doom difficulty set.
+	 */
+	virtual QList<Difficulty> get();
+
+private:
+	Q_DISABLE_COPY(DifficultyProvider);
+
+	DPtr<DifficultyProvider> d;
+};
+
+/**
+ * @ingroup group_pluginapi
  * @brief A game setting that is a part of a group of settings
  *        that can be OR'ed logically as a single integer.
  *

@@ -31,7 +31,7 @@ QList<GameMode> Srb2GameInfo::gameModes()
 	modes << GameMode::mkDeathmatch();
 	modes << GameMode::mkTeamDeathmatch();
 	modes << GameMode::ffaGame(5, tr("Tag"));
-	modes << GameMode::ffaGame(6, tr("Hide and Seek"));
+	modes << GameMode::ffaGame(6, tr("Hide & Seek"));
 	modes << GameMode::mkCaptureTheFlag();
 	return modes;
 }

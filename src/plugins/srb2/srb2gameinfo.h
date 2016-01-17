@@ -34,4 +34,13 @@ public:
 	static QList<GameMode> gameModes();
 };
 
+class Srb2DifficultyProvider : DifficultyProvider
+{
+public:
+	virtual QList<Difficulty> get()
+	{
+		return QList<Difficulty>();
+	}
+};
+
 #endif

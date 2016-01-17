@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// srb2gameclientrunner.h
+// srb2gamehost.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,22 +20,25 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2016 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef SRB2_GAME_RUNNER_H
-#define SRB2_GAME_RUNNER_H
+#ifndef id0C2CBB3A_3E88_4063_9F380FB52C71E32A
+#define id0C2CBB3A_3E88_4063_9F380FB52C71E32A
 
-#include <serverapi/gameclientrunner.h>
+#include <serverapi/gamehost.h>
 
-class Srb2Server;
-
-class Srb2GameClientRunner : public GameClientRunner
+class Srb2GameHost : public GameHost
 {
-public:
-	Srb2GameClientRunner(QSharedPointer<Srb2Server> server);
+	Q_OBJECT
 
-private:
-	QSharedPointer<Srb2Server> server;
+	public:
+		Srb2GameHost();
 
-	void addExtra();
+	protected:
+		void addExtra();
+
+	private:
+		Q_DISABLE_COPY(Srb2GameHost)
+
+		void addIwad();
 };
 
 #endif

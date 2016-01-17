@@ -24,6 +24,8 @@
 
 #include <QDateTime>
 
+#include "srb2gamehost.h"
+#include "srb2gameinfo.h"
 #include "srb2masterclient.h"
 #include "srb2server.h"
 
@@ -47,10 +49,24 @@ Srb2EnginePlugin::Srb2EnginePlugin()
 #else
 		EP_ClientExeName, "srb2",
 #endif
+		EP_ClientOnly,
 		EP_GameFileSearchSuffixes, "srb2",
 		EP_IRCChannel, "Sonic Robo Blast 2", "irc.esper.net", "#srb2fun",
+		EP_DifficultyProvider, new Srb2DifficultyProvider(),
+		EP_NoMapList,
+		EP_NoIwad,
 		EP_Done
 	);
+}
+
+GameHost *Srb2EnginePlugin::gameHost()
+{
+	return new Srb2GameHost();
+}
+
+QList<GameMode> Srb2EnginePlugin::gameModes() const
+{
+	return Srb2GameInfo::gameModes();
 }
 
 ServerPtr Srb2EnginePlugin::mkServer(const QHostAddress &address, unsigned short port) const

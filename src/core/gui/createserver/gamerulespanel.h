@@ -56,7 +56,7 @@ private:
 	void fillInLimits(GameCreateParams &params);
 	void fillInModifiers(GameCreateParams &params);
 	void removeLimitWidgets();
-	void setupDifficulty();
+	void setupDifficulty(const EnginePlugin *engine);
 	void setupLimitWidgets(const EnginePlugin *engine, const GameMode &gameMode);
 	void setupModifiers(const EnginePlugin *engine);
 };

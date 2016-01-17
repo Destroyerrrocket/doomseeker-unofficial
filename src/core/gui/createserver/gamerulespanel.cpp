@@ -49,7 +49,6 @@ GameRulesPanel::GameRulesPanel(QWidget *parent)
 : QWidget(parent)
 {
 	d->setupUi(this);
-	setupDifficulty();
 }
 
 GameRulesPanel::~GameRulesPanel()
@@ -133,7 +132,10 @@ void GameRulesPanel::setCreateServerDialog(CreateServerDialog *dialog)
 
 void GameRulesPanel::setupForEngine(const EnginePlugin *engine, const GameMode &gameMode)
 {
+	setupDifficulty(engine);
 	setupModifiers(engine);
+
+	d->mapListBox->setVisible(engine->data()->hasMapList);
 	d->mapListPanel->setupForEngine(engine);
 
 	setupLimitWidgets(engine, gameMode);
@@ -149,15 +151,17 @@ void GameRulesPanel::setupForRemoteGame()
 		disableControls[i]->setDisabled(true);
 }
 
-void GameRulesPanel::setupDifficulty()
+void GameRulesPanel::setupDifficulty(const EnginePlugin *engine)
 {
 	d->cboDifficulty->clear();
 
-	d->cboDifficulty->addItem("1 - I'm too young to die", 0);
-	d->cboDifficulty->addItem("2 - Hey, not too rough", 1);
-	d->cboDifficulty->addItem("3 - Hurt me plenty", 2);
-	d->cboDifficulty->addItem("4 - Ultra-violence", 3);
-	d->cboDifficulty->addItem("5 - NIGHTMARE!", 4);
+	QList<Difficulty> levels = engine->data()->difficulty->get();
+	d->labelDifficulty->setVisible(!levels.isEmpty());
+	d->cboDifficulty->setVisible(!levels.isEmpty());
+	foreach (const Difficulty &level, levels)
+	{
+		d->cboDifficulty->addItem(level.name(), level.data());
+	}
 }
 
 void GameRulesPanel::setupModifiers(const EnginePlugin *engine)

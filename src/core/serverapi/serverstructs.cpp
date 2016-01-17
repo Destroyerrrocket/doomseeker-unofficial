@@ -24,6 +24,64 @@
 
 #include <QVector>
 
+DClass<Difficulty>
+{
+public:
+	QVariant data;
+	QString name;
+};
+
+DPointered(Difficulty)
+
+Difficulty::Difficulty(const QString &name, const QVariant &data)
+{
+	d->data = data;
+	d->name = name;
+}
+
+Difficulty::~Difficulty()
+{
+}
+
+const QVariant &Difficulty::data() const
+{
+	return d->data;
+}
+
+const QString &Difficulty::name() const
+{
+	return d->name;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+DClass<DifficultyProvider>
+{
+};
+
+DPointeredNoCopy(DifficultyProvider)
+
+DifficultyProvider::DifficultyProvider()
+{
+}
+
+DifficultyProvider::~DifficultyProvider()
+{
+}
+
+QList<Difficulty> DifficultyProvider::get()
+{
+	QList<Difficulty> list;
+	list << Difficulty(tr("1 - I'm too young to die"), 0);
+	list << Difficulty(tr("2 - Hey, not too rough"), 1);
+	list << Difficulty(tr("3 - Hurt me plenty"), 2);
+	list << Difficulty(tr("4 - Ultra-violence"), 3);
+	list << Difficulty(tr("5 - NIGHTMARE!"), 4);
+	return list;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 DClass<DMFlag>
 {
 	public:
@@ -306,4 +364,3 @@ const QString& PWad::name() const
 {
 	return d->name;
 }
-

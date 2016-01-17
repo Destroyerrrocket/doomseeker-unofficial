@@ -4,6 +4,7 @@ set(PLUGIN_NAME srb2)
 include(../PluginHeader.txt)
 
 set(SRB2_QT_FILES
+	srb2gamehost.h
 	srb2gameinfo.h
 	srb2masterclient.h
 	srb2server.h
@@ -11,6 +12,7 @@ set(SRB2_QT_FILES
 set(SRB2_FILES
 	srb2engineplugin.cpp
 	srb2gameclientrunner.cpp
+	srb2gamehost.cpp
 	srb2gameinfo.cpp
 	srb2masterclient.cpp
 	srb2server.cpp

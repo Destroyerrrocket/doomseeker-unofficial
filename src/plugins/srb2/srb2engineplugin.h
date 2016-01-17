@@ -37,6 +37,8 @@ class Srb2EnginePlugin : public EnginePlugin
 public:
 	Srb2EnginePlugin();
 
+	GameHost *gameHost();
+	QList<GameMode> gameModes() const;
 	ServerPtr mkServer(const QHostAddress &address, unsigned short port) const;
 };
 

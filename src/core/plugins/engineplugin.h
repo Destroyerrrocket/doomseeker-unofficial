@@ -54,6 +54,7 @@ class Broadcast;
 class ConfigurationBaseBox;
 class CreateServerDialog;
 class CreateServerDialogPage;
+class DifficultyProvider;
 class GameCVar;
 class GameExeFactory;
 class GameHost;
@@ -153,7 +154,22 @@ class MAIN_EXPORT EnginePlugin
 			 * Doomseeker to search for game files in
 			 * "C:/Program Files (x86)/MyGame" and "C:/Program Files/MyGame".
 			 */
-			EP_GameFileSearchSuffixes
+			EP_GameFileSearchSuffixes,
+			/**
+			 * @brief See DifficultyProvider; accepts its instance as an arg.
+			 */
+			EP_DifficultyProvider,
+			/**
+			 * @brief Disables map list in create game box.
+			 */
+			EP_NoMapList,
+			/**
+			 * @brief Informs that the game has no notion of an IWAD.
+			 *
+			 * Either IWAD is not used in this game at all or only one
+			 * IWAD is supported and it is hardcoded.
+			 */
+			EP_NoIwad,
 		};
 
 		/// Reimplement if you want to perform some ini initialization manually.
@@ -220,6 +236,16 @@ class MAIN_EXPORT EnginePlugin
 				QString clientExeName;
 				QString serverExeName;
 				QStringList gameFileSearchSuffixes;
+
+				/**
+				 * @brief Difficulty levels provider for this game.
+				 *
+				 * Defaults to the default implementation of
+				 * DifficultyProvider.
+				 */
+				QSharedPointer<DifficultyProvider> difficulty;
+				bool hasMapList;
+				bool hasIwad;
 
 				Data();
 
