@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// srb2masterclient.h
+// srb2gameinfo.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,55 +20,18 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2016 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef SRB2MASTERCLIENT_H
-#define SRB2MASTERCLIENT_H
+#ifndef idbb44c6c8_a578_436c_adc7_dcba557f22ff
+#define idbb44c6c8_a578_436c_adc7_dcba557f22ff
 
-#include <serverapi/masterclient.h>
-#include <QTcpSocket>
-#include <QTimer>
+#include "serverapi/serverstructs.h"
+#include <QObject>
 
-class DataStreamOperatorWrapper;
-class EnginePlugin;
-
-namespace Srb2Master
-{
-	struct Header;
-	struct ServerPayload;
-}
-
-QDataStream &operator<<(QDataStream &stream, const Srb2Master::Header &header);
-QDataStream &operator>>(QDataStream &stream, Srb2Master::Header &header);
-
-QDataStream &operator>>(QDataStream &stream, Srb2Master::ServerPayload &server);
-
-class Srb2MasterClient : public MasterClient
+class Srb2GameInfo : public QObject
 {
 	Q_OBJECT
 
 public:
-	Srb2MasterClient();
-	const EnginePlugin *plugin() const;
-	void updateAddress();
-
-public slots:
-	void refreshStarts();
-
-protected:
-	QByteArray createServerListRequest();
-	Response readMasterResponse(const QByteArray &data);
-
-private:
-	QTcpSocket socket;
-	QTimer readTimer;
-
-	void parseServerPayload(const QByteArray &payload);
-	Srb2Master::Header readHeader();
-	void sendChallenge();
-	void timeoutRefreshEx();
-
-private slots:
-	void readResponse();
-	void socketStateChanged(QAbstractSocket::SocketState state);
+	static QList<GameMode> gameModes();
 };
 
 #endif

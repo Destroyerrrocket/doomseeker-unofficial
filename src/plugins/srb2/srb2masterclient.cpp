@@ -32,7 +32,9 @@
 #include <QHostAddress>
 #include <cstring>
 
-struct Srb2::Header
+using namespace Srb2Master;
+
+struct Srb2Master::Header
 {
 	enum Type
 	{
@@ -64,7 +66,7 @@ struct Srb2::Header
 	}
 };
 
-QDataStream &operator<<(QDataStream &stream, const Srb2::Header &header)
+QDataStream &operator<<(QDataStream &stream, const Header &header)
 {
 	stream << header.id;
 	stream << header.type;
@@ -73,7 +75,7 @@ QDataStream &operator<<(QDataStream &stream, const Srb2::Header &header)
 	return stream;
 }
 
-QDataStream &operator>>(QDataStream &stream, Srb2::Header &header)
+QDataStream &operator>>(QDataStream &stream, Header &header)
 {
 	stream >> header.id;
 	stream >> header.type;
@@ -84,7 +86,7 @@ QDataStream &operator>>(QDataStream &stream, Srb2::Header &header)
 
 ///////////////////////////////////////////////////////////////////////////
 
-struct Srb2::ServerPayload
+struct Srb2Master::ServerPayload
 {
 	friend QDataStream &::operator>>(QDataStream &stream, ServerPayload &server);
 
@@ -127,30 +129,16 @@ private:
 		}
 		this->port = raw.toShort();
 	}
-
-	void rawName(QByteArray raw)
-	{
-		this->name = "";
-		// Strip color codes.
-		for (int i = 0; i < raw.length() && raw[i] != '\0'; ++i)
-		{
-			char c = raw[i];
-			if (c >= 0x20)
-			{
-				this->name += c;
-			}
-		}
-	}
 };
 
-QDataStream &operator>>(QDataStream &stream, Srb2::ServerPayload &server)
+QDataStream &operator>>(QDataStream &stream, ServerPayload &server)
 {
 	DataStreamOperatorWrapper out = DataStreamOperatorWrapper(&stream);
 
-	out.readRaw(16); // Srb2::Header full of zeros.
+	out.readRaw(16); // Header full of zeros.
 	server.rawIp(out.readRaw(16));
 	server.rawPort(out.readRaw(8));
-	server.rawName(out.readRaw(32));
+	server.name = Srb2::asciiOnly(out.readRaw(32));
 	server.room = out.readQInt32();
 	server.version = out.readRaw(8);
 
@@ -189,7 +177,7 @@ void Srb2MasterClient::readResponse()
 {
 	while (socket.bytesAvailable() > 0)
 	{
-		Srb2::Header header = readHeader();
+		Header header = readHeader();
 
 		if (header.length == 0)
 		{
@@ -207,17 +195,17 @@ void Srb2MasterClient::readResponse()
 	}
 }
 
-Srb2::Header Srb2MasterClient::readHeader()
+Header Srb2MasterClient::readHeader()
 {
-	QByteArray data = socket.read(sizeof(Srb2::Header));
-	if (data.length() < static_cast<qint64>(sizeof(Srb2::Header)))
+	QByteArray data = socket.read(sizeof(Header));
+	if (data.length() < static_cast<qint64>(sizeof(Header)))
 	{
-		return Srb2::Header();
+		return Header();
 	}
 	QDataStream stream(data);
 	stream.setByteOrder(QDataStream::BigEndian);
 
-	Srb2::Header header;
+	Header header;
 	stream >> header;
 	return header;
 }
@@ -227,7 +215,7 @@ void Srb2MasterClient::parseServerPayload(const QByteArray &payload)
 	QDataStream stream(payload);
 	stream.setByteOrder(QDataStream::BigEndian);
 
-	Srb2::ServerPayload info;
+	ServerPayload info;
 	stream >> info;
 
 	if (info.isValid())
@@ -264,8 +252,8 @@ void Srb2MasterClient::sendChallenge()
 	QDataStream out(&buffer);
 	out.setByteOrder(QDataStream::BigEndian);
 
-	Srb2::Header header;
-	header.type = Srb2::Header::GET_SHORT_SERVER;
+	Header header;
+	header.type = Header::GET_SHORT_SERVER;
 	out << header;
 
 	socket.write(buffer.data());

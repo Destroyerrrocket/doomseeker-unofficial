@@ -127,27 +127,7 @@ class MAIN_EXPORT Strings
 		static QString normalizePath(QString path);
 
 		/**
-		 * @brief Reads raw data from the current position of
-		 *        passed QDataStream until a specified byte is encountered.
-		 *
-		 * The primary use for this method is to read '\0' terminated strings.
-		 *
-		 * The operator>>(char*&) in QDataStream expects the size of the string to
-		 * be written first in a quint32 variable. Because this data not
-		 * always exists, a custom method must be used.
-		 * This is this method.
-		 *
-		 * The read will occur from current position until the stopByte byte
-		 * is encountered. Read may also stop when an end of stream is encountered
-		 * in which case the data read up to this point will be returned.
-		 *
-		 * @param stream
-		 *     Stream to read from.
-		 * @param stopByte
-		 *     When method encounters this byte, then the read will stop and the
-		 *     currently read data is returned.
-		 * @return
-		 *     All read data plus the stopByte (if encountered).
+		 * @brief This method calls DataStreamOperatorWrapper::readRawUntilByte() .
 		 */
 		static QByteArray readUntilByte(QDataStream& stream, unsigned char stopByte);
 

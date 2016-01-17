@@ -57,3 +57,17 @@ ServerPtr Srb2EnginePlugin::mkServer(const QHostAddress &address, unsigned short
 {
 	return ServerPtr(new Srb2Server(address, port));
 }
+
+QString Srb2::asciiOnly(const QByteArray &raw)
+{
+	QString result;
+	for (int i = 0; i < raw.length() && raw[i] != '\0'; ++i)
+	{
+		char c = raw[i];
+		if (c >= 0x20)
+		{
+			result += c;
+		}
+	}
+	return result;
+}

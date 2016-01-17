@@ -23,6 +23,7 @@
 #include "playertable.h"
 #include "serverapi/server.h"
 #include "serverapi/serverstructs.h"
+#include <climits>
 
 DClass<PlayerTable>
 {
@@ -96,7 +97,12 @@ QString PlayerTable::spawnPartOfPlayerTable(const PlayersList& list, bool bAppen
 				strPlayer += QString("<td>%1</td>").arg(d->server->teamName(player.teamNum()));
 			}
 			strPlayer += "<td>%1</td><td align=\"right\">%2</td><td align=\"right\">%3</td><td>%4</td></tr>";
-			strPlayer = strPlayer.arg(player.nameFormatted()).arg(player.score()).arg(player.ping());
+			QString ping;
+			if (player.ping() != USHRT_MAX)
+			{
+				ping =  QString::number(player.ping());
+			}
+			strPlayer = strPlayer.arg(player.nameFormatted()).arg(player.score()).arg(ping);
 			strPlayer = strPlayer.arg(status);
 
 			ret += strPlayer;
@@ -106,7 +112,7 @@ QString PlayerTable::spawnPartOfPlayerTable(const PlayersList& list, bool bAppen
 	return ret;
 }
 
-QString	PlayerTable::spawnPlayersRows(const PlayersByTeams& playersByTeams)
+QString PlayerTable::spawnPlayersRows(const PlayersByTeams& playersByTeams)
 {
 	QString playersRows;
 

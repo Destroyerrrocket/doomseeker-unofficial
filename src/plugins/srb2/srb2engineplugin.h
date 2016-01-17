@@ -25,6 +25,11 @@
 
 #include <plugins/engineplugin.h>
 
+namespace Srb2
+{
+	QString asciiOnly(const QByteArray &raw);
+}
+
 class Srb2EnginePlugin : public EnginePlugin
 {
 	DECLARE_PLUGIN(Srb2EnginePlugin);

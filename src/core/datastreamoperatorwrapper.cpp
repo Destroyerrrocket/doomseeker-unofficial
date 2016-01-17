@@ -125,7 +125,26 @@ QByteArray DataStreamOperatorWrapper::readRawAll()
 
 QByteArray DataStreamOperatorWrapper::readRawUntilByte(char stopByte)
 {
-	return Strings::readUntilByte(*d->s, stopByte);
+	return readRawMaxUntilByte(stopByte, -1);
+}
+
+QByteArray DataStreamOperatorWrapper::readRawMaxUntilByte(char stopByte, qint64 length)
+{
+	QByteArray result;
+	qint64 counter = 0;
+	while (!d->s->atEnd() && (length < 0 || counter < length))
+	{
+		quint8 rByte;
+		*d->s >> rByte;
+		result += rByte;
+		++counter;
+
+		if (rByte == stopByte)
+		{
+			break;
+		}
+	}
+	return result;
 }
 
 qint64 DataStreamOperatorWrapper::remaining() const

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// srb2masterclient.h
+// srb2gameinfo.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,55 +20,18 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2016 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef SRB2MASTERCLIENT_H
-#define SRB2MASTERCLIENT_H
+#include "srb2gameinfo.h"
 
-#include <serverapi/masterclient.h>
-#include <QTcpSocket>
-#include <QTimer>
-
-class DataStreamOperatorWrapper;
-class EnginePlugin;
-
-namespace Srb2Master
+QList<GameMode> Srb2GameInfo::gameModes()
 {
-	struct Header;
-	struct ServerPayload;
+	QList<GameMode> modes;
+	modes << GameMode::mkCooperative();
+	modes << GameMode::ffaGame(1, tr("Comptetition"));
+	modes << GameMode::ffaGame(2, tr("Race"));
+	modes << GameMode::mkDeathmatch();
+	modes << GameMode::mkTeamDeathmatch();
+	modes << GameMode::ffaGame(5, tr("Tag"));
+	modes << GameMode::ffaGame(6, tr("Hide and Seek"));
+	modes << GameMode::mkCaptureTheFlag();
+	return modes;
 }
-
-QDataStream &operator<<(QDataStream &stream, const Srb2Master::Header &header);
-QDataStream &operator>>(QDataStream &stream, Srb2Master::Header &header);
-
-QDataStream &operator>>(QDataStream &stream, Srb2Master::ServerPayload &server);
-
-class Srb2MasterClient : public MasterClient
-{
-	Q_OBJECT
-
-public:
-	Srb2MasterClient();
-	const EnginePlugin *plugin() const;
-	void updateAddress();
-
-public slots:
-	void refreshStarts();
-
-protected:
-	QByteArray createServerListRequest();
-	Response readMasterResponse(const QByteArray &data);
-
-private:
-	QTcpSocket socket;
-	QTimer readTimer;
-
-	void parseServerPayload(const QByteArray &payload);
-	Srb2Master::Header readHeader();
-	void sendChallenge();
-	void timeoutRefreshEx();
-
-private slots:
-	void readResponse();
-	void socketStateChanged(QAbstractSocket::SocketState state);
-};
-
-#endif

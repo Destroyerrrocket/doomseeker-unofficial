@@ -26,6 +26,7 @@
 
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
+#include "datastreamoperatorwrapper.h"
 
 #include <cassert>
 #include <cmath>
@@ -365,22 +366,8 @@ QString Strings::normalizePath(QString path)
 
 QByteArray Strings::readUntilByte(QDataStream& stream, unsigned char stopByte)
 {
-	QByteArray result;
-	bool bStopByteEncountered = false;
-
-	while (!stream.atEnd() && !bStopByteEncountered)
-	{
-		quint8 rByte;
-		stream >> rByte;
-		result += rByte;
-
-		if (rByte == stopByte)
-		{
-			bStopByteEncountered = true;
-		}
-	}
-
-	return result;
+	DataStreamOperatorWrapper reader(&stream);
+	return reader.readRawUntilByte(stopByte);
 }
 
 float Strings::scaleDataUnit(float bytes, DataUnit& outUnit)

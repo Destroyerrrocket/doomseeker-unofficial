@@ -23,6 +23,7 @@
 #ifndef SRB2SERVER_H
 #define SRB2SERVER_H
 
+#include <QDataStream>
 #include <QMap>
 #include <serverapi/server.h>
 
@@ -30,12 +31,26 @@ class GameHost;
 class GameClientRunner;
 class EnginePlugin;
 
+namespace Srb2ServerPacket
+{
+	struct Header;
+	struct ServerInfo; /// PT_SERVERINFO
+	struct FileNeeded; /// PT_SERVERINFO
+	struct PlayerInfo; /// PT_PLAYERINFO
+}
+
+QDataStream &operator>>(QDataStream &stream, Srb2ServerPacket::Header &header);
+QDataStream &operator>>(QDataStream &stream, Srb2ServerPacket::ServerInfo &info);
+QDataStream &operator>>(QDataStream &stream, Srb2ServerPacket::FileNeeded &info);
+QDataStream &operator>>(QDataStream &stream, Srb2ServerPacket::PlayerInfo &info);
+
 class Srb2Server : public Server
 {
 	Q_OBJECT
 
 public:
 	Srb2Server(const QHostAddress &address, unsigned short port);
+	~Srb2Server();
 
 	QString customDetails();
 
@@ -48,6 +63,14 @@ public:
 protected:
 	Response readRequest(const QByteArray &data);
 	QByteArray createSendRequest();
+
+private:
+	class PrivData;
+	PrivData *d;
+
+	Response processInfoPackets();
+	Response processServerInfo(const Srb2ServerPacket::ServerInfo &info);
+	Response processPlayerInfo(const Srb2ServerPacket::PlayerInfo &info);
 };
 
 #endif

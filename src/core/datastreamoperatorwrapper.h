@@ -90,9 +90,37 @@ class MAIN_EXPORT DataStreamOperatorWrapper
 		QByteArray readRawAll();
 
 		/**
-		 * @brief This method calls Strings::readUntilByte() .
+		 * @brief Reads raw data from the current position of
+		 *        passed QDataStream until a specified byte is encountered.
+		 *
+		 * The primary use for this method is to read '\0' terminated strings.
+		 *
+		 * The operator>>(char*&) in QDataStream expects the size of the string to
+		 * be written first in a quint32 variable. Because this data is not
+		 * always available, a custom method must be used.
+		 * This is this method.
+		 *
+		 * The read will occur from current position until the stopByte byte
+		 * is encountered. Read may also stop when an end of stream is encountered
+		 * in which case the data read up to this point will be returned.
+		 *
+		 * @param stopByte
+		 *     When method encounters this byte, then the read will stop and the
+		 *     currently read data is returned.
+		 * @return
+		 *     All read data plus the stopByte (if encountered).
 		 */
 		QByteArray readRawUntilByte(char stopByte);
+
+		/**
+		 * @brief Reads up to 'length' bytes; can stop early on stopByte.
+		 *
+		 * An expansion of readRawUntilByte(). Usage principle is the same.
+		 *
+		 * @param length
+		 *     Max length. Negative values effectively disable length checks.
+		 */
+		QByteArray readRawMaxUntilByte(char stopByte, qint64 length);
 
 		/**
 		 * @brief Returns a remaining amount of bytes from the underlying
