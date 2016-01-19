@@ -50,6 +50,7 @@ void Srb2GameHost::addExtra()
 	}
 	args() << "-gametype" << QString::number(modeNum);
 	args() << "+servername" << params().name();
+	args() << "+maxplayers" << QString::number(params().maxPlayers());
 
 	if (!params().map().isEmpty())
 	{

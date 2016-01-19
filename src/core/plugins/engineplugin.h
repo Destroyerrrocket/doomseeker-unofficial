@@ -174,6 +174,14 @@ class MAIN_EXPORT EnginePlugin
 			 * IWAD is supported and it is hardcoded.
 			 */
 			EP_NoIwad,
+			/**
+			 * @brief Disables specifying amount of client slots
+			 * in create game box.
+			 *
+			 * Player slots can still be set. This is useful for games
+			 * that don't allow to specify spectator-only slots.
+			 */
+			EP_NoClientSlots,
 		};
 
 		/// Reimplement if you want to perform some ini initialization manually.
@@ -249,6 +257,7 @@ class MAIN_EXPORT EnginePlugin
 				QSharedPointer<GameCVarProvider> difficulty;
 				bool hasMapList;
 				bool hasIwad;
+				bool allowsClientSlots;
 
 				Data();
 

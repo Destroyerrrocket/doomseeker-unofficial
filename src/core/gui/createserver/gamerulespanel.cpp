@@ -138,6 +138,9 @@ void GameRulesPanel::setupForEngine(const EnginePlugin *engine, const GameMode &
 	d->mapListBox->setVisible(engine->data()->hasMapList);
 	d->mapListPanel->setupForEngine(engine);
 
+	d->labelMaxClients->setVisible(engine->data()->allowsClientSlots);
+	d->spinMaxClients->setVisible(engine->data()->allowsClientSlots);
+
 	setupLimitWidgets(engine, gameMode);
 }
 

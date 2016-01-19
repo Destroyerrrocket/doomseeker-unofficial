@@ -41,6 +41,7 @@ EnginePlugin::Data::Data()
 {
 	// Init the defaults.
 	allowsConnectPassword = false;
+	allowsClientSlots = true;
 	allowsEmail = false;
 	allowsJoinPassword = false;
 	allowsMOTD = false;
@@ -204,6 +205,9 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 			}
 			case EP_MasterClient:
 				d->masterClient = va_arg(va, MasterClient*);
+				break;
+			case EP_NoClientSlots:
+				d->allowsClientSlots = false;
 				break;
 			case EP_NoIwad:
 				d->hasIwad = false;

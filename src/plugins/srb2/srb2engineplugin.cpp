@@ -57,6 +57,7 @@ Srb2EnginePlugin::Srb2EnginePlugin()
 		EP_NoIwad,
 		EP_AllowsMOTD,
 		EP_AllowsRConPassword,
+		EP_NoClientSlots,
 		EP_Done
 	);
 }
