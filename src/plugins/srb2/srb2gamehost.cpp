@@ -52,6 +52,12 @@ void Srb2GameHost::addExtra()
 	args() << "+servername" << params().name();
 	args() << "+maxplayers" << QString::number(params().maxPlayers());
 
+	if (params().isBroadcastToMaster())
+	{
+		const QString STANDARD_ROOM = "33";
+		args() << "-room" << STANDARD_ROOM;
+	}
+
 	if (!params().map().isEmpty())
 	{
 		args() << "+map" << params().map();
