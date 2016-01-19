@@ -24,6 +24,7 @@
 
 #include <QBuffer>
 #include <QDataStream>
+#include <QFileInfo>
 #include <QScopedPointer>
 #include <climits>
 #include <cstring>
@@ -33,7 +34,10 @@
 #include "srb2gameinfo.h"
 #include <datastreamoperatorwrapper.h>
 #include <plugins/engineplugin.h>
+#include <serverapi/exefile.h>
+#include <serverapi/message.h>
 #include <serverapi/playerslist.h>
+#include <strings.h>
 
 using namespace Srb2ServerPacket;
 
@@ -444,4 +448,19 @@ QByteArray Srb2Server::createSendRequest()
 void Srb2Server::setGameVersion(const QString &version)
 {
 	Server::setGameVersion(version);
+}
+
+PathFinder Srb2Server::wadPathFinder()
+{
+	PathFinder pathFinder = Server::wadPathFinder();
+	QScopedPointer<ExeFile> exe(clientExe());
+	Message message;
+	QString exePath = exe->pathToExe(message);
+	if (!exePath.isNull())
+	{
+		QFileInfo fileInfo(exePath);
+		QString dirPath = Strings::combinePaths(fileInfo.absolutePath(), "DOWNLOAD");
+		pathFinder.addSearchDir(dirPath);
+	}
+	return pathFinder;
 }

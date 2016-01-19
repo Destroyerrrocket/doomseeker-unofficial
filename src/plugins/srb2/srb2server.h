@@ -63,6 +63,7 @@ public:
 protected:
 	Response readRequest(const QByteArray &data);
 	QByteArray createSendRequest();
+	PathFinder wadPathFinder();
 
 private:
 	class PrivData;

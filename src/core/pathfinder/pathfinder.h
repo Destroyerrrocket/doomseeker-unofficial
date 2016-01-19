@@ -110,6 +110,14 @@ class MAIN_EXPORT PathFinder
 		 */
 		void addPrioritySearchDir(const QString& dir);
 		/**
+		 * @brief Adds directory where search will be performed.
+		 *
+		 * Directory is added with least search priority. If you wish
+		 * to add dir with top priority use addPrioritySearchDir()
+		 * instead.
+		 */
+		void addSearchDir(const QString& dir);
+		/**
 		 * @brief Performs a search for a single file.
 		 */
 		QString findFile(const QString& fileName) const;
