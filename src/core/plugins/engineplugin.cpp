@@ -25,6 +25,7 @@
 #include "ini/ini.h"
 #include "irc/entities/ircnetworkentity.h"
 #include "pathfinder/pathfind.h"
+#include "plugins/enginedefaults.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/gameexefactory.h"
 #include "serverapi/gamefile.h"
@@ -70,7 +71,7 @@ EnginePlugin::EnginePlugin()
 	d = new Data;
 
 	d->gameExeFactory.reset(new GameExeFactory(this));
-	d->difficulty.reset(new DifficultyProvider());
+	d->difficulty.reset(new DefaultDifficultyProvider());
 
 	// At the moment I can't think of how we would support any ABI other than
 	// the current, but I suppose we might as well keep track of it?
@@ -176,7 +177,7 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 				d->demoExtension = va_arg(va, const char*);
 				break;
 			case EP_DifficultyProvider:
-				d->difficulty.reset(va_arg(va, DifficultyProvider*));
+				d->difficulty.reset(va_arg(va, GameCVarProvider*));
 				break;
 			case EP_DontCreateDMFlagsPagesAutomatic:
 				d->createDMFlagsPagesAutomatic = false;

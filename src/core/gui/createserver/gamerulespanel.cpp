@@ -155,12 +155,12 @@ void GameRulesPanel::setupDifficulty(const EnginePlugin *engine)
 {
 	d->cboDifficulty->clear();
 
-	QList<Difficulty> levels = engine->data()->difficulty->get();
+	QList<GameCVar> levels = engine->data()->difficulty->get(QVariant());
 	d->labelDifficulty->setVisible(!levels.isEmpty());
 	d->cboDifficulty->setVisible(!levels.isEmpty());
-	foreach (const Difficulty &level, levels)
+	foreach (const GameCVar &level, levels)
 	{
-		d->cboDifficulty->addItem(level.name(), level.data());
+		d->cboDifficulty->addItem(level.name(), level.value());
 	}
 }
 

@@ -54,7 +54,7 @@ class Broadcast;
 class ConfigurationBaseBox;
 class CreateServerDialog;
 class CreateServerDialogPage;
-class DifficultyProvider;
+class GameCVarProvider;
 class GameCVar;
 class GameExeFactory;
 class GameHost;
@@ -156,7 +156,11 @@ class MAIN_EXPORT EnginePlugin
 			 */
 			EP_GameFileSearchSuffixes,
 			/**
-			 * @brief See DifficultyProvider; accepts its instance as an arg.
+			 * @brief GameCVarProvider that returns difficulty levels ordered
+			 * from easiest to hardest.
+			 *
+			 * The context param may be a QVariantMap with "iwad" field or may be
+			 * empty in which case a default list should be returned.
 			 */
 			EP_DifficultyProvider,
 			/**
@@ -240,10 +244,9 @@ class MAIN_EXPORT EnginePlugin
 				/**
 				 * @brief Difficulty levels provider for this game.
 				 *
-				 * Defaults to the default implementation of
-				 * DifficultyProvider.
+				 * Defaults to returning Doom difficulty levels.
 				 */
-				QSharedPointer<DifficultyProvider> difficulty;
+				QSharedPointer<GameCVarProvider> difficulty;
 				bool hasMapList;
 				bool hasIwad;
 

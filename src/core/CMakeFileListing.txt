@@ -220,6 +220,7 @@ set(HEADER_FILES
 	pathfinder/pathfinder.h
 	pathfinder/wadpathfinder.h
 	patternlist.h
+	plugins/enginedefaults.h
 	plugins/engineplugin.h
 	plugins/pluginloader.h
 	qtmetapointer.h

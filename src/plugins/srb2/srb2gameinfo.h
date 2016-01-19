@@ -34,12 +34,12 @@ public:
 	static QList<GameMode> gameModes();
 };
 
-class Srb2DifficultyProvider : DifficultyProvider
+class Srb2DifficultyProvider : GameCVarProvider
 {
 public:
-	virtual QList<Difficulty> get()
+	QList<GameCVar> get(const QVariant &context)
 	{
-		return QList<Difficulty>();
+		return QList<GameCVar>();
 	}
 };
 
