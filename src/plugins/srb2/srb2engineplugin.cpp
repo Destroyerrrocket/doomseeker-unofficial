@@ -55,6 +55,8 @@ Srb2EnginePlugin::Srb2EnginePlugin()
 		EP_DifficultyProvider, new Srb2DifficultyProvider(),
 		EP_NoMapList,
 		EP_NoIwad,
+		EP_AllowsMOTD,
+		EP_AllowsRConPassword,
 		EP_Done
 	);
 }

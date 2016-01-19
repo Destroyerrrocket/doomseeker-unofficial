@@ -56,9 +56,14 @@ void Srb2GameHost::addExtra()
 		args() << "+map" << params().map();
 	}
 
-	if (!params().connectPassword().isEmpty())
+	if (!params().rconPassword().isEmpty())
 	{
-		args() << "-password" << params().connectPassword();
+		args() << "-password" << params().rconPassword();
+	}
+
+	if (!params().motd().trimmed().isEmpty())
+	{
+		args() << "+motd" << params().motd().trimmed();
 	}
 }
 
