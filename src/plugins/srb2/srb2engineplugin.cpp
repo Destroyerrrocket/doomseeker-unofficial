@@ -72,6 +72,11 @@ QList<GameMode> Srb2EnginePlugin::gameModes() const
 	return Srb2GameInfo::gameModes();
 }
 
+QList<GameCVar> Srb2EnginePlugin::limits(const GameMode& mode) const
+{
+	return Srb2GameInfo::limits(mode);
+}
+
 ServerPtr Srb2EnginePlugin::mkServer(const QHostAddress &address, unsigned short port) const
 {
 	return ServerPtr(new Srb2Server(address, port));

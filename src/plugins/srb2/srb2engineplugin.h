@@ -39,6 +39,7 @@ public:
 
 	GameHost *gameHost();
 	QList<GameMode> gameModes() const;
+	QList<GameCVar> limits(const GameMode& mode) const;
 	ServerPtr mkServer(const QHostAddress &address, unsigned short port) const;
 };
 

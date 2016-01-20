@@ -30,8 +30,17 @@ class Srb2GameInfo : public QObject
 {
 	Q_OBJECT
 
+	enum GameModeIndex
+	{
+		Competition = 1,
+		Race = 2,
+		Tag = 5,
+		HideAndSeek = 6
+	};
+
 public:
 	static QList<GameMode> gameModes();
+	static QList<GameCVar> limits(const GameMode &gameMode);
 };
 
 class Srb2DifficultyProvider : GameCVarProvider

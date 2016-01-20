@@ -26,12 +26,45 @@ QList<GameMode> Srb2GameInfo::gameModes()
 {
 	QList<GameMode> modes;
 	modes << GameMode::mkCooperative();
-	modes << GameMode::ffaGame(1, tr("Comptetition"));
-	modes << GameMode::ffaGame(2, tr("Race"));
+	modes << GameMode::ffaGame(Competition, tr("Competition"));
+	modes << GameMode::ffaGame(Race, tr("Race"));
 	modes << GameMode::mkDeathmatch();
 	modes << GameMode::mkTeamDeathmatch();
-	modes << GameMode::ffaGame(5, tr("Tag"));
-	modes << GameMode::ffaGame(6, tr("Hide & Seek"));
+	modes << GameMode::ffaGame(Tag, tr("Tag"));
+	modes << GameMode::ffaGame(HideAndSeek, tr("Hide & Seek"));
 	modes << GameMode::mkCaptureTheFlag();
 	return modes;
+}
+
+QList<GameCVar> Srb2GameInfo::limits(const GameMode &gameMode)
+{
+	QList<GameCVar> limits;
+	switch (gameMode.index())
+	{
+	case GameMode::SGM_Cooperative:
+	case Competition:
+		limits << GameCVar(tr("Starting lives"), "+startinglives", 3);
+		break;
+	case Race:
+		limits << GameCVar(tr("Laps"), "+numlaps", 4);
+		limits << GameCVar(tr("Countdown time"), "+countdowntime", 60);
+		break;
+	case Tag:
+	case HideAndSeek:
+		limits << GameCVar(tr("Hide time"), "+hidetime", 30);
+		// Intentional fall-through.
+	case GameMode::SGM_Deathmatch:
+	case GameMode::SGM_TeamDeathmatch:
+	case GameMode::SGM_CTF:
+		limits << GameCVar(tr("Point limit"), "+pointlimit");
+		limits << GameCVar(tr("Time limit"), "+timelimit");
+		break;
+	}
+	if (gameMode.index() == GameMode::SGM_CTF)
+	{
+		limits << GameCVar(tr("Flag auto-return time"), "+flagtime", 30);
+	}
+	limits << GameCVar(tr("Respawn item time"), "+respawnitemtime", 30);
+	limits << GameCVar(tr("Intermission time"), "+inttime", 20);
+	return limits;
 }
