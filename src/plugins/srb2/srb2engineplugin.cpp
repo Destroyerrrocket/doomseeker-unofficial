@@ -62,6 +62,11 @@ Srb2EnginePlugin::Srb2EnginePlugin()
 	);
 }
 
+QList<DMFlagsSection> Srb2EnginePlugin::dmFlags() const
+{
+	return Srb2GameInfo::dmFlags();
+}
+
 GameHost *Srb2EnginePlugin::gameHost()
 {
 	return new Srb2GameHost();

@@ -128,6 +128,50 @@ DMFlag& DMFlagsSection::operator[](int index)
 	return d->flags[index];
 }
 
+QList<DMFlagsSection> DMFlagsSection::removedBySection(
+	const QList<DMFlagsSection> &original,
+	const QList<DMFlagsSection> &removals)
+{
+	QList<DMFlagsSection> copy;
+	foreach (const DMFlagsSection &section, original)
+	{
+		bool removed = false;
+		foreach (const DMFlagsSection &removal, removals)
+		{
+			if (section.name() == removal.name())
+			{
+				copy << section.removed(removal);
+				removed = true;
+				break;
+			}
+		}
+		if (!removed)
+		{
+			copy << section;
+		}
+	}
+	return copy;
+}
+
+DMFlagsSection DMFlagsSection::removed(const DMFlagsSection &removals) const
+{
+	DMFlagsSection copy = *this;
+	foreach (const DMFlag &removal, removals.d->flags)
+	{
+		QMutableVectorIterator<DMFlag> i(copy.d->flags);
+		while (i.hasNext())
+		{
+			DMFlag &flag = i.next();
+			if (flag.value() == removal.value())
+			{
+				i.remove();
+				break;
+			}
+		}
+	}
+	return copy;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 DClass<GameCVar>

@@ -86,6 +86,15 @@ class MAIN_EXPORT DMFlag
 class MAIN_EXPORT DMFlagsSection
 {
 	public:
+		/**
+		 * @brief Matches sections by name() and calls removed() on them.
+		 *
+		 * Sections that are emptied are also returned as empty sections.
+		 */
+		static QList<DMFlagsSection> removedBySection(
+			const QList<DMFlagsSection> &original,
+			const QList<DMFlagsSection> &removals);
+
 		DMFlagsSection();
 		DMFlagsSection(const QString& name);
 		virtual ~DMFlagsSection();
@@ -130,6 +139,16 @@ class MAIN_EXPORT DMFlagsSection
 			add(flag);
 			return *this;
 		}
+
+		/**
+		 * @brief Returns a copy of this list with specified DMFlags removed.
+		 *
+		 * Removal is determined basing on DMFlag::value() comparison.
+		 *
+		 * @param removals
+		 *     List of DMFlags to remove.
+		 */
+		DMFlagsSection removed(const DMFlagsSection &removals) const;
 
 	private:
 		DPtr<DMFlagsSection> d;

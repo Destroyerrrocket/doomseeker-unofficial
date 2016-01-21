@@ -39,6 +39,18 @@ class Srb2GameInfo : public QObject
 	};
 
 public:
+	enum Flag
+	{
+		RespawnItems,
+		RingSlinger,
+		TouchTag,
+		AllowExitLevel,
+		AllowTeamChange,
+		AllPlayersForExit
+	};
+
+	static QString commandFromFlag(Flag flag);
+	static QList<DMFlagsSection> dmFlags();
 	static QList<GameMode> gameModes();
 	static QList<GameCVar> limits(const GameMode &gameMode);
 };

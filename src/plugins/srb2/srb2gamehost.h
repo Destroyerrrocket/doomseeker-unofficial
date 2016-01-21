@@ -24,6 +24,9 @@
 #define id0C2CBB3A_3E88_4063_9F380FB52C71E32A
 
 #include <serverapi/gamehost.h>
+#include <QList>
+
+class DMFlagsSection;
 
 class Srb2GameHost : public GameHost
 {
@@ -38,6 +41,8 @@ class Srb2GameHost : public GameHost
 	private:
 		Q_DISABLE_COPY(Srb2GameHost)
 
+		void addDMFlags();
+		void addDMFlags(const QList<DMFlagsSection> &flags, bool enabled);
 		void addIwad();
 };
 

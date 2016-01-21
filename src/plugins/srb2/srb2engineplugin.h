@@ -37,6 +37,7 @@ class Srb2EnginePlugin : public EnginePlugin
 public:
 	Srb2EnginePlugin();
 
+	QList<DMFlagsSection> dmFlags() const;
 	GameHost *gameHost();
 	QList<GameMode> gameModes() const;
 	QList<GameCVar> limits(const GameMode& mode) const;

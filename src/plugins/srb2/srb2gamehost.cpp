@@ -25,6 +25,7 @@
 #include <serverapi/gamecreateparams.h>
 #include <serverapi/serverstructs.h>
 #include "srb2engineplugin.h"
+#include "srb2gameinfo.h"
 
 Srb2GameHost::Srb2GameHost()
 : GameHost(Srb2EnginePlugin::staticInstance())
@@ -34,7 +35,31 @@ Srb2GameHost::Srb2GameHost()
 	setArgForDemoRecord("-record");
 	setArgForPort("-udpport");
 	setArgForServerLaunch("-dedicated");
+	set_addDMFlags(&Srb2GameHost::addDMFlags);
 	set_addIwad(&Srb2GameHost::addIwad);
+}
+
+void Srb2GameHost::addDMFlags()
+{
+	QList<DMFlagsSection> enabled = params().dmFlags();
+	QList<DMFlagsSection> disabled = DMFlagsSection::removedBySection(
+		Srb2GameInfo::dmFlags(), params().dmFlags());
+	addDMFlags(enabled, true);
+	addDMFlags(disabled, false);
+}
+
+void Srb2GameHost::addDMFlags(const QList<DMFlagsSection> &flags, bool enabled)
+{
+	foreach (const DMFlagsSection &section, flags)
+	{
+		for (int i = 0; i < section.count(); ++i)
+		{
+			DMFlag flag = section[i];
+			QString command = Srb2GameInfo::commandFromFlag(
+				static_cast<Srb2GameInfo::Flag>(flag.value()));
+			args() << command << (enabled ? "1" : "0");
+		}
+	}
 }
 
 void Srb2GameHost::addExtra()
@@ -43,6 +68,8 @@ void Srb2GameHost::addExtra()
 	switch(params().gameMode().index())
 	{
 		default:
+			modeNum = params().gameMode().index();
+			break;
 		case GameMode::SGM_Cooperative: modeNum = 0; break;
 		case GameMode::SGM_Deathmatch: modeNum = 3; break;
 		case GameMode::SGM_TeamDeathmatch: modeNum = 4; break;

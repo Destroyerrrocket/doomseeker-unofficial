@@ -22,6 +22,42 @@
 //------------------------------------------------------------------------------
 #include "srb2gameinfo.h"
 
+QString Srb2GameInfo::commandFromFlag(Flag flag)
+{
+	switch (flag)
+	{
+	case AllPlayersForExit:
+		return "+playersforexit";
+	case AllowExitLevel:
+		return "+allowexitlevel";
+	case AllowTeamChange:
+		return "+allowteamchange";
+	case RespawnItems:
+		return "+respawnitem";
+	case RingSlinger:
+		return "+ringslinger";
+	case TouchTag:
+		return "+touchtag";
+	default:
+		return "";
+	}
+}
+
+QList<DMFlagsSection> Srb2GameInfo::dmFlags()
+{
+	DMFlagsSection section(tr("Flags"));
+	section << DMFlag(tr("All players must reach exit"), AllPlayersForExit);
+	section << DMFlag(tr("Allow attacking in all game modes"), RingSlinger);
+	section << DMFlag(tr("Allow level exit in all game modes"), AllowExitLevel);
+	section << DMFlag(tr("Allow team change"), AllowTeamChange);
+	section << DMFlag(tr("Tag players by simply touching them"), TouchTag);
+	section << DMFlag(tr("Respawn items"), RespawnItems);
+
+	QList<DMFlagsSection> flags;
+	flags << section;
+	return flags;
+}
+
 QList<GameMode> Srb2GameInfo::gameModes()
 {
 	QList<GameMode> modes;
