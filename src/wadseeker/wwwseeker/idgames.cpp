@@ -211,6 +211,8 @@ void Idgames::networkRequestFinished()
 
 	QByteArray pageData = d->currentRequest->readAll();
 	QUrl pageUrl = d->currentRequest->url();
+	QUrl redirectUrl = d->currentRequest->attribute(
+		QNetworkRequest::RedirectionTargetAttribute).toUrl();
 
 	emit siteFinished(pageUrl);
 
@@ -224,7 +226,18 @@ void Idgames::networkRequestFinished()
 	}
 	else
 	{
-		extractAndEmitLinks(pageData, pageUrl);
+		if (!redirectUrl.isEmpty() && redirectUrl != pageUrl)
+		{
+			if (redirectUrl.isRelative())
+			{
+				redirectUrl = pageUrl.resolved(redirectUrl);
+			}
+			startNetworkQuery(redirectUrl);
+		}
+		else
+		{
+			extractAndEmitLinks(pageData, pageUrl);
+		}
 	}
 }
 

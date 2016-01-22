@@ -25,7 +25,7 @@
 #include "protocols/idgames/idgamesreply.h"
 #include <QDebug>
 
-const QUrl IdgamesClient::DEFAULT_URL("http://www.doomworld.com/idgames/api/api.php");
+const QUrl IdgamesClient::DEFAULT_URL("https://www.doomworld.com/idgames/api/api.php");
 
 class IdgamesClient::PrivData
 {
