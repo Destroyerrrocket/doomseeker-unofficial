@@ -186,6 +186,7 @@ class DoomseekerConfig
 			public:
 			static const QString SECTION_NAME;
 
+			bool bAlwaysUseDefaultSites;
 			bool bSearchInIdgames;
 			bool bSearchInWadArchive;
 			QString colorMessageCriticalError;

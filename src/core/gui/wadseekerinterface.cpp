@@ -196,16 +196,16 @@ void WadseekerInterface::construct()
 	bAutomatic = false;
 	bFirstShown = false;
 
-	const QStringList& urlList = gConfig.wadseeker.searchURLs;
+	QStringList urlList = gConfig.wadseeker.searchURLs;
+	if (gConfig.wadseeker.bAlwaysUseDefaultSites)
+	{
+		for (int i = 0; !Wadseeker::defaultSites[i].isEmpty(); ++i)
+		{
+			urlList << Wadseeker::defaultSites[i];
+		}
+	}
 
-	if (!urlList.isEmpty())
-	{
-		wadseeker.setPrimarySites(urlList);
-	}
-	else
-	{
-		wadseeker.setPrimarySitesToDefault();
-	}
+	wadseeker.setPrimarySites(urlList);
 
 	updateTimer.setSingleShot(false);
 	updateTimer.start(UPDATE_INTERVAL_MS);

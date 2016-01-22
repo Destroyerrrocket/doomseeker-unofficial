@@ -608,6 +608,7 @@ const QString DoomseekerConfig::WadseekerCfg::SECTION_NAME = "Wadseeker";
 
 DoomseekerConfig::WadseekerCfg::WadseekerCfg()
 {
+	this->bAlwaysUseDefaultSites = true;
 	this->bSearchInIdgames = true;
 	this->bSearchInWadArchive = true;
 	this->colorMessageCriticalError = "#ff0000";
@@ -627,6 +628,7 @@ DoomseekerConfig::WadseekerCfg::WadseekerCfg()
 
 void DoomseekerConfig::WadseekerCfg::init(IniSection& section)
 {
+	section.createSetting("AlwaysUseDefaultSites", this->bAlwaysUseDefaultSites);
 	section.createSetting("SearchInIdgames", this->bSearchInIdgames);
 	section.createSetting("SearchInWadArchive", this->bSearchInWadArchive);
 	section.createSetting("ColorMessageCriticalError", this->colorMessageCriticalError);
@@ -643,6 +645,7 @@ void DoomseekerConfig::WadseekerCfg::init(IniSection& section)
 
 void DoomseekerConfig::WadseekerCfg::load(IniSection& section)
 {
+	this->bAlwaysUseDefaultSites = section["AlwaysUseDefaultSites"];
 	this->bSearchInIdgames = section["SearchInIdgames"];
 	this->bSearchInWadArchive = section["SearchInWadArchive"];
 	this->colorMessageCriticalError = (const QString &)section["ColorMessageCriticalError"];
@@ -666,6 +669,7 @@ void DoomseekerConfig::WadseekerCfg::load(IniSection& section)
 
 void DoomseekerConfig::WadseekerCfg::save(IniSection& section)
 {
+	section["AlwaysUseDefaultSites"] = this->bAlwaysUseDefaultSites;
 	section["SearchInIdgames"] = this->bSearchInIdgames;
 	section["SearchInWadArchive"] = this->bSearchInWadArchive;
 	section["ColorMessageCriticalError"] = this->colorMessageCriticalError;

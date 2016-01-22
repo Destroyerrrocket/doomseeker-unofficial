@@ -122,6 +122,7 @@ void CFGWadseekerSites::readSettings()
 	{
 		this->insertUrl(url);
 	}
+	d->cbAlwaysUseDefaultSites->setChecked(gConfig.wadseeker.bAlwaysUseDefaultSites);
 }
 
 void CFGWadseekerSites::saveSettings()
@@ -134,4 +135,5 @@ void CFGWadseekerSites::saveSettings()
 	}
 
 	gConfig.wadseeker.searchURLs = urlList;
+	gConfig.wadseeker.bAlwaysUseDefaultSites = d->cbAlwaysUseDefaultSites->isChecked();
 }
