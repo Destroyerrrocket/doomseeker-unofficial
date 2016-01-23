@@ -52,6 +52,8 @@ QList<DMFlagsSection> Srb2GameInfo::dmFlags()
 	section << DMFlag(tr("Allow team change"), AllowTeamChange);
 	section << DMFlag(tr("Tag players by simply touching them"), TouchTag);
 	section << DMFlag(tr("Respawn items"), RespawnItems);
+	section << DMFlag(tr("Listen server"), ListenServer);
+	section << DMFlag(tr("Casual server"), CasualServer);
 
 	QList<DMFlagsSection> flags;
 	flags << section;

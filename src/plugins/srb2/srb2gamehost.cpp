@@ -28,13 +28,14 @@
 #include "srb2gameinfo.h"
 
 Srb2GameHost::Srb2GameHost()
-: GameHost(Srb2EnginePlugin::staticInstance())
+: GameHost(Srb2EnginePlugin::staticInstance()),
+  listenServer(false), casualServer(false)
 {
 	setArgForIwadLoading("-file");
 	setArgForDemoPlayback("-playdemo");
 	setArgForDemoRecord("-record");
 	setArgForPort("-udpport");
-	setArgForServerLaunch("-dedicated");
+	setArgForServerLaunch(""); // This will be determined basing on "casual" flag.
 	set_addDMFlags(&Srb2GameHost::addDMFlags);
 	set_addIwad(&Srb2GameHost::addIwad);
 }
@@ -55,15 +56,35 @@ void Srb2GameHost::addDMFlags(const QList<DMFlagsSection> &flags, bool enabled)
 		for (int i = 0; i < section.count(); ++i)
 		{
 			DMFlag flag = section[i];
-			QString command = Srb2GameInfo::commandFromFlag(
-				static_cast<Srb2GameInfo::Flag>(flag.value()));
-			args() << command << (enabled ? "1" : "0");
+			switch (flag.value())
+			{
+			case Srb2GameInfo::ListenServer:
+				listenServer = enabled;
+				break;
+			case Srb2GameInfo::CasualServer:
+				casualServer = enabled;
+				break;
+			default:
+			{
+				QString command = Srb2GameInfo::commandFromFlag(
+					static_cast<Srb2GameInfo::Flag>(flag.value()));
+				if (!command.isEmpty())
+				{
+					args() << command << (enabled ? "1" : "0");
+				}
+			}
+			}
 		}
 	}
 }
 
 void Srb2GameHost::addExtra()
 {
+	if (params().hostMode() == GameCreateParams::Host)
+	{
+		args() << (listenServer ? "-server" : "-dedicated");
+	}
+
 	unsigned int modeNum = params().gameMode().index();
 	switch(params().gameMode().index())
 	{
@@ -82,7 +103,8 @@ void Srb2GameHost::addExtra()
 	if (params().isBroadcastToMaster())
 	{
 		const QString STANDARD_ROOM = "33";
-		args() << "-room" << STANDARD_ROOM;
+		const QString CASUAL_ROOM = "28";
+		args() << "-room" << (casualServer ? CASUAL_ROOM : STANDARD_ROOM);
 	}
 
 	if (!params().map().isEmpty())

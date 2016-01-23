@@ -41,6 +41,9 @@ class Srb2GameHost : public GameHost
 	private:
 		Q_DISABLE_COPY(Srb2GameHost)
 
+		bool casualServer;
+		bool listenServer;
+
 		void addDMFlags();
 		void addDMFlags(const QList<DMFlagsSection> &flags, bool enabled);
 		void addIwad();

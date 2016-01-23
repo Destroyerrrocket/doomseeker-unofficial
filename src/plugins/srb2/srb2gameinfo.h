@@ -46,7 +46,9 @@ public:
 		TouchTag,
 		AllowExitLevel,
 		AllowTeamChange,
-		AllPlayersForExit
+		AllPlayersForExit,
+		ListenServer,
+		CasualServer,
 	};
 
 	static QString commandFromFlag(Flag flag);
