@@ -73,6 +73,18 @@ PluginLoader::Plugin::Plugin(unsigned int type, QString file)
 		if(!doomSeekerABI || doomSeekerABI() != DOOMSEEKER_ABI_VERSION)
 		{
 			// Unsupported version
+			QString reason;
+			if (doomSeekerABI != NULL)
+			{
+				reason = QObject::tr(
+					"plugin ABI version mismatch; plugin: %1, Doomseeker: %2").arg(
+						doomSeekerABI()).arg(DOOMSEEKER_ABI_VERSION);
+			}
+			else
+			{
+				reason = QObject::tr("plugin doesn't report its ABI version");
+			}
+			gLog << QObject::tr("Cannot load plugin %1, reason: %2.").arg(file, reason);
 			unload();
 			return;
 		}
