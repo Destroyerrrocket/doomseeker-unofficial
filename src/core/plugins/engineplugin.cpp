@@ -42,6 +42,7 @@ EnginePlugin::Data::Data()
 	// Init the defaults.
 	allowsConnectPassword = false;
 	allowsClientSlots = true;
+	allowsPlayerSlots = true;
 	allowsEmail = false;
 	allowsJoinPassword = false;
 	allowsMOTD = false;
@@ -208,6 +209,9 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 				break;
 			case EP_NoClientSlots:
 				d->allowsClientSlots = false;
+				break;
+			case EP_NoPlayerSlots:
+				d->allowsPlayerSlots = false;
 				break;
 			case EP_NoIwad:
 				d->hasIwad = false;

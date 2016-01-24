@@ -48,6 +48,9 @@ ChocolateDoomEnginePlugin::ChocolateDoomEnginePlugin()
 		EP_ServerExeName, "chocolate-doom",
 		EP_ClientExeName, "chocolate-doom",
 		EP_GameFileSearchSuffixes, "chocolate-doom;chocolate doom;chocolatedoom;chocolate_doom",
+		EP_NoMapList,
+		EP_NoClientSlots,
+		EP_NoPlayerSlots,
 		EP_Done
 	);
 }

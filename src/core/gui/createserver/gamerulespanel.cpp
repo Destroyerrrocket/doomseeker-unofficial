@@ -175,6 +175,9 @@ void GameRulesPanel::setupForEngine(const EnginePlugin *engine, const GameMode &
 	d->labelMaxClients->setVisible(engine->data()->allowsClientSlots);
 	d->spinMaxClients->setVisible(engine->data()->allowsClientSlots);
 
+	d->labelMaxPlayers->setVisible(engine->data()->allowsPlayerSlots);
+	d->spinMaxPlayers->setVisible(engine->data()->allowsPlayerSlots);
+
 	setupLimitWidgets(engine, gameMode);
 	d->engine = engine;
 }

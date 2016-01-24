@@ -178,10 +178,20 @@ class MAIN_EXPORT EnginePlugin
 			 * @brief Disables specifying amount of client slots
 			 * in create game box.
 			 *
-			 * Player slots can still be set. This is useful for games
-			 * that don't allow to specify spectator-only slots.
+			 * Player slots, unless disabled with EP_NoPlayerSlots,
+			 * can still be set. This is useful for games that don't
+			 * allow to specify spectator-only slots.
 			 */
 			EP_NoClientSlots,
+			/**
+			 * @brief Disables specifying amount of player slots
+			 * in create game box.
+			 *
+			 * Combined with EP_NoClientSlots this allows to disable
+			 * maximum player controls in create game window for games
+			 * that have a hardcoded amount of maximum players.
+			 */
+			EP_NoPlayerSlots,
 		};
 
 		/// Reimplement if you want to perform some ini initialization manually.
@@ -258,6 +268,7 @@ class MAIN_EXPORT EnginePlugin
 				bool hasMapList;
 				bool hasIwad;
 				bool allowsClientSlots;
+				bool allowsPlayerSlots;
 
 				Data();
 
