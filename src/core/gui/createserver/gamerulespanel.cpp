@@ -42,7 +42,7 @@ public:
 	const EnginePlugin *engine;
 	QList<GameCVar> gameModifiers;
 	QList<GameLimitWidget*> limitWidgets;
-	QMap<QString, QMap<QString, int>> memorizedLimits;
+	QMap<QString, QMap<QString, int> > memorizedLimits;
 };
 
 DPointered(GameRulesPanel)
