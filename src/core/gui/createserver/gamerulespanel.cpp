@@ -43,6 +43,7 @@ public:
 	QList<GameCVar> gameModifiers;
 	QList<GameLimitWidget*> limitWidgets;
 	QMap<QString, QMap<QString, int> > memorizedLimits;
+	QVariant memorizedDifficulty;
 };
 
 DPointered(GameRulesPanel)
@@ -194,6 +195,11 @@ void GameRulesPanel::setupForRemoteGame()
 
 void GameRulesPanel::setupDifficulty(const EnginePlugin *engine)
 {
+	QVariant oldLevel = d->cboDifficulty->itemData(d->cboDifficulty->currentIndex());
+	if (oldLevel.isValid())
+	{
+		d->memorizedDifficulty = oldLevel;
+	}
 	d->cboDifficulty->clear();
 
 	QList<GameCVar> levels = engine->data()->difficulty->get(QVariant());
@@ -202,6 +208,10 @@ void GameRulesPanel::setupDifficulty(const EnginePlugin *engine)
 	foreach (const GameCVar &level, levels)
 	{
 		d->cboDifficulty->addItem(level.name(), level.value());
+		if (level.value() == d->memorizedDifficulty)
+		{
+			d->cboDifficulty->setCurrentIndex(d->cboDifficulty->count() - 1);
+		}
 	}
 }
 
@@ -250,7 +260,6 @@ void GameRulesPanel::setupLimitWidgets(const EnginePlugin *engine, const GameMod
 	removeLimitWidgets();
 	QList<GameCVar> limits = engine->limits(gameMode);
 
-	int number = 0;
 	foreach (const GameCVar &limit, limits)
 	{
 		QLabel* label = new QLabel(this);
