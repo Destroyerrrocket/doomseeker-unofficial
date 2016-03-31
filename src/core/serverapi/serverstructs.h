@@ -227,7 +227,7 @@ public:
 	virtual ~GameCVarProvider();
 
 	/**
-	 * @brief Default implementation empty set.
+	 * @brief Default implementation creates empty set.
 	 *
 	 * @param context
 	 *     Context contents depend on context.
@@ -246,8 +246,8 @@ private:
  *
  * The only available constructor will create an invalid object (returns false
  * on isValid()). The proper method of construction is to use provided static
- * builder methods. Either use one of 'mk' methods, that are mentioned
- * in StandardGameMode description, or build your own mode using ffaGame() or
+ * builder methods. Either use one of 'mk' methods that are mentioned
+ * in StandardGameMode description or build your own mode using ffaGame() or
  * teamGame() methods. index() in all cases must either be one of
  * StandardGameMode values or unique within your plugin for given game mode.
  *
