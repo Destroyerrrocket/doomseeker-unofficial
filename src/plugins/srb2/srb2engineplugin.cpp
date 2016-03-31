@@ -38,7 +38,7 @@ Srb2EnginePlugin::Srb2EnginePlugin()
 
 	init("Sonic Robo Blast 2", srb2_xpm,
 		EP_Author, "The Doomseeker Team",
-		EP_Version, 4,
+		EP_Version, 5,
 
 		EP_DefaultMaster, "ms.srb2.org:28900",
 		EP_DefaultServerPort, 5029,
