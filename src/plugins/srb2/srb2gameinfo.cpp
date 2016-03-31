@@ -32,10 +32,26 @@ QString Srb2GameInfo::commandFromFlag(Flag flag)
 		return "+allowexitlevel";
 	case AllowTeamChange:
 		return "+allowteamchange";
+	case ForceSkin:
+		return "+forceskin";
+	case FriendlyFire:
+		return "+friendlyfire";
+	case IngameWadDownloads:
+		return "+downloading";
+	case JoinNextRound:
+		return "+joinnextround";
+	case MouseLook:
+		return "+allowmlook";
+	case PowerStones:
+		return "+powerstones";
 	case RespawnItems:
 		return "+respawnitem";
+	case RestrictSkinChange:
+		return "+restrictskinchange";
 	case RingSlinger:
 		return "+ringslinger";
+	case TailsPickup:
+		return "+tailspickup";
 	case TouchTag:
 		return "+touchtag";
 	default:
@@ -48,12 +64,20 @@ QList<DMFlagsSection> Srb2GameInfo::dmFlags()
 	DMFlagsSection section(tr("Flags"));
 	section << DMFlag(tr("All players must reach exit"), AllPlayersForExit);
 	section << DMFlag(tr("Allow attacking in all game modes"), RingSlinger);
+	section << DMFlag(tr("Allow mouse-look"), MouseLook);
 	section << DMFlag(tr("Allow level exit in all game modes"), AllowExitLevel);
 	section << DMFlag(tr("Allow team change"), AllowTeamChange);
 	section << DMFlag(tr("Tag players by simply touching them"), TouchTag);
 	section << DMFlag(tr("Respawn items"), RespawnItems);
 	section << DMFlag(tr("Listen server"), ListenServer);
 	section << DMFlag(tr("Casual server"), CasualServer);
+	section << DMFlag(tr("Allow in-game WAD downloads"), IngameWadDownloads);
+	section << DMFlag(tr("Players are non-solid and can be picked up"), TailsPickup);
+	section << DMFlag(tr("Force server character (skin)"), ForceSkin);
+	section << DMFlag(tr("Friendly fire"), FriendlyFire);
+	section << DMFlag(tr("Restrict skin change (game mode specific)"), RestrictSkinChange);
+	section << DMFlag(tr("Join game only on next round"), JoinNextRound);
+	section << DMFlag(tr("Spawn chaos emeralds (powerstones) in DM, TDM and CTF"), PowerStones);
 
 	QList<DMFlagsSection> flags;
 	flags << section;
@@ -94,6 +118,10 @@ QList<GameCVar> Srb2GameInfo::limits(const GameMode &gameMode)
 	case GameMode::SGM_Deathmatch:
 	case GameMode::SGM_TeamDeathmatch:
 	case GameMode::SGM_CTF:
+		if (gameMode.index() == GameMode::SGM_CTF)
+		{
+			limits << GameCVar(tr("Team difference autobalance"), "+autobalance", 0);
+		}
 		limits << GameCVar(tr("Point limit"), "+pointlimit");
 		limits << GameCVar(tr("Time limit"), "+timelimit");
 		break;
@@ -104,5 +132,9 @@ QList<GameCVar> Srb2GameInfo::limits(const GameMode &gameMode)
 	}
 	limits << GameCVar(tr("Respawn item time"), "+respawnitemtime", 30);
 	limits << GameCVar(tr("Intermission time"), "+inttime", 20);
+	limits << GameCVar(tr("Max ping"), "+maxping", 0);
+	limits << GameCVar(tr("Max upload size in kB"), "+maxsend", 1024);
+	limits << GameCVar(tr("Tics until client timeout"), "+nettimeout", 525);
+	limits << GameCVar(tr("Resynch attempts before kicking clients"), "+resynchattempts", 10);
 	return limits;
 }

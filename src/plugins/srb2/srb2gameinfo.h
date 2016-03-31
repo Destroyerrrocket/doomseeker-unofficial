@@ -49,6 +49,15 @@ public:
 		AllPlayersForExit,
 		ListenServer,
 		CasualServer,
+		IngameWadDownloads,
+		MouseLook,
+		/// When enabled is similar to sv_unblockplayers.
+		TailsPickup,
+		ForceSkin,
+		FriendlyFire,
+		RestrictSkinChange,
+		JoinNextRound,
+		PowerStones
 	};
 
 	static QString commandFromFlag(Flag flag);
