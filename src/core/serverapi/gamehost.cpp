@@ -162,34 +162,55 @@ void GameHost::addIwad_default()
 
 void GameHost::addPwads_default()
 {
-	const QList<bool> &pwadsOptional = params().pwadsOptional();
+	verifyPwadPaths();
 	for(int i = 0;i < params().pwadsPaths().size();++i)
 	{
 		const QString &pwad = params().pwadsPaths()[i];
+		args() << fileLoadingPrefix(i) << pwad;
+	}
+}
 
-		QFileInfo fi(pwad);
-		if (!fi.isFile())
+void GameHost::addPwads_prefixOnce()
+{
+	verifyPwadPaths();
+	QMap<QString, QStringList> groups;
+	for (int i = 0;i < params().pwadsPaths().size();++i)
+	{
+		const QString &pwad = params().pwadsPaths()[i];
+		QString prefix = fileLoadingPrefix(i);
+		groups[prefix] << pwad;
+	}
+	foreach (const QString &prefix, groups.keys())
+	{
+		args() << prefix;
+		foreach (const QString &file, groups[prefix])
 		{
-			QString error = tr("Pwad path error:\n\"%1\" doesn't exist or is a directory!").arg(pwad);
-			setMessage(Message::customError(error));
-			return;
-		}
-		if (pwad.toLower().endsWith(".deh"))
-		{
-			args() << argForDehLoading() << pwad;
-		}
-		else if (pwad.toLower().endsWith(".bex"))
-		{
-			args() << argForBexLoading() << pwad;
-		}
-		else
-		{
-			if(pwadsOptional.size() > i && pwadsOptional[i])
-				args() << argForOptionalWadLoading() << pwad;
-			else
-				args() << argForPwadLoading() << pwad;
+			args() << file;
 		}
 	}
+}
+
+QString GameHost::fileLoadingPrefix(int index) const
+{
+	const QString &pwad = params().pwadsPaths()[index];
+	bool optional = false;
+	if (params().pwadsOptional().size() > index)
+	{
+		optional = params().pwadsOptional()[index];
+	}
+
+	if (pwad.toLower().endsWith(".deh"))
+	{
+		return argForDehLoading();
+	}
+	else if (pwad.toLower().endsWith(".bex"))
+	{
+		return argForBexLoading();
+	}
+
+	if (optional)
+		return argForOptionalWadLoading();
+	return argForPwadLoading();
 }
 
 const QString& GameHost::argForBexLoading() const
@@ -409,4 +430,19 @@ void GameHost::setupGamePaths()
 	}
 	d->currentCmdLine->executable = params().executablePath();
 	d->currentCmdLine->applicationDir = fileInfo.dir();
+}
+
+bool GameHost::verifyPwadPaths()
+{
+	foreach (const QString &pwad, params().pwadsPaths())
+	{
+		QFileInfo fi(pwad);
+		if (!fi.isFile())
+		{
+			QString error = tr("Pwad path error:\n\"%1\" doesn't exist or is a directory!").arg(pwad);
+			setMessage(Message::customError(error));
+			return false;
+		}
+	}
+	return true;
 }

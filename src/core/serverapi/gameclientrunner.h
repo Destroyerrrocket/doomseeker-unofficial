@@ -193,16 +193,70 @@ class MAIN_EXPORT GameClientRunner : public QObject
 		 */
 		void addWads();
 		/**
-		 * @brief Finds and adds each PWAD to the args list, marks missing WADs.
+		 * @brief Finds and adds each game modification file to the args list,
+		 *        marks missing files.
 		 *
-		 * Properly found WADs are added to the args list. Each WAD argument is
-		 * prepended with argForPwadLoading() argument.
+		 * Properly found files are added to the args list. Each file path is
+		 * prepended with argForDehLoading(), argForBexLoading() or
+		 * argForPwadLoading() argument.
 		 *
-		 * Not found WADs are marked as such with markPwadAsMissing() method.
+		 * Not found files are marked as such with markPwadAsMissing() method.
 		 *
-		 * This method supports WAD aliasing configured in Doomseeker.
+		 * Paths to found files are forwarded to addModFiles() where they are
+		 * actually added to the args() list.
+		 *
+		 * This method supports WAD/file aliasing configured in Doomseeker.
 		 */
 		void addPwads();
+
+		/**
+		 * @brief Adds path to each game modification file to the args list.
+		 *
+		 * This function is called by addPwads(). Plugins can override this
+		 * function to implement specific loading behavior for each file.
+		 * For example, some files might need a different loading pattern or some
+		 * files might need to be sorted or some might need to be blacklisted.
+		 *
+		 * Default behavior understands .deh and .bex extensions and will apply
+		 * argForDehLoading() and argForBexLoading() respectively. Other files
+		 * are loaded with argForPwadLoading(). Each file is prefixed with its
+		 * respective loading argument. There's an alternative behavior that is
+		 * unused by default but ready for use by plugins in form of
+		 * addModFiles_prefixOnce() method.
+		 *
+		 * @param files
+		 *     Paths to found files.
+		 */
+		void addModFiles(const QStringList &files);
+		POLYMORPHIC_SETTER_DECLARE(void, GameClientRunner, addModFiles, (const QStringList&));
+		void addModFiles_default(const QStringList &files);
+		/**
+		 * @brief addModFiles() implementation that sorts files by extension and
+		 *        uses loading prefix arg only once for each extension type.
+		 *
+		 * addModFiles_default() will prefix each file with loading argument
+		 * like this:
+		 *
+		 * @code
+		 * -deh d1.deh -file w1.wad -file p1.pk3 -deh d2.deh -file w2.wad
+		 * @endcode
+		 *
+		 * addModFiles_prefixOnce will produce arguments line like this:
+		 *
+		 * @code
+		 * -deh d1.deh d2.deh -file w1.wad p1.pk3 w2.wad
+		 * @endcode
+		 *
+		 * As shown in the example, extension sorting only applies as far as
+		 * splitting the files into separate loading groups. Sorting of files
+		 * withing each group is *stable*. This stable sorting is important as
+		 * file load order matters within the game!
+		 *
+		 * This method is not used by Doomseeker itself. Plugins may utilize it
+		 * by setting it with `set_addModFiles()` method.
+		 */
+		void addModFiles_prefixOnce(const QStringList &files);
+
 		/**
 		 * @brief @b [Virtual] Adds connect password to the args list.
 		 *
@@ -396,6 +450,7 @@ class MAIN_EXPORT GameClientRunner : public QObject
 
 		bool canDownloadWadsInGame() const;
 		bool isFatalError() const;
+		QString fileLoadingPrefix(const QString &file) const;
 		QString findIwad() const;
 		GamePaths gamePaths();
 		const QString& pluginName() const;

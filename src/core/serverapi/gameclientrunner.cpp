@@ -136,6 +136,7 @@ DClass<GameClientRunner>
 		void (GameClientRunner::*addGamePaths)();
 		void (GameClientRunner::*addInGamePassword)();
 		void (GameClientRunner::*addIwad)();
+		void (GameClientRunner::*addModFiles)(const QStringList &);
 		void (GameClientRunner::*addPassword)();
 		void (GameClientRunner::*createCommandLineArguments)();
 };
@@ -147,6 +148,7 @@ POLYMORPHIC_DEFINE(void, GameClientRunner, addExtra, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, addGamePaths, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, addInGamePassword, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, addIwad, (), ());
+POLYMORPHIC_DEFINE(void, GameClientRunner, addModFiles, (const QStringList &files), (files));
 POLYMORPHIC_DEFINE(void, GameClientRunner, addPassword, (), ());
 POLYMORPHIC_DEFINE(void, GameClientRunner, createCommandLineArguments, (), ());
 
@@ -157,6 +159,7 @@ GameClientRunner::GameClientRunner(ServerPtr server)
 	set_addExtra(&GameClientRunner::addExtra_default);
 	set_addInGamePassword(&GameClientRunner::addInGamePassword_default);
 	set_addIwad(&GameClientRunner::addIwad_default);
+	set_addModFiles(&GameClientRunner::addModFiles_default);
 	set_addPassword(&GameClientRunner::addPassword_default);
 	set_createCommandLineArguments(&GameClientRunner::createCommandLineArguments_default);
 	d->argBexLoading = "-deh";
@@ -286,6 +289,7 @@ void GameClientRunner::addPassword_default()
 
 void GameClientRunner::addPwads()
 {
+	QStringList paths;
 	for (int i = 0; i < d->server->numWads(); ++i)
 	{
 		QString pwad = findWad(d->server->wad(i).name());
@@ -295,20 +299,49 @@ void GameClientRunner::addPwads()
 		}
 		else
 		{
-			if (pwad.toLower().endsWith(".deh"))
-			{
-				args() << argForDehLoading() << pwad;
-			}
-			else if (pwad.toLower().endsWith(".bex"))
-			{
-				args() << argForBexLoading() << pwad;
-			}
-			else
-			{
-				args() << argForPwadLoading() << pwad;
-			}
+			paths << pwad;
 		}
 	}
+	addModFiles(paths);
+}
+
+void GameClientRunner::addModFiles_default(const QStringList &files)
+{
+	foreach (const QString &file, files)
+	{
+		args() << fileLoadingPrefix(file) << file;
+	}
+}
+
+void GameClientRunner::addModFiles_prefixOnce(const QStringList &files)
+{
+	QMap<QString, QStringList> groups;
+	foreach (const QString &file, files)
+	{
+		QString prefix = fileLoadingPrefix(file);
+		groups[prefix] << file;
+	}
+	foreach (const QString &prefix, groups.keys())
+	{
+		args() << prefix;
+		foreach (const QString &file, groups[prefix])
+		{
+			args() << file;
+		}
+	}
+}
+
+QString GameClientRunner::fileLoadingPrefix(const QString &file) const
+{
+	if (file.toLower().endsWith(".deh"))
+	{
+		return argForDehLoading();
+	}
+	else if (file.toLower().endsWith(".bex"))
+	{
+		return argForBexLoading();
+	}
+	return argForPwadLoading();
 }
 
 QStringList& GameClientRunner::args()

@@ -38,6 +38,7 @@ Srb2GameHost::Srb2GameHost()
 	setArgForServerLaunch(""); // This will be determined basing on "casual" flag.
 	set_addDMFlags(&Srb2GameHost::addDMFlags);
 	set_addIwad(&Srb2GameHost::addIwad);
+	set_addPwads(&Srb2GameHost::addPwads_prefixOnce);
 }
 
 void Srb2GameHost::addDMFlags()

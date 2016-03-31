@@ -32,6 +32,7 @@ Srb2GameClientRunner::Srb2GameClientRunner(QSharedPointer<Srb2Server> server)
 	this->server = server;
 	setArgForDemoRecord("-record");
 	setArgForConnectPassword("-password");
+	set_addModFiles(&Srb2GameClientRunner::addModFiles_prefixOnce);
 	set_addExtra(&Srb2GameClientRunner::addExtra);
 }
 

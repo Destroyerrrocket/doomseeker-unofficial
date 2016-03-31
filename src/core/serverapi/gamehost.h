@@ -220,6 +220,10 @@ class MAIN_EXPORT GameHost : public QObject
 		void addPwads();
 		POLYMORPHIC_SETTER_DECLARE(void, GameHost, addPwads, ());
 		void addPwads_default();
+		/**
+		 * @brief See: GameClientRunner::addModFiles_prefixOnce()
+		 */
+		void addPwads_prefixOnce();
 
 		/**
 		 * @brief Builds command line arguments sequentially by
@@ -258,6 +262,17 @@ class MAIN_EXPORT GameHost : public QObject
 		 */
 		void setMessage(const Message& message);
 
+		/**
+		 * @brief Verifies if all `params().pwadsPaths()` exist.
+		 *
+		 * If at least one path points to a non-existing file, an error message
+		 * is set through setMessage() and false is returned.
+		 * If all paths are fine, true is returned.
+		 *
+		 * Called by addPwads_default() and addPwads_prefixOnce().
+		 */
+		bool verifyPwadPaths();
+
 	private:
 		DPtr<GameHost> d;
 
@@ -265,6 +280,7 @@ class MAIN_EXPORT GameHost : public QObject
 
 		void addDemoPlaybackIfApplicable();
 		void addDemoRecordIfApplicable();
+		QString fileLoadingPrefix(int index) const;
 		void saveDemoMetaData();
 		void setupGamePaths();
 };
