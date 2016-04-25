@@ -49,9 +49,14 @@ class CFGIRCSounds : public ConfigurationBaseBox
 		void setPath(QLineEdit* pLineEdit, const QString& path);
 
 		DPtr<CFGIRCSounds> d;
+
+		void playSound(const QString &path) const;
+
 	private slots:
-		void btnBrowseNicknameUsedClicked();
-		void btnBrowsePrivateMessageClicked();
+		void browseNicknameUsed();
+		void browsePrivateMessage();
+		void playNicknameUsed();
+		void playPrivateMessage();
 };
 
 

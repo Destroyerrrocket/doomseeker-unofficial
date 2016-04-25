@@ -7,7 +7,9 @@
 #include "ui_cfgircsounds.h"
 #include "irc/configuration/ircconfig.h"
 
+#include <QFile>
 #include <QFileDialog>
+#include <QSound>
 
 DClass<CFGIRCSounds> : public Ui::CFGIRCSounds
 {
@@ -19,21 +21,18 @@ CFGIRCSounds::CFGIRCSounds(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
 	d->setupUi(this);
-
-	this->connect(d->btnBrowseNicknameUsed, SIGNAL( clicked() ), SLOT( btnBrowseNicknameUsedClicked() ) );
-	this->connect(d->btnBrowsePrivateMessage, SIGNAL( clicked() ), SLOT( btnBrowsePrivateMessageClicked() ) );
 }
 
 CFGIRCSounds::~CFGIRCSounds()
 {
 }
 
-void CFGIRCSounds::btnBrowseNicknameUsedClicked()
+void CFGIRCSounds::browseNicknameUsed()
 {
 	setPath(d->leNicknameUsed, getPathToWav());
 }
 
-void CFGIRCSounds::btnBrowsePrivateMessageClicked()
+void CFGIRCSounds::browsePrivateMessage()
 {
 	setPath(d->lePrivateMessage, getPathToWav());
 }
@@ -43,6 +42,25 @@ QString CFGIRCSounds::getPathToWav()
 	return QFileDialog::getOpenFileName(this, tr("Pick Sound File"),
 		QString(),
 		tr("WAVE (*.wav)"));
+}
+
+void CFGIRCSounds::playNicknameUsed()
+{
+	playSound(d->leNicknameUsed->text());
+}
+
+void CFGIRCSounds::playPrivateMessage()
+{
+	playSound(d->lePrivateMessage->text());
+}
+
+void CFGIRCSounds::playSound(const QString &path) const
+{
+	QFile file(path);
+	if (file.exists())
+	{
+		QSound::play(path);
+	}
 }
 
 void CFGIRCSounds::readSettings()

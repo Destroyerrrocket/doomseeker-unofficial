@@ -11,7 +11,16 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -65,6 +74,14 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="btnPlayNicknameUsed">
+         <property name="icon">
+          <iconset resource="../../../../../media/resources.qrc">
+           <normaloff>:/icons/media-playback-start.png</normaloff>:/icons/media-playback-start.png</iconset>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item row="1" column="1">
@@ -102,6 +119,14 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="btnPlayPrivateMessage">
+         <property name="icon">
+          <iconset resource="../../../../../media/resources.qrc">
+           <normaloff>:/icons/media-playback-start.png</normaloff>:/icons/media-playback-start.png</iconset>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
     </layout>
@@ -121,7 +146,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../../../media/resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>cbNicknameUsed</sender>
@@ -130,12 +157,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>107</x>
-     <y>36</y>
+     <x>103</x>
+     <y>19</y>
     </hint>
     <hint type="destinationlabel">
-     <x>230</x>
-     <y>35</y>
+     <x>317</x>
+     <y>23</y>
     </hint>
    </hints>
   </connection>
@@ -146,12 +173,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>107</x>
-     <y>67</y>
+     <x>103</x>
+     <y>51</y>
     </hint>
     <hint type="destinationlabel">
-     <x>230</x>
-     <y>66</y>
+     <x>317</x>
+     <y>55</y>
     </hint>
    </hints>
   </connection>
@@ -162,12 +189,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>107</x>
-     <y>36</y>
+     <x>103</x>
+     <y>19</y>
     </hint>
     <hint type="destinationlabel">
-     <x>367</x>
-     <y>36</y>
+     <x>363</x>
+     <y>24</y>
     </hint>
    </hints>
   </connection>
@@ -178,14 +205,84 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>107</x>
-     <y>67</y>
+     <x>103</x>
+     <y>51</y>
     </hint>
     <hint type="destinationlabel">
-     <x>367</x>
-     <y>67</y>
+     <x>363</x>
+     <y>56</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnPlayNicknameUsed</sender>
+   <signal>clicked()</signal>
+   <receiver>CFGIRCSounds</receiver>
+   <slot>playNicknameUsed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>383</x>
+     <y>13</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>159</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnPlayPrivateMessage</sender>
+   <signal>clicked()</signal>
+   <receiver>CFGIRCSounds</receiver>
+   <slot>playPrivateMessage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>383</x>
+     <y>45</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>159</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnBrowseNicknameUsed</sender>
+   <signal>clicked()</signal>
+   <receiver>CFGIRCSounds</receiver>
+   <slot>browseNicknameUsed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>343</x>
+     <y>13</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>159</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnBrowsePrivateMessage</sender>
+   <signal>clicked()</signal>
+   <receiver>CFGIRCSounds</receiver>
+   <slot>browsePrivateMessage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>343</x>
+     <y>45</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>159</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <slots>
+  <slot>playNicknameUsed()</slot>
+  <slot>playPrivateMessage()</slot>
+  <slot>browseNicknameUsed()</slot>
+  <slot>browsePrivateMessage()</slot>
+ </slots>
 </ui>
