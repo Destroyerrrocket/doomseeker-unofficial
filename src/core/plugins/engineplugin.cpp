@@ -72,8 +72,8 @@ EnginePlugin::EnginePlugin()
 {
 	d = new Data;
 
-	d->gameExeFactory.reset(new GameExeFactory(this));
-	d->difficulty.reset(new DefaultDifficultyProvider());
+	d->gameExeFactory = QSharedPointer<GameExeFactory>(new GameExeFactory(this));
+	d->difficulty = QSharedPointer<DefaultDifficultyProvider>(new DefaultDifficultyProvider());
 
 	// At the moment I can't think of how we would support any ABI other than
 	// the current, but I suppose we might as well keep track of it?
@@ -179,7 +179,7 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 				d->demoExtension = va_arg(va, const char*);
 				break;
 			case EP_DifficultyProvider:
-				d->difficulty.reset(va_arg(va, GameCVarProvider*));
+				d->difficulty = QSharedPointer<GameCVarProvider>(va_arg(va, GameCVarProvider*));
 				break;
 			case EP_DontCreateDMFlagsPagesAutomatic:
 				d->createDMFlagsPagesAutomatic = false;

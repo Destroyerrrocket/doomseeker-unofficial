@@ -26,6 +26,7 @@
 #include <QString>
 
 class QAbstractItemView;
+class QComboBox;
 class QListView;
 class QStringList;
 class QTableWidget;
@@ -65,6 +66,12 @@ class CommonGUI
 		 */
 		static void removeSelectedRowsFromStandardItemView(
 			QAbstractItemView* view, bool bSelectNextItem = false);
+
+		/**
+		 * @brief Qt4 compliant implementation of Qt5's
+		 * QComboBox::setCurrentText().
+		 */
+		static void setCurrentText(QComboBox *box, const QString &text);
 
 		/**
 		 * @brief Puts a list of strings into a QListView that uses

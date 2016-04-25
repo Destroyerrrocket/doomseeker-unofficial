@@ -21,6 +21,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "commongui.h"
+#include <QComboBox>
 #include <QInputDialog>
 #include <QListView>
 #include <QStandardItemModel>
@@ -122,6 +123,29 @@ void CommonGUI::removeSelectedRowsFromStandardItemView(QAbstractItemView* view,
 			selModel->select(newIdx, QItemSelectionModel::ClearAndSelect);
 		}
 	}
+}
+
+void CommonGUI::setCurrentText(QComboBox *box, const QString &text)
+{
+#if QT_VERSION >= 0x050000
+	box->setCurrentText(text);
+#else
+	if (box->isEditable())
+	{
+		box->setEditText(text);
+	}
+	else
+	{
+		for (int i = 0; i < box->count(); ++i)
+		{
+			if (box->itemText(i) == text)
+			{
+				box->setCurrentIndex(i);
+				break;
+			}
+		}
+	}
+#endif
 }
 
 void CommonGUI::stringListToStandardItemsListView(QListView* targetListview,

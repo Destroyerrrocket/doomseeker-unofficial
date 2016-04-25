@@ -24,6 +24,7 @@
 
 #include "ui_iwadandwadspickerdialog.h"
 #include "filefilter.h"
+#include "gui/commongui.h"
 #include <QFileDialog>
 
 DClass<IwadAndWadsPickerDialog> : public Ui::IwadAndWadsPickerDialog
@@ -64,7 +65,7 @@ void IwadAndWadsPickerDialog::browseExecutable()
 		executable(), FileFilter::executableFilesFilter());
 	if (!path.isEmpty())
 	{
-		d->executableInput->setCurrentText(path);
+		CommonGUI::setCurrentText(d->executableInput, path);
 		if (d->executableInput->findText(path) < 0)
 		{
 			d->executableInput->addItem(path);

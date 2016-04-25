@@ -45,7 +45,7 @@ FilePickWidget::FilePickWidget(QWidget *parent)
 {
 	d->setupUi(this);
 	d->changed = false;
-	d->neighbourStrategy.reset(new NeighbourStrategy);
+	d->neighbourStrategy = QSharedPointer<NeighbourStrategy>(new NeighbourStrategy);
 	this->connect(d->lePath, SIGNAL(editingFinished()), SLOT(emitPathChangedIfChanged()));
 	this->connect(d->lePath, SIGNAL(textEdited(QString)), SLOT(trackEdit()));
 }

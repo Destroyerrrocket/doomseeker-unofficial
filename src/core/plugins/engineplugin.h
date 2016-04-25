@@ -26,6 +26,7 @@
 
 #include <QtContainerFwd>
 #include <QString>
+#include <QStringList>
 #include <QVector>
 #include "global.h"
 #include "serverapi/serverstructs.h"

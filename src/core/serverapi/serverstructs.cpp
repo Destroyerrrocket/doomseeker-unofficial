@@ -195,8 +195,9 @@ GameCVar::GameCVar(const QString &name, const QString &command)
 }
 
 GameCVar::GameCVar(const QString &name, const QString &command, const QVariant &value)
-	: GameCVar(name, command)
 {
+	d->name = name;
+	d->command = command;
 	setValue(value);
 }
 
