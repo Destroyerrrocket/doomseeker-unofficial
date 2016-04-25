@@ -1,6 +1,7 @@
 {
     "name" : "doomseeker",
     "files" : [
+        "audio/qtaudio_windows.dll",
         "platforms/qwindows.dll",
         "translations/translations.def",
         "translations/pl_PL.qm",

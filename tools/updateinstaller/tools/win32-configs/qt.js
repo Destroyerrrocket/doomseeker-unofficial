@@ -1,6 +1,7 @@
 {
     "name" : "qt",
     "files" : [
+        "audio/qtaudio_windows.dll",
         "platforms/qwindows.dll",
         "Qt5Core.dll",
         "Qt5Gui.dll",

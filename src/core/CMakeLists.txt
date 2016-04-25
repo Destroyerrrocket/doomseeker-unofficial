@@ -240,6 +240,7 @@ if(WIN32)
 		execute_process(COMMAND ${QMAKE_EXEC} -query QT_INSTALL_PLUGINS
 			OUTPUT_VARIABLE QT_PLUGINS_DIR
 			OUTPUT_STRIP_TRAILING_WHITESPACE)
+		install(FILES ${QT_PLUGINS_DIR}/audio/qtaudio_windows.dll DESTINATION audio)
 		install(FILES ${QT_PLUGINS_DIR}/platforms/qwindows.dll DESTINATION platforms)
 		# ICU (the 26.6 Megabyte bastard)
 		#
