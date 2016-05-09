@@ -22,9 +22,11 @@
 //------------------------------------------------------------------------------
 #include "ip2cparser.h"
 
+#include "datastreamoperatorwrapper.h"
 #include "global.h"
 #include "log.h"
 #include "scanner.h"
+#include <QBuffer>
 #include <QFile>
 #include <QMap>
 #include <QMutexLocker>
@@ -250,43 +252,38 @@ bool IP2CParser::readDatabaseVersion1(const QByteArray& dataArray)
 
 bool IP2CParser::readDatabaseVersion2(const QByteArray& dataArray)
 {
-	int pos = 6; // skip file tag and version number
-	const char* data = dataArray.constData();
+	QBuffer buffer;
+	buffer.setData(dataArray);
+	buffer.open(QIODevice::ReadOnly);
+	QDataStream dstream(&buffer);
+	dstream.setByteOrder(QDataStream::LittleEndian);
+	DataStreamOperatorWrapper stream(&dstream);
+	stream.skipRawData(6); // skip file tag and version number
 
 	// We need to store the addresses in such hash table to make sure they
 	// are ordered in proper, ascending order. Otherwise the whole library
 	// will not work!
 	QMap<unsigned, IP2C::IP2CData> hashTable;
 
-	while (pos < dataArray.size())
+	while (stream.hasRemaining())
 	{
 		// Base entry for each IP read from the file
 		IP2C::IP2CData baseEntry;
 
-		baseEntry.countryFullName = &data[pos];
-		pos += baseEntry.countryFullName.size() + 1;
+		baseEntry.countryFullName = QString::fromUtf8(stream.readRawUntilByte('\0'));
+		baseEntry.country = QString::fromUtf8(stream.readRawUntilByte('\0'));
+		if (!stream.hasRemaining()) return false;
 
-		baseEntry.country = &data[pos];
-		pos += baseEntry.country.size() + 1;
+		quint32 numOfIpBlocks = stream.readQUInt32();
 
-		if (pos + 4 > dataArray.size())	return false;
-		unsigned numOfIpBlocks = READINT32(&data[pos]);
-		pos += 4;
-
-		for (unsigned x = 0; x < numOfIpBlocks; ++x)
+		for (quint32 x = 0; x < numOfIpBlocks; ++x)
 		{
 			// Create new entry from the base.
 			IP2C::IP2CData entry = baseEntry;
 
-			// Perform error checks at each point. We don't want the app to crash
-			// due to corrupted database.
-			if (pos + 4 > dataArray.size()) return false;
-			entry.ipStart = READINT32(&data[pos]);
-			pos += 4;
-
-			if (pos + 4 > dataArray.size()) return false;
-			entry.ipEnd = READINT32(&data[pos]);
-			pos += 4;
+			entry.ipStart = stream.readQUInt32();
+			if (!stream.hasRemaining()) return false;
+			entry.ipEnd = stream.readQUInt32();
 
 			hashTable[entry.ipStart] = entry;
 		}
