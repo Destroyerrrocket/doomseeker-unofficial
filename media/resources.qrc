@@ -148,6 +148,6 @@
 	<file alias="flags/localhost-small">flags/localhost-small.png</file>
 	<file alias="flags/unknown-small">flags/unknown-small.png</file>
 
-	<file>IpToCountry.csv</file>
+	<file>IpToCountry.dat</file>
 </qresource>
 </RCC>

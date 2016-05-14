@@ -22,17 +22,18 @@
 //------------------------------------------------------------------------------
 #include "ip2cupdater.h"
 
-#include <QDateTime>
-#include <QDebug>
-#include <QDir>
-#include <QFileInfo>
+#include <QCryptographicHash>
+#include <QFile>
 #include <QTemporaryFile>
 #include <zlib.h>
+
+#include <wadseeker/protocols/fixednetworkaccessmanager.h>
 
 #include "log.h"
 #include "version.h"
 
-IP2CUpdater::IP2CUpdater()
+IP2CUpdater::IP2CUpdater(QObject *parent)
+	: QObject(parent)
 {
 	pCurrentNetworkReply = NULL;
 	pNetworkAccessManager = new FixedNetworkAccessManager();
@@ -40,12 +41,7 @@ IP2CUpdater::IP2CUpdater()
 
 IP2CUpdater::~IP2CUpdater()
 {
-	if (pCurrentNetworkReply != NULL)
-	{
-		pCurrentNetworkReply->disconnect();
-		pCurrentNetworkReply->abort();
-		pCurrentNetworkReply->deleteLater();
-	}
+	abort();
 
 	if (pNetworkAccessManager != NULL)
 	{
@@ -53,71 +49,137 @@ IP2CUpdater::~IP2CUpdater()
 	}
 }
 
-void IP2CUpdater::downloadDatabase(const QUrl& netLocation)
+void IP2CUpdater::abort()
 {
-	retrievedData.clear();
+	if (pCurrentNetworkReply != NULL)
+	{
+		pCurrentNetworkReply->disconnect();
+		pCurrentNetworkReply->abort();
+		pCurrentNetworkReply->deleteLater();
+	}
+	pCurrentNetworkReply = NULL;
+}
 
-	QNetworkRequest request;
-	request.setUrl(netLocation);
-	qDebug() << netLocation;
-	request.setRawHeader("User-Agent", Version::userAgent().toUtf8());
+void IP2CUpdater::checksumDownloadFinished()
+{
+	if (handleRedirect(*pCurrentNetworkReply, SLOT(checksumDownloadFinished())))
+	{
+		return;
+	}
 
-	pCurrentNetworkReply = pNetworkAccessManager->get(request);
-	this->connect(pCurrentNetworkReply, SIGNAL(	downloadProgress(qint64, qint64) ),
-				SIGNAL( downloadProgress(qint64, qint64) ) );
-	this->connect(pCurrentNetworkReply, SIGNAL(	finished() ),
-				SLOT( downloadFinished() ) );
+	if (pCurrentNetworkReply->error() != QNetworkReply::NoError)
+	{
+		gLog << tr("IP2C checksum check network error: %1").arg(pCurrentNetworkReply->errorString());
+		abort();
+		emit updateNeeded(UpdateCheckError);
+		return;
+	}
+
+	QByteArray remoteMd5 = pCurrentNetworkReply->readAll();
+	remoteMd5 = remoteMd5.trimmed();
+
+	pCurrentNetworkReply->deleteLater();
+	pCurrentNetworkReply = NULL;
+
+	QFile file(this->pathToFile);
+	file.open(QIODevice::ReadOnly);
+	QByteArray localMd5 = QCryptographicHash::hash(file.readAll(), QCryptographicHash::Md5);
+	localMd5 = localMd5.toHex().toLower();
+
+	gLog << tr("Comparing IP2C hashes: local = %1, remote = %2").arg(
+		QString(localMd5)).arg(QString(remoteMd5));
+	bool needed = localMd5 != remoteMd5;
+	if (needed)
+	{
+		gLog << tr("IP2C update needed.");
+	}
+	emit updateNeeded(needed ? UpdateNeeded : UpToDate);
+}
+
+const QUrl IP2CUpdater::dbChecksumUrl()
+{
+	return QUrl("http://doomseeker.drdteam.org/ip2c/md5");
+}
+
+const QUrl IP2CUpdater::dbDownloadUrl()
+{
+	return QUrl("http://doomseeker.drdteam.org/ip2c/geolite2.gz");
+}
+
+void IP2CUpdater::downloadDatabase()
+{
+	get(dbDownloadUrl(), SLOT(downloadFinished()));
 }
 
 void IP2CUpdater::downloadFinished()
 {
+	if (handleRedirect(*pCurrentNetworkReply, SLOT(downloadFinished())))
+	{
+		return;
+	}
+
 	QByteArray data = pCurrentNetworkReply->readAll();
 
-	QUrl possibleRedirectUrl = pCurrentNetworkReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
-	QUrl url = pCurrentNetworkReply->request().url();
-	if (!possibleRedirectUrl.isEmpty()
-		&& possibleRedirectUrl != url)
+	pCurrentNetworkReply->deleteLater();
+	pCurrentNetworkReply = NULL;
+
+	// First we need to write it to a temporary file
+	QTemporaryFile tmpFile;
+	if(tmpFile.open())
+	{
+		tmpFile.write(data);
+
+		QString tmpFilePath = tmpFile.fileName();
+
+		QByteArray uncompressedData;
+		gzFile gz = gzopen(tmpFilePath.toUtf8().constData(), "rb");
+		if(gz != NULL)
+		{
+			char chunk[131072]; // 128k
+			int bytesRead = 0;
+			while((bytesRead = gzread(gz, chunk, 131072)) != 0)
+			{
+				uncompressedData.append(QByteArray(chunk, bytesRead));
+			}
+			gzclose(gz);
+
+			retrievedData = uncompressedData;
+		}
+	}
+
+	emit databaseDownloadFinished(retrievedData);
+}
+
+bool IP2CUpdater::handleRedirect(QNetworkReply &reply, const char *finishedSlot)
+{
+	QUrl possibleRedirectUrl = reply.attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+	QUrl url = reply.request().url();
+	if (!possibleRedirectUrl.isEmpty() && possibleRedirectUrl != url)
 	{
 		// Redirect.
 		if (possibleRedirectUrl.isRelative())
 		{
 			possibleRedirectUrl = url.resolved(possibleRedirectUrl);
 		}
-
-		pCurrentNetworkReply->deleteLater();
-		downloadDatabase(possibleRedirectUrl);
+		get(possibleRedirectUrl, finishedSlot);
+		return true;
 	}
-	else
-	{
-		pCurrentNetworkReply->deleteLater();
-		pCurrentNetworkReply = NULL;
+	return false;
+}
 
-		// First we need to write it to a temporary file
-		QTemporaryFile tmpFile;
-		if(tmpFile.open())
-		{
-			tmpFile.write(data);
+void IP2CUpdater::get(const QUrl &url, const char *finishedSlot)
+{
+	abort();
+	retrievedData.clear();
 
-			QString tmpFilePath = tmpFile.fileName();
+	QNetworkRequest request;
+	request.setUrl(url);
+	request.setRawHeader("User-Agent", Version::userAgent().toUtf8());
 
-			QByteArray uncompressedData;
-			gzFile gz = gzopen(tmpFilePath.toUtf8().constData(), "rb");
-			if(gz != NULL)
-			{
-				char chunk[131072]; // 128k
-				int bytesRead = 0;
-				while((bytesRead = gzread(gz, chunk, 131072)) != 0)
-				{
-					uncompressedData.append(QByteArray(chunk, bytesRead));
-				}
-				gzclose(gz);
-
-				retrievedData = uncompressedData;
-			}
-		}
-
-		emit databaseDownloadFinished(retrievedData);
-	}
+	pCurrentNetworkReply = pNetworkAccessManager->get(request);
+	this->connect(pCurrentNetworkReply, SIGNAL(downloadProgress(qint64, qint64)),
+		SIGNAL(downloadProgress(qint64, qint64)));
+	this->connect(pCurrentNetworkReply, SIGNAL(finished()), finishedSlot);
 }
 
 bool IP2CUpdater::getRollbackData()
@@ -141,36 +203,23 @@ bool IP2CUpdater::getRollbackData()
 	return true;
 }
 
-bool IP2CUpdater::needsUpdate(const QString& filePath, unsigned minimumUpdateAge)
+bool IP2CUpdater::isWorking() const
 {
-	if (filePath.isEmpty())
+	return pCurrentNetworkReply != NULL;
+}
+
+void IP2CUpdater::needsUpdate(const QString& filePath)
+{
+	QFile file(filePath);
+	if (!file.exists())
 	{
-		return false;
+		emit updateNeeded(UpdateNeeded);
+		return;
 	}
 
-	if (minimumUpdateAge == 0)
-	{
-		minimumUpdateAge = 1;
-	}
-
-	QFileInfo fileInfo(filePath);
-	if (fileInfo.exists())
-	{
-		QDateTime current = QDateTime::currentDateTime();
-		QDateTime lastModified = fileInfo.lastModified();
-
-		int daysTo = lastModified.daysTo(current);
-
-		// Handle file system errors.
-		if (daysTo < 0)
-		{
-			return true;
-		}
-
-		return (unsigned)daysTo >= minimumUpdateAge;
-	}
-
-	return true;
+	this->pathToFile = filePath;
+	gLog << tr("Checking if IP2C database at '%1' needs updating.").arg(filePath);
+	get(dbChecksumUrl(), SLOT(checksumDownloadFinished()));
 }
 
 bool IP2CUpdater::rollback()

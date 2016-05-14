@@ -10,10 +10,12 @@ class IP2CLoader : public QObject
 	Q_OBJECT
 
 	public:
-		IP2CLoader();
+		IP2CLoader(QObject *parent = NULL);
 		~IP2CLoader();
 
 		void load();
+
+	public slots:
 		void update();
 
 	signals:
@@ -25,11 +27,11 @@ class IP2CLoader : public QObject
 
 		void ip2cJobsFinished();
 		void ip2cParseDatabase();
-		void ip2cStartUpdate();
 
 	private slots:
 		void ip2cFinishUpdate(const QByteArray& downloadedData);
 		void ip2cFinishedParsing(bool bSuccess);
+		void onUpdateNeeded(int status);
 };
 
 #endif

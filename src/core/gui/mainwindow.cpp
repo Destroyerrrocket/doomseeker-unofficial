@@ -302,6 +302,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	PlayersDiagram::loadImages(slotStyle);
 
 	// IP2C
+	d->menuActionUpdateIP2C->setEnabled(false);
 	d->ip2cLoader = new IP2CLoader();
 	connectIP2CLoader(d->ip2cLoader);
 	d->ip2cLoader->load();

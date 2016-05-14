@@ -38,6 +38,11 @@ CFGAutoUpdates::CFGAutoUpdates(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
 	d->setupUi(this);
+	// Hide if not supported on target platform.
+	#ifndef WITH_AUTOUPDATES
+		d->programUpdateArea->hide();
+	#endif
+	layout()->setAlignment(Qt::AlignTop);
 }
 
 CFGAutoUpdates::~CFGAutoUpdates()
@@ -87,6 +92,7 @@ void CFGAutoUpdates::readSettings()
 		channelIdx = d->cboUpdateChannel->findData(UpdateChannel::mkStable().name());
 	}
 	d->cboUpdateChannel->setCurrentIndex(channelIdx);
+	d->cbIp2cAutoUpdate->setChecked(gConfig.doomseeker.bIP2CountryAutoUpdate);
 }
 
 void CFGAutoUpdates::saveSettings()
@@ -109,4 +115,5 @@ void CFGAutoUpdates::saveSettings()
 	}
 	gConfig.autoUpdates.updateChannelName = d->cboUpdateChannel->itemData(
 		d->cboUpdateChannel->currentIndex()).toString();
+	gConfig.doomseeker.bIP2CountryAutoUpdate = d->cbIp2cAutoUpdate->isChecked();
 }

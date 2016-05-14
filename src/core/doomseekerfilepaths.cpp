@@ -7,7 +7,7 @@
 
 DataPaths* DoomseekerFilePaths::pDataPaths = NULL;
 
-const QString DoomseekerFilePaths::IP2C_DATABASE_FILENAME = "IpToCountry.csv";
+const QString DoomseekerFilePaths::IP2C_DATABASE_FILENAME = "IpToCountry.dat";
 const QString DoomseekerFilePaths::IP2C_QT_SEARCH_PATH = "data:" + IP2C_DATABASE_FILENAME;
 const QString DoomseekerFilePaths::TEMP_SERVER_CONFIG_FILENAME = "tmpserver.cfg";
 const QString DoomseekerFilePaths::INI_FILENAME = "doomseeker.ini";

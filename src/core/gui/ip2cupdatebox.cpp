@@ -26,9 +26,12 @@
 #include "doomseekerfilepaths.h"
 
 #include <QDateTime>
+#include "ip2c/ip2cupdater.h"
 
 DClass<IP2CUpdateBox> : public Ui::IP2CUpdateBox
 {
+public:
+	IP2CUpdater *ip2cUpdater;
 };
 
 DPointered(IP2CUpdateBox)
@@ -40,15 +43,20 @@ IP2CUpdateBox::IP2CUpdateBox(QWidget* parent)
 
 	connect(d->btnUpdate, SIGNAL( clicked() ), this, SLOT( accept() ) );
 	connect(d->btnCancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
+	d->progressBar->hide();
 
-	updateInfo();
+	d->ip2cUpdater = new IP2CUpdater(this);
+	this->connect(d->ip2cUpdater, SIGNAL(updateNeeded(int)), SLOT(updateInfo(int)));
+	d->ip2cUpdater->needsUpdate(DoomseekerFilePaths::ip2cDatabase());
+
+	start();
 }
 
 IP2CUpdateBox::~IP2CUpdateBox()
 {
 }
 
-void IP2CUpdateBox::updateInfo()
+void IP2CUpdateBox::start()
 {
 	QString filePath = DoomseekerFilePaths::ip2cDatabase();
 
@@ -57,20 +65,33 @@ void IP2CUpdateBox::updateInfo()
 	QFileInfo fileInfo(filePath);
 	if (fileInfo.exists())
 	{
-		QDateTime lastModified = fileInfo.lastModified();
-		QDateTime current = QDateTime::currentDateTime();
-
-		int days = lastModified.daysTo(current);
-
-		QString ageString = tr("This database is %n days old.", "", days);
-		d->lblDatabaseAge->setText(ageString);
+		d->lblDatabaseStatus->setText(tr("Verifying checksum ..."));
+		d->progressBar->show();
 	}
 	else
 	{
-		d->lblDatabaseAge->setText(tr("This file cannot be found. Precompiled database will be used. Use update button if you want to fix this problem."));
+		d->lblDatabaseStatus->setText(tr("IP2C database file was not found. "
+				"Precompiled database will be used. "
+				"Use update button if you want to download the newest database."));
 	}
+}
 
-
-
-
+void IP2CUpdateBox::updateInfo(int status)
+{
+	d->progressBar->hide();
+	switch (status)
+	{
+	case IP2CUpdater::UpdateNeeded:
+		d->lblDatabaseStatus->setText(tr("Update required."));
+		break;
+	case IP2CUpdater::UpToDate:
+		d->lblDatabaseStatus->setText(tr("Database is up-to-date."));
+		break;
+	case IP2CUpdater::UpdateCheckError:
+		d->lblDatabaseStatus->setText(tr("Database status check failed. See log for details."));
+		break;
+	default:
+		d->lblDatabaseStatus->setText(tr("Unhandled update check status."));
+		break;
+	}
 }

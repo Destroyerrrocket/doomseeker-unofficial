@@ -25,39 +25,34 @@
 
 #include <QByteArray>
 #include <QObject>
-#include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QNetworkRequest>
 
-#include <wadseeker/protocols/fixednetworkaccessmanager.h>
+class FixedNetworkAccessManager;
 
 /**
- *	@brief IP2CUpdater is responsible for downloading a new version of database
- *	from the site.
+ * @brief IP2CUpdater is responsible for downloading a new version of database
+ * from the site.
  *
- *	WWW class from Wadseeker library is used to communicate with WWW site.
- *	Since IP2C class remains the core of the whole system for more information
- *	refer there.
+ * NetworkManager class from Wadseeker library is used to communicate with WWW
+ * site. As IP2C class remains the core of the whole system for more
+ * information refer to there.
  */
 class IP2CUpdater : public QObject
 {
 	Q_OBJECT
 
 	public:
-		/**
-		 *	@brief Checks if IP2C file must be updated.
-		 *
-		 *	@param filePath - Path to the file. It is assumed that this is the
-		 *		IP2Country database file.
-		 *	@param minimumUpdateAge - Maximum age of the file for which this
-		 *		method will return false. Cannot be 0.
-		 */
-		static bool needsUpdate(const QString& filePath, unsigned minimumUpdateAge);
+		enum UpdateStatus
+		{
+			UpToDate,
+			UpdateNeeded,
+			UpdateCheckError
+		};
 
-		IP2CUpdater();
+		IP2CUpdater(QObject *parent = NULL);
 		~IP2CUpdater();
 
-		void downloadDatabase(const QUrl& netLocation);
+		void downloadDatabase();
 		const QByteArray& downloadedData();
 
 		const QString& filePath() const { return pathToFile; }
@@ -77,6 +72,21 @@ class IP2CUpdater : public QObject
 
 		bool hasDownloadedData() const { return !retrievedData.isEmpty(); }
 		bool hasRollbackData() const { return !rollbackData.isEmpty(); }
+
+		bool isWorking() const;
+
+		/**
+		 * @brief Checks if IP2C file must be updated.
+		 *
+		 * The call is asynchronous as the locally stored database is compared
+		 * against the one hosted online on Doomseeker's web page. Once it
+		 * completes, an updateNeeded() signal is emitted.
+		 *
+		 * @param filePath - Path to the file. It is assumed that this is the
+		 *     IP2Country database file.
+		 */
+		void needsUpdate(const QString& filePath);
+
 
 		/**
 		 *	@brief Saves data to the pathToFile file. This data must be first
@@ -110,25 +120,37 @@ class IP2CUpdater : public QObject
 		 */
 		void databaseDownloadFinished(const QByteArray& downloadedData);
 		void downloadProgress(qint64 value, qint64 max);
+		/**
+		 * @brief Emitted status is one of UpdateStatus enum values.
+		 */
+		void updateNeeded(int status);
 
 	private:
+		static const QUrl dbChecksumUrl();
+		static const QUrl dbDownloadUrl();
+
 		FixedNetworkAccessManager* pNetworkAccessManager;
 		QNetworkReply* pCurrentNetworkReply;
 
 		/**
-		 *	@brief Various methods will operate on this path.
+		 * @brief Various methods will operate on this path.
 		 *
-		 *	@see rollback()
-		 *	@see saveDownloadedData()
-		 *	@see saveRollbackData()
+		 * @see needsUpdate()
+		 * @see rollback()
+		 * @see saveDownloadedData()
+		 * @see saveRollbackData()
 		 */
 		QString pathToFile;
 		QByteArray retrievedData;
 		QByteArray rollbackData;
 
+		void abort();
+		void get(const QUrl &url, const char *finishedSlot);
+		bool handleRedirect(QNetworkReply &reply, const char *finishedSlot);
 		bool save(const QByteArray& saveWhat);
 
 	private slots:
+		void checksumDownloadFinished();
 		void downloadFinished();
 };
 

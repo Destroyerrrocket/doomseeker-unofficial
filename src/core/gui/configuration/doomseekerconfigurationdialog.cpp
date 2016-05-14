@@ -26,7 +26,6 @@
 #include "gui/configuration/cfgautoupdates.h"
 #include "gui/configuration/cfgcustomservers.h"
 #include "gui/configuration/cfgfilepaths.h"
-#include "gui/configuration/cfgip2country.h"
 #include "gui/configuration/cfgquery.h"
 #include "gui/configuration/cfgserverpasswords.h"
 #include "gui/configuration/cfgwadalias.h"
@@ -128,20 +127,14 @@ void DoomseekerConfigurationDialog::initOptionsList()
 	pConfigBox = new CFGAppearance(this);
 	addConfigurationBox(NULL, pConfigBox);
 
-	// Add only if supported on target platform.
-	#ifdef WITH_AUTOUPDATES
-		pConfigBox = new CFGAutoUpdates(this);
-		addConfigurationBox(NULL, pConfigBox);
-	#endif
+	pConfigBox = new CFGAutoUpdates(this);
+	addConfigurationBox(NULL, pConfigBox);
 
 	pConfigBox = new CFGCustomServers(this);
 	addConfigurationBox(NULL, pConfigBox);
 	customServersCfgBox = pConfigBox;
 
 	pConfigBox = new CFGServerPasswords(this);
-	addConfigurationBox(NULL, pConfigBox);
-
-	pConfigBox = new CFGIP2Country(this);
 	addConfigurationBox(NULL, pConfigBox);
 
 	pConfigBox = new CFGQuery(this);
