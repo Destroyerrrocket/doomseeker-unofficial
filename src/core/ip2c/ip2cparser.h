@@ -28,55 +28,29 @@
 #include <QThread>
 
 /**
- *	Class accepts text database from:
- * 	http://software77.net/geo-ip
- *	The first time the text database is read it is compacted into a smaller
- *	format and stored on the drive.
- *	@see convertAndSaveDatabase()
+ * Compacted database file format, version 2:
+ * (all strings are null terminated)
+ * Header:
+ * @code
+ * TYPE			LENGTH		DESCRIPTION
+ * -----------------------------------------------------
+ * unsigned long	4			'I' 'P' '2' 'C' bytes
+ * unsigned short	2			Version (equal to 2)
+ * @endcode
  *
+ * Block repeated until EOF:
+ * @code
+ * TYPE			LENGTH		DESCRIPTION
+ * -----------------------------------------------------
+ * string			N/A		Country full name, UTF-8
+ * string			N/A		Country abbreviation (3 letters version)
+ * unsigned long	4			Number of IP Blocks (N_IP_BLOCKS)
  *
- *	Compacted database file format, version 1:
- *	(all strings are null terminated)
- *	Header:
- *	@code
- *	TYPE			LENGTH		DESCRIPTION
- *  -----------------------------------------------------
- *	unsigned long	4			'I' 'P' '2' 'C' bytes
- *	unsigned short	2			Version (equal to 1)
- *	@endcode
- *
- *	Block repeated until EOF:
- *	@code
- *	TYPE			LENGTH		DESCRIPTION
- *  -----------------------------------------------------
- *	unsigned long	4			Beginning of an IP range
- *	unsigned long	4			End of an IP range
- *	string			N/A			Country name abbreviation
- *	@endcode
- *
- *	Compacted database file format, version 2:
- *	(all strings are null terminated)
- *	Header:
- *	@code
- *	TYPE			LENGTH		DESCRIPTION
- *  -----------------------------------------------------
- *	unsigned long	4			'I' 'P' '2' 'C' bytes
- *	unsigned short	2			Version (equal to 2)
- *	@endcode
- *
- *	Block repeated until EOF:
- *	@code
- *	TYPE			LENGTH		DESCRIPTION
- *  -----------------------------------------------------
- *	string			N/A			Country full name
- *	string			N/A			Country abbreviation
- *	unsigned long	4			Number of IP Blocks (N_IP_BLOCKS)
-
- *  -- BLOCK: repeated N_IP_BLOCKS times.
- *	unsigned long	4			Beginning of an IP range
- *	unsigned long	4			End of an IP range
- *	-- END OF BLOCK
- *	@endcode
+ * -- BLOCK: repeated N_IP_BLOCKS times.
+ * unsigned long	4			Beginning of an IP range
+ * unsigned long	4			End of an IP range
+ * -- END OF BLOCK
+ * @endcode
  */
 class IP2CParser : public QObject
 {
@@ -163,31 +137,8 @@ class IP2CParser : public QObject
 
 		QMutex thisLock;
 
-
-		/**
-		 *	Converts downloaded text database to a compacted binary file.
-		 *	The name of the new file is IP2C::file.
-		 */
-		bool convertAndSaveDatabase(QByteArray& downloadedData, const QString& outFilePath);
-
-		/**
-		 *	Converts previously created by readTextDatabase() countries hash
-		 *	table into an output data that can be saved into a file.
-		 */
-		void convertCountriesIntoBinaryData(const Countries& countries, QByteArray& output);
-
 		bool doReadDatabase(const QString& filePath);
-
-		bool readDatabaseVersion1(const QByteArray& dataArray);
 		bool readDatabaseVersion2(const QByteArray& dataArray);
-
-		/**
-		 *	Called by convertAndSaveDatabase().
-		 *	@param textDatabase - contents of the file, this will be modified
-		 *		by this function.
-		 *	@param [out] countries - returned hash table of countries.
-		 */
-		void readTextDatabase(QByteArray& textDatabase, Countries& countries);
 
 	protected slots:
 		void parsingThreadFinished();

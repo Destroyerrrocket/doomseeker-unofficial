@@ -175,7 +175,7 @@ void IP2CLoader::ip2cParseDatabase()
 {
 	QString filePath = DoomseekerFilePaths::IP2C_QT_SEARCH_PATH;
 
-	gLog << tr("Please wait. IP2C database is being read and converted if necessary. This may take some time.");
+	gLog << tr("Please wait. IP2C database is being read. This may take some time.");
 	// Attempt to read IP2C database.
 
 	IP2C::instance()->setDataAccessLockEnabled(true);
