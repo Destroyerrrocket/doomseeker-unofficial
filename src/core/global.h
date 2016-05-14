@@ -2,6 +2,7 @@
 #define __GLOBAL_H__
 
 #include <QtGlobal>
+#include <QThread>
 
 static inline quint32 READINT32(const char *pointer)
 {
@@ -59,5 +60,14 @@ static inline quint32 MAKEID(quint8 a, quint8 b, quint8 c, quint8 d)
 #define MAIN_EXPORT
 #define PLUGIN_EXPORT
 #endif
+
+class Sleep : private QThread
+{
+public:
+	static void sleep(int time)
+	{
+		QThread::sleep(time);
+	}
+};
 
 #endif /* __GLOBAL_H__ */

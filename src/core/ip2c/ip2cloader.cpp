@@ -5,6 +5,7 @@
 #include "ip2c/ip2c.h"
 #include "ip2c/ip2cparser.h"
 #include "ip2c/ip2cupdater.h"
+#include "global.h"
 #include "log.h"
 #include <QFile>
 #include <QTimer>
@@ -46,7 +47,7 @@ IP2CLoader::~IP2CLoader()
 		gLog << tr("IP2C parser is still working, awaiting stop...");
 		while (d->ip2cParser->isParsing())
 		{
-			QThread::sleep(1);
+			Sleep::sleep(1);
 		}
 	}
 
