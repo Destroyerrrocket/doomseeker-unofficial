@@ -19,8 +19,11 @@
 # Unported License. To view a copy of this license, visit
 # http://creativecommons.org/licenses/by-sa/3.0/.
 #
+import binascii
 import csv
 import json
+import hashlib
+import gzip
 import os
 import sys
 import shutil
@@ -280,6 +283,20 @@ def convert(geolite_blocks_path, geolite_locations_path, doomseeker_path):
             num += 1
 
 
+def md5(fpath):
+    with open(fpath, "rb") as f:
+        checksum = hashlib.md5(f.read()).digest()
+        print "MD5: {0}".format(binascii.hexlify(checksum).lower())
+
+
+def gzip_file(fpath):
+    outpath = "{0}.gz".format(fpath)
+    with gzip.open(outpath, "wb") as gfile:
+        with open(fpath, "rb") as f:
+            gfile.write(f.read())
+    print "GZip file generated at: {0}".format(outpath)
+
+
 def run():
     if is_help():
         usage()
@@ -311,6 +328,8 @@ def run():
                 shutil.rmtree(tmpdir)
             except Exception as e:
                 print >>sys.stderr, "Warning: failed to clean up tmpdir '{0}': {1}".format(tmpdir, e)
+    md5(doomseeker_path)
+    gzip_file(doomseeker_path)
 
 
 if __name__ == "__main__":
