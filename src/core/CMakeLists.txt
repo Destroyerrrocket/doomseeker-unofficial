@@ -305,9 +305,9 @@ endif()
 
 if(UNIX AND NOT APPLE)
 	install(TARGETS doomseeker RUNTIME DESTINATION bin)
-	install(FILES ${CMAKE_SOURCE_DIR}/media/icon.png DESTINATION share/doomseeker)
+	install(FILES ${CMAKE_SOURCE_DIR}/media/icon.png DESTINATION share/icons RENAME doomseeker.png)
 	install(FILES ${TRANSLATION_FILES_TO_COPY} DESTINATION share/doomseeker/translations)
-	install(FILES ${CMAKE_SOURCE_DIR}/media/Doomseeker.desktop DESTINATION /usr/share/applications)
+	install(FILES ${CMAKE_SOURCE_DIR}/media/Doomseeker.desktop DESTINATION share/applications)
 endif()
 
 if(WIN32 OR APPLE)
