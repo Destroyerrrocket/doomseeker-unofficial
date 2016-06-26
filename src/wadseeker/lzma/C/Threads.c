@@ -5,13 +5,6 @@ Public domain */
 
 #include "Threads.h"
 
-#ifndef BOOL
-#include <stdbool.h>
-#define BOOL bool
-#define TRUE  true
-#define FALSE false
-#endif
-
 #ifdef _WIN32
 #include <process.h>
 
@@ -126,6 +119,13 @@ WRes CriticalSection_Init(CCriticalSection *p)
 #include <stdlib.h>
 
 #include <errno.h>
+
+#ifndef BOOL
+	#include <stdbool.h>
+	#define BOOL bool
+	#define TRUE  true
+	#define FALSE false
+#endif
 
 #if defined(__linux__) 
 #define PTHREAD_MUTEX_ERRORCHECK PTHREAD_MUTEX_ERRORCHECK_NP
