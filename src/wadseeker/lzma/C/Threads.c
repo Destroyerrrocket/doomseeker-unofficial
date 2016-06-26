@@ -5,6 +5,13 @@ Public domain */
 
 #include "Threads.h"
 
+#ifndef BOOL
+#include <stdbool.h>
+#define BOOL bool
+#define TRUE  true
+#define FALSE false
+#endif
+
 #ifdef _WIN32
 #include <process.h>
 

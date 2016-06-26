@@ -53,6 +53,7 @@ if (NOT ZLIB_INCLUDE_DIR OR NOT ZLIB_LIBRARIES)
 	find_package(ZLIB REQUIRED)
 endif()
 find_package(BZip2 REQUIRED)
+find_package(Threads REQUIRED)
 
 include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}
@@ -153,9 +154,9 @@ include_directories(${QT_INCLUDES})
 
 qt_wrap_cpp(wadseekerQt WADSEEKER_FILES ${WADSEEKER_QT_FILES})
 
-add_library(wadseeker SHARED ${WADSEEKER_FILES} ${HEADER_FILES})
+add_library(wadseeker SHARED ${WADSEEKER_FILES} ${HEADER_FILES} $<TARGET_OBJECTS:lzma>)
 
-target_link_libraries(wadseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} ${ZLIB_LIBRARIES} ${BZIP2_LIBRARIES} lzma)
+target_link_libraries(wadseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} ${ZLIB_LIBRARIES} ${BZIP2_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 if(DEFINED DOOMSEEKER_BINARY_DIR)
 	set_target_properties(wadseeker PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${DOOMSEEKER_BINARY_DIR} RUNTIME_OUTPUT_DIRECTORY ${DOOMSEEKER_BINARY_DIR})

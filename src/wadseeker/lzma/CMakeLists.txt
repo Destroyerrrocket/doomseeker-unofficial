@@ -22,9 +22,4 @@ set( LZMA_FILES
 	C/LzmaEnc.c
 	C/LzmaLib.c )
 
-if( WIN32 )
-	set( LZMA_FILES ${LZMA_FILES} C/Threads.c )
-endif()
-
-add_library( lzma ${LZMA_FILES} )
-target_link_libraries( lzma )
+add_library( lzma OBJECT ${LZMA_FILES} C/Threads.c)
