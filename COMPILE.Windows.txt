@@ -22,33 +22,32 @@ and non-commercial use.
 ================================================================================
 3. Qt.
 
-Get Qt from this URL:
-http://doomseeker.drdteam.org/files/dependencies/Qt5.5.0-no-icu-Zalewa-VS2013-x86.7z
+This instruction was written when Qt 5.7.0 was the newest available version and
+it works against this version. Your results may vary if you use newer Qt.
+Using older Qt5 versions is discouraged as they had localization bugs and
+they linked against ICU (about 30MB of additional DLL dependency).
 
-This is a Qt version compiled by me. The official build, at the time
-when this is written, has a dependency on a huge (about 30MB) ICU
-library. Doomseeker makes no use of this library, but its dependency
-is forced in official Qt build and the program won't run without it.
+Get Qt 5.7.0 for MSVC 2013 from Qt's official home page and install it.
 
-This package contains all libraries and toolchains that you need. It
-also includes Qt Designer that helps with creating GUI components and
-Qt Linguist which assists in translation to different languages.
+Once Qt is installed you should modify your PATH environment variable so that it
+contains path to the "bin" directory inside your Qt installation. It is possible
+that Qt installer will do this for you, but you should check anyway.
+Setting this up will allow CMake to correctly detect all modules of Qt.
+This guide will not describe how to modify environment variables in Windows.
+Once you modify the PATH variable you may have to reboot your system.
 
-Once Qt is installed you may want to modify your PATH environment variable
-so that it contains path to the "bin" directory inside your Qt installation.
-This will be helpful with CMake. This guide will not describe how to modify
-environment variables in Windows. If you decide to modify the PATH variable
-(you really should do that) you will need to reboot your system.
 ================================================================================
 4. OpenSSL
 
 Link:
 http://doomseeker.drdteam.org/files/dependencies/OpenSSL-1.0.2a-VC-32.7z
 
-This is for completion only, so it's optional. Doomseeker will work
-without OpenSSL, but it won't be able to access HTTPS sites. This is a
-very crippling flaw in current era. Moreover, without this you'll get
-annoying error messages each time Doomseeker accesses the web.
+This is for completion only, so it's optional. Doomseeker will work without
+OpenSSL, but it won't be able to access HTTPS sites. This is a very crippling
+flaw in current era. And also, without those libs, you will most likely get
+a very nasty message box popup during startup, followed by a second very nasty
+message box popup. If that doesn't happen, then without this you'll get annoying
+error messages each time Doomseeker accesses the web.
 
 ================================================================================
 5. CMake.
@@ -60,6 +59,9 @@ makefiles for various different compilers and Operating Systems. It allows
 programmers to avoid uploading all that mess that IDEs create when they
 spawn a new project. Also, it helps with keeping track of all the dependencies
 that the program needs in order to compile.
+
+At the moment when this was written the newest stable
+CMake version was 3.7.0-rc1.
 
 Get CMake now.
 
@@ -77,8 +79,12 @@ D:/dev/Doomseeker/repo
 Now press "Configure" button.
 
 CMake should prompt about the type of compiler you want to use. Pick
-"Visual Studio 12". Also make sure that "Use default native compilers"
-option is selected. Now press "Finish". If you did everything right up to this
+"Visual Studio 12". The very important thing here is to define special toolset
+to ensure that folks who use Windows XP can run Doomseeker. Specify "v120_xp"
+as the toolset. Don't make a typo! Also make sure that
+"Use default native compilers" option is selected.
+
+Now press "Finish". If you did everything right up to this
 point then CMake should find the MSVC 2013 and Qt installations. The initial
 configuration may take some time but should finish without errors. Once done,
 CMake will display some key-value positions in a table with a red background.
@@ -111,6 +117,10 @@ again. There's a chance it will succeed the next time.
 
 Open OPENSSL branch and point both settings there to appropriate DLL files.
 The setting names tell you which file you need for which setting.
+
+Remember to change CMAKE_INSTALL_PREFIX path to something less stupid than
+"C:\Program Files (x86)\DOOMSEEKER". Be aware that the installed files are
+dumped directly to this directory.
 
 ================================================================================
 Now you may build the program and while it compiles you may open one
