@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 2.8.7)
 project(DOOMSEEKER)
 
-if(MSVC12)
-	set(CMAKE_GENERATOR_TOOLSET "v120_xp")
-endif()
-
 if(NOT WIN32)
 	find_package( ZLIB )
 	find_package( BZip2 )
