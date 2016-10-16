@@ -204,7 +204,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1792"/>
-        <source>Sucide</source>
+        <source>Suicide</source>
         <translation>Samobójstwo</translation>
     </message>
     <message>

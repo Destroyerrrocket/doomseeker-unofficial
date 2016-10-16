@@ -285,7 +285,7 @@ p, li { white-space: pre-wrap; }
               <item row="0" column="0">
                <widget class="QCheckBox" name="cbSuicide">
                 <property name="text">
-                 <string>Sucide</string>
+                 <string>Suicide</string>
                 </property>
                </widget>
               </item>
