@@ -193,6 +193,27 @@ class MAIN_EXPORT EnginePlugin
 			 * that have a hardcoded amount of maximum players.
 			 */
 			EP_NoPlayerSlots,
+			/**
+			 * @brief Tells the create game box that this game
+			 * allows UPnP.
+			 *
+			 * By default, UPnP control is hidden.
+			 */
+			EP_AllowsUpnp,
+			/**
+			 * @brief Tells the create game box that this game
+			 * allows to modify UPnP port.
+			 *
+			 * What is meant by "UPnP port" is "a network port that can be used
+			 * by the game in some relation to UPnP however the game sees fit."
+			 *
+			 * This setting works in conjuction with EP_AllowsUpnp.
+			 * If the plugin specifies this one, it also must specify
+			 * the EP_AllowsUpnp.
+			 *
+			 * By default this is disabled.
+			 */
+			EP_AllowsUpnpPort
 		};
 
 		/// Reimplement if you want to perform some ini initialization manually.
@@ -270,6 +291,8 @@ class MAIN_EXPORT EnginePlugin
 				bool hasIwad;
 				bool allowsClientSlots;
 				bool allowsPlayerSlots;
+				bool allowsUpnp;
+				bool allowsUpnpPort;
 
 				Data();
 

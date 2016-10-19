@@ -123,6 +123,15 @@ void ZandronumGameHost::addExtra()
 	args() << "+sv_updatemaster" << QString::number(static_cast<int>( params().isBroadcastToMaster() ));
 	args() << "+sv_maxclients" << QString::number(params().maxTotalClientSlots());
 	args() << "+sv_maxplayers" << QString::number(params().maxPlayers());
+
+	if (params().upnp())
+	{
+		args() << "-upnp";
+		if (params().upnpPort() > 0)
+		{
+			args() << QString::number(params().upnpPort());
+		}
+	}
 }
 
 QString ZandronumGameHost::strArg(const QString &val)

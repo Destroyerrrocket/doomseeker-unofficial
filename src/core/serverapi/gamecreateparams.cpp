@@ -55,6 +55,8 @@ DClass<GameCreateParams>
 		bool randomMapRotation;
 		QString rconPassword;
 		int skill;
+		bool upnp;
+		quint16 upnpPort;
 		QString url;
 };
 
@@ -69,6 +71,8 @@ GameCreateParams::GameCreateParams()
 	d->maxPlayers = 0;
 	d->port = 0;
 	d->skill = 0;
+	d->upnp = true;
+	d->upnpPort = 0;
 }
 
 GameCreateParams::~GameCreateParams()
@@ -391,6 +395,26 @@ void GameCreateParams::setUrl(const QString& url)
 int GameCreateParams::skill() const
 {
 	return d->skill;
+}
+
+bool GameCreateParams::upnp() const
+{
+	return d->upnp;
+}
+
+void GameCreateParams::setUpnp(bool upnp)
+{
+	d->upnp = upnp;
+}
+
+quint16 GameCreateParams::upnpPort() const
+{
+	return d->upnpPort;
+}
+
+void GameCreateParams::setUpnpPort(quint16 port)
+{
+	d->upnpPort = port;
 }
 
 const QString& GameCreateParams::url() const

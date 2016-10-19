@@ -48,6 +48,8 @@ EnginePlugin::Data::Data()
 	allowsMOTD = false;
 	allowsRConPassword = false;
 	allowsURL = false;
+	allowsUpnp = false;
+	allowsUpnpPort = false;
 	broadcast = NULL;
 	clientOnly = false;
 	createDMFlagsPagesAutomatic = true;
@@ -161,6 +163,12 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 				break;
 			case EP_AllowsMOTD:
 				d->allowsMOTD = true;
+				break;
+			case EP_AllowsUpnp:
+				d->allowsUpnp = true;
+				break;
+			case EP_AllowsUpnpPort:
+				d->allowsUpnpPort = true;
 				break;
 			case EP_Broadcast:
 				d->broadcast = va_arg(va, Broadcast*);

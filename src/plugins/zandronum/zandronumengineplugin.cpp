@@ -67,6 +67,8 @@ ZandronumEnginePlugin::ZandronumEnginePlugin()
 		EP_AllowsJoinPassword,
 		EP_AllowsRConPassword,
 		EP_AllowsMOTD,
+		EP_AllowsUpnp,
+		EP_AllowsUpnpPort,
 #if defined(Q_OS_WIN32) || defined(Q_OS_MAC)
 		EP_ClientOnly,
 #endif

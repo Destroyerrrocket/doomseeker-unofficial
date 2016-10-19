@@ -196,6 +196,21 @@ class MAIN_EXPORT GameCreateParams
 		 */
 		const QString& url() const;
 
+		/**
+		 * @brief If set, the game should try to enable UPnP.
+		 */
+		bool upnp() const;
+		void setUpnp(bool upnp);
+
+		/**
+		 * @brief Game or plugin can use this network port as it sees fit within
+		 * the UPnP context.
+		 *
+		 * This value should be ignored if upnp() is false.
+		 */
+		quint16 upnpPort() const;
+		void setUpnpPort(quint16 port);
+
 	private:
 		DPtr<GameCreateParams> d;
 };

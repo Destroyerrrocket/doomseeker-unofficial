@@ -11,7 +11,16 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -216,7 +225,7 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,1,0">
      <item>
       <widget class="QCheckBox" name="cbBroadcastToLAN">
        <property name="text">
@@ -235,6 +244,47 @@
        <property name="checked">
         <bool>true</bool>
        </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="upnpArea" native="true">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QCheckBox" name="cbUpnp">
+          <property name="toolTip">
+           <string>If checked, the game will try to tell your router to forward necessary ports.</string>
+          </property>
+          <property name="text">
+           <string>UPnP</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinUpnpPort">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;UPnP port. Set this to 0 to let Doomseeker or game decide.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="maximum">
+           <number>65535</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
     </layout>
@@ -278,7 +328,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>594</x>
-     <y>183</y>
+     <y>177</y>
     </hint>
     <hint type="destinationlabel">
      <x>597</x>
@@ -294,11 +344,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>593</x>
-     <y>128</y>
+     <y>122</y>
     </hint>
     <hint type="destinationlabel">
-     <x>301</x>
-     <y>130</y>
+     <x>374</x>
+     <y>124</y>
     </hint>
    </hints>
   </connection>
@@ -315,6 +365,22 @@
     <hint type="destinationlabel">
      <x>297</x>
      <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbUpnp</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>spinUpnpPort</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>513</x>
+     <y>368</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>570</x>
+     <y>370</y>
     </hint>
    </hints>
   </connection>

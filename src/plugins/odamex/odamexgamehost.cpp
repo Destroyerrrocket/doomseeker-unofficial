@@ -36,6 +36,7 @@ OdamexGameHost::OdamexGameHost()
 void OdamexGameHost::addExtra()
 {
 	args() << "-skill" << QString::number(params().skill() + 1); // from 1 to 5
+	args() << "+set" << "sv_upnp" << (params().upnp() ? "1" : "0");
 
 	const QStringList& mapsList = params().mapList();
 	if (!mapsList.isEmpty())

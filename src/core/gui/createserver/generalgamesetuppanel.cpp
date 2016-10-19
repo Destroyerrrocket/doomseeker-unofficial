@@ -80,6 +80,8 @@ void GeneralGameSetupPanel::fillInParams(GameCreateParams &params)
 	params.setName(d->leServername->text());
 	params.setPort(d->spinPort->isEnabled() ? d->spinPort->value() : 0);
 	params.setGameMode(currentGameMode());
+	params.setUpnp(d->cbUpnp->isChecked());
+	params.setUpnpPort(d->spinUpnpPort->value());
 }
 
 void GeneralGameSetupPanel::loadConfig(Ini &config, bool loadingPrevious)
@@ -127,6 +129,8 @@ void GeneralGameSetupPanel::loadConfig(Ini &config, bool loadingPrevious)
 
 	d->cbBroadcastToLAN->setChecked(general["broadcastToLAN"]);
 	d->cbBroadcastToMaster->setChecked(general["broadcastToMaster"]);
+	d->cbUpnp->setChecked(general["upnp"]);
+	d->spinUpnpPort->setValue(general["upnpPort"]);
 
 	// Timer triggers slot after config is fully loaded.
 	QTimer::singleShot(0, this, SLOT(updateMapWarningVisibility()));
@@ -152,6 +156,8 @@ void GeneralGameSetupPanel::saveConfig(Ini &config)
 
 	general["broadcastToLAN"] = d->cbBroadcastToLAN->isChecked();
 	general["broadcastToMaster"] = d->cbBroadcastToMaster->isChecked();
+	general["upnp"] = d->cbUpnp->isChecked();
+	general["upnpPort"] = d->spinUpnpPort->value();
 }
 
 void GeneralGameSetupPanel::setupForEngine(EnginePlugin *engine)
@@ -160,6 +166,8 @@ void GeneralGameSetupPanel::setupForEngine(EnginePlugin *engine)
 
 	d->labelIwad->setVisible(engine->data()->hasIwad);
 	d->iwadPicker->setVisible(engine->data()->hasIwad);
+	d->upnpArea->setVisible(engine->data()->allowsUpnp);
+	d->spinUpnpPort->setVisible(engine->data()->allowsUpnpPort);
 
 	d->executableInput->setPlugin(engine);
 
@@ -184,6 +192,7 @@ void GeneralGameSetupPanel::setupForRemoteGame()
 	{
 		d->cboEngine, d->leServername, d->spinPort,
 		d->cbBroadcastToLAN, d->cbBroadcastToMaster,
+		d->upnpArea,
 
 		NULL
 	};

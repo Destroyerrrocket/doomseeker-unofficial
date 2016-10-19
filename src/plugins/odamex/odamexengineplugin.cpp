@@ -58,6 +58,7 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 		EP_ClientExeName, "odamex",
 		EP_ServerExeName, "odasrv",
 		EP_GameFileSearchSuffixes, "odamex",
+		EP_AllowsUpnp,
 		EP_Done
 	);
 }
