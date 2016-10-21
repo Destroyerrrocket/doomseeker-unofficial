@@ -285,6 +285,10 @@ void EnginePlugin::setConfig(IniSection &ini)
 	setupConfig(ini);
 }
 
+void EnginePlugin::setupConfig(IniSection &config)
+{
+}
+
 void EnginePlugin::setGameExeFactory(QSharedPointer<GameExeFactory> factory)
 {
 	d->gameExeFactory = factory;

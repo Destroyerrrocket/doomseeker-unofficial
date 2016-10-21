@@ -217,7 +217,7 @@ class MAIN_EXPORT EnginePlugin
 		};
 
 		/// Reimplement if you want to perform some ini initialization manually.
-		virtual void setupConfig(IniSection &config) {}
+		virtual void setupConfig(IniSection &config);
 
 	public:
 		/**
