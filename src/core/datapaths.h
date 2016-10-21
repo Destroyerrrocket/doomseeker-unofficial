@@ -51,7 +51,7 @@ class EnginePlugin;
  * located should be inconsequential. The contract here is that it's ensured
  * that those directories are writable, however the paths may change between
  * Doomseeker versions. To preserve specific directory, it's preferable to store
- * its path it in a configuration setting and allow user to modify it. The rule
+ * its path in a configuration setting and allow user to modify it. The rule
  * of thumb for picking directory type is this:
  *
  * - programsDataDirectoryPath() is the "Roaming" directory. It should be used to
@@ -90,14 +90,14 @@ class MAIN_EXPORT DataPaths
 		static const QString UPDATE_PACKAGE_FILENAME_PREFIX;
 
 		/**
-		 *	@b Retrieves correct path to "Program Files" directory.
-		 *	Windows only.
+		 * @b Retrieves correct path to "Program Files" directory.
+		 * Windows only.
 		 *
-		 *	This exploits environmental variables such as %PROGRAMFILES%,
-		 *	%PROGRAMFILES(X86)% and ProgramW6432. This method is used to
-		 *	determine the correct path to the "Program Files" directory on
-		 *	Windows (XP and above). Since on *nix systems there is no equivalent
-		 *	it will return an empty string.
+		 * This exploits environmental variables such as %PROGRAMFILES%,
+		 * %PROGRAMFILES(X86)% and ProgramW6432. This method is used to
+		 * determine the correct path to the "Program Files" directory on
+		 * Windows (XP and above). Since on *nix systems there is no equivalent
+		 * it will return an empty string.
 		 */
 		static QString programFilesDirectory(MachineType machineType);
 
@@ -127,31 +127,31 @@ class MAIN_EXPORT DataPaths
 		virtual ~DataPaths();
 
 		/**
-		 *	@brief Checks if all directories can be written to.
+		 * @brief Checks if all directories can be written to.
 		 *
-		 *	@return List of directories for which the test FAILED.
+		 * @return List of directories for which the test FAILED.
 		 */
 		QStringList canWrite() const;
 
 		/**
-		 *	@brief Creates necessary directories for application run.
+		 * @brief Creates necessary directories for application run.
 		 *
-		 *	If directories exist nothing happens.
+		 * If directories exist nothing happens.
 		 *
-		 *	@return If it was impossible to create at least one of the required
-		 *	directories false will be returned. True is returned only on full
-		 *	success.
+		 * @return If it was impossible to create at least one of the required
+		 * directories false will be returned. True is returned only on full
+		 * success.
 		 *
-		 *	@see directoriesExist()
+		 * @see directoriesExist()
 		 */
 		bool createDirectories();
 
 		QString demosDirectoryPath() const;
 
 		/**
-		 *	@brief Checks if all necessary directories exist.
+		 * @brief Checks if all necessary directories exist.
 		 *
-		 *	@return List of directories that DO NOT exist.
+		 * @return List of directories that DO NOT exist.
 		 */
 		QStringList directoriesExist() const;
 
@@ -188,13 +188,13 @@ class MAIN_EXPORT DataPaths
 		QString pluginLocalDataDir(const EnginePlugin &plugin);
 
 		/**
-		 *	@brief Path to directory where this concrete application should
-		 *	store its data.
+		 * @brief Path to directory where this concrete application should
+		 * store its data.
 		 *
-		 *	Depending on model (portable or not) and operating system this might
-		 *	point to a number of different directories. However the root dir
-		 *	is determined by calling the systemAppDataDirectory() method and
-		 *	appending string returned by programDirName() getter.
+		 * Depending on model (portable or not) and operating system this might
+		 * point to a number of different directories. However the root dir
+		 * is determined by calling the systemAppDataDirectory() method and
+		 * appending string returned by programDirName() getter.
 		 */
 		QString programsDataDirectoryPath() const;
 
@@ -204,9 +204,9 @@ class MAIN_EXPORT DataPaths
 		const QString &programDirName() const;
 
 		/**
-		 *  @brief Allows switching from Preferences to Application Support on OS X.
+		 * @brief Allows switching from Preferences to Application Support on OS X.
 		 *
-		 *  Same as programsDataDirectoryPath() on other systems or in portable mode.
+		 * Same as programsDataDirectoryPath() on other systems or in portable mode.
 		 */
 		QString programsDataSupportDirectoryPath() const;
 
@@ -217,26 +217,26 @@ class MAIN_EXPORT DataPaths
 		void setWorkingDirectory(const QString &workingDirectory);
 
 		/**
-		 *	@brief Gets path to the root directory for data storage.
+		 * @brief Gets path to the root directory for data storage.
 		 *
-		 *	If portable mode is ON this points to the application's directory.
-		 *	Otherwise:
+		 * If portable mode is ON this points to the application's directory.
+		 * Otherwise:
 		 *
-		 *	For Windows this is determined based on %APPDATA% environment
-		 *	variable. If this cannot be found then QDir::home() is used.
+		 * For Windows this is determined based on %APPDATA% environment
+		 * variable. If this cannot be found then QDir::home() is used.
 		 *
-		 *	On other systems QDir::home() is used directly.
+		 * On other systems QDir::home() is used directly.
 		 *
-		 *	@param append - this string will be appended to the returned path.
+		 * @param append - this string will be appended to the returned path.
 		 *
-		 *	@return Empty string if directory doesn't pass validateDir() check.
-		 *	Otherwise the path returned is always absolute.
+		 * @return Empty string if directory doesn't pass validateDir() check.
+		 * Otherwise the path returned is always absolute.
 		 */
 		QString systemAppDataDirectory(QString append = QString()) const;
 
 		/**
-		 *	@brief Checks if the root directory for Doomseeker data storage
-		 *	is accessible.
+		 * @brief Checks if the root directory for Doomseeker data storage
+		 * is accessible.
 		 */
 		bool validateAppDataDirectory();
 
@@ -247,13 +247,13 @@ class MAIN_EXPORT DataPaths
 
 	protected:
 		/**
-		 *	@return True if path is a directory that exists and can be written
-		 *	to.
+		 * @return True if path is a directory that exists and can be written
+		 * to.
 		 */
 		static bool validateDir(const QString& path);
 
 		/**
-		 *	@brief If directory already exists true is returned.
+		 * @brief If directory already exists true is returned.
 		 */
 		bool tryCreateDirectory(const QDir& rootDir, const QString& dirToCreate) const;
 
