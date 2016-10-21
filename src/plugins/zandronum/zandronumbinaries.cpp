@@ -104,9 +104,14 @@ Message ZandronumClientExeFile::install(QWidget *parent)
 		}
 
 		QDir dir(path);
-		if (!dir.mkdir(testingVersion()))
+		if (!dir.mkpath("."))
 		{
 			return Message::customError(tr("Unable to create directory:\n%1").arg(path));
+		}
+		if (!dir.mkpath(testingVersion()))
+		{
+			return Message::customError(tr("Unable to create directory:\n%1/%2").arg(
+					path, testingVersion()));
 		}
 
 		QString finalDestinationPath = path + '/' + testingVersion();

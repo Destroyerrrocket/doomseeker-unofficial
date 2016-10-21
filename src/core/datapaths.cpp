@@ -23,6 +23,7 @@
 #include "datapaths.h"
 
 #include <QCoreApplication>
+#include "plugins/engineplugin.h"
 #include "strings.h"
 #include <QDesktopServices>
 #include <QProcessEnvironment>
@@ -36,6 +37,8 @@
 DClass<DataPaths>
 {
 	public:
+		static const QString PLUGINS_DIR_NAME;
+
 		bool bIsPortableModeOn;
 		QString programsDirectoryName;
 		QString programsSupportDirectoryName;
@@ -57,6 +60,7 @@ const QString DataPaths::PROGRAMS_APPDATASUPPORT_DIR_NAME = "";
 #endif
 const QString DataPaths::DEMOS_DIR_NAME = "demos";
 const QString DataPaths::CHATLOGS_DIR_NAME = "chatlogs";
+const QString PrivData<DataPaths>::PLUGINS_DIR_NAME = "plugins";
 const QString DataPaths::TRANSLATIONS_DIR_NAME = "translations";
 const QString DataPaths::UPDATE_PACKAGES_DIR_NAME = "updates";
 const QString DataPaths::UPDATE_PACKAGE_FILENAME_PREFIX = "doomseeker-update-pkg-";
@@ -195,6 +199,12 @@ QString DataPaths::localDataLocationPath(const QString& subpath) const
 		rootPath = systemAppDataDirectory(".static");
 	}
 	return Strings::combinePaths(rootPath, subpath);
+}
+
+QString DataPaths::pluginLocalDataDir(const EnginePlugin &plugin)
+{
+	return localDataLocationPath(QString("%1/%2").arg(
+			PrivData<DataPaths>::PLUGINS_DIR_NAME, plugin.nameCanonical()));
 }
 
 QString DataPaths::programFilesDirectory(MachineType machineType)
