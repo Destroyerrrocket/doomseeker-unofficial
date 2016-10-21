@@ -181,13 +181,6 @@ void DataPaths::setProgramDirName(const QString& name)
 
 QString DataPaths::localDataLocationPath(const QString& subpath) const
 {
-	// TODO This won't work correctly on Mac because we didn't use
-	// the QDesktopServices from the beginning. Using this class
-	// would save a lot of trouble and simplify code in this file a lot.
-	// Unfortunatelly right now using it would cause compatibility errors for
-	// Linux users who already have Doomseeker installed as the locations
-	// returned by QDesktopServices are different in certain cases. However,
-	// with some work some compromise could be achieved.
 	QString rootPath;
 	if (!isPortableModeOn())
 	{
@@ -196,7 +189,6 @@ QString DataPaths::localDataLocationPath(const QString& subpath) const
 #else
 		rootPath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
 #endif
-		rootPath = Strings::combinePaths(rootPath, ".doomseeker");
 	}
 	else
 	{

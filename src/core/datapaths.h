@@ -132,7 +132,7 @@ class MAIN_EXPORT DataPaths
 		 * the local file system. If portable mode is on this returns path
 		 * to program directory with "/.static" appended. If portable mode
 		 * is off this returns path to QDesktopServices::DataLocation with
-		 * "/.PROGRAMS_APPDATA_DIR_NAME" appended.
+		 * "/QCoreApplication::applicationName()" appended.
 		 *
 		 * @param subpath
 		 *     If specified then this path is appended to the returned path.
@@ -141,7 +141,7 @@ class MAIN_EXPORT DataPaths
 
 		/**
 		 *	@brief Path to directory where this concrete application should
-		 *	store it's data.
+		 *	store its data.
 		 *
 		 *	Depending on model (portable or not) and operating system this might
 		 *	point to a number of different directories. However the root dir

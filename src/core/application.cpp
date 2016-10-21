@@ -41,6 +41,7 @@ Application::Application(int &argc, char **argv)
 {
 	d->mainWindow = NULL;
 	d->running = true;
+	setApplicationName("doomseeker");
 
 #if QT_VERSION >= 0x050000
 	// http://blog.qt.io/blog/2013/04/25/retina-display-support-for-mac-os-ios-and-x11/
