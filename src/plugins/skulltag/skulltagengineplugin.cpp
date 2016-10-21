@@ -68,7 +68,7 @@ SkulltagEnginePlugin::SkulltagEnginePlugin()
 	);
 }
 
-void SkulltagEnginePlugin::setupConfig(IniSection &config) const
+void SkulltagEnginePlugin::setupConfig(IniSection &config)
 {
 	// Default to where the automatic installations install to.
 #ifdef Q_OS_WIN32

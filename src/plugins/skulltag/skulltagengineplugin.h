@@ -31,7 +31,7 @@ class SkulltagEnginePlugin : public EnginePlugin
 	public:
 		SkulltagEnginePlugin();
 
-		void setupConfig(IniSection &config) const;
+		void setupConfig(IniSection &config);
 
 		ConfigurationBaseBox *configuration(QWidget *parent) const;
 

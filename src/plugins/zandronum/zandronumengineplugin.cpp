@@ -89,7 +89,7 @@ ZandronumEnginePlugin::ZandronumEnginePlugin()
 	);
 }
 
-void ZandronumEnginePlugin::setupConfig(IniSection &config) const
+void ZandronumEnginePlugin::setupConfig(IniSection &config)
 {
 	config.createSetting("Masterserver", data()->defaultMaster);
 	config.createSetting("EnableTesting", true);
