@@ -203,6 +203,14 @@ void ServerListRowHandler::fillPortIconColumn()
 			iconPainter.drawPixmap(0, 0, QPixmap(":/shield.png"));
 			iconPainter.end();
 		}
+		// 't' is drawn on a different part of the logo therefore it can be
+		// drawn together with other icons
+		if (d->server->isTestingServer())
+		{
+			QPainter iconPainter(&icon);
+			iconPainter.drawPixmap(0, 0, QPixmap(":/t.png"));
+			iconPainter.end();
+		}
 	}
 	fillItem(pItem, d->server->metaObject()->className(), icon);
 }

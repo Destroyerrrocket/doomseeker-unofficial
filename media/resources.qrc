@@ -38,6 +38,7 @@
 	<file>icons/refresh.png</file>
 	<file>icons/server_details.png</file>
 	<file alias="shield.png">icons/shield.png</file>
+	<file alias="t.png">icons/t.png</file>
 	<file>icons/view-refresh-2.png</file>
 	<file>icons/x.png</file>
 	<file alias="slots/blocks/open">slotstyles/blocks/openslot.png</file>
