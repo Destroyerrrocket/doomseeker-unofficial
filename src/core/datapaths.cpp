@@ -149,6 +149,25 @@ QStringList DataPaths::directoriesExist() const
 	return failedList;
 }
 
+QString DataPaths::documentsLocationPath(const QString &subpath) const
+{
+	QString rootPath;
+	if (!isPortableModeOn())
+	{
+#if QT_VERSION >= 0x050000
+		rootPath = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
+#else
+		rootPath = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+#endif
+		rootPath = Strings::combinePaths(rootPath, "doomseeker");
+	}
+	else
+	{
+		rootPath = systemAppDataDirectory("storage");
+	}
+	return Strings::combinePaths(rootPath, subpath);
+}
+
 QString DataPaths::env(const QString &key)
 {
 	return QProcessEnvironment::systemEnvironment().value(key);
@@ -201,9 +220,15 @@ QString DataPaths::localDataLocationPath(const QString& subpath) const
 	return Strings::combinePaths(rootPath, subpath);
 }
 
-QString DataPaths::pluginLocalDataDir(const EnginePlugin &plugin)
+QString DataPaths::pluginLocalDataLocationPath(const EnginePlugin &plugin) const
 {
 	return localDataLocationPath(QString("%1/%2").arg(
+			PrivData<DataPaths>::PLUGINS_DIR_NAME, plugin.nameCanonical()));
+}
+
+QString DataPaths::pluginDocumentsLocationPath(const EnginePlugin &plugin) const
+{
+	return documentsLocationPath(QString("%1/%2").arg(
 			PrivData<DataPaths>::PLUGINS_DIR_NAME, plugin.nameCanonical()));
 }
 
@@ -356,4 +381,3 @@ const QString &DataPaths::workingDirectory() const
 {
 	return d->workingDirectory;
 }
-

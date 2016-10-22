@@ -37,15 +37,16 @@ class EnginePlugin;
  * @ingroup group_pluginapi
  * @brief Represents directories used by Doomseeker to store data.
  *
- * Doomseeker data is stored in two general directories: the 'configuration
- * storage' and the 'local data storage' directory (using Windows nomenclature:
- * Roaming & Local, respectively). If portable mode is disabled (the default),
+ * Doomseeker data is stored in three general directories: the 'configuration
+ * storage' dir, the 'local data storage' dir (using Windows nomenclature:
+ * Roaming & Local, respectively), and the 'My Documents' dir.
+ * If portable mode is *disabled* (the default),
  * these directories are created in according to the current Operating System
  * standards or according to historical behavior of older Doomseeker
  * versions. Also if portable mode is disabled then, depending on the platform
- * and its configuration, one of those directories might be on a Network File
- * System. For portable model both directories are created where Doomseeker.exe
- * resides.
+ * and its configuration, some of those directories might be on a Network File
+ * System. For portable model both directories are created where Doomseeker's
+ * executable resides.
  *
  * What are the exact names of those directories and where they're physically
  * located should be inconsequential. The contract here is that it's ensured
@@ -59,6 +60,11 @@ class EnginePlugin;
  * - localDataLocationPath() is the "Local" directory. It can be used to store
  *   data that's large or only valid to the particular machine that is running
  *   Doomseeker (like cache).
+ * - documentsLocationPath() is the "My Documents" directory with
+ *   "doomseeker" appended to it. Store here files that should also be normally
+ *   accessible to the user through directory navigation. On Windows platform
+ *   it has also a benefit of additional hard drive space as it is very easy
+ *   to move "My Documents" dir to a different partition or drive.
  *
  * @note
  * You might've noticed that Doomseeker itself doesn't always follow these rules
@@ -68,8 +74,9 @@ class EnginePlugin;
  * functions that help to solve this problem. This behavior might change in
  * future versions of Doomseeker.
  *
- * Plugins, to store their "Local" data, can use pluginLocalDataDir() method to
- * obtain the path where this data can be stored.
+ * Plugins, to store their "Local" data, can use pluginLocalDataLocationPath()
+ * method to obtain the path where this data can be stored. To store "Documents"
+ * data, use pluginDocumentsLocationPath().
  */
 class MAIN_EXPORT DataPaths
 {
@@ -156,6 +163,18 @@ class MAIN_EXPORT DataPaths
 		QStringList directoriesExist() const;
 
 		/**
+		 * @brief Path to the "My Documents" directory with Doomseeker's
+		 * own subpath suffix.
+		 *
+		 * In portable mode is on this will be the program directory with
+		 * "storage" appended to it.
+		 *
+		 * @param subpath
+		 *     Additional subpath in the "My Documents/Doomseeker" subpath.
+		 */
+		QString documentsLocationPath(const QString &subpath = QString()) const;
+
+		/**
 		 * @brief Path to the directory where large data should be
 		 *        saved.
 		 *
@@ -169,6 +188,20 @@ class MAIN_EXPORT DataPaths
 		 *     If specified then this path is appended to the returned path.
 		 */
 		QString localDataLocationPath(const QString& subpath = QString()) const;
+
+		/**
+		 * @brief Place where EnginePlugin can store its "My Documents" content.
+		 *
+		 * This path is a directory path created by documentsDataLocationPath()
+		 * with suffix unique for each plugin. The suffix is derived in the same
+		 * way as in pluginLocalDataLocationPath().
+		 *
+		 * This method is to be used by plugins.
+		 *
+		 * @param plugin
+		 *     Plugin must pass reference to its implementation of EnginePlugin.
+		 */
+		QString pluginDocumentsLocationPath(const EnginePlugin &plugin) const;
 
 		/**
 		 * @brief Place where EnginePlugin can store its local files.
@@ -185,7 +218,7 @@ class MAIN_EXPORT DataPaths
 		 * @param plugin
 		 *     Plugin must pass reference to its implementation of EnginePlugin.
 		 */
-		QString pluginLocalDataDir(const EnginePlugin &plugin);
+		QString pluginLocalDataLocationPath(const EnginePlugin &plugin) const;
 
 		/**
 		 * @brief Path to directory where this concrete application should
