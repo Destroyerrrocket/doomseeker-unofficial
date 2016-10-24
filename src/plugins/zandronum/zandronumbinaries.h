@@ -73,7 +73,12 @@ class ZandronumClientExeFile : public ExeFile
 		PrivData *d;
 
 		IniSection &config();
+		/**
+		 * @return true - user accepts installation; false - user refuses.
+		 */
+		bool askToInstallTestingVersion(QWidget *parent) const;
 		QString testingVersion() const;
+		QString testingVersionInstallPath() const;
 };
 
 class TestingProgressDialog : public QProgressDialog
