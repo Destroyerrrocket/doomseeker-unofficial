@@ -41,7 +41,7 @@
     <message>
         <location filename="../odamexgameinfo.cpp" line="39"/>
         <source>Monsters respawn</source>
-        <translation>Monstory odradzają się</translation>
+        <translation>Potwory odradzają się</translation>
     </message>
     <message>
         <location filename="../odamexgameinfo.cpp" line="40"/>
