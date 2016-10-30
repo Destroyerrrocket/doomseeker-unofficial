@@ -68,7 +68,7 @@ QList<DMFlagsSection> DMFlagsPanel::dmFlags() const
 	QList<DMFlagsSection> result;
 	foreach(const DMFlagsTabWidget* p, d->dmFlagsTabs)
 	{
-		DMFlagsSection sec(p->section.name());
+		DMFlagsSection sec = p->section.copyEmpty();
 		for (int i = 0; i < p->section.count(); ++i)
 		{
 			if (p->checkBoxes[i]->isChecked())
@@ -159,9 +159,17 @@ void DMFlagsPanel::loadConfig(Ini &config)
 	IniSection dmflags = config.section("DMFlags");
 	foreach(DMFlagsTabWidget* p, d->dmFlagsTabs)
 	{
-		for (int i = 0; i < p->section.count(); ++i)
+		const DMFlagsSection &section = p->section;
+		for (int i = 0; i < section.count(); ++i)
 		{
-			p->checkBoxes[i]->setChecked(dmflags[p->section.name() + "/" + p->section[i].name()]);
+			QString flagKey = section.internalName() + "/" + section[i].name();
+			if (!dmflags.hasSetting(flagKey))
+			{
+				// Fallback to support game setup configs
+				// from old Doomseeker versions.
+				flagKey = section.name() + "/" + section[i].name();
+			}
+			p->checkBoxes[i]->setChecked(dmflags[flagKey]);
 		}
 	}
 }
@@ -174,7 +182,8 @@ void DMFlagsPanel::saveConfig(Ini &config)
 	{
 		for (int i = 0; i < p->section.count(); ++i)
 		{
-			dmflags[p->section.name() + "/" + p->section[i].name()] = p->checkBoxes[i]->isChecked();
+			dmflags[p->section.internalName() + "/" + p->section[i].name()]
+				= p->checkBoxes[i]->isChecked();
 		}
 	}
 }

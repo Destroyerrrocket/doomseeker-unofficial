@@ -81,13 +81,43 @@ class MAIN_EXPORT DMFlag
  * @brief A group of DMFlag objects that can be safely OR'ed
  *        together to form a meaningful value.
  *
- * This object is safe to copy.
+ * This object is safe to copy. If you need to clone the section but omit
+ * the DMFlag definitions stored within it, use copyEmpty() method instead.
+ *
+ * DMFlagsSection uses two names - name() for human-readable purposes and
+ * internalName() for identification within the system. name() should normally
+ * be wrapped in a QObject::tr() call. It's also allowed to only specify the
+ * 'internal' name and the human-readable name will be the same.
+ *
+ * Each section in a plugin should have an unique internalName().
+ *
+ * The 'internal' name should be as friendly to any underlying Operating System
+ * as possible. Using only lower-case letters and digits is enforced. If plugin
+ * specifies invalid characters in the 'internal' name, the proper format will
+ * be coerced; all invalid characters will be removed and all letters
+ * lowercased. The human-readable name(), when not specified explicitly, will
+ * use the specified 'internal' name, but will have all original characters
+ * intact. What's forbidden is wrapping the 'internal' name in a QObject::tr()
+ * call. Unfortunately, Doomseeker has no means to detect whether string is
+ * translated or not, so the responsibility to ensure that it isn't falls on the
+ * author of the plugin. It is very important to pay attention to this as the
+ * plugin may appear to work correctly at first but break in certain cases only,
+ * for example when user saves game configurations while using one language
+ * translation and tries to load them when using another.
+ *
+ * Some call examples:
+ *
+ * @code
+ * DMFlagsSection dmflags("dmflags");
+ * DMFlagsSection compatFlags("compatflags", tr("Compat. Flags"));
+ * @endcode
  */
 class MAIN_EXPORT DMFlagsSection
 {
 	public:
 		/**
-		 * @brief Matches sections by name() and calls removed() on them.
+		 * @brief Matches sections by internalName()
+		 *        and calls removed() on them.
 		 *
 		 * Sections that are emptied are also returned as empty sections.
 		 */
@@ -96,7 +126,23 @@ class MAIN_EXPORT DMFlagsSection
 			const QList<DMFlagsSection> &removals);
 
 		DMFlagsSection();
-		DMFlagsSection(const QString& name);
+
+		/**
+		 * @brief Creates DMFlags section with same user-displayable
+		 *        and internal names.
+		 *
+		 * @warning Don't tr() this name!
+		 */
+		DMFlagsSection(const QString &internalName);
+
+		/**
+		 * @brief Creates DMFlags section with different user-displayable
+		 *        and internal names.
+		 *
+		 * @warning Don't tr() the internalName!
+		 */
+		DMFlagsSection(const QString &internalName, const QString &name);
+
 		virtual ~DMFlagsSection();
 
 		/**
@@ -114,11 +160,30 @@ class MAIN_EXPORT DMFlagsSection
 		 * the output of this operation.
 		 */
 		unsigned combineValues() const;
+
+		/**
+		 * @brief Copies section maintaining its properties
+		 *        but removing all flags.
+		 */
+		DMFlagsSection copyEmpty() const;
+
 		/**
 		 * @brief Number of DMFlag objects inside the collection.
 		 */
 		int count() const;
+
+		/**
+		 * @param Name used for internal identification purposes.
+		 *
+		 * This name must be unique within given plugin.
+		 */
+		const QString &internalName() const;
+
+		/**
+		 * @brief Does this section contain any dmflag?
+		 */
 		bool isEmpty() const;
+
 		/**
 		 * @brief User-displayable name of this section,
 		 *        ex. "Compatibility flags".

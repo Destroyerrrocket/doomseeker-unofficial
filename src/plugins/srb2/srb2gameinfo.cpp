@@ -61,7 +61,7 @@ QString Srb2GameInfo::commandFromFlag(Flag flag)
 
 QList<DMFlagsSection> Srb2GameInfo::dmFlags()
 {
-	DMFlagsSection section(tr("Flags"));
+	DMFlagsSection section("flags", tr("Flags"));
 	section << DMFlag(tr("All players must reach exit"), AllPlayersForExit);
 	section << DMFlag(tr("Allow attacking in all game modes"), RingSlinger);
 	section << DMFlag(tr("Allow mouse-look"), MouseLook);

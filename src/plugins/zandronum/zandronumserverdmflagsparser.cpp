@@ -54,7 +54,7 @@ QList<DMFlagsSection> ZandronumServerDmflagsParser::sequential32Parse(
 		unsigned int dmflags = in.readQInt32();
 
 		const DMFlagsSection& knownSection = knownFlags[i];
-		DMFlagsSection detectedSection(knownSection.name());
+		DMFlagsSection detectedSection = knownSection.copyEmpty();
 
 		// Iterate through every known flag to check whether it should be
 		// inserted into the structure of this server.

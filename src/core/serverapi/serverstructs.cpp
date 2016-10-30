@@ -70,7 +70,19 @@ DClass<DMFlagsSection>
 {
 	public:
 		QString name;
+		QString internalName;
 		QVector<DMFlag> flags;
+
+		void setInternalName(const QString &name)
+		{
+			internalName = coerceInternalName(name);
+		}
+
+	private:
+		QString coerceInternalName(const QString &name) const
+		{
+			return name.toLower().remove("[^a-z0-9]");
+		}
 };
 
 DPointered(DMFlagsSection)
@@ -79,9 +91,16 @@ DMFlagsSection::DMFlagsSection()
 {
 }
 
-DMFlagsSection::DMFlagsSection(const QString& name)
+DMFlagsSection::DMFlagsSection(const QString &internalName)
+{
+	d->name = internalName;
+	d->setInternalName(internalName);
+}
+
+DMFlagsSection::DMFlagsSection(const QString &internalName, const QString &name)
 {
 	d->name = name;
+	d->setInternalName(internalName);
 }
 
 DMFlagsSection::~DMFlagsSection()
@@ -103,9 +122,21 @@ unsigned DMFlagsSection::combineValues() const
 	return result;
 }
 
+DMFlagsSection DMFlagsSection::copyEmpty() const
+{
+	DMFlagsSection copy = *this;
+	copy.d->flags.clear();
+	return copy;
+}
+
 int DMFlagsSection::count() const
 {
 	return d->flags.count();
+}
+
+const QString &DMFlagsSection::internalName() const
+{
+	return d->internalName;
 }
 
 bool DMFlagsSection::isEmpty() const
@@ -138,7 +169,7 @@ QList<DMFlagsSection> DMFlagsSection::removedBySection(
 		bool removed = false;
 		foreach (const DMFlagsSection &removal, removals)
 		{
-			if (section.name() == removal.name())
+			if (section.internalName() == removal.internalName())
 			{
 				copy << section.removed(removal);
 				removed = true;
