@@ -62,22 +62,32 @@ QString Srb2GameInfo::commandFromFlag(Flag flag)
 QList<DMFlagsSection> Srb2GameInfo::dmFlags()
 {
 	DMFlagsSection section("flags", tr("Flags"));
-	section << DMFlag(tr("All players must reach exit"), AllPlayersForExit);
-	section << DMFlag(tr("Allow attacking in all game modes"), RingSlinger);
-	section << DMFlag(tr("Allow mouse-look"), MouseLook);
-	section << DMFlag(tr("Allow level exit in all game modes"), AllowExitLevel);
-	section << DMFlag(tr("Allow team change"), AllowTeamChange);
-	section << DMFlag(tr("Tag players by simply touching them"), TouchTag);
-	section << DMFlag(tr("Respawn items"), RespawnItems);
-	section << DMFlag(tr("Listen server"), ListenServer);
-	section << DMFlag(tr("Casual server"), CasualServer);
-	section << DMFlag(tr("Allow in-game WAD downloads"), IngameWadDownloads);
-	section << DMFlag(tr("Players are non-solid and can be picked up"), TailsPickup);
-	section << DMFlag(tr("Force server character (skin)"), ForceSkin);
-	section << DMFlag(tr("Friendly fire"), FriendlyFire);
-	section << DMFlag(tr("Restrict skin change (game mode specific)"), RestrictSkinChange);
-	section << DMFlag(tr("Join game only on next round"), JoinNextRound);
-	section << DMFlag(tr("Spawn chaos emeralds (powerstones) in DM, TDM and CTF"), PowerStones);
+	section << DMFlag("All players must reach exit", AllPlayersForExit,
+		tr("All players must reach exit"));
+	section << DMFlag("Allow attacking in all game modes", RingSlinger,
+		tr("Allow attacking in all game modes"));
+	section << DMFlag("Allow mouse-look", MouseLook, tr("Allow mouse-look"));
+	section << DMFlag("Allow level exit in all game modes", AllowExitLevel,
+		tr("Allow level exit in all game modes"));
+	section << DMFlag("Allow team change", AllowTeamChange, tr("Allow team change"));
+	section << DMFlag("Tag players by simply touching them", TouchTag,
+		tr("Tag players by simply touching them"));
+	section << DMFlag("Respawn items", RespawnItems, tr("Respawn items"));
+	section << DMFlag("Listen server", ListenServer, tr("Listen server"));
+	section << DMFlag("Casual server", CasualServer, tr("Casual server"));
+	section << DMFlag("Allow in-game WAD downloads", IngameWadDownloads,
+		tr("Allow in-game WAD downloads"));
+	section << DMFlag("Players are non-solid and can be picked up", TailsPickup,
+		tr("Players are non-solid and can be picked up"));
+	section << DMFlag("Force server character (skin)", ForceSkin,
+		tr("Force server character (skin)"));
+	section << DMFlag("Friendly fire", FriendlyFire, tr("Friendly fire"));
+	section << DMFlag("Restrict skin change", RestrictSkinChange,
+		tr("Restrict skin change (game mode specific)"));
+	section << DMFlag("Join game only on next round", JoinNextRound,
+		tr("Join game only on next round"));
+	section << DMFlag("Spawn chaos emeralds in DM and TDM and CTF", PowerStones,
+		tr("Spawn chaos emeralds (powerstones) in DM, TDM and CTF"));
 
 	QList<DMFlagsSection> flags;
 	flags << section;

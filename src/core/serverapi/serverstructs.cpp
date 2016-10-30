@@ -22,7 +22,14 @@
 //------------------------------------------------------------------------------
 #include "serverstructs.h"
 
+#include <QRegExp>
 #include <QVector>
+
+
+static QString coerceInternalName(const QString &name)
+{
+	return name.toLower().remove(QRegExp("[^a-z0-9]"));
+}
 
 
 DClass<DMFlag>
@@ -30,6 +37,12 @@ DClass<DMFlag>
 	public:
 		QString name;
 		unsigned value;
+		QString internalName;
+
+		void setInternalName(const QString &name)
+		{
+			internalName = coerceInternalName(name);
+		}
 };
 
 DPointered(DMFlag)
@@ -39,9 +52,17 @@ DMFlag::DMFlag()
 	d->value = 0;
 }
 
-DMFlag::DMFlag(QString name, unsigned value)
+DMFlag::DMFlag(const QString &internalName, unsigned value)
+{
+	d->name = internalName;
+	d->setInternalName(internalName);
+	d->value = value;
+}
+
+DMFlag::DMFlag(const QString &internalName, unsigned value, const QString &name)
 {
 	d->name = name;
+	d->setInternalName(internalName);
 	d->value = value;
 }
 
@@ -49,12 +70,17 @@ DMFlag::~DMFlag()
 {
 }
 
+const QString &DMFlag::internalName() const
+{
+	return d->internalName;
+}
+
 bool DMFlag::isValid() const
 {
 	return value() > 0;
 }
 
-const QString& DMFlag::name() const
+const QString &DMFlag::name() const
 {
 	return d->name;
 }
@@ -76,12 +102,6 @@ DClass<DMFlagsSection>
 		void setInternalName(const QString &name)
 		{
 			internalName = coerceInternalName(name);
-		}
-
-	private:
-		QString coerceInternalName(const QString &name) const
-		{
-			return name.toLower().remove("[^a-z0-9]");
 		}
 };
 

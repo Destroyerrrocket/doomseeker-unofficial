@@ -30,20 +30,21 @@ GameMode OdamexGameInfo::gameModeDuel()
 QList<DMFlagsSection> OdamexGameInfo::dmFlags()
 {
 	DMFlagsSection section("DMFlags");
-	section << DMFlag( tr("Items respawn"), 1 << 0 );
-	section << DMFlag( tr("Weapons stay"), 1 << 1 );
-	section << DMFlag( tr("Friendly fire"), 1 << 2 );
-	section << DMFlag( tr("Allow exit"), 1 << 3 );
-	section << DMFlag( tr("Infinite ammo"), 1 << 4 );
-	section << DMFlag( tr("No monsters"), 1 << 5 );
-	section << DMFlag( tr("Monsters respawn"), 1 << 6 );
-	section << DMFlag( tr("Fast monsters"), 1 << 7 );
-	section << DMFlag( tr("Jumping allowed"), 1 << 8 );
-	section << DMFlag( tr("Freelook allowed"), 1 << 9 );
-	section << DMFlag( tr("Wad can be downloaded"), 1 << 10 );
-	section << DMFlag( tr("Server resets on empty"), 1 << 11 );
-	section << DMFlag( tr("Clean Maps"), 1 << 12 );
-	section << DMFlag( tr("Kill anyone who tries to leave the level"), 1 << 13 );
+	section << DMFlag("Items respawn", 1 << 0, tr("Items respawn"));
+	section << DMFlag("Weapons stay", 1 << 1, tr("Weapons stay"));
+	section << DMFlag("Friendly fire", 1 << 2, tr("Friendly fire"));
+	section << DMFlag("Allow exit", 1 << 3, tr("Allow exit"));
+	section << DMFlag("Infinite ammo", 1 << 4, tr("Infinite ammo"));
+	section << DMFlag("No monsters", 1 << 5, tr("No monsters"));
+	section << DMFlag("Monsters respawn", 1 << 6, tr("Monsters respawn"));
+	section << DMFlag("Fast monsters", 1 << 7, tr("Fast monsters"));
+	section << DMFlag("Jumping allowed", 1 << 8, tr("Jumping allowed"));
+	section << DMFlag("Freelook allowed", 1 << 9, tr("Freelook allowed"));
+	section << DMFlag("Wad can be downloaded", 1 << 10, tr("Wad can be downloaded"));
+	section << DMFlag("Server resets on empty", 1 << 11, tr("Server resets on empty"));
+	section << DMFlag("Clean Maps", 1 << 12, tr("Clean Maps"));
+	section << DMFlag("Kill anyone who tries to leave the level", 1 << 13,
+		tr("Kill anyone who tries to leave the level"));
 
 	QList<DMFlagsSection> result;
 	result << section;

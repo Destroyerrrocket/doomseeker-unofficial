@@ -47,14 +47,29 @@
  *
  * DMFlag objects can be put into DMFlagsSection collection.
  *
+ * DMFlag is bound by the same human-readable name and 'internal' name rules as
+ * the DMFlagsSection class. Refer to the documentation of that class to see
+ * the details. Remember that it's absolutely forbidden to use QObject::tr() in
+ * the 'internal' name. Each DMFlag should have an unique name within
+ * its DMFlagsSection.
+ *
  * This structure is safe to copy.
  */
 class MAIN_EXPORT DMFlag
 {
 	public:
 		DMFlag();
-		DMFlag(QString name, unsigned value);
+		DMFlag(const QString &internalName, unsigned value);
+		DMFlag(const QString &internalName, unsigned value, const QString &name);
 		virtual ~DMFlag();
+
+		/**
+		 * @brief Uniquely identifiable name within its DMFlagsSection,
+		 *        ex. "Jump is allowed" or "jumpisallowed".
+		 *
+		 * @see DMFlagsSection::internalName().
+		 */
+		const QString &internalName() const;
 
 		/**
 		 * @brief Valid objects have value() greater than zero.
@@ -64,9 +79,11 @@ class MAIN_EXPORT DMFlag
 		bool isValid() const;
 
 		/**
-		 * @brief User-displayable name of the DMFlag, ex. "Jump is allowed".
+		 * @brief User-displayable, translateable name of the DMFlag,
+		 *        ex. "Jump is allowed".
 		 */
-		const QString& name() const;
+		const QString &name() const;
+
 		/**
 		 * @brief Bits that represent this flag (usually just a single '1' bit).
 		 */
@@ -87,7 +104,11 @@ class MAIN_EXPORT DMFlag
  * DMFlagsSection uses two names - name() for human-readable purposes and
  * internalName() for identification within the system. name() should normally
  * be wrapped in a QObject::tr() call. It's also allowed to only specify the
- * 'internal' name and the human-readable name will be the same.
+ * 'internal' name and the human-readable name will be the same. The 'internal'
+ * name is expected to stay the same between versions of Doomseeker as it will
+ * be used in configuration files that should be usable for extended period
+ * of time (years) without being resaved. The human-readable name can be changed
+ * at whim.
  *
  * Each section in a plugin should have an unique internalName().
  *

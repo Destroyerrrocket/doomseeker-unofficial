@@ -162,7 +162,7 @@ void DMFlagsPanel::loadConfig(Ini &config)
 		const DMFlagsSection &section = p->section;
 		for (int i = 0; i < section.count(); ++i)
 		{
-			QString flagKey = section.internalName() + "/" + section[i].name();
+			QString flagKey = section.internalName() + "/" + section[i].internalName();
 			if (!dmflags.hasSetting(flagKey))
 			{
 				// Fallback to support game setup configs
@@ -182,7 +182,7 @@ void DMFlagsPanel::saveConfig(Ini &config)
 	{
 		for (int i = 0; i < p->section.count(); ++i)
 		{
-			dmflags[p->section.internalName() + "/" + p->section[i].name()]
+			dmflags[p->section.internalName() + "/" + p->section[i].internalName()]
 				= p->checkBoxes[i]->isChecked();
 		}
 	}
