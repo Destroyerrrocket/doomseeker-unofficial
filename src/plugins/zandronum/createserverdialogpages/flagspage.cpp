@@ -5,6 +5,7 @@
 #include <ini/ini.h>
 #include <ini/inisection.h>
 
+#include "createserverdialogpages/flagsid.h"
 #include "createserverdialogpages/flagspagevaluecontroller.h"
 #include "createserverdialogpages/votingsetupwidget.h"
 #include "zandronumdmflags.h"
@@ -50,6 +51,8 @@ FlagsPage::FlagsPage(CreateServerDialog* pParentDialog)
 	setupUi(this);
 
 	d = new PrivData();
+	FlagsId flagsId(this);
+	flagsId.assign();
 
 	// The validator makes sure that the line edit will accept only
 	// 32-bit unsigned values.
@@ -98,8 +101,7 @@ QStringList FlagsPage::generateGameRunParameters()
 	params << "+lmsallowedweapons" << leLMSAllowedWeapons->text();
 	params << "+lmsspectatorsettings" << leLMSSpectatorSettings->text();
 
-	unsigned dmflags2 = leDmflags2->text().toUInt();
-	if (dmflags2 & ZandronumDmflags::DF2_KILL_MONSTERS)
+	if (cbMonstersMustBeKilledToExit->isChecked())
 	{
 		params << "+sv_killallmonsters_percentage"
 			<< QString::number(spinMonsterKillPercentage->value());
@@ -140,6 +142,7 @@ bool FlagsPage::loadConfig(Ini& ini)
 {
 	IniSection section = ini.section("dmflags");
 
+	// The below numerical flag inserts are here to support old configs.
 	insertFlagsIfValid(leDmflags, section["dmflags"]);
 	insertFlagsIfValid(leDmflags2, section["dmflags2"]);
 	insertFlagsIfValid(leZandronumDmflags, section["zandronumDmflags"]);
@@ -147,6 +150,12 @@ bool FlagsPage::loadConfig(Ini& ini)
 	insertFlagsIfValid(leZandronumCompatflags, section["zandronumCompatflags"]);
 	insertFlagsIfValid(leLMSAllowedWeapons, section["lmsallowedweapons"], DEFAULT_LMSALLOWEDWEAPONS);
 	insertFlagsIfValid(leLMSSpectatorSettings, section["lmsspectatorsettings"], DEFAULT_LMSSPECTATORSETTINGS);
+	propagateFlagsInputsChanges();
+	// End of old config support.
+
+	FlagsId flagsId(this);
+	flagsId.load(section);
+	propagateFlagsCheckboxChanges();
 
 	IniVariable varKillMonstersPercentage = section["killmonsters_percentage"];
 	if (!varKillMonstersPercentage.value().isNull())
@@ -164,11 +173,24 @@ bool FlagsPage::loadConfig(Ini& ini)
 		spinMonstersDamageFactor->setValue(varMonstersDamageFactor);
 	}
 
+	if (section.hasSetting("falling_damage_type"))
+		cboFallingDamage->setCurrentIndex(section["falling_damage_type"]);
+	if (section.hasSetting("jump_ability"))
+		cboJumping->setCurrentIndex(section["jump_ability"]);
+	if (section.hasSetting("crouch_ability"))
+		cboCrouching->setCurrentIndex(section["crouch_ability"]);
+	setPlayerBlock(static_cast<PlayerBlock>(section.value("player_block", PB_NotSet).toInt()));
+	setLevelExit(static_cast<LevelExit>(section.value("level_exit", EXIT_NotSet).toInt()));
+
 	cbDefaultDmflags->setChecked((bool)section["defaultdmflags"]);
 
-	propagateFlagsInputsChanges();
+	return votingPage->loadConfig(ini);
+}
 
-	return votingPage->loadConfig(ini);;
+void FlagsPage::propagateFlagsCheckboxChanges()
+{
+	FlagsPageValueController controller(this);
+	controller.convertWidgetsToNumerical();
 }
 
 void FlagsPage::propagateFlagsInputsChanges()
@@ -181,25 +203,100 @@ bool FlagsPage::saveConfig(Ini& ini)
 {
 	IniSection section = ini.section("dmflags");
 
-	section["dmflags"] = leDmflags->text();
-	section["dmflags2"] = leDmflags2->text();
-	section["zandronumDmflags"] = leZandronumDmflags->text();
-	section["compatflags"] = leCompatflags->text();
-	section["zandronumCompatflags"] = leZandronumCompatflags->text();
-	section["lmsallowedweapons"] = leLMSAllowedWeapons->text();
-	section["lmsspectatorsettings"] = leLMSSpectatorSettings->text();
-	section["defaultdmflags"] = cbDefaultDmflags->isChecked();
-
-	unsigned dmflags2 = leDmflags2->text().toUInt();
-	if (dmflags2 & ZandronumDmflags::DF2_KILL_MONSTERS)
+	// Remove obsolete settings that were created by old method of saving
+	// dmflags. That way the subsequent loads of this file will not trigger
+	// the backward-compatibility fallbacks.
+	QStringList oldSettings;
+	oldSettings << "dmflags" << "dmflags2" << "zandronumDmflags" << "compatflags"
+		<< "zandronumCompatflags" << "lmsallowedweapons" << "lmsspectatorsettings";
+	foreach (const QString &oldSetting, oldSettings)
 	{
-		section["killmonsters_percentage"] = spinMonsterKillPercentage->value();
+		section.deleteSetting(oldSetting);
 	}
+
+	FlagsId flagsId(this);
+	flagsId.save(section);
+
+	section["defaultdmflags"] = cbDefaultDmflags->isChecked();
+	section["falling_damage_type"] = cboFallingDamage->currentIndex();
+	section["jump_ability"] = cboJumping->currentIndex();
+	section["crouch_ability"] = cboCrouching->currentIndex();
+	if (playerBlock() != PB_NotSet)
+		section["player_block"] = playerBlock();
+	if (levelExit() != EXIT_NotSet)
+		section["level_exit"] = levelExit();
+
+	section["killmonsters_percentage"] = spinMonsterKillPercentage->value();
 	section["force_inactive_players_spectating_mins"] =
 		spinForceInactivePlayersSpectatingMins->value();
 	section["monsters_damage_factor"] =
-		(float)spinMonstersDamageFactor->value();
+		static_cast<float>(spinMonstersDamageFactor->value());
 
 	return votingPage->saveConfig(ini);
 }
 
+FlagsPage::PlayerBlock FlagsPage::playerBlock() const
+{
+	if (rbPlayersCanWalkThroughEachOther->isChecked())
+		return PB_Noclip;
+	if (rbAlliesCanWalkThroughEachOther->isChecked())
+		return PB_AllyNoclip;
+	if (rbPlayersBlockEachOtherNormally->isChecked())
+		return PB_Block;
+	return PB_NotSet;
+}
+
+void FlagsPage::setPlayerBlock(PlayerBlock playerBlock)
+{
+	switch (playerBlock)
+	{
+	case PB_NotSet:
+		// do nothing
+		break;
+	case PB_Noclip:
+		rbPlayersCanWalkThroughEachOther->setChecked(true);
+		break;
+	case PB_AllyNoclip:
+		rbAlliesCanWalkThroughEachOther->setChecked(true);
+		break;
+	case PB_Block:
+		rbPlayersBlockEachOtherNormally->setChecked(true);
+		break;
+	default:
+		qDebug() << "FlagsPage::setPlayerBlock - unhandled PlayerBlock " << playerBlock;
+		break;
+	}
+}
+
+FlagsPage::LevelExit FlagsPage::levelExit() const
+{
+	if (rbContinueToTheNextMap->isChecked())
+		return EXIT_NextMap;
+	if (rbRestartTheCurrentLevel->isChecked())
+		return EXIT_RestartMap;
+	if (rbKillThePlayer->isChecked())
+		return EXIT_KillPlayer;
+	return EXIT_NotSet;
+}
+
+void FlagsPage::setLevelExit(LevelExit levelExit)
+{
+	switch (levelExit)
+	{
+	case EXIT_NotSet:
+		// do nothing
+		break;
+	case EXIT_NextMap:
+		rbContinueToTheNextMap->setChecked(true);
+		break;
+	case EXIT_RestartMap:
+		rbRestartTheCurrentLevel->setChecked(true);
+		break;
+	case EXIT_KillPlayer:
+		rbKillThePlayer->setChecked(true);
+		break;
+	default:
+		qDebug() << "FlagsPage::setLevelExit - unhandled LevelExit " << levelExit;
+		break;
+	}
+}

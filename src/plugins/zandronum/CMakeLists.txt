@@ -30,6 +30,7 @@ set(ZANDRONUM_QT_FILES
 )
 
 set(ZANDRONUM_FILES
+	createserverdialogpages/flagsid.cpp
 	createserverdialogpages/flagspagevaluecontroller.cpp
 	createserverdialogpages/flagspage.cpp
 	createserverdialogpages/votingsetupwidget.cpp
@@ -56,6 +57,7 @@ set(ZANDRONUM_FILES
 
 set(HEADER_FILES
 	${ZANDRONUM_QT_FILES}
+	createserverdialogpages/flagsid.h
 	createserverdialogpages/flagspagevaluecontroller.h
 	huffman/bitreader.h
 	huffman/bitwriter.h

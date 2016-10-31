@@ -28,11 +28,15 @@
 
 class FlagsPage : public CreateServerDialogPage, private Ui::FlagsPage
 {
+	friend class FlagsId;
 	friend class FlagsPageValueController;
 
 	Q_OBJECT;
 
 	public:
+		/**
+		 * This is stored in config and indexing cannot change between versions.
+		 */
 		enum FallingDamageType
 		{
 			FDT_None = 0,
@@ -41,11 +45,36 @@ class FlagsPage : public CreateServerDialogPage, private Ui::FlagsPage
 			FDT_Strife = 3
 		};
 
+		/**
+		 * This is stored in config and indexing cannot change between versions.
+		 */
 		enum JumpCrouchAbility
 		{
 			JCA_Default = 0,
 			JCA_No = 1,
 			JCA_Yes = 2
+		};
+
+		/**
+		 * This is stored in config and indexing cannot change between versions.
+		 */
+		enum PlayerBlock
+		{
+			PB_NotSet = 0,
+			PB_Noclip = 1,
+			PB_AllyNoclip = 2,
+			PB_Block = 3
+		};
+
+		/**
+		 * This is stored in config and indexing cannot change between versions.
+		 */
+		enum LevelExit
+		{
+			EXIT_NotSet = 0,
+			EXIT_NextMap = 1,
+			EXIT_RestartMap = 2,
+			EXIT_KillPlayer = 3
 		};
 
 		FlagsPage(CreateServerDialog* pParentDialog);
@@ -63,12 +92,24 @@ class FlagsPage : public CreateServerDialogPage, private Ui::FlagsPage
 		void initJumpCrouchComboBoxes(QComboBox* pComboBox);
 		void insertFlagsIfValid(QLineEdit* dst, QString flags, unsigned valIfInvalid = 0);
 
+		PlayerBlock playerBlock() const;
+		void setPlayerBlock(PlayerBlock playerBlock);
+
+		LevelExit levelExit() const;
+		void setLevelExit(LevelExit levelExit);
+
 	private slots:
 		/**
 		 * @brief Extracts dmflags values from widgets and inserts their
 		 *        numerical values into the text input widgets.
 		 */
 		void applyWidgetsChange();
+
+		/**
+		 * @brief Takes the checkbox values of flags and applies them to
+		 *        numerical widgets.
+		 */
+		void propagateFlagsCheckboxChanges();
 
 		/**
 		 * @brief Takes the numerical values of flags and applies them to
