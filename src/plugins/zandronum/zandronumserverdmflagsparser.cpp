@@ -32,7 +32,10 @@
 ZandronumServerDmflagsParser *ZandronumServerDmflagsParser::mkParser(
 	ZandronumServer *server, QDataStream *in)
 {
-	return new ZandronumServer2point0DmflagsParser(server, in);
+	ZandronumVersion version(server->gameVersion());
+	if (version.majorVersion() >= 3)
+		return new ZandronumServer3DmflagsParser(server, in);
+	return new ZandronumServer2DmflagsParser(server, in);
 }
 
 ZandronumServerDmflagsParser::ZandronumServerDmflagsParser(
@@ -90,7 +93,14 @@ QList<DMFlagsSection> ZandronumServerNullParser::parse()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-QList<DMFlagsSection> ZandronumServer2point0DmflagsParser::parse()
+QList<DMFlagsSection> ZandronumServer2DmflagsParser::parse()
 {
 	return sequential32Parse(Zandronum2::Dmflags().flags());
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+QList<DMFlagsSection> ZandronumServer3DmflagsParser::parse()
+{
+	return sequential32Parse(Zandronum3::Dmflags().flags());
 }

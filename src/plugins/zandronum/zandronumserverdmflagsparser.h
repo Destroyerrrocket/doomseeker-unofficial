@@ -59,10 +59,20 @@ class ZandronumServerNullParser : public ZandronumServerDmflagsParser
 		QList<DMFlagsSection> parse();
 };
 
-class ZandronumServer2point0DmflagsParser : public ZandronumServerDmflagsParser
+class ZandronumServer2DmflagsParser : public ZandronumServerDmflagsParser
 {
 	public:
-		ZandronumServer2point0DmflagsParser(ZandronumServer *server, QDataStream *in)
+		ZandronumServer2DmflagsParser(ZandronumServer *server, QDataStream *in)
+		: ZandronumServerDmflagsParser(server, in)
+		{}
+
+		QList<DMFlagsSection> parse();
+};
+
+class ZandronumServer3DmflagsParser : public ZandronumServerDmflagsParser
+{
+	public:
+		ZandronumServer3DmflagsParser(ZandronumServer *server, QDataStream *in)
 		: ZandronumServerDmflagsParser(server, in)
 		{}
 
