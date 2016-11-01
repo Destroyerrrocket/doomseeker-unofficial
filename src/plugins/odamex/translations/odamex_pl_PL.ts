@@ -74,7 +74,7 @@
         <translation>Wyczyść mapy</translation>
     </message>
     <message>
-        <location filename="../odamexgameinfo.cpp" line="46"/>
+        <location filename="../odamexgameinfo.cpp" line="47"/>
         <source>Kill anyone who tries to leave the level</source>
         <translation>Zabij każdego, kto spróbuje opuścić poziom</translation>
     </message>

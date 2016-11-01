@@ -27,52 +27,77 @@
 <context>
     <name>FlagsPage</name>
     <message>
-        <location filename="../createserverdialogpages/flagspage.cpp" line="48"/>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="52"/>
         <source>Flags</source>
         <translation>Flagi</translation>
     </message>
     <message>
-        <location filename="../createserverdialogpages/flagspage.cpp" line="65"/>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="72"/>
+        <source>Zandronum 2</source>
+        <translation>Zandronum 2</translation>
+    </message>
+    <message>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="73"/>
+        <source>Zandronum 3 (beta)</source>
+        <translation>Zandronum 3 (beta)</translation>
+    </message>
+    <message>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="75"/>
         <source>None</source>
         <translation>Brak</translation>
     </message>
     <message>
-        <location filename="../createserverdialogpages/flagspage.cpp" line="66"/>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="76"/>
         <source>Old (ZDoom)</source>
         <translation>Stary (ZDoom)</translation>
     </message>
     <message>
-        <location filename="../createserverdialogpages/flagspage.cpp" line="67"/>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="77"/>
         <source>Hexen</source>
         <translation>Hexen</translation>
     </message>
     <message>
-        <location filename="../createserverdialogpages/flagspage.cpp" line="68"/>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="78"/>
         <source>Strife</source>
         <translation>Strife</translation>
     </message>
     <message>
-        <location filename="../createserverdialogpages/flagspage.cpp" line="121"/>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="134"/>
         <source>Default</source>
         <translation>Domyślnie</translation>
     </message>
     <message>
-        <location filename="../createserverdialogpages/flagspage.cpp" line="122"/>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="135"/>
         <source>No</source>
         <translation>Nie</translation>
     </message>
     <message>
-        <location filename="../createserverdialogpages/flagspage.cpp" line="123"/>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="136"/>
         <source>Yes</source>
         <translation>Tak</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1752"/>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="256"/>
+        <source>Unknown Zandronum version in the config. Reverting to default.</source>
+        <translation>Nieznana wersja Zandronum w pliku konfiguracyjnym. Używam wartości domyślnej.</translation>
+    </message>
+    <message>
+        <location filename="../createserverdialogpages/flagspage.cpp" line="283"/>
+        <source>Tried to set unknown Zandronum version. Reverting to default.</source>
+        <translation>Próbowano ustawić nieznaną wersję Zandronum. Powracam do wartości domyślnej.</translation>
+    </message>
+    <message>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1821"/>
         <source>Form</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1754"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1822"/>
+        <source>Game version:</source>
+        <translation>Wersja gry:</translation>
+    </message>
+    <message>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1824"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -87,263 +112,268 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;(+sv_defaultdmflags)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1761"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1831"/>
         <source>Default DMFlags</source>
         <translation>Domyślne DMFlagi</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1762"/>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1845"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1832"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1916"/>
         <source>Environment</source>
         <translation>Środowisko</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1763"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1833"/>
         <source>Falling damage:</source>
         <translation>Ból od upadku:</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1764"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1834"/>
         <source>No monsters</source>
         <translation>Brak potworów</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1765"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1835"/>
         <source>Items respawn</source>
         <translation>Odradzanie przedmiotów</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1766"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1836"/>
         <source>Barrels respawn</source>
         <translation>Odradzanie beczek</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1768"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1838"/>
         <source>Respawn invulnerability and invisibility spheres.</source>
         <translation>Odradzanie kul nieśmiertelności i niewidzialności.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1770"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1840"/>
         <source>Mega powerups respawn</source>
-        <translation>Odradzanie mega-dopalaczy</translation>
+        <translation>Odradzanie mega-powerupów</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1771"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1841"/>
         <source>Teams</source>
         <translation>Drużyny</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1772"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1842"/>
         <source>Server picks teams</source>
         <translation>Serwer wybiera drużyny</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1773"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1843"/>
         <source>Players can&apos;t switch teams</source>
         <translation>Gracze nie mogą zmieniać drużyn</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1774"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1844"/>
         <source>Keep teams after a map change</source>
         <translation>Zachowuj drużyny po zmianie mapy</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1775"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1845"/>
         <source>Hide allies on the automap</source>
         <translation>Ukrywaj sojuszników na automapie</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1776"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1846"/>
         <source>Don&apos;t let players spy on allies</source>
         <translation>Nie pozwalaj graczom podglądać sojuszników</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1777"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1847"/>
         <source>Instant flag/skull return</source>
         <translation>Natychmiastowy zwrot flagi/czaszki</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1779"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1849"/>
         <source>Don&apos;t use ping-based backwards reconciliation for player-fired hitscans and rails.</source>
         <translation>Nie używaj opartego na pingu wstecznego poprawiania dla wystrzelonych przez graczy hitscanów i promieni.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1781"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1851"/>
         <source>No unlagged</source>
         <translation>Wyłącz unlagged</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1783"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1853"/>
         <source>Apply lmsspectatorsettings in all game modes.</source>
         <translation>Zastosuj lmsspectatorsettings we wszystkich trybach gry.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1785"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1855"/>
         <source>Always apply LMS spectator settings</source>
         <translation>Zawsze stostuj ustawienia widzów LMS</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1787"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1857"/>
         <source>Enforces clients not to show medals, i.e. behave as if cl_medals == 0.</source>
         <translation>Wymusza na klientach nie pokazywanie medali, tak jakby cl_medals == 0.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1789"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1859"/>
         <source>No medals</source>
         <translation>Brak medali</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1790"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1860"/>
         <source>General</source>
         <translation>Ogólne</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1791"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1861"/>
         <source>Disallow</source>
         <translation>Nie pozwalaj</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1792"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1862"/>
         <source>Suicide</source>
         <translation>Samobójstwo</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1793"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1863"/>
         <source>Respawn</source>
         <translation>Respawn</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1795"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1865"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;P_RadiusAttack doesn&apos;t give players any z-momentum if the attack was made by a player. This essentially disables rocket jumping.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;P_RadiusAttack nie nadaje graczom z-pędu jeżeli źródłem ataku jest sam gracz. To wyłącza skakanie na rakietach.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1797"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1867"/>
         <source>Rocket jump</source>
         <translation>Skakanie na rakietach</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1798"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1868"/>
         <source>Taunt</source>
         <translation>Okrzyki</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1799"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1869"/>
+        <source>Item drop</source>
+        <translation>Upuszczanie przedmiotów</translation>
+    </message>
+    <message>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1870"/>
         <source>Use automap</source>
         <translation>Używanie automapy</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1800"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1871"/>
         <source>Turn off translucency</source>
         <translation>Wyłączanie przezroczystości</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1801"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1872"/>
         <source>Use crosshairs</source>
         <translation>Używanie celownika</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1802"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1873"/>
         <source>Use custom GL lighting settings</source>
         <translation>Używanie własnych ustawień światła w OpenGL</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1804"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1875"/>
         <source>Enforces clients not to identify players, i.e. behave as if cl_identifytarget == 0.</source>
         <translation>Wymusza na klientach brak identyfikacji graczy, tak jakby cl_identifytarget == 0.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1806"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1877"/>
         <source>Target identify</source>
         <translation>Identyfikacja celów</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1808"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1879"/>
         <source>Enforces clients not to draw coop info, i.e. behave as if cl_drawcoopinfo == 0.</source>
         <translation>Wymusza na klientach brak rysowania informacji w coopie, tak jakby cl_drawcoopinfo == 0.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1810"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1881"/>
         <source>Display coop info</source>
         <translation>Wyświetlanie informacji coop</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1811"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1882"/>
         <source>Use autoaim</source>
         <translation>Używanie autocelowania</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1813"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1884"/>
         <source>Only let the arbitrator set FOV (for all players)</source>
         <translation>Tylko serwer może ustalić FOV (wszystkim graczom)</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1815"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1886"/>
         <source>Use FOV</source>
         <translation>Używanie FOV</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1816"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1887"/>
         <source>Use freelook</source>
         <translation>Patrzenia góra-dół</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1818"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1889"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Players are not allowed to use the land CCMD. Because of Zandronum&apos;s default amount of air control, flying players can get a huge speed boast with the land CCMD. Disallowing players to land, allows to keep the default air control most people are used to while not giving flying players too much of an advantage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gracze nie mogą używać komendy konsolowej land. Ze względu na domyślną swobodę kontroli w powietrzu, latający gracze mogą ogromnie przyspieszać za pomocą komendy land. Zabranianie graczom lądować pozwala zachować domyślną kontrolę w powietrzu, do której gracze są przyzwyczajeni, nie dając im jednocześnie znacznej przewagi.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1820"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1891"/>
         <source>Use &apos;land&apos; console command</source>
         <translation>Używania komendy &apos;land&apos;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1822"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1893"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Don&apos;t allow players to change how strongly will their screen flash when they get hit.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zabroń graczom zmieniać, jak mocno zabłyśnie ich ekran, gdy otrzymają obrażenia.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1824"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1895"/>
         <source>Change bloodied screen brightness</source>
         <translation>Zmiana jasności zakrwawionego ekranu</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1825"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1896"/>
         <source>Abilities</source>
         <translation>Zdolności</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1826"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1897"/>
         <source>Jumping:</source>
         <translation>Skakanie:</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1827"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1898"/>
         <source>Crouching:</source>
         <translation>Kucanie:</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1828"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1899"/>
         <source>Infinite inventory</source>
         <translation>Nieskończony ekwipunek</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1829"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1900"/>
         <source>Infinite ammo</source>
         <translation>Nieskończona amunicja</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1831"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1902"/>
         <source>Like Quake 3</source>
         <translation>Jak w Quake 3</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1833"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1904"/>
         <source>Slowly lose health when over 100%</source>
         <translation>Powoli trać zdrowie powyżej 100%</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1834"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1905"/>
         <source>Can use chasecam</source>
         <translation>Można używać kamery z 3 osoby</translation>
     </message>
@@ -352,669 +382,685 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Zabroń celowania góra-dól z BFG w grach wieloosobowych.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1835"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1906"/>
         <source>Allow BFG freeaiming</source>
         <translation>Pozwól na celowanie góra-dół z BFG</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1836"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1907"/>
         <source>Behavior</source>
         <translation>Zachowanie</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1837"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1908"/>
         <source>Players can walk through each other</source>
         <translation>Gracze mogą przenikać przez siebie</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1838"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1909"/>
         <source>Allies can walk through each other</source>
         <translation>Sojusznicy mogą przez siebie przechodzić</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1839"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1910"/>
         <source>Players block each other normally</source>
         <translation>Gracze blokują się normalnie</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1840"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1911"/>
         <source>Don&apos;t check ammo when switching weapons</source>
         <translation>Nie sprawdzaj amunicji podczas zmiany broni</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1841"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1912"/>
         <source>Force inactive players to spectate after:</source>
         <translation>Wymuś tryb widza dla nieaktywnych graczy po:</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1842"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1913"/>
         <source>min.</source>
         <translation>min.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1843"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1914"/>
         <source>Players</source>
         <translation>Gracze</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1844"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1915"/>
         <source>Score damage, not kills</source>
         <translation>Nagradzaj obrażenia, nie zabójstwa</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1846"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1917"/>
         <source>Don&apos;t spawn Deathmatch weapons</source>
         <translation>Nie spawnuj broni z Deathmatcha</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1848"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1919"/>
         <source>Spawn map actors in coop as if the game was single player.</source>
         <translation>Spawnuj aktorów na mapie w trybie coop, tak jakby była to gra single player.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1850"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1921"/>
         <source>Don&apos;t spawn any multiplayer actor in coop</source>
         <translation>Nie spawnuj żadnego aktora wieloosobowego w coopie</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1851"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1922"/>
         <source>Monsters...</source>
         <translation>Potwory...</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1852"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1923"/>
         <source>are fast (like Nightmare)</source>
         <translation>są szybkie (jak na Nightmare)</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1853"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1924"/>
         <source>respawn (like Nightmare)</source>
         <translation>odradzają się (jak na Nightmare)</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1854"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1925"/>
         <source>must be killed to enable exit</source>
         <translation>muszą zostać zabite aby można było wyjść</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1855"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1926"/>
         <source>Kill percentage:</source>
         <translation>Procent zabójstw:</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1857"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1928"/>
         <source>Multiplier of damage dealt by monsters.</source>
         <translation>Mnożnik obrażeń zadawanych przez potwory.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1859"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1930"/>
         <source>Damage factor:</source>
         <translation>Mnożnik obrażeń:</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1861"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1932"/>
         <source>&lt;html&gt;&lt;body&gt;&lt;p&gt;Multiplier of damage dealt by monsters.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;body&gt;&lt;p&gt;Mnożnik obrażeń zadawanych przez potwory.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1863"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1934"/>
         <source>Kill all monsters spawned by a boss cube when the boss dies</source>
         <translation>Zabij wszystkie potwory spawnięte przez kostkę bossa gdy boss zginie</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1864"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1935"/>
         <source>On player death...</source>
         <translation>Gdy gracz zginie...</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1865"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1936"/>
         <source>Respawn where died</source>
         <translation>Odradza się tam, gdzie zginął</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1866"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1937"/>
         <source>Lose all inventory</source>
         <translation>Traci cały ekwipunek</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1867"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1938"/>
         <source>Lose armor</source>
         <translation>Traci zbroję</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1868"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1939"/>
         <source>Lose keys</source>
         <translation>Traci klucze</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1869"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1940"/>
         <source>Lose powerups</source>
-        <translation>Traci dopalacze</translation>
+        <translation>Traci powerupy</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1870"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1941"/>
         <source>Lose weapons</source>
         <translation>Traci bronie</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1871"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1942"/>
         <source>Lose all ammo</source>
         <translation>Traci całą amunicję</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1872"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1943"/>
         <source>Lose half ammo</source>
         <translation>Traci połowę amunicji</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1873"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1944"/>
         <source>Share keys between players</source>
         <translation>Współdziel klucze pomiędzy graczami</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1874"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1945"/>
         <source>Cooperative</source>
         <translation>Kooperacja</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1875"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1946"/>
         <source>When players die, they...</source>
         <translation>Gdy gracze giną, to...</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1876"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1947"/>
         <source>Respawn automatically</source>
         <translation>Od razu się odradzają</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1877"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1948"/>
         <source>Drop their weapon</source>
         <translation>Upuszczają swoją broń</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1878"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1949"/>
         <source>Respawn farthest away from others</source>
         <translation>Odradzają się najdalej od innych</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1879"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1950"/>
         <source>Lose a frag</source>
         <translation>Tracą fraga</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1880"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1951"/>
         <source>Respawn with a shotgun</source>
-        <translation>Odradzają się z szotganem</translation>
+        <translation>Odradzają się z shotgunem</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1881"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1952"/>
         <source>Don&apos;t get respawn protection</source>
         <translation>Nie mają ochrony po respawnie</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1882"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1953"/>
         <source>When someone exits the level...</source>
         <translation>Gdy ktoś opuści poziom...</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1883"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1954"/>
         <source>Continue to the next map</source>
         <translation>Kontynuuj do następnej mapy</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1884"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1955"/>
         <source>Restart the current level</source>
         <translation>Restartuj obecny poziom</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1885"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1956"/>
         <source>Kill the player</source>
         <translation>Zabij tego gracza</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1886"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1957"/>
         <source>Keep frags after map change</source>
         <translation>Zachowuj fragi po zmianie mapy</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1887"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1958"/>
         <source>Weapons &amp;&amp; Ammo</source>
         <translation>Bronie i amunicja</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1888"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1959"/>
         <source>Weapons stay after pickup</source>
         <translation>Bronie nie znikają po podniesieniu</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1889"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1960"/>
         <source>Double ammo</source>
         <translation>Podwójna amunicja</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1890"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1961"/>
         <source>Don&apos;t spawn...</source>
         <translation>Nie spawnuj...</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1891"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1962"/>
         <source>Health</source>
         <translation>Zdrowia</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1892"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1963"/>
         <source>Armor</source>
         <translation>Zbroi</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1893"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1964"/>
         <source>Runes</source>
         <translation>Run</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1894"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1965"/>
         <source>Deathmatch</source>
         <translation>Deathmatch</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1895"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1966"/>
         <source>Weapons</source>
         <translation>Bronie</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1896"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1967"/>
         <source>Chainsaw</source>
         <translation>Piła</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1897"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1968"/>
         <source>Pistol</source>
         <translation>Pistolet</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1898"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1969"/>
         <source>Shotgun</source>
-        <translation>Szotgan</translation>
+        <translation>Shotgun</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1899"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1970"/>
         <source>Super shotgun</source>
         <translation>Dwururka</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1900"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1971"/>
         <source>Chaingun</source>
         <translation>Chaingun</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1901"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1972"/>
         <source>Minigun</source>
         <translation>Minigun</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1902"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1973"/>
         <source>Rocket launcher</source>
         <translation>Rakietnica</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1903"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1974"/>
         <source>Grenade launcher</source>
         <translation>Granatnik</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1904"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1975"/>
         <source>Plasma rifle</source>
         <translation>Plazmówka</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1905"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1976"/>
         <source>Railgun</source>
         <translation>Railgun</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1906"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1977"/>
         <source>lmsallowedweapons:</source>
         <translation>lsmallowedweapons:</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1907"/>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1909"/>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2047"/>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2050"/>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2052"/>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2054"/>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2055"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1978"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1980"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2121"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2124"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2126"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2128"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2129"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2131"/>
         <source>0</source>
         <translation>0</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1908"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1979"/>
         <source>lmsspectatorsettings:</source>
         <translation>lmsspectatorsettings:</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1910"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1981"/>
         <source>Spectators can...</source>
         <translation>Widzowie mogą...</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1911"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1982"/>
         <source>Talk to active players</source>
         <translation>Rozmawiać z żyjącymi graczami</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1912"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1983"/>
         <source>View the game</source>
         <translation>Oglądać grę</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1913"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1984"/>
         <source>LMS</source>
         <translation>LMS</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1915"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1986"/>
         <source>Enable buggier wall clipping so players can wallrun.</source>
         <translation>Włącz zbugowaną kolizję ze ścianami, aby gracze mogli robić wallrun.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1917"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1988"/>
         <source>Enable wall running</source>
         <translation>Włącz wall running</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1919"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1990"/>
         <source>Pickups are only heard locally.</source>
         <translation>Podniesione przedmioty słychać tylko lokalnie.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1921"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1992"/>
         <source>Don&apos;t let others hear pickups</source>
         <translation>Inni nie słyszą podniesień</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1922"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1993"/>
         <source>Allow instant respawn</source>
         <translation>Zezwól na natychmiastowy respawn</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1924"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1995"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disable stealth monsters, since doom2.exe didn&apos;t have them.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Note: this handles ZDoom&apos;s invisible monsters.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;THIS DOESN&apos;T AFFECT THE PARTIAL INVISIBILITY SPHERE IN ANY WAY. See &amp;quot;Monsters see semi-invisible players&amp;quot; for that.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wyłącz potwory &quot;stealth&quot;, ponieważ doom2.exe ich nie miało.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Uwaga: to odnosi się do niewidzialnych potworów z ZDooma.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;TO NIE WPŁYWA NA KULĘ POŁOWICZNEJ NIEWIDZIALNOŚCI W ŻADEN SPOSÓB. Użyj do tego ustawienia &amp;quot;Potwory widzą na wpół-niewidzialnych graczy&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1926"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1997"/>
         <source>Disable stealth monsters</source>
         <translation>Wyłącz potwory &quot;stealth&quot;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1928"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="1999"/>
         <source>Limit actors to one sound at a time.</source>
         <translation>Ogranicz aktorów do jednego dźwięku na raz.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1930"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2001"/>
         <source>Allow silent BFG trick</source>
         <translation>Pozwól na trick z cichym BFG</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1932"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2003"/>
         <source>Clients use the vanilla Doom weapon on pickup behavior.</source>
         <translation>Klienci używają zachowania z vanilla Dooma po podniesieniu broni.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1934"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2005"/>
         <source>Original weapon switch</source>
         <translation>Oryginalna zmiana broni</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1935"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2006"/>
         <source>Limited movement in the air</source>
         <translation>Ograniczone poruszanie w powietrzu</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1937"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2008"/>
         <source>This affects the partial invisibility sphere.</source>
         <translation>To wpływa na kulę połowicznej niewidzialności.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1939"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2010"/>
         <source>Monsters see semi-invisible players</source>
         <translation>Potwory widzą na wpół-niewidzialnych graczy</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1941"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2012"/>
         <source>Allow the map01 &quot;plasma bump&quot; bug.</source>
         <translation>Zezwól na błąd &quot;plasma bump&quot; z map01.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1943"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2014"/>
         <source>Plasma bump bug</source>
         <translation>Błąd plasma bump</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1944"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2015"/>
         <source>Any boss death activates map specials</source>
         <translation>Śmierć dowolnego bossa aktywuje speciale na mapie</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1945"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2016"/>
         <source>Friction/pushers/pullers affect Monsters</source>
         <translation>Tarcie/popychacze i ciągniki wpływają na potwory</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1947"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2018"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Crushed monsters are turned into gibs, rather than replaced by gibs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zgniecione potwory zamieniają się we flaki, a nie są przez nie zastępowane.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1949"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2020"/>
         <source>Crusher gibs by morphing, not replacement</source>
         <translation>Zgniatarka zmienia we flaki, zamiast podmieniać</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1950"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2021"/>
         <source>Block monster lines ignore friendly monsters</source>
         <translation>Linie blokujące potwory ignorują przyjazne potwory</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1951"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2022"/>
         <source>Find neighboring light level like Doom</source>
         <translation>Szukaj sąsiadującego poziomu światła jak w Doomie</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1953"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2024"/>
         <source>Use doom2.exe&apos;s original intermission screens/music.</source>
         <translation>Używaj muzyki i ekranów z doom2.exe podczas intermisji.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1955"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2026"/>
         <source>Use old intermission screens/music</source>
         <translation>Używaj starych intermisji</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1957"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2028"/>
         <source>Scrolling sectors are additive like in Boom.</source>
         <translation>Przesuwające się sektory dodają się jak w Boomie.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1959"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2030"/>
         <source>Scrolling sectors are additive</source>
         <translation>Przesuwające sektory dodają się</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1961"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2032"/>
         <source>Sector sounds use original method for sound origin.</source>
         <translation>Dźwięki sektorów używają oryginalnej metody pozycjonowania dźwięku.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1963"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2034"/>
         <source>Sector sounds use original method</source>
         <translation>Dźwięki sektorów używają oryginalnej metody</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1965"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2036"/>
         <source>Monsters cannot move when hanging over a dropoff.</source>
         <translation>Potwory utykają nad krawędziami.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1967"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2038"/>
         <source>No monsters dropoff move</source>
         <translation>Potwory utykają nad krawędziami</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1969"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2040"/>
         <source>Instantly moving floors are not silent.</source>
         <translation>Natychmiastowo poruszane podłogi nie są ciche.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1971"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2042"/>
         <source>Instantly moving floors aren&apos;t silent</source>
         <translation>Natychmiastowo poruszane podłogi nie są ciche</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1973"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2044"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clients send ucmd.buttons as &amp;quot;long&amp;quot; instead of as &amp;quot;byte&amp;quot; in CLIENTCOMMANDS_ClientMove. So far this is only necessary if the ACS function GetPlayerInput is used in a server side script to check for buttons bigger than BT_ZOOM. Otherwise this information is completely useless for the server and the additional net traffic to send it should be avoided.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Klienci wysyłają ucmd.buttons jako &amp;quot;long&amp;quot; zamiast jako &amp;quot;byte&amp;quot; w CLIENTCOMMANDS_ClientMove. Jak do tej pory, było to jedynie potrzebne w funkcji ACS GetPlayerInput, gdy jest ona użyta po stronie serwera do sprawdzenia przycisku większego niż BT_ZOOM. W każdym innym przypadku ta informacja jest całkowicie bezużyteczna dla serwera i powinno się unikać dodatkowego zużycia łącza.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1975"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2046"/>
         <source>Clients send full button info</source>
         <translation>Klienci wysyłają pełne info o przyciskach</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1977"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2048"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use Doom&apos;s random table instead of ZDoom&apos;s random number generator. Affects weapon damage among other things.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Używaj losowej tablicy z Dooma zamiast generatora liczb losowych z ZDooma. Wpływa to, między innymi, na obrażenia od broni.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1979"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2050"/>
         <source>Old random number generator</source>
         <translation>Stary generator liczb losowych</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1980"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2051"/>
         <source>Monsters can&apos;t be pushed off cliffs</source>
         <translation>Potwory nie mogą być wypchnięte przez przepaść</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1981"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2052"/>
         <source>Old damage radius (infinite height)</source>
         <translation>Obrażenia obszarowe mają nieskończoną wysokość</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1982"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2053"/>
         <source>Minotaur&apos;s floor flame explodes immediately when feet are clipped</source>
         <translation>Ogień podłogowy Minotaura eksploduje natychmiast gdy stopy są przycięte</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1983"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2054"/>
         <source>Original velocity calc. for A_Mushroom in Dehacked</source>
         <translation>Oryginalne obliczanie prędkości dla A_Mushroom w Dehacked</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1984"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2055"/>
         <source>Sprite sort order inverted for sprites of equal distance</source>
         <translation>Odwrócone sortowanie sprite&apos;ów gdy są w tej samej odległości</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1985"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2056"/>
         <source>Hitscans use original blockmap and hit check code</source>
         <translation>Hitscany używają oryginalnego kodu blockmap i detekcji trafień</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1986"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2057"/>
         <source>Draw polyobjects the old fashioned way</source>
         <translation>Rysuj polyobjekty w stary sposób</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1987"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2058"/>
         <source>Compatibility</source>
         <translation>Kompatybilność</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1988"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2059"/>
         <source>Use original missile clipping height</source>
         <translation>Używaj oryginalnej wysokości kolizji pocisków</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1989"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2060"/>
         <source>Use sector based sound target code</source>
         <translation>Używaj kodu celowania dźwiękiem opartego na sektorach</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1991"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2062"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Doom&apos;s hitscan tracing code ignores all lines with both sides in the same sector. ZDoom&apos;s does not. This option reverts to the original but less precise behavior. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Kod w Doomie odpowiedzialny za śledzenie hitscanów ignoruje wszystkie linie, które mają ten sam sektor po obu stronach. ZDoom tego nie robi. Ta opcja przywraca oryginalne, lecz mniej dokładne zachowanie. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1993"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2064"/>
         <source>Trace ignore lines w/ same sector on both sides</source>
         <translation>Trasowanie ignoruje linie o tym samym sektorze po obu stronach</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1994"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2065"/>
         <source>Limit deh.MaxHealth to health bonus</source>
         <translation>Ogranicz deh.MaxHealth do bonusu energii</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1996"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2067"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The scrolling floor specials in Heretic and Hexen move the player much faster than the actual texture scrolling speed. Enable this option to restore this effect. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Akcje przesuwające podłogę w Hereticu i Hexenie przesuwają graczy znacznie szybciej, niż teksturę. Włączenie tej opcji przywraca ten efekt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="1998"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2069"/>
         <source>Raven&apos;s scrollers use original speed</source>
         <translation>Przesuwniki Ravena używają oryginalnych prędkości</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2000"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2071"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add NOGRAVITY to actors named InvulnerabilitySphere, Soulsphere, Megasphere and BlurSphere when spawned by the map.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dodaj NOGRAVITY aktorom o nazwach InvulnerabilitySphere, Soulsphere, Megasphere i BlurSphere gdy są spawnowane przez mapę.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2002"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2073"/>
         <source>Add NOGRAVITY flag to spheres</source>
         <translation>Dodaj flagę NOGRAVITY kulom</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2004"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2075"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When a player leaves the game, don&apos;t stop any scripts of that player that are still running.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gdy gracz opuści grę, nie zatrzymuj skryptów, które są dla niego uruchomione.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2006"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2077"/>
         <source>Don&apos;t stop player scripts on disconnect</source>
         <translation>Nie zatrzymuj skryptów gracza po rozłączeniu</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2008"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2079"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If this is enabled, explosions cause a strong horizontal thrust like in old ZDoom versions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gdy jest to włączone, eksplozje silnie popychają w poziomie jak w starych wersjach ZDooma.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2010"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2081"/>
         <source>Old ZDoom horizontal thrust</source>
         <translation>Popychanie poziome ze starego ZDooma</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2012"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2083"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If this is enabled, non-SOLID things like flags fall through bridges (as they used to do in old ZDoom versions).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
 </source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gdy to jest włączone, nie-SOLIDne obiekty jak flagi wpadają pod mosty (tak jak to było w starych wersjach ZDooma).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2015"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2086"/>
         <source>Old ZDoom bridge drops</source>
         <translation>Upuszczanie pod most ze starego ZDooma</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2017"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2088"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Uses old ZDoom jump physics, it&apos;s a minor bug in the gravity code that causes gravity application in the wrong place.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Używaj fizyki skoku ze starego ZDooma. To mały błąd w kodzie, który aplikuje grawitację nie w tym miejscu, co trzeba.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2051"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2095"/>
+        <source>Ignore compositing when drawing masked midtextures</source>
+        <translation>Ignoruj kompozycję podczas rysowania maskowanych midtekstur</translation>
+    </message>
+    <message>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2096"/>
+        <source>It is impossible to face directly NSEW</source>
+        <translation>Nie można obrócić się bezpośrednio w kierunku kardynalnym</translation>
+    </message>
+    <message>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2117"/>
+        <source>Use the same floor motion behavior as Doom</source>
+        <translation>Użyj takiego zachowania ruchu podłóg, jak w Doomie</translation>
+    </message>
+    <message>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2125"/>
         <source>zandronum compatflags</source>
         <translation>zandronum compatflags</translation>
     </message>
@@ -1031,112 +1077,112 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Używaj fizyki skoku ze starego ZDooma. To mały błąd w kodzie, który aplikuje grawitację nie w tym miejscu, co trzeba.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2019"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2090"/>
         <source>ZDoom 1.23B33 jump physics</source>
         <translation>Fizyka skoku z ZDooma 1.23B33</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2021"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2092"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;p&gt;Zandronum uses more tracers to fill in the gaps, this reverts it to vanilla&apos;s 3 tracer behavior&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;p&gt;Zandronum używa więcej promieni do wypełnienia dziur. To przywraca używanie tylko 3 promieni z vanilli.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2023"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2094"/>
         <source>Use vanilla autoaim tracer behavior</source>
         <translation>Trasowanie autocelowania takie jak w vanilli</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2025"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2098"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use Doom&apos;s shortest texture find behavior. This is requied by some WADs in MAP07.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Używaj najkrótszego wyszukiwania tekstury z Dooma. Jest to wymagane przez niektóre WADy w MAP07.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2027"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2100"/>
         <source>Find shortest textures like Doom</source>
         <translation>Wyszukuj najkrótszej tekstury jak w Doomie</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2028"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2101"/>
         <source>Limit pain elementals to 20 lost souls</source>
         <translation>Ogranicz pain elemental do 20 lost souls</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2029"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2102"/>
         <source>Spawned item drops on the floor</source>
         <translation>Spawnięte przedmioty spadają na podłogę</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2031"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2104"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Treat ACS scripts with the SCRIPTF_Net flag to be client side, i.e. executed on the clients, but not on the server.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Traktuj skrypty ACS z flagą SCRIPTF_Net jako skrypty po stronie klienta, tzn. wykonuj je u klientów, a nie na serwerze.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2033"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2106"/>
         <source>NET scripts are clientside</source>
         <translation>Skrypty NET są po stronie klienta</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2034"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2107"/>
         <source>Actors are infinitely tall</source>
         <translation>Nieskończenie wysocy aktorzy</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2036"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2109"/>
         <source>Don&apos;t fix loop index for stair building.</source>
         <translation>Nie naprawiaj indeksu pętli do budowania schodów.</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2038"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2111"/>
         <source>Use buggier stair building</source>
         <translation>Używaj zbugowanego budowania schodów</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2039"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2112"/>
         <source>Disable Boom door light effect</source>
         <translation>Wyłącz Boomowy efekt świateł z drzwi</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2040"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2113"/>
         <source>All special lines can drop use lines</source>
         <translation>Wszystkie specjalne linie mogą anulować używanie linii</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2041"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2114"/>
         <source>Original sound curve</source>
         <translation>Oryginalna krzywa dźwięku</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2042"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2115"/>
         <source>Disallow weapon change until fully drawn or hidden</source>
         <translation>Nie można zmieniać broni w trakcie wyciągania/chowania</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2043"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2116"/>
         <source>West spawns are silent</source>
         <translation>Zachodnie spawny są ciche</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2044"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2118"/>
         <source>Compatibility 2</source>
         <translation>Kompatybilność 2</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2045"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2119"/>
         <source>Voting</source>
         <translation>Głosowanie</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2046"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2120"/>
         <source>zandronum dmflags</source>
         <translation>zandronum dmflags</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2048"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2122"/>
         <source>dmflags</source>
         <translation>dmflags</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2049"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2123"/>
         <source>dmflags2</source>
         <translation>dmflags2</translation>
     </message>
@@ -1145,44 +1191,45 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">dmflags3</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_flagspage.h" line="2053"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2127"/>
         <source>compatflags</source>
         <translation>compatflags</translation>
     </message>
     <message>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_flagspage.h" line="2130"/>
         <source>compatflags2</source>
-        <translation type="obsolete">compatflags2</translation>
+        <translation>compatflags2</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../zandronumengineplugin.cpp" line="137"/>
+        <location filename="../zandronumengineplugin.cpp" line="141"/>
         <source>Time limit:</source>
         <translation>Limit czasu:</translation>
     </message>
     <message>
-        <location filename="../zandronumengineplugin.cpp" line="145"/>
+        <location filename="../zandronumengineplugin.cpp" line="149"/>
         <source>Frag limit:</source>
         <translation>Limit fragów:</translation>
     </message>
     <message>
-        <location filename="../zandronumengineplugin.cpp" line="156"/>
+        <location filename="../zandronumengineplugin.cpp" line="160"/>
         <source>Point limit:</source>
         <translation>Limit punktów:</translation>
     </message>
     <message>
-        <location filename="../zandronumengineplugin.cpp" line="163"/>
+        <location filename="../zandronumengineplugin.cpp" line="167"/>
         <source>Win limit:</source>
         <translation>Limit zwycięstw:</translation>
     </message>
     <message>
-        <location filename="../zandronumengineplugin.cpp" line="168"/>
+        <location filename="../zandronumengineplugin.cpp" line="172"/>
         <source>Duel limit:</source>
         <translation>Limit pojedynków:</translation>
     </message>
     <message>
-        <location filename="../zandronumengineplugin.cpp" line="171"/>
+        <location filename="../zandronumengineplugin.cpp" line="175"/>
         <source>Max. lives:</source>
         <translation>Maks. żyć:</translation>
     </message>
@@ -1195,12 +1242,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TestingProgressDialog</name>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="398"/>
+        <location filename="../zandronumbinaries.cpp" line="447"/>
         <source>Downloading testing binaries...</source>
         <translation>Pobieram binarki testowe ...</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="398"/>
+        <location filename="../zandronumbinaries.cpp" line="447"/>
         <source>Cancel</source>
         <translation>Anuluj</translation>
     </message>
@@ -1208,94 +1255,1365 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>VotingSetupWidget</name>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="221"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="221"/>
         <source>Form</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="222"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="222"/>
         <source>Use this page</source>
         <translation>Używaj tej strony</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="223"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="223"/>
         <source>Who can vote</source>
         <translation>Kto może głosować</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="224"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="224"/>
         <source>All can vote</source>
         <translation>Wszyscy mogą głosować</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="225"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="225"/>
         <source>No one can vote</source>
         <translation>Nikt nie może głosować</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="226"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="226"/>
         <source>Spectators can&apos;t vote</source>
         <translation>Widzowie nie mogą głosować</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="227"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="227"/>
         <source>Minimum number of players required to call a vote:</source>
         <translation>Minimalna ilość graczy wymagana do głosu:</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="228"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="228"/>
         <source>Allow specific votes</source>
         <translation>Zezwól na głosowanie</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="230"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="230"/>
         <source>pointlimit</source>
         <translation>limit punktów</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="229"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="229"/>
         <source>duellimit</source>
         <translation>limit pojedynków</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="231"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="231"/>
         <source>timelimit</source>
         <translation>limit czasu</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="232"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="232"/>
         <source>winlimit</source>
         <translation>limit zwycięstw</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="233"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="233"/>
         <source>changemap</source>
         <translation>changemap</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="234"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="234"/>
         <source>kick</source>
         <translation>kopnięcie</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="235"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="235"/>
         <source>map</source>
         <translation>map</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="236"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="236"/>
         <source>fraglimit</source>
         <translation>limit fragów</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="237"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="237"/>
         <source>force players to spectate</source>
         <translation>wymuszanie oglądania na graczach</translation>
     </message>
     <message>
-        <location filename="../../../../../visual2013/src/plugins/zandronum/ui_votingsetupwidget.h" line="238"/>
+        <location filename="../../../../../vs2013_5_7_0/src/plugins/zandronum/ui_votingsetupwidget.h" line="238"/>
         <source>Vote flooding protection enabled</source>
         <translation>Chroń przed floodowaniem głosowaniami</translation>
+    </message>
+</context>
+<context>
+    <name>Zandronum2::Dmflags</name>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="37"/>
+        <source>Use Doom&apos;s shortest texture behavior</source>
+        <translation>Użyj Doomowego zachowania najkrótszej tekstury</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="39"/>
+        <source>Don&apos;t fix loop index for stair building</source>
+        <translation>Nie naprawiaj indeksu pętli do budowania schodów</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="41"/>
+        <source>Pain elemental is limited to 20 lost souls</source>
+        <translation>Pain elemental jest ograniczony do 20 lost souls</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="43"/>
+        <source>Pickups are only heard locally</source>
+        <translation>Podniesienia przedmiotów słychać tylko lokalnie</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="45"/>
+        <source>Infinitely tall actors</source>
+        <translation>Nieskończenie wysocy aktorzy</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="47"/>
+        <source>Limit actors to only one sound</source>
+        <translation>Ogranicz aktorów do tylko jednego dźwięku</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="49"/>
+        <source>Enable wallrunning</source>
+        <translation>Włącz wallrunning</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="51"/>
+        <source>Dropped items spawn on floor</source>
+        <translation>Upuszczane przedmioty tworzone są na podłodze</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="53"/>
+        <source>Special lines block use line</source>
+        <translation>Linie specjalne blokują użycie linii</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="55"/>
+        <source>Disable BOOM local door light effect</source>
+        <translation>Wyłącz efekt lokalnego światła drzwi z BOOMa</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="57"/>
+        <source>Raven&apos;s scrollers use their original speed</source>
+        <translation>Przewijacze Ravena używają oryginalnych prędkości</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="59"/>
+        <source>Use sector based sound target code</source>
+        <translation>Używaj kodu celowania dźwięków opartego na sektorach</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="61"/>
+        <source>Limit dehacked MaxHealth to health bonus</source>
+        <translation>Ogranicz maks. zdrowie z dehacked do bonusowego zdrowia</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="63"/>
+        <source>Trace ignores lines with the same sector on both sides</source>
+        <translation>Śledzenie ignoruje linie z tym samym sektorem po obu stronach</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="65"/>
+        <source>Monsters can not move when hanging over a drop off</source>
+        <translation>Potwory utykają gdy wiszą nad przepaścią</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="67"/>
+        <source>Scrolling sectors are additive like Boom</source>
+        <translation>Przesuwające sektory dodają się jak w Boomie</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="69"/>
+        <source>Monsters can see semi-invisible players</source>
+        <translation>Potwory mogą widzieć na-wpół-niewidzialnych graczy</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="71"/>
+        <source>Instantly moving floors are not silent</source>
+        <translation>Natychmiastowo ruszające się podłogi nie są ciche</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="73"/>
+        <source>Sector sounds use original method for sound origin</source>
+        <translation>Dźwięki sektorów używają oryginalnej metody pozycjonowania dźwięku</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="75"/>
+        <source>Use original Doom heights for clipping against projectiles</source>
+        <translation>Używaj oryginalnych wysokości z Dooma podczas kolizji z pociskami</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="77"/>
+        <source>Monsters can&apos;t be pushed over dropoffs</source>
+        <translation>Potwory nie mogą być wypchnięte przez przepaść</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="79"/>
+        <source>Any monster which calls BOSSDEATH counts for level specials</source>
+        <translation>Każdy potwór, który wywołuje BOSSDEATH liczy się dla specjali na poziomie</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="81"/>
+        <source>Minotaur&apos;s floor flame is exploded immediately when feet are clipped</source>
+        <translation>Ogień podłogowy Minotaura eksploduje natychmiast gdy stopy są przycięte</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="83"/>
+        <source>Force original velocity calculations for A_Mushroom in Dehacked mods</source>
+        <translation>Oryginalne obliczanie prędkości dla A_Mushroom w Dehacked</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="85"/>
+        <source>Monsters are affected by friction and pushers/pullers</source>
+        <translation>Tarcie oraz popychacze i ciągniki wpływają na potwory</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="87"/>
+        <source>Crushed monsters are turned into gibs, rather than replaced by gibs</source>
+        <translation>Zgniecione potwory zamieniają się we flaki, a nie są przez nie zastępowane</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="89"/>
+        <source>Friendly monsters aren&apos;t blocked by monster-blocking lines</source>
+        <translation>Linie blokujące potwory ignorują przyjazne potwory</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="91"/>
+        <source>Invert sprite sorting order for sprites of equal distance</source>
+        <translation>Odwrócone sortowanie sprite&apos;ów gdy są w tej samej odległości</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="93"/>
+        <source>Hitscans use original blockmap and hit check code</source>
+        <translation>Hitscany używają oryginalnego kodu blockmap i detekcji trafień</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="95"/>
+        <source>Find neighboring light level like like Doom</source>
+        <translation>Szukaj sąsiadującego poziomu światła jak w Doomie</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="97"/>
+        <source>Draw polyobjects the old fashioned way</source>
+        <translation>Rysuj polyobjecty w stary sposób</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="107"/>
+        <source>Net scripts are client side</source>
+        <translation>Skrypty NET są po stronie klienta</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="109"/>
+        <source>Clients send full button info</source>
+        <translation>Klienci wysyłają pełne info o przyciskach</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="111"/>
+        <source>Players can&apos;t use &apos;land&apos; CCMD</source>
+        <translation>Gracze nie mogą używać komendy &apos;land&apos;</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="114"/>
+        <source>Use Doom&apos;s original random number generator</source>
+        <translation>Używaj oryginalnego generatora liczb losowych z Dooma</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="116"/>
+        <source>Spheres have NOGRAVITY flag</source>
+        <translation>Kule mają flagę NOGRAVITY</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="119"/>
+        <source>Don&apos;t stop player scripts on disconnect</source>
+        <translation>Nie zatrzymuj skryptów gracza po rozłączeniu</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="122"/>
+        <source>Use horizontal explosion thrust of old ZDoom versions</source>
+        <translation>Eksplozje popychają w poziomie jak w starym ZDoomie</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="125"/>
+        <source>Non-SOLID things fall through invisible bridges</source>
+        <translation>Nie-SOLIDne obiekty przenikają przez aktorów mostu</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="127"/>
+        <source>Use old ZDoom jump physics</source>
+        <translation>Fizyka skoku ze starego ZDooma</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="130"/>
+        <source>Disallow weapon change when in mid raise/lower</source>
+        <translation>Nie można zmieniać broni w trakcie wyciągania/chowania</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="132"/>
+        <source>Use vanilla&apos;s autoaim tracer behavior</source>
+        <translation>Trasowanie autocelowania takie jak w vanilli</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="134"/>
+        <source>West spawns are silent</source>
+        <translation>Zachodnie spawny są ciche</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="136"/>
+        <source>Limited movement in the air</source>
+        <translation>Ograniczone poruszanie w powietrzu</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="138"/>
+        <source>Allow map01 &quot;plasma bump&quot; bug</source>
+        <translation>Pozwól na błąd &quot;plasma bump&quot; z map01</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="140"/>
+        <source>Allow instant respawn after death</source>
+        <translation>Pozwól na natychmiastowy respawn po śmierci</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="142"/>
+        <source>Disable taunting</source>
+        <translation>Wyłącz okrzyki</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="144"/>
+        <source>Use doom2.exe&apos;s original sound curve</source>
+        <translation>Używaj krzywej dźwięku z doom2.exe</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="146"/>
+        <source>Use original doom2 intermission music</source>
+        <translation>Używaj oryginalnej (doom2) muzyki podczas intermisji</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="148"/>
+        <source>Disable stealth monsters</source>
+        <translation>Wyłącz potwory &quot;stealth&quot;</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="150"/>
+        <source>Radius damage has infinite height</source>
+        <translation>Obrażenia obszarowe mają nieskończoną wysokość</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="152"/>
+        <source>Disable crosshair</source>
+        <translation>Wyłącz celownik</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="154"/>
+        <source>Force weapon switch</source>
+        <translation>Wymuś zmianę broni</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="162"/>
+        <source>Do not spawn health items (DM)</source>
+        <translation>Nie spawnuj przedmiotów ze zdrowiem (DM)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="164"/>
+        <source>Do not spawn powerups (DM)</source>
+        <translation>Nie spawnuj powerupów (DM)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="166"/>
+        <source>Weapons remain after pickup (DM)</source>
+        <translation>Bronie zostają po podniesieniu (DM)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="168"/>
+        <source>Falling damage (old ZDoom)</source>
+        <translation>Upadek boli (stary ZDoom)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="170"/>
+        <source>Falling damage (Hexen)</source>
+        <translation>Upadek boli (Hexen)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="172"/>
+        <source>Falling damage (Strife)</source>
+        <translation>Upadek boli (Strife)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="174"/>
+        <source>Stay on same map when someone exits (DM)</source>
+        <translation>Nie zmieniaj mapy gdy ktoś ją ukończy (DM)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="176"/>
+        <source>Spawn players as far as possible (DM)</source>
+        <translation>Spawnuj graczy jak najdalej od siebie (DM)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="178"/>
+        <source>Automatically respawn dead players (DM)</source>
+        <translation>Automatycznie respawnuj martwych graczy (DM)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="180"/>
+        <source>Don&apos;t spawn armor (DM)</source>
+        <translation>Nie spawnuj zbroi (DM)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="182"/>
+        <source>Kill anyone who tries to exit the level (DM)</source>
+        <translation>Zabijaj graczy gdy aktywują wyjście (DM)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="184"/>
+        <source>Infinite ammo</source>
+        <translation>Nieskończona amunicja</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="186"/>
+        <source>No monsters</source>
+        <translation>Brak potworów</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="188"/>
+        <source>Monsters respawn</source>
+        <translation>Potwory odradzają się</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="190"/>
+        <source>Items other than invuln. and invis. respawn</source>
+        <translation>Przedmioty (oprócz nieśmier. i niewidz.) się odnawiają</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="192"/>
+        <source>Fast monsters</source>
+        <translation>Szybkie potwory</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="194"/>
+        <source>No jumping</source>
+        <translation>Brak skoku</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="196"/>
+        <source>No freelook</source>
+        <translation>Brak patrzenia góra-dół</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="198"/>
+        <source>Respawn invulnerability and invisibility</source>
+        <translation>Odradzaj nieśmiertelność i niewidzialność</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="200"/>
+        <source>Arbitrator FOV</source>
+        <translation>FOV ustalony z góry</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="202"/>
+        <source>No multiplayer weapons in cooperative</source>
+        <translation>Wyłącz bronie multiplayer w kooperacji</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="204"/>
+        <source>No crouching</source>
+        <translation>Brak kucania</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="206"/>
+        <source>Lose all old inventory on respawn (COOP)</source>
+        <translation>Zabieraj cały ekwipunek po odrodzeniu (COOP)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="208"/>
+        <source>Lose keys on respawn (COOP)</source>
+        <translation>Zabieraj klucze po odrodzeniu (COOP)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="210"/>
+        <source>Lose weapons on respawn (COOP)</source>
+        <translation>Zabieraj bronie po odrodzeniu (COOP)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="212"/>
+        <source>Lose armor on respawn (COOP)</source>
+        <translation>Zabieraj zbroję po odrodzeniu (COOP)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="214"/>
+        <source>Lose powerups on respawn (COOP)</source>
+        <translation>Zabieraj powerupy po odrodzeniu (COOP)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="216"/>
+        <source>Lose ammo on respawn (COOP)</source>
+        <translation>Zabieraj amunicję po odrodzeniu (COOP)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="218"/>
+        <source>Lose half your ammo on respawn (COOP)</source>
+        <translation>Zabieraj połowę amunicji po odrodzeniu (COOP)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="221"/>
+        <source>Jumping allowed</source>
+        <translation>Skakanie dozwolone</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="223"/>
+        <source>Crouching allowed</source>
+        <translation>Kucanie dozwolone</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="231"/>
+        <source>Drop weapons upon death</source>
+        <translation>Upuszczaj bronie po śmierci</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="233"/>
+        <source>Don&apos;t spawn runes</source>
+        <translation>Nie spawnuj run</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="235"/>
+        <source>Instantly return flags (ST/CTF)</source>
+        <translation>Natychmiastowo zwracaj flagi (ST/CTF)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="237"/>
+        <source>Don&apos;t allow players to switch teams</source>
+        <translation>Nie pozwalaj graczom na zmianę drużyn</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="239"/>
+        <source>Players are automatically assigned teams</source>
+        <translation>Gracze są automatycznie przydzielani do drużyn</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="241"/>
+        <source>Double the amount of ammo given</source>
+        <translation>Podwójna amunicja</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="243"/>
+        <source>Players slowly lose health over 100% like Quake</source>
+        <translation>Gracze powoli tracą zdrowie, gdy powyżej 100%</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="245"/>
+        <source>Allow BFG freeaiming</source>
+        <translation>Zezwól na celowanie BFG</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="247"/>
+        <source>Barrels respawn</source>
+        <translation>Odradzaj beczki</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="249"/>
+        <source>No respawn protection</source>
+        <translation>Nie chroń po odrodzeniu</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="251"/>
+        <source>All players start with a shotgun</source>
+        <translation>Wszyscy gracze dostają shotguna</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="253"/>
+        <source>Players respawn where they died (COOP)</source>
+        <translation>Gracze odradzają się tam, gdzie zginęli (COOP)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="255"/>
+        <source>Don&apos;t clear frags after each level</source>
+        <translation>Nie resetuj fragów po ukończeniu poziomu</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="257"/>
+        <source>Player can&apos;t respawn</source>
+        <translation>Gracz nie może się odrodzić</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="259"/>
+        <source>Lose a frag when killed</source>
+        <translation>Zabieraj fraga w momencie śmierci</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="261"/>
+        <source>Infinite inventory</source>
+        <translation>Nieskończony ekwipunek</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="263"/>
+        <source>All monsters must be killed before exiting</source>
+        <translation>Wszystkie potwory muszą zostać zabite przed wyjściem</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="265"/>
+        <source>Players can&apos;t see the automap</source>
+        <translation>Gracze nie widzą automapy</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="267"/>
+        <source>Allies can&apos;t be seen on the automap</source>
+        <translation>Sojusznicy są niewidoczni na automapie</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="269"/>
+        <source>You can&apos;t spy allies</source>
+        <translation>Nie możesz podglądać sojuszników</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="271"/>
+        <source>Players can use chase cam</source>
+        <translation>Można używać kamery z trzeciej osoby</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="273"/>
+        <source>Players can&apos;t suicide</source>
+        <translation>Gracze nie mogą popełniać samobójstwa</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="275"/>
+        <source>Players can&apos;t use autoaim</source>
+        <translation>Gracze nie mogą używać autocelowania</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="277"/>
+        <source>Don&apos;t check ammo when switching weapons</source>
+        <translation>Nie sprawdzaj amunicji podczas zmiany broni</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="279"/>
+        <source>Kill all monsters spawned by a boss cube when the boss dies</source>
+        <translation>Zabij wszystkie potwory spawnięte przez kostkę bossa gdy boss zginie</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="287"/>
+        <source>Clients can&apos;t identify targets</source>
+        <translation>Klienci nie mogą identyfikować celów</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="290"/>
+        <source>lmsspectatorsettings applied in all game modes</source>
+        <translation>Zastosuj lmsspectatorsettings we wszystkich trybach gry</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="292"/>
+        <source>Clients can&apos;t draw coop info</source>
+        <translation>Klienci nie mogą rysować informacji o kooperacji</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="294"/>
+        <source>Unlagged is disabled</source>
+        <translation>Unlagged jest wyłączone</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="296"/>
+        <source>Players don&apos;t block each other</source>
+        <translation>Gracze nie mogą się nawzajem blokować</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="298"/>
+        <source>Clients don&apos;t show medals</source>
+        <translation>Klienci nie pokazują medali</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="300"/>
+        <source>Keys are shared between players</source>
+        <translation>Klucze są współdzielone pomiędzy graczami</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="302"/>
+        <source>Player teams are preserved between maps</source>
+        <translation>Gracze są w tych samych drużynach po zmianie mapy</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="304"/>
+        <source>Force OpenGL defaults</source>
+        <translation>Wymuś domyślne ustawienia OpenGL</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="306"/>
+        <source>No rocket jumping</source>
+        <translation>Wyłącz skakanie na rakietach</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="308"/>
+        <source>Award damage instead of kills</source>
+        <translation>Nagradzaj obrażenia, nie zabójstwa</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="310"/>
+        <source>Force drawing alpha</source>
+        <translation>Wymuś rysowanie przezroczystości</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="312"/>
+        <source>Don&apos;t spawn multiplayer things</source>
+        <translation>Nie spawnuj aktorów wieloosobowych</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="315"/>
+        <source>Force blood screen brightness on clients to emulate vanilla</source>
+        <translation>Wymuszaj na klientach jasność zakrwawionego ekranu taką, jak w vanilli</translation>
+    </message>
+    <message>
+        <location filename="../zandronum2dmflags.cpp" line="317"/>
+        <source>Teammates don&apos;t block each other</source>
+        <translation>Członkowie drużyny nie mogą się nawzajem blokować</translation>
+    </message>
+</context>
+<context>
+    <name>Zandronum3::Dmflags</name>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="37"/>
+        <source>Use Doom&apos;s shortest texture behavior</source>
+        <translation>Użyj Doomowego zachowania najkrótszej tekstury</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="39"/>
+        <source>Don&apos;t fix loop index for stair building</source>
+        <translation>Nie naprawiaj indeksu pętli do budowania schodów</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="41"/>
+        <source>Pain elemental is limited to 20 lost souls</source>
+        <translation>Pain elemental jest ograniczony do 20 lost souls</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="43"/>
+        <source>Pickups are only heard locally</source>
+        <translation>Podniesienia przedmiotów słychać tylko lokalnie</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="45"/>
+        <source>Infinitely tall actors</source>
+        <translation>Nieskończenie wysocy aktorzy</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="47"/>
+        <source>Limit actors to only one sound</source>
+        <translation>Ogranicz aktorów do tylko jednego dźwięku</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="49"/>
+        <source>Enable wallrunning</source>
+        <translation>Włącz wallrunning</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="51"/>
+        <source>Dropped items spawn on floor</source>
+        <translation>Upuszczane przedmioty tworzone są na podłodze</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="53"/>
+        <source>Special lines block use line</source>
+        <translation>Linie specjalne blokują użycie linii</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="55"/>
+        <source>Disable BOOM local door light effect</source>
+        <translation>Wyłącz efekt lokalnego światła drzwi z BOOMa</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="57"/>
+        <source>Raven&apos;s scrollers use their original speed</source>
+        <translation>Przewijacze Ravena używają oryginalnych prędkości</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="59"/>
+        <source>Use sector based sound target code</source>
+        <translation>Używaj kodu celowania dźwiękiem opartego na sektorach</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="61"/>
+        <source>Limit dehacked MaxHealth to health bonus</source>
+        <translation>Ogranicz maks. zdrowie z dehacked do bonusowego zdrowia</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="63"/>
+        <source>Trace ignores lines with the same sector on both sides</source>
+        <translation>Śledzenie ignoruje linie z tym samym sektorem po obu stronach</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="65"/>
+        <source>Monsters can not move when hanging over a drop off</source>
+        <translation>Potwory utykają gdy wiszą nad przepaścią</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="67"/>
+        <source>Scrolling sectors are additive like Boom</source>
+        <translation>Przesuwające sektory dodają się jak w Boomie</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="69"/>
+        <source>Monsters can see semi-invisible players</source>
+        <translation>Potwory mogą widzieć na-wpół-niewidzialnych graczy</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="71"/>
+        <source>Instantly moving floors are not silent</source>
+        <translation>Natychmiastowo ruszające się podłogi nie są ciche</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="73"/>
+        <source>Sector sounds use original method for sound origin</source>
+        <translation>Dźwięki sektorów używają oryginalnej metody pozycjonowania dźwięku</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="75"/>
+        <source>Use original Doom heights for clipping against projectiles</source>
+        <translation>Używaj oryginalnych wysokości z Dooma podczas kolizji z pociskami</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="77"/>
+        <source>Monsters can&apos;t be pushed over dropoffs</source>
+        <translation>Potwory nie mogą być wypchnięte przez przepaść</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="79"/>
+        <source>Any monster which calls BOSSDEATH counts for level specials</source>
+        <translation>Każdy potwór, który wywołuje BOSSDEATH liczy się dla specjali na poziomie</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="81"/>
+        <source>Minotaur&apos;s floor flame is exploded immediately when feet are clipped</source>
+        <translation>Ogień podłogowy Minotaura eksploduje natychmiast gdy stopy są przycięte</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="83"/>
+        <source>Force original velocity calculations for A_Mushroom in Dehacked mods</source>
+        <translation>Oryginalne obliczanie prędkości dla A_Mushroom w Dehacked</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="85"/>
+        <source>Monsters are affected by friction and pushers/pullers</source>
+        <translation>Tarcie oraz popychacze i ciągniki wpływają na potwory</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="87"/>
+        <source>Crushed monsters are turned into gibs, rather than replaced by gibs</source>
+        <translation>Zgniecione potwory zamieniają się we flaki, a nie są przez nie zastępowane</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="89"/>
+        <source>Friendly monsters aren&apos;t blocked by monster-blocking lines</source>
+        <translation>Linie blokujące potwory ignorują przyjazne potwory</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="91"/>
+        <source>Invert sprite sorting order for sprites of equal distance</source>
+        <translation>Odwrócone sortowanie sprite&apos;ów gdy są w tej samej odległości</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="93"/>
+        <source>Hitscans use original blockmap and hit check code</source>
+        <translation>Hitscany używają oryginalnego kodu blockmap i detekcji trafień</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="95"/>
+        <source>Find neighboring light level like like Doom</source>
+        <translation>Szukaj sąsiadującego poziomu światła jak w Doomie</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="97"/>
+        <source>Draw polyobjects the old fashioned way</source>
+        <translation>Rysuj polyobjecty w stary sposób</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="99"/>
+        <source>Ignore compositing when drawing masked midtextures</source>
+        <translation>Ignoruj kompozycję podczas rysowania maskowanych midtekstur</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="107"/>
+        <source>It is impossible to directly face cardinal direction</source>
+        <translation>Nie można obrócić się bezpośrednio w kierunku kardynalnym</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="109"/>
+        <source>Use the same floor motion behavior as Doom</source>
+        <translation>Użyj takiego zachowania ruchu podłóg, jak w Doomie</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="119"/>
+        <source>Net scripts are client side</source>
+        <translation>Skrypty NET są po stronie klienta</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="121"/>
+        <source>Clients send full button info</source>
+        <translation>Klienci wysyłają pełne info o przyciskach</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="123"/>
+        <source>Players can&apos;t use &apos;land&apos; CCMD</source>
+        <translation>Gracze nie mogą używać komendy &apos;land&apos;</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="126"/>
+        <source>Use Doom&apos;s original random number generator</source>
+        <translation>Używaj oryginalnego generatora liczb losowych z Dooma</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="128"/>
+        <source>Spheres have NOGRAVITY flag</source>
+        <translation>Kule mają flagę NOGRAVITY</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="131"/>
+        <source>Don&apos;t stop player scripts on disconnect</source>
+        <translation>Nie zatrzymuj skryptów gracza po rozłączeniu</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="134"/>
+        <source>Use horizontal explosion thrust of old ZDoom versions</source>
+        <translation>Eksplozje popychają w poziomie jak w starym ZDoomie</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="137"/>
+        <source>Non-SOLID things fall through invisible bridges</source>
+        <translation>Nie-SOLIDne obiekty przenikają przez aktorów mostu</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="139"/>
+        <source>Use old ZDoom jump physics</source>
+        <translation>Fizyka skoku ze starego ZDooma</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="142"/>
+        <source>Disallow weapon change when in mid raise/lower</source>
+        <translation>Nie można zmieniać broni w trakcie wyciągania/chowania</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="144"/>
+        <source>Use vanilla&apos;s autoaim tracer behavior</source>
+        <translation>Trasowanie autocelowania takie jak w vanilli</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="146"/>
+        <source>West spawns are silent</source>
+        <translation>Zachodnie spawny są ciche</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="148"/>
+        <source>Limited movement in the air</source>
+        <translation>Ograniczone poruszanie w powietrzu</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="150"/>
+        <source>Allow map01 &quot;plasma bump&quot; bug</source>
+        <translation>Pozwól na błąd &quot;plasma bump&quot; z map01</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="152"/>
+        <source>Allow instant respawn after death</source>
+        <translation>Pozwól na natychmiastowy respawn po śmierci</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="154"/>
+        <source>Disable taunting</source>
+        <translation>Wyłącz okrzyki</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="156"/>
+        <source>Use doom2.exe&apos;s original sound curve</source>
+        <translation>Używaj krzywej dźwięku z doom2.exe</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="158"/>
+        <source>Use original doom2 intermission music</source>
+        <translation>Używaj oryginalnej (doom2) muzyki podczas intermisji</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="160"/>
+        <source>Disable stealth monsters</source>
+        <translation>Wyłącz potwory &quot;stealth&quot;</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="162"/>
+        <source>Radius damage has infinite height</source>
+        <translation>Obrażenia obszarowe mają nieskończoną wysokość</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="164"/>
+        <source>Disable crosshair</source>
+        <translation>Wyłącz celownik</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="166"/>
+        <source>Force weapon switch</source>
+        <translation>Wymuś zmianę broni</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="174"/>
+        <source>Do not spawn health items (DM)</source>
+        <translation>Nie spawnuj przedmiotów ze zdrowiem (DM)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="176"/>
+        <source>Do not spawn powerups (DM)</source>
+        <translation>Nie spawnuj powerupów (DM)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="178"/>
+        <source>Weapons remain after pickup (DM)</source>
+        <translation>Bronie zostają po podniesieniu (DM)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="180"/>
+        <source>Falling damage (old ZDoom)</source>
+        <translation>Upadek boli (stary ZDoom)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="182"/>
+        <source>Falling damage (Hexen)</source>
+        <translation>Upadek boli (Hexen)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="184"/>
+        <source>Falling damage (Strife)</source>
+        <translation>Upadek boli (Strife)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="186"/>
+        <source>Stay on same map when someone exits (DM)</source>
+        <translation>Nie zmieniaj mapy gdy ktoś ją ukończy (DM)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="188"/>
+        <source>Spawn players as far as possible (DM)</source>
+        <translation>Spawnuj graczy jak najdalej od siebie (DM)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="190"/>
+        <source>Automatically respawn dead players (DM)</source>
+        <translation>Automatycznie respawnuj martwych graczy (DM)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="192"/>
+        <source>Don&apos;t spawn armor (DM)</source>
+        <translation>Nie spawnuj zbroi (DM)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="194"/>
+        <source>Kill anyone who tries to exit the level (DM)</source>
+        <translation>Zabijaj graczy gdy aktywują wyjście (DM)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="196"/>
+        <source>Infinite ammo</source>
+        <translation>Nieskończona amunicja</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="198"/>
+        <source>No monsters</source>
+        <translation>Brak potworów</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="200"/>
+        <source>Monsters respawn</source>
+        <translation>Potwory odradzają się</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="202"/>
+        <source>Items other than invuln. and invis. respawn</source>
+        <translation>Przedmioty (oprócz nieśmier. i niewidz.) się odnawiają</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="204"/>
+        <source>Fast monsters</source>
+        <translation>Szybkie potwory</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="206"/>
+        <source>No jumping</source>
+        <translation>Brak skoku</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="208"/>
+        <source>No freelook</source>
+        <translation>Brak patrzenia góra-dół</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="210"/>
+        <source>Respawn invulnerability and invisibility</source>
+        <translation>Odradzaj nieśmiertelność i niewidzialność</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="212"/>
+        <source>Arbitrator FOV</source>
+        <translation>FOV ustalony z góry</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="214"/>
+        <source>No multiplayer weapons in cooperative</source>
+        <translation>Wyłącz bronie multiplayer w kooperacji</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="216"/>
+        <source>No crouching</source>
+        <translation>Brak kucania</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="218"/>
+        <source>Lose all old inventory on respawn (COOP)</source>
+        <translation>Zabieraj cały ekwipunek po odrodzeniu (COOP)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="220"/>
+        <source>Lose keys on respawn (COOP)</source>
+        <translation>Zabieraj klucze po odrodzeniu (COOP)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="222"/>
+        <source>Lose weapons on respawn (COOP)</source>
+        <translation>Zabieraj bronie po odrodzeniu (COOP)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="224"/>
+        <source>Lose armor on respawn (COOP)</source>
+        <translation>Zabieraj zbroję po odrodzeniu (COOP)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="226"/>
+        <source>Lose powerups on respawn (COOP)</source>
+        <translation>Zabieraj powerupy po odrodzeniu (COOP)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="228"/>
+        <source>Lose ammo on respawn (COOP)</source>
+        <translation>Zabieraj amunicję po odrodzeniu (COOP)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="230"/>
+        <source>Lose half your ammo on respawn (COOP)</source>
+        <translation>Zabieraj połowę amunicji po odrodzeniu (COOP)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="232"/>
+        <source>Jumping allowed</source>
+        <translation>Skakanie dozwolone</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="234"/>
+        <source>Crouching allowed</source>
+        <translation>Kucanie dozwolone</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="242"/>
+        <source>Drop weapons upon death</source>
+        <translation>Upuszczaj bronie po śmierci</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="244"/>
+        <source>Don&apos;t spawn runes</source>
+        <translation>Nie spawnuj run</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="246"/>
+        <source>Instantly return flags (ST/CTF)</source>
+        <translation>Natychmiastowo zwracaj flagi (ST/CTF)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="248"/>
+        <source>Don&apos;t allow players to switch teams</source>
+        <translation>Nie pozwalaj graczom na zmianę drużyn</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="250"/>
+        <source>Players are automatically assigned teams</source>
+        <translation>Gracze są automatycznie przydzielani do drużyn</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="252"/>
+        <source>Double the amount of ammo given</source>
+        <translation>Podwójna amunicja</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="254"/>
+        <source>Players slowly lose health over 100% like Quake</source>
+        <translation>Gracze powoli tracą zdrowie, gdy powyżej 100%</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="256"/>
+        <source>Allow BFG freeaiming</source>
+        <translation>Zezwól na celowanie BFG</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="258"/>
+        <source>Barrels respawn</source>
+        <translation>Odradzaj beczki</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="260"/>
+        <source>No respawn protection</source>
+        <translation>Nie chroń po odrodzeniu</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="262"/>
+        <source>All players start with a shotgun</source>
+        <translation>Wszyscy gracze dostają shotguna</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="264"/>
+        <source>Players respawn where they died (COOP)</source>
+        <translation>Gracze odradzają się tam, gdzie zginęli (COOP)</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="266"/>
+        <source>Don&apos;t clear frags after each level</source>
+        <translation>Nie resetuj fragów po ukończeniu poziomu</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="268"/>
+        <source>Player can&apos;t respawn</source>
+        <translation>Gracz nie może się odrodzić</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="270"/>
+        <source>Lose a frag when killed</source>
+        <translation>Zabieraj fraga w momencie śmierci</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="272"/>
+        <source>Infinite inventory</source>
+        <translation>Nieskończony ekwipunek</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="274"/>
+        <source>All monsters must be killed before exiting</source>
+        <translation>Wszystkie potwory muszą zostać zabite przed wyjściem</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="276"/>
+        <source>Players can&apos;t see the automap</source>
+        <translation>Gracze nie widzą automapy</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="278"/>
+        <source>Allies can&apos;t be seen on the automap</source>
+        <translation>Sojusznicy są niewidoczni na automapie</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="280"/>
+        <source>You can&apos;t spy allies</source>
+        <translation>Nie możesz podglądać sojuszników</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="282"/>
+        <source>Players can use chase cam</source>
+        <translation>Można używać kamery z trzeciej osoby</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="284"/>
+        <source>Players can&apos;t suicide</source>
+        <translation>Gracze nie mogą popełniać samobójstwa</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="286"/>
+        <source>Players can&apos;t use autoaim</source>
+        <translation>Gracze nie mogą używać autocelowania</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="288"/>
+        <source>Don&apos;t check ammo when switching weapons</source>
+        <translation>Nie sprawdzaj amunicji podczas zmiany broni</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="290"/>
+        <source>Kill all monsters spawned by a boss cube when the boss dies</source>
+        <translation>Zabij wszystkie potwory spawnięte przez kostkę bossa gdy boss zginie</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="293"/>
+        <source>Do not count monsters in &apos;end level when dying&apos; sectors towards kill count</source>
+        <translation>Nie licz zabójstw potworów znajdujących się w sektorach typu &apos;zakończ poziom przy śmierci&apos;</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="301"/>
+        <source>Clients can&apos;t identify targets</source>
+        <translation>Klienci nie mogą identyfikować celów</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="304"/>
+        <source>lmsspectatorsettings applied in all game modes</source>
+        <translation>Zastosuj lmsspectatorsettings we wszystkich trybach gry</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="306"/>
+        <source>Clients can&apos;t draw coop info</source>
+        <translation>Klienci nie mogą rysować informacji o kooperacji</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="308"/>
+        <source>Unlagged is disabled</source>
+        <translation>Unlagged jest wyłączone</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="310"/>
+        <source>Players don&apos;t block each other</source>
+        <translation>Gracze nie mogą się nawzajem blokować</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="312"/>
+        <source>Clients don&apos;t show medals</source>
+        <translation>Klienci nie pokazują medali</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="314"/>
+        <source>Keys are shared between players</source>
+        <translation>Klucze są współdzielone pomiędzy graczami</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="316"/>
+        <source>Player teams are preserved between maps</source>
+        <translation>Gracze są w tych samych drużynach po zmianie mapy</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="318"/>
+        <source>Force OpenGL defaults</source>
+        <translation>Wymuś domyślne ustawienia OpenGL</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="320"/>
+        <source>No rocket jumping</source>
+        <translation>Wyłącz skakanie na rakietach</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="322"/>
+        <source>Award damage instead of kills</source>
+        <translation>Nagradzaj obrażenia, nie zabójstwa</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="324"/>
+        <source>Force drawing alpha</source>
+        <translation>Wymuś rysowanie przezroczystości</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="326"/>
+        <source>Don&apos;t spawn multiplayer things</source>
+        <translation>Nie spawnuj aktorów wieloosobowych</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="329"/>
+        <source>Force blood screen brightness on clients to emulate vanilla</source>
+        <translation>Wymuszaj na klientach jasność zakrwawionego ekranu taką, jak w vanilli</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="331"/>
+        <source>Teammates don&apos;t block each other</source>
+        <translation>Członkowie drużyny nie mogą się nawzajem blokować</translation>
+    </message>
+    <message>
+        <location filename="../zandronum3dmflags.cpp" line="333"/>
+        <source>No dropping allowed</source>
+        <translation>Nie wolno upuszczać przedmiotów</translation>
     </message>
 </context>
 <context>
@@ -1318,51 +2636,81 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ZandronumClientExeFile</name>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="76"/>
+        <location filename="../zandronumbinaries.cpp" line="91"/>
         <source>client</source>
         <translation>klient</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="92"/>
         <source>Testing binaries for version %1 can be installed.
 
 Do you want Doomseeker to create %1 directory and copy all your .ini files from your base directory?</source>
-        <translation>Binarki testowe dla wersji %1 mogą zostać zainstalowane.
+        <translation type="vanished">Binarki testowe dla wersji %1 mogą zostać zainstalowane.
 
 Czy chcesz aby Doomseeker utworzył katalog %1 i skopiował do niego wszystkie twoje pliki .ini z katalogu bazowego?</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="97"/>
         <source>Doomseeker - missing testing binaries</source>
-        <translation>Doomseeker - brakuje binarek testowych</translation>
+        <translation type="vanished">Doomseeker - brakuje binarek testowych</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="103"/>
-        <location filename="../zandronumbinaries.cpp" line="158"/>
+        <location filename="../zandronumbinaries.cpp" line="112"/>
+        <location filename="../zandronumbinaries.cpp" line="204"/>
         <source>No testing directory specified for Zandronum</source>
         <translation>Nie podano katalogu testowego dla Zandronum</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="109"/>
+        <location filename="../zandronumbinaries.cpp" line="118"/>
         <source>Unable to create directory:
 %1</source>
         <translation>Nie można utworzyć katalogu:
 %1</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="131"/>
+        <location filename="../zandronumbinaries.cpp" line="122"/>
+        <source>Unable to create directory:
+%1/%2</source>
+        <translation>Nie można utworzyć katalogu:
+%1/%2</translation>
+    </message>
+    <message>
+        <location filename="../zandronumbinaries.cpp" line="145"/>
         <source>Doomseeker</source>
         <translation>Doomseeker</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="132"/>
+        <location filename="../zandronumbinaries.cpp" line="146"/>
         <source>Please install now version &quot;%1&quot; into:
 %2</source>
         <translation>Proszę teraz zainstalować wersję &quot;%1&quot; do:
 %2</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="173"/>
+        <location filename="../zandronumbinaries.cpp" line="160"/>
+        <source>&lt;p&gt;Installation of testing binaries for version %1 can potentially &lt;b&gt;overwrite&lt;/b&gt; your files.&lt;/p&gt;&lt;p&gt;Game will be installed to:&lt;br&gt;%2&lt;/p&gt;&lt;p&gt;Do you want Doomseeker to extract Zandronum files, potentially &lt;b&gt;overwriting existing ones&lt;/b&gt;, and to copy all your configuration files from your base directory?&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Instalacja binarek testowych dla wersji %1 może potencjalnie &lt;b&gt;nadpisać&lt;/b&gt; Twoje pliki.&lt;/p&gt;&lt;p&gt;Gra zostanie zainstalowana pod ścieżką:&lt;br&gt;%2&lt;/p&gt;&lt;p&gt;Czy chcesz aby Doomseeker wypakował pliki Zandronum, potencjalnie &lt;b&gt;nadpisując już istniejące&lt;/b&gt;, oraz aby skopiował wszystkie Twoje pliki konfiguracyjne z katalogu bazowego?&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../zandronumbinaries.cpp" line="171"/>
+        <source>Zandronum testing version %1 can be installed.
+
+Game will be installed to:
+%2
+
+Do you want Doomseeker to install that version and copy all your configuration files from your base directory?</source>
+        <translation>Wersja testowa Zandronum %1 może zostać zainstalowana.
+
+Gra zostanie zainstalowana do:
+%2
+
+Czy chcesz, aby Doomseeker zainstalował tą wersję i skopiował wszystkie Twoje pliki konfiguracyjne z katalogu bazowego?</translation>
+    </message>
+    <message>
+        <location filename="../zandronumbinaries.cpp" line="178"/>
+        <source>Doomseeker - install Zandronum testing version</source>
+        <translation>Doomseeker - instalacja testowej wersji Zandronum</translation>
+    </message>
+    <message>
+        <location filename="../zandronumbinaries.cpp" line="214"/>
         <source>%1
 doesn&apos;t exist.
 You need to install new testing binaries.</source>
@@ -1371,7 +2719,7 @@ nie istnieje.
 Musisz zainstalować nowe binarki testowe.</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="180"/>
+        <location filename="../zandronumbinaries.cpp" line="221"/>
         <source>%1
 exists but is NOT a directory.
 Cannot proceed.</source>
@@ -1380,24 +2728,34 @@ istnieje ale NIE JEST katalogiem.
 Nie można kontynuować.</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="189"/>
+        <location filename="../zandronumbinaries.cpp" line="230"/>
+        <source>%1
+exists but doesn&apos;t contain Zandronum executable.
+
+Doomseeker can still install the game there if you want.</source>
+        <translation>%1
+istnieje, ale nie zawiera pliku wykonywalnego Zandronum.
+
+Doomseeker może tam zainstalować grę, jeżeli chcesz.</translation>
+    </message>
+    <message>
         <source>%1
 doesn&apos;t contain Zandronum executable</source>
-        <translation>%1
+        <translation type="vanished">%1
 nie zawiera pliku wykonywalnego Zandronum</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="251"/>
+        <location filename="../zandronumbinaries.cpp" line="300"/>
         <source>Downloading Zandronum testing binary from URL: %1</source>
         <translation>Pobieram binarkę testową Zandronum z URLa: %1</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="256"/>
+        <location filename="../zandronumbinaries.cpp" line="305"/>
         <source>Doomseeker - download failed</source>
         <translation>Doomseeker - pobieranie sfiaskowało</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="257"/>
+        <location filename="../zandronumbinaries.cpp" line="306"/>
         <source>Failed to download testing binary.
 
 %1</source>
@@ -1406,35 +2764,35 @@ nie zawiera pliku wykonywalnego Zandronum</translation>
 %1</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="282"/>
+        <location filename="../zandronumbinaries.cpp" line="331"/>
         <source>Unpacking file: %1</source>
         <translation>Wypakowuję plik: %1</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="314"/>
+        <location filename="../zandronumbinaries.cpp" line="363"/>
         <source>%1
  should be a script file but is a directory!</source>
         <translation>%1
  powinien być plikiem skryptowym, ale jest katalogiem!</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="323"/>
+        <location filename="../zandronumbinaries.cpp" line="372"/>
         <source>You don&apos;t have permissions to execute file: %1
 </source>
         <translation>Nie masz uprawnień aby uruchomić plik: %1</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="370"/>
+        <location filename="../zandronumbinaries.cpp" line="419"/>
         <source>Couldn&apos;t open batch file &quot;%1&quot; for writing</source>
         <translation>Nie można otworzyć pliku skryptowego &quot;%1&quot; do zapisu</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="377"/>
+        <location filename="../zandronumbinaries.cpp" line="426"/>
         <source>Error while writing batch file &quot;%1&quot;</source>
         <translation>Błąd podczas zapisywania pliku skryptowego &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../zandronumbinaries.cpp" line="387"/>
+        <location filename="../zandronumbinaries.cpp" line="436"/>
         <source>Cannot set permissions for file:
 %1</source>
         <translation>Nie można ustawić uprawnień plikowi:
@@ -1444,289 +2802,232 @@ nie zawiera pliku wykonywalnego Zandronum</translation>
 <context>
     <name>ZandronumDmflags</name>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="30"/>
         <source>Use Doom&apos;s shortest texture behavior</source>
-        <translation>Użyj Doomowego zachowania najkrótszej tekstury</translation>
+        <translation type="vanished">Użyj Doomowego zachowania najkrótszej tekstury</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="31"/>
         <source>Don&apos;t fix loop index for stair building</source>
-        <translation>Nie naprawiaj indeksu pętli do budowania schodów</translation>
+        <translation type="vanished">Nie naprawiaj indeksu pętli do budowania schodów</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="32"/>
         <source>Pain elemental is limited to 20 lost souls</source>
-        <translation>Pain elemental jest ograniczony do 20 lost souls</translation>
+        <translation type="vanished">Pain elemental jest ograniczony do 20 lost souls</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="33"/>
         <source>Pickups are only heard locally</source>
-        <translation>Podniesienia przedmiotów słychać tylko lokalnie</translation>
+        <translation type="vanished">Podniesienia przedmiotów słychać tylko lokalnie</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="34"/>
         <source>Infinitly tall actors</source>
-        <translation>Nieskończenie wysocy aktorzy</translation>
+        <translation type="vanished">Nieskończenie wysocy aktorzy</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="35"/>
         <source>Limit actors to only one sound</source>
-        <translation>Ogranicz aktorów do tylko jednego dźwięku</translation>
+        <translation type="vanished">Ogranicz aktorów do tylko jednego dźwięku</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="36"/>
         <source>Enable wallrunning</source>
-        <translation>Włącz wallrunning</translation>
+        <translation type="vanished">Włącz wallrunning</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="37"/>
         <source>Dropped items spawn on floor</source>
-        <translation>Upuszczane przedmioty tworzone są na podłodze</translation>
+        <translation type="vanished">Upuszczane przedmioty tworzone są na podłodze</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="38"/>
         <source>Special lines block use line</source>
-        <translation>Linie specjalne blokują użycie linii</translation>
+        <translation type="vanished">Linie specjalne blokują użycie linii</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="39"/>
         <source>Disable BOOM local door light effect</source>
-        <translation>Wyłącz efekt lokalnego światła drzwi z BOOMa</translation>
+        <translation type="vanished">Wyłącz efekt lokalnego światła drzwi z BOOMa</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="40"/>
         <source>Raven&apos;s scrollers use their original speed</source>
-        <translation>Przewijacze Ravena używają oryginalnych prędkości</translation>
+        <translation type="vanished">Przewijacze Ravena używają oryginalnych prędkości</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="41"/>
         <source>Use sector based sound target code</source>
-        <translation>Opieraj kod celu dźwięku na sektorach</translation>
+        <translation type="vanished">Opieraj kod celu dźwięku na sektorach</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="42"/>
         <source>Limit dehacked MaxHealth to health bonus</source>
-        <translation>Ogranicz maks. zdrowie z dehacked do bonusowego zdrowia</translation>
+        <translation type="vanished">Ogranicz maks. zdrowie z dehacked do bonusowego zdrowia</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="43"/>
         <source>Trace ignores lines with the same sector on both sides</source>
-        <translation>Śledzenie ignoruje linie z tym samym sektorem po obu stronach</translation>
+        <translation type="vanished">Śledzenie ignoruje linie z tym samym sektorem po obu stronach</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="44"/>
         <source>Monsters can not move when hanging over a drop off</source>
-        <translation>Potwory utykają gdy wiszą nad przepaścią</translation>
+        <translation type="vanished">Potwory utykają gdy wiszą nad przepaścią</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="45"/>
         <source>Scrolling sectors are additive like Boom</source>
-        <translation>Przesuwające sektory dodają się jak w Boomie</translation>
+        <translation type="vanished">Przesuwające sektory dodają się jak w Boomie</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="46"/>
         <source>Monsters can see semi-invisible players</source>
-        <translation>Potwory mogą widzieć na-wpół-niewidzialnych graczy</translation>
+        <translation type="vanished">Potwory mogą widzieć na-wpół-niewidzialnych graczy</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="48"/>
         <source>Sector sounds use original method for sound origin</source>
-        <translation>Dźwięki sektorów używają oryginalnej metody pozycjonowania dźwięku</translation>
+        <translation type="vanished">Dźwięki sektorów używają oryginalnej metody pozycjonowania dźwięku</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="49"/>
         <source>Use original Doom heights for clipping against projectiles</source>
-        <translation>Używaj oryginalnych wysokości z Dooma podczas kolizji z pociskami</translation>
+        <translation type="vanished">Używaj oryginalnych wysokości z Dooma podczas kolizji z pociskami</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="50"/>
         <source>Monsters can&apos;t be pushed over dropoffs</source>
-        <translation>Potwory nie mogą być wypchnięte przez przepaść</translation>
+        <translation type="vanished">Potwory nie mogą być wypchnięte przez przepaść</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="51"/>
         <source>Any monster which calls BOSSDEATH counts for level specials</source>
-        <translation>Każdy potwór, który wywołuje BOSSDEATH liczy się dla specjali na poziomie</translation>
+        <translation type="vanished">Każdy potwór, który wywołuje BOSSDEATH liczy się dla specjali na poziomie</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="52"/>
         <source>Minotaur&apos;s floor flame is exploded immediately when feet are clipped</source>
-        <translation>Ogień podłogowy Minotaura eksploduje natychmiast gdy stopy są przycięte</translation>
+        <translation type="vanished">Ogień podłogowy Minotaura eksploduje natychmiast gdy stopy są przycięte</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="53"/>
         <source>Force original velocity calculations for A_Mushroom in Dehacked mods</source>
-        <translation>Oryginalne obliczanie prędkości dla A_Mushroom w Dehacked</translation>
+        <translation type="vanished">Oryginalne obliczanie prędkości dla A_Mushroom w Dehacked</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="54"/>
         <source>Monsters are affected by friction and pushers/pullers</source>
-        <translation>Tarcie/popychacze i ciągniki wpływają na potwory</translation>
+        <translation type="vanished">Tarcie/popychacze i ciągniki wpływają na potwory</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="55"/>
         <source>Crushed monsters are turned into gibs, rather than replaced by gibs</source>
-        <translation>Zgniecione potwory zamieniają się we flaki, a nie są przez nie zastępowane</translation>
+        <translation type="vanished">Zgniecione potwory zamieniają się we flaki, a nie są przez nie zastępowane</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="56"/>
         <source>Friendly monsters aren&apos;t blocked by monster-blocking lines</source>
-        <translation>Linie blokujące potwory ignorują przyjazne potwory</translation>
+        <translation type="vanished">Linie blokujące potwory ignorują przyjazne potwory</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="57"/>
         <source>Invert sprite sorting order for sprites of equal distance</source>
-        <translation>Odwrócone sortowanie sprite&apos;ów gdy są w tej samej odległości</translation>
+        <translation type="vanished">Odwrócone sortowanie sprite&apos;ów gdy są w tej samej odległości</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="58"/>
         <source>Hitscans use original blockmap and hit check code</source>
-        <translation>Hitscany używają oryginalnego kodu blockmap i detekcji trafień</translation>
+        <translation type="vanished">Hitscany używają oryginalnego kodu blockmap i detekcji trafień</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="59"/>
         <source>Find neighboring light level like like Doom</source>
-        <translation>Szukaj sąsiadującego poziomu światła jak w Doomie</translation>
+        <translation type="vanished">Szukaj sąsiadującego poziomu światła jak w Doomie</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="60"/>
         <source>Draw polyobjects the old fashioned way</source>
-        <translation>Rysuj polyobjekty w stary sposób</translation>
+        <translation type="vanished">Rysuj polyobjekty w stary sposób</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="67"/>
         <source>Net scripts are client side</source>
-        <translation>Skrypty NET są po stronie klienta</translation>
+        <translation type="vanished">Skrypty NET są po stronie klienta</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="68"/>
         <source>Clients send full button info</source>
-        <translation>Klienci wysyłają pełne info o przyciskach</translation>
+        <translation type="vanished">Klienci wysyłają pełne info o przyciskach</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="69"/>
         <source>Players can&apos;t use &apos;land&apos; CCMD</source>
-        <translation>Gracze nie mogą używać komendy &apos;land&apos;</translation>
+        <translation type="vanished">Gracze nie mogą używać komendy &apos;land&apos;</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="70"/>
         <source>Use Doom&apos;s original random number generator</source>
-        <translation>Używaj oryginalnego generatora liczb losowych z Dooma</translation>
+        <translation type="vanished">Używaj oryginalnego generatora liczb losowych z Dooma</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="71"/>
         <source>Spheres have NOGRAVITY flag</source>
-        <translation>Kule mają flagę NOGRAVITY</translation>
+        <translation type="vanished">Kule mają flagę NOGRAVITY</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="72"/>
         <source>Don&apos;t stop player scripts on disconnect</source>
-        <translation>Nie zatrzymuj skryptów gracza po rozłączeniu</translation>
+        <translation type="vanished">Nie zatrzymuj skryptów gracza po rozłączeniu</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="73"/>
         <source>Use horizontal explosion thrust of old ZDoom versions</source>
-        <translation>Eksplozje popychają w poziomie jak w starym ZDoomie</translation>
+        <translation type="vanished">Eksplozje popychają w poziomie jak w starym ZDoomie</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="74"/>
         <source>Non-SOLID things fall through invisible bridges</source>
-        <translation>Nie-SOLIDne obiekty przenikają przez aktorów mostu</translation>
+        <translation type="vanished">Nie-SOLIDne obiekty przenikają przez aktorów mostu</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="75"/>
         <source>Use old ZDoom jump physics</source>
-        <translation>Fizyka skoku ze starego ZDooma</translation>
+        <translation type="vanished">Fizyka skoku ze starego ZDooma</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="76"/>
         <source>Disallow weapon change when in mid raise/lower</source>
-        <translation>Nie można zmieniać broni w trakcie wyciągania/chowania</translation>
+        <translation type="vanished">Nie można zmieniać broni w trakcie wyciągania/chowania</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="77"/>
         <source>Use vanilla&apos;s autoaim tracer behavior</source>
-        <translation>Trasowanie autocelowania takie jak w vanilli</translation>
+        <translation type="vanished">Trasowanie autocelowania takie jak w vanilli</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="78"/>
         <source>West spawns are silent</source>
-        <translation>Zachodnie spawny są ciche</translation>
+        <translation type="vanished">Zachodnie spawny są ciche</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="79"/>
         <source>Limited movement in the air</source>
-        <translation>Ograniczone poruszanie w powietrzu</translation>
+        <translation type="vanished">Ograniczone poruszanie w powietrzu</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="80"/>
         <source>Allow map01 &quot;plasma bump&quot; bug</source>
-        <translation>Pozwól na błąd &quot;plasma bump&quot; z map01</translation>
+        <translation type="vanished">Pozwól na błąd &quot;plasma bump&quot; z map01</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="81"/>
         <source>Allow instant respawn after death</source>
-        <translation>Pozwól na natychmiastowy respawn po śmierci</translation>
+        <translation type="vanished">Pozwól na natychmiastowy respawn po śmierci</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="82"/>
         <source>Disable taunting</source>
-        <translation>Wyłącz okrzyki</translation>
+        <translation type="vanished">Wyłącz okrzyki</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="83"/>
         <source>Use doom2.exe&apos;s original sound curve</source>
-        <translation>Używaj krzywej dźwięku z doom2.exe</translation>
+        <translation type="vanished">Używaj krzywej dźwięku z doom2.exe</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="84"/>
         <source>Use original doom2 intermission music</source>
-        <translation>Używaj oryginalnej (doom2) muzyki podczas intermisji</translation>
+        <translation type="vanished">Używaj oryginalnej (doom2) muzyki podczas intermisji</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="85"/>
         <source>Disable stealth monsters</source>
-        <translation>Wyłącz potwory &quot;stealth&quot;</translation>
+        <translation type="vanished">Wyłącz potwory &quot;stealth&quot;</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="86"/>
         <source>Radius damage has infinite height</source>
-        <translation>Obrażenia obszarowe mają nieskończoną wysokość</translation>
+        <translation type="vanished">Obrażenia obszarowe mają nieskończoną wysokość</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="87"/>
         <source>Disable crosshair</source>
-        <translation>Wyłącz celownik</translation>
+        <translation type="vanished">Wyłącz celownik</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="88"/>
         <source>Force weapon switch</source>
-        <translation>Wymuś zmianę broni</translation>
+        <translation type="vanished">Wymuś zmianę broni</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="174"/>
         <source>Award damage instead of kills</source>
-        <translation>Nagradzaj obrażenia, nie zabójstwa</translation>
+        <translation type="vanished">Nagradzaj obrażenia, nie zabójstwa</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="176"/>
         <source>Don&apos;t spawn multiplayer things</source>
-        <translation>Nie spawnuj aktorów wieloosobowych</translation>
+        <translation type="vanished">Nie spawnuj aktorów wieloosobowych</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="177"/>
         <source>Force blood screen brightness on clients to emulate vanilla</source>
-        <translation>Wymuszaj na klientach jasność zakrwawionego ekranu takie, jak w vanilli</translation>
+        <translation type="vanished">Wymuszaj na klientach jasność zakrwawionego ekranu takie, jak w vanilli</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="178"/>
         <source>Teammates don&apos;t block each other</source>
-        <translation>Członkowie drużyny nie mogą się nawzajem blokować</translation>
+        <translation type="vanished">Członkowie drużyny nie mogą się nawzajem blokować</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="47"/>
         <source>Instantly moving floors are not silent</source>
-        <translation>Natychmiastowo ruszające się podłogi nie są ciche</translation>
+        <translation type="vanished">Natychmiastowo ruszające się podłogi nie są ciche</translation>
     </message>
     <message>
         <source>Sector sounds use original method for sound orgin</source>
@@ -1741,347 +3042,280 @@ nie zawiera pliku wykonywalnego Zandronum</translation>
         <translation type="obsolete">Potwory nie mogą być wypchnięte przez przepaść</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="95"/>
         <source>Do not spawn health items (DM)</source>
-        <translation>Nie spawnuj przedmiotów ze zdrowiem (DM)</translation>
+        <translation type="vanished">Nie spawnuj przedmiotów ze zdrowiem (DM)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="96"/>
         <source>Do not spawn powerups (DM)</source>
-        <translation>Nie spawnuj dopalaczy (DM)</translation>
+        <translation type="vanished">Nie spawnuj dopalaczy (DM)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="97"/>
         <source>Weapons remain after pickup (DM)</source>
-        <translation>Bronie zostają po podniesieniu (DM)</translation>
+        <translation type="vanished">Bronie zostają po podniesieniu (DM)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="98"/>
         <source>Falling damage (old ZDoom)</source>
-        <translation>Upadek boli (stary ZDoom)</translation>
+        <translation type="vanished">Upadek boli (stary ZDoom)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="99"/>
         <source>Falling damage (Hexen)</source>
-        <translation>Upadek boli (Hexen)</translation>
+        <translation type="vanished">Upadek boli (Hexen)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="100"/>
         <source>Falling damage (Strife)</source>
-        <translation>Upadek boli (Strife)</translation>
+        <translation type="vanished">Upadek boli (Strife)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="101"/>
         <source>Stay on same map when someone exits (DM)</source>
-        <translation>Nie zmieniaj mapy gdy ktoś ją ukończy (DM)</translation>
+        <translation type="vanished">Nie zmieniaj mapy gdy ktoś ją ukończy (DM)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="102"/>
         <source>Spawn players as far as possible (DM)</source>
-        <translation>Spawnuj graczy jak najdalej od siebie (DM)</translation>
+        <translation type="vanished">Spawnuj graczy jak najdalej od siebie (DM)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="103"/>
         <source>Automatically respawn dead players (DM)</source>
-        <translation>Automatycznie respawnuj martwych graczy (DM)</translation>
+        <translation type="vanished">Automatycznie respawnuj martwych graczy (DM)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="104"/>
         <source>Don&apos;t spawn armor (DM)</source>
-        <translation>Nie spawnuj zbroi (DM)</translation>
+        <translation type="vanished">Nie spawnuj zbroi (DM)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="105"/>
         <source>Kill anyone who tries to exit the level (DM)</source>
-        <translation>Zabijaj graczy gdy aktywują wyjście (DM)</translation>
+        <translation type="vanished">Zabijaj graczy gdy aktywują wyjście (DM)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="106"/>
         <source>Infinite ammo</source>
-        <translation>Nieskończona amunicja</translation>
+        <translation type="vanished">Nieskończona amunicja</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="107"/>
         <source>No monsters</source>
-        <translation>Brak potworów</translation>
+        <translation type="vanished">Brak potworów</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="108"/>
         <source>Monsters respawn</source>
-        <translation>Potwory odradzają się</translation>
+        <translation type="vanished">Potwory odradzają się</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="109"/>
         <source>Items other than invuln. and invis. respawn</source>
-        <translation>Przedmioty (oprócz nieśmier. i niewidz.) się odnawiają</translation>
+        <translation type="vanished">Przedmioty (oprócz nieśmier. i niewidz.) się odnawiają</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="110"/>
         <source>Fast monsters</source>
-        <translation>Szybkie potwory</translation>
+        <translation type="vanished">Szybkie potwory</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="111"/>
         <source>No jumping</source>
-        <translation>Brak skoku</translation>
+        <translation type="vanished">Brak skoku</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="112"/>
         <source>No freelook</source>
-        <translation>Brak patrzenia góra-dół</translation>
+        <translation type="vanished">Brak patrzenia góra-dół</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="113"/>
         <source>Respawn invulnerability and invisibility</source>
-        <translation>Odradzaj nieśmiertelność i niewidzialność</translation>
+        <translation type="vanished">Odradzaj nieśmiertelność i niewidzialność</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="114"/>
         <source>Arbitrator FOV</source>
-        <translation>FOV ustalony z góry</translation>
+        <translation type="vanished">FOV ustalony z góry</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="115"/>
         <source>No multiplayer weapons in cooperative</source>
-        <translation>Wyłącz bronie multiplayer w kooperacji</translation>
+        <translation type="vanished">Wyłącz bronie multiplayer w kooperacji</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="116"/>
         <source>No crouching</source>
-        <translation>Brak kucania</translation>
+        <translation type="vanished">Brak kucania</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="117"/>
         <source>Lose all old inventory on respawn (COOP)</source>
-        <translation>Zabieraj cały ekwipunek po odrodzeniu (COOP)</translation>
+        <translation type="vanished">Zabieraj cały ekwipunek po odrodzeniu (COOP)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="118"/>
         <source>Lose keys on respawn (COOP)</source>
-        <translation>Zabieraj klucze po odrodzeniu (COOP)</translation>
+        <translation type="vanished">Zabieraj klucze po odrodzeniu (COOP)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="119"/>
         <source>Lose weapons on respawn (COOP)</source>
-        <translation>Zabieraj bronie po odrodzeniu (COOP)</translation>
+        <translation type="vanished">Zabieraj bronie po odrodzeniu (COOP)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="120"/>
         <source>Lose armor on respawn (COOP)</source>
-        <translation>Zabieraj zbroję po odrodzeniu (COOP)</translation>
+        <translation type="vanished">Zabieraj zbroję po odrodzeniu (COOP)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="121"/>
         <source>Lose powerups on respawn (COOP)</source>
-        <translation>Zabieraj dopalacze po odrodzeniu (COOP)</translation>
+        <translation type="vanished">Zabieraj dopalacze po odrodzeniu (COOP)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="122"/>
         <source>Lose ammo on respawn (COOP)</source>
-        <translation>Zabieraj amunicję po odrodzeniu (COOP)</translation>
+        <translation type="vanished">Zabieraj amunicję po odrodzeniu (COOP)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="123"/>
         <source>Lose half your ammo on respawn (COOP)</source>
-        <translation>Zabieraj połowę amunicji po odrodzeniu (COOP)</translation>
+        <translation type="vanished">Zabieraj połowę amunicji po odrodzeniu (COOP)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="125"/>
         <source>Jumping allowed</source>
-        <translation>Skakanie dozwolone</translation>
+        <translation type="vanished">Skakanie dozwolone</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="126"/>
         <source>Crouching allowed</source>
-        <translation>Kucanie dozwolone</translation>
+        <translation type="vanished">Kucanie dozwolone</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="133"/>
         <source>Drop weapons upon death</source>
-        <translation>Upuszczaj bronie po śmierci</translation>
+        <translation type="vanished">Upuszczaj bronie po śmierci</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="134"/>
         <source>Don&apos;t spawn runes</source>
-        <translation>Nie spawnuj run</translation>
+        <translation type="vanished">Nie spawnuj run</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="135"/>
         <source>Instantly return flags (ST/CTF)</source>
-        <translation>Natychmiastowo zwracaj flagi (ST/CTF)</translation>
+        <translation type="vanished">Natychmiastowo zwracaj flagi (ST/CTF)</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="136"/>
         <source>Don&apos;t allow players to switch teams</source>
-        <translation>Nie pozwalaj graczom na zmianę drużyn</translation>
+        <translation type="vanished">Nie pozwalaj graczom na zmianę drużyn</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="137"/>
         <source>Players are automatically assigned teams</source>
-        <translation>Gracze są automatycznie przydzielani do drużyn</translation>
+        <translation type="vanished">Gracze są automatycznie przydzielani do drużyn</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="138"/>
         <source>Double the amount of ammo given</source>
-        <translation>Podwójna amunicja</translation>
+        <translation type="vanished">Podwójna amunicja</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="139"/>
         <source>Players slowly lose health over 100% like Quake</source>
-        <translation>Gracze powoli tracą zdrowie, gdy powyżej 100%</translation>
+        <translation type="vanished">Gracze powoli tracą zdrowie, gdy powyżej 100%</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="140"/>
         <source>Allow BFG freeaiming</source>
-        <translation>Pozwól celować góra-dół BFG</translation>
+        <translation type="vanished">Pozwól celować góra-dół BFG</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="141"/>
         <source>Barrels respawn</source>
-        <translation>Beczki się odradzają</translation>
+        <translation type="vanished">Beczki się odradzają</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="142"/>
         <source>No respawn protection</source>
-        <translation>Nie chroń po odrodzeniu</translation>
+        <translation type="vanished">Nie chroń po odrodzeniu</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="143"/>
         <source>All players start with a shotgun</source>
-        <translation>Wszyscy gracze dostają szotgana</translation>
+        <translation type="vanished">Wszyscy gracze dostają szotgana</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="144"/>
         <source>Players respawn where they died (COOP)</source>
-        <translation>Gracze odradzają się tam, gdzie zginęli (COOP)</translation>
+        <translation type="vanished">Gracze odradzają się tam, gdzie zginęli (COOP)</translation>
     </message>
     <message>
         <source>Players keep teams after map change</source>
         <translation type="obsolete">Gracze są w tych samych drużynach po zmianie mapy</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="145"/>
         <source>Don&apos;t clear frags after each level</source>
-        <translation>Nie resetuj fragów po ukończeniu poziomu</translation>
+        <translation type="vanished">Nie resetuj fragów po ukończeniu poziomu</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="146"/>
         <source>Player can&apos;t respawn</source>
-        <translation>Gracz nie może się odrodzić</translation>
+        <translation type="vanished">Gracz nie może się odrodzić</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="147"/>
         <source>Lose a frag when killed</source>
-        <translation>Zabieraj fraga w momencie śmierci</translation>
+        <translation type="vanished">Zabieraj fraga w momencie śmierci</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="148"/>
         <source>Infinite inventory</source>
-        <translation>Nieskończony ekwipunek</translation>
+        <translation type="vanished">Nieskończony ekwipunek</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="156"/>
         <source>Don&apos;t check ammo when switching weapons</source>
-        <translation>Nie sprawdzaj amunicji podczas zmiany broni</translation>
+        <translation type="vanished">Nie sprawdzaj amunicji podczas zmiany broni</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="157"/>
         <source>Kill all monsters spawned by a boss cube when the boss dies</source>
-        <translation>Zabij wszystkie potwory spawnięte przez kostkę bossa gdy boss zginie</translation>
+        <translation type="vanished">Zabij wszystkie potwory spawnięte przez kostkę bossa gdy boss zginie</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="164"/>
         <source>Clients can&apos;t identify targets</source>
-        <translation>Klienci nie mogą identyfikować celów</translation>
+        <translation type="vanished">Klienci nie mogą identyfikować celów</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="165"/>
         <source>lmsspectatorsettings applied in all game modes</source>
-        <translation>Zastosuj lmsspectatorsettings we wszystkich trybach gry</translation>
+        <translation type="vanished">Zastosuj lmsspectatorsettings we wszystkich trybach gry</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="166"/>
         <source>Clients can&apos;t draw coop info</source>
-        <translation>Klienci nie mogą rysować informacji o kooperacji</translation>
+        <translation type="vanished">Klienci nie mogą rysować informacji o kooperacji</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="167"/>
         <source>Unlagged is disabled</source>
-        <translation>Unlagged jest wyłączone</translation>
+        <translation type="vanished">Unlagged jest wyłączone</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="168"/>
         <source>Players don&apos;t block each other</source>
-        <translation>Gracze nie mogą się nawzajem blokować</translation>
+        <translation type="vanished">Gracze nie mogą się nawzajem blokować</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="169"/>
         <source>Clients don&apos;t show medals</source>
-        <translation>Klienci nie pokazują medali</translation>
+        <translation type="vanished">Klienci nie pokazują medali</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="170"/>
         <source>Keys are shared between players</source>
-        <translation>Klucze są współdzielone pomiędzy graczami</translation>
+        <translation type="vanished">Klucze są współdzielone pomiędzy graczami</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="171"/>
         <source>Player teams are preserved between maps</source>
-        <translation>Gracze są w tych samych drużynach po zmianie mapy</translation>
+        <translation type="vanished">Gracze są w tych samych drużynach po zmianie mapy</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="172"/>
         <source>Force OpenGL defaults</source>
-        <translation>Wymuś domyślne ustawienia OpenGL</translation>
+        <translation type="vanished">Wymuś domyślne ustawienia OpenGL</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="173"/>
         <source>No rocket jumping</source>
-        <translation>Wyłącz skakanie na rakietach</translation>
+        <translation type="vanished">Wyłącz skakanie na rakietach</translation>
     </message>
     <message>
         <source>Award damage not kills</source>
         <translation type="obsolete">Nagradzaj obrażenia, nie zabójstwa</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="175"/>
         <source>Force drawing alpha</source>
-        <translation>Wymuś rysowanie przezroczystości</translation>
+        <translation type="vanished">Wymuś rysowanie przezroczystości</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="149"/>
         <source>All monsters must be killed before exiting</source>
-        <translation>Wszystkie potwory muszą zostać zabite przed wyjściem</translation>
+        <translation type="vanished">Wszystkie potwory muszą zostać zabite przed wyjściem</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="150"/>
         <source>Players can&apos;t see the automap</source>
-        <translation>Gracze nie widzą automapy</translation>
+        <translation type="vanished">Gracze nie widzą automapy</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="151"/>
         <source>Allies can&apos;t be seen on the automap</source>
-        <translation>Sojusznicy są niewidoczni na automapie</translation>
+        <translation type="vanished">Sojusznicy są niewidoczni na automapie</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="152"/>
         <source>You can&apos;t spy allies</source>
-        <translation>Nie możesz podglądać sojuszników</translation>
+        <translation type="vanished">Nie możesz podglądać sojuszników</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="153"/>
         <source>Players can use chase cam</source>
-        <translation>Można używać kamery z trzeciej osoby</translation>
+        <translation type="vanished">Można używać kamery z trzeciej osoby</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="154"/>
         <source>Players can&apos;t suicide</source>
-        <translation>Gracze nie mogą popełniać samobójstwa</translation>
+        <translation type="vanished">Gracze nie mogą popełniać samobójstwa</translation>
     </message>
     <message>
-        <location filename="../zandronumdmflags.cpp" line="155"/>
         <source>Players can&apos;t use autoaim</source>
-        <translation>Gracze nie mogą używać autocelowania</translation>
+        <translation type="vanished">Gracze nie mogą używać autocelowania</translation>
     </message>
     <message>
         <source>Spawn map actors in coop as if the game was single player</source>
