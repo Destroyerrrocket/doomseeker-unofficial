@@ -253,13 +253,13 @@ void FlagsPage::loadGameVersion(GameVersion version)
 	int index = cboGameVersion->findData(version);
 	if (index < 0)
 	{
-		gLog << tr("Unknown game version in the config. Reverting to default.");
+		gLog << tr("Unknown Zandronum version in the config. Reverting to default.");
 		version = DEFAULT_GAME_VERSION;
 		index = cboGameVersion->findData(version);
 		if (index < 0)
 		{
-			gLog << QString("FlagsPage::loadGameVersion() - oops, a bug!, GameVersion = %1")
-				.arg(version);
+			gLog << QString("Zandronum: FlagsPage::loadGameVersion() - oops, "
+				"a bug!, GameVersion = %1") .arg(version);
 			return;
 		}
 	}
@@ -280,7 +280,7 @@ void FlagsPage::setGameVersion(GameVersion version)
 	switch (version)
 	{
 	default:
-		gLog << tr("Tried to set unknown game version. Reverting to default.");
+		gLog << tr("Tried to set unknown Zandronum version. Reverting to default.");
 		// intentional fall-through
 	case GV_Zandronum2:
 		d->flagsController.reset(new Zandronum2::FlagsPageValueController(this));

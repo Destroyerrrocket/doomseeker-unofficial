@@ -324,21 +324,21 @@ p, li { white-space: pre-wrap; }
             <item>
              <layout class="QGridLayout" name="gridLayout_4">
               <item row="0" column="0">
-               <widget class="QCheckBox" name="cbSuicide">
+               <widget class="QCheckBox" name="cbNoSuicide">
                 <property name="text">
                  <string>Suicide</string>
                 </property>
                </widget>
               </item>
               <item row="0" column="1">
-               <widget class="QCheckBox" name="cbRespawn">
+               <widget class="QCheckBox" name="cbNoRespawn">
                 <property name="text">
                  <string>Respawn</string>
                 </property>
                </widget>
               </item>
               <item row="1" column="0">
-               <widget class="QCheckBox" name="cbRocketJump">
+               <widget class="QCheckBox" name="cbNoRocketJump">
                 <property name="toolTip">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;P_RadiusAttack doesn't give players any z-momentum if the attack was made by a player. This essentially disables rocket jumping.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
@@ -348,7 +348,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item row="1" column="1">
-               <widget class="QCheckBox" name="cbTaunt">
+               <widget class="QCheckBox" name="cbNoTaunt">
                 <property name="text">
                  <string>Taunt</string>
                 </property>
@@ -382,35 +382,35 @@ p, li { white-space: pre-wrap; }
             <item>
              <layout class="QGridLayout" name="gridLayout_5">
               <item row="0" column="0">
-               <widget class="QCheckBox" name="cbUseAutomap">
+               <widget class="QCheckBox" name="cbNoUseAutomap">
                 <property name="text">
                  <string>Use automap</string>
                 </property>
                </widget>
               </item>
               <item row="1" column="1">
-               <widget class="QCheckBox" name="cbTurnOffTranslucency">
+               <widget class="QCheckBox" name="cbNoTurnOffTranslucency">
                 <property name="text">
                  <string>Turn off translucency</string>
                 </property>
                </widget>
               </item>
               <item row="1" column="0">
-               <widget class="QCheckBox" name="cbUseCrosshairs">
+               <widget class="QCheckBox" name="cbNoUseCrosshairs">
                 <property name="text">
                  <string>Use crosshairs</string>
                 </property>
                </widget>
               </item>
               <item row="0" column="1">
-               <widget class="QCheckBox" name="cbUseCustomGLLightingSettings">
+               <widget class="QCheckBox" name="cbNoUseCustomGLLightingSettings">
                 <property name="text">
                  <string>Use custom GL lighting settings</string>
                 </property>
                </widget>
               </item>
               <item row="2" column="0">
-               <widget class="QCheckBox" name="cbTargetIdentify">
+               <widget class="QCheckBox" name="cbNoTargetIdentify">
                 <property name="toolTip">
                  <string>Enforces clients not to identify players, i.e. behave as if cl_identifytarget == 0.</string>
                 </property>
@@ -420,7 +420,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item row="2" column="1">
-               <widget class="QCheckBox" name="cbDisplayCoopInfo">
+               <widget class="QCheckBox" name="cbNoDisplayCoopInfo">
                 <property name="toolTip">
                  <string>Enforces clients not to draw coop info, i.e. behave as if cl_drawcoopinfo == 0.</string>
                 </property>
@@ -448,14 +448,14 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbUseAutoaim">
+             <widget class="QCheckBox" name="cbNoUseAutoaim">
               <property name="text">
                <string>Use autoaim</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbUseFOV">
+             <widget class="QCheckBox" name="cbNoUseFOV">
               <property name="toolTip">
                <string>Only let the arbitrator set FOV (for all players)</string>
               </property>
@@ -465,14 +465,14 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbUseFreelook">
+             <widget class="QCheckBox" name="cbNoUseFreelook">
               <property name="text">
                <string>Use freelook</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbUseLandConsoleCommand">
+             <widget class="QCheckBox" name="cbNoUseLandConsoleCommand">
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Players are not allowed to use the land CCMD. Because of Zandronum's default amount of air control, flying players can get a huge speed boast with the land CCMD. Disallowing players to land, allows to keep the default air control most people are used to while not giving flying players too much of an advantage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
@@ -482,7 +482,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbMaxBloodScalar">
+             <widget class="QCheckBox" name="cbNoMaxBloodScalar">
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Don't allow players to change how strongly will their screen flash when they get hit.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
@@ -1937,10 +1937,10 @@ p, li { white-space: pre-wrap; }
   <tabstop>cbHideAlliesOnTheAutomap</tabstop>
   <tabstop>cbDontLetPlayersSpyOnAllies</tabstop>
   <tabstop>cbInstantFlagSkullReturn</tabstop>
-  <tabstop>cbUseAutoaim</tabstop>
-  <tabstop>cbUseFOV</tabstop>
-  <tabstop>cbUseFreelook</tabstop>
-  <tabstop>cbUseLandConsoleCommand</tabstop>
+  <tabstop>cbNoUseAutoaim</tabstop>
+  <tabstop>cbNoUseFOV</tabstop>
+  <tabstop>cbNoUseFreelook</tabstop>
+  <tabstop>cbNoUseLandConsoleCommand</tabstop>
   <tabstop>cboJumping</tabstop>
   <tabstop>cboCrouching</tabstop>
   <tabstop>cbInfiniteInventory</tabstop>
@@ -1992,17 +1992,17 @@ p, li { white-space: pre-wrap; }
   <tabstop>cbLMSSpectatorsCanViewTheGame</tabstop>
   <tabstop>leLMSAllowedWeapons</tabstop>
   <tabstop>leLMSSpectatorSettings</tabstop>
-  <tabstop>cbSuicide</tabstop>
-  <tabstop>cbRespawn</tabstop>
-  <tabstop>cbRocketJump</tabstop>
-  <tabstop>cbTaunt</tabstop>
-  <tabstop>cbUseAutomap</tabstop>
-  <tabstop>cbUseCrosshairs</tabstop>
-  <tabstop>cbUseCustomGLLightingSettings</tabstop>
-  <tabstop>cbTurnOffTranslucency</tabstop>
+  <tabstop>cbNoSuicide</tabstop>
+  <tabstop>cbNoRespawn</tabstop>
+  <tabstop>cbNoRocketJump</tabstop>
+  <tabstop>cbNoTaunt</tabstop>
+  <tabstop>cbNoUseAutomap</tabstop>
+  <tabstop>cbNoUseCrosshairs</tabstop>
+  <tabstop>cbNoUseCustomGLLightingSettings</tabstop>
+  <tabstop>cbNoTurnOffTranslucency</tabstop>
   <tabstop>spinForceInactivePlayersSpectatingMins</tabstop>
-  <tabstop>cbTargetIdentify</tabstop>
-  <tabstop>cbDisplayCoopInfo</tabstop>
+  <tabstop>cbNoTargetIdentify</tabstop>
+  <tabstop>cbNoDisplayCoopInfo</tabstop>
   <tabstop>cbDontSpawnAnyMultiplayerItem</tabstop>
   <tabstop>spinMonstersDamageFactor</tabstop>
   <tabstop>cbCompatEnableWallRunning</tabstop>
@@ -2044,7 +2044,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>cbNoUnlagged</tabstop>
   <tabstop>cbAlwaysApplyLMSSpectatorSettings</tabstop>
   <tabstop>cbNoMedals</tabstop>
-  <tabstop>cbMaxBloodScalar</tabstop>
+  <tabstop>cbNoMaxBloodScalar</tabstop>
   <tabstop>cbDontCheckAmmoWhenSwitchingWeapons</tabstop>
   <tabstop>cbKillBossMonsters</tabstop>
   <tabstop>cbShareKeys</tabstop>
@@ -2324,7 +2324,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>cbSuicide</sender>
+   <sender>cbNoSuicide</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
    <slot>applyWidgetsChange()</slot>
@@ -2340,7 +2340,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>cbRespawn</sender>
+   <sender>cbNoRespawn</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
    <slot>applyWidgetsChange()</slot>
@@ -2356,7 +2356,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>cbRocketJump</sender>
+   <sender>cbNoRocketJump</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
    <slot>applyWidgetsChange()</slot>
@@ -2372,7 +2372,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>cbTaunt</sender>
+   <sender>cbNoTaunt</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
    <slot>applyWidgetsChange()</slot>
@@ -2388,7 +2388,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>cbUseAutomap</sender>
+   <sender>cbNoUseAutomap</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
    <slot>applyWidgetsChange()</slot>
@@ -2404,7 +2404,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>cbUseCrosshairs</sender>
+   <sender>cbNoUseCrosshairs</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
    <slot>applyWidgetsChange()</slot>
@@ -2420,7 +2420,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>cbUseCustomGLLightingSettings</sender>
+   <sender>cbNoUseCustomGLLightingSettings</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
    <slot>applyWidgetsChange()</slot>
@@ -2436,7 +2436,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>cbTurnOffTranslucency</sender>
+   <sender>cbNoTurnOffTranslucency</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
    <slot>applyWidgetsChange()</slot>
@@ -2452,7 +2452,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>cbUseAutoaim</sender>
+   <sender>cbNoUseAutoaim</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
    <slot>applyWidgetsChange()</slot>
@@ -2468,7 +2468,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>cbUseFOV</sender>
+   <sender>cbNoUseFOV</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
    <slot>applyWidgetsChange()</slot>
@@ -2564,7 +2564,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>cbTargetIdentify</sender>
+   <sender>cbNoTargetIdentify</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
    <slot>applyWidgetsChange()</slot>
@@ -2580,7 +2580,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>cbDisplayCoopInfo</sender>
+   <sender>cbNoDisplayCoopInfo</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
    <slot>applyWidgetsChange()</slot>
@@ -2628,7 +2628,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>cbUseFreelook</sender>
+   <sender>cbNoUseFreelook</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
    <slot>applyWidgetsChange()</slot>
@@ -3364,7 +3364,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>cbUseLandConsoleCommand</sender>
+   <sender>cbNoUseLandConsoleCommand</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
    <slot>applyWidgetsChange()</slot>
@@ -4068,7 +4068,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>cbMaxBloodScalar</sender>
+   <sender>cbNoMaxBloodScalar</sender>
    <signal>clicked()</signal>
    <receiver>FlagsPage</receiver>
    <slot>applyWidgetsChange()</slot>

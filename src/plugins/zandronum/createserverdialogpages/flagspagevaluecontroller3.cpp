@@ -132,12 +132,12 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 
 		// Players
 		m.insert(Dmflags::ZACOMPATF_DISABLETAUNTS,
-			f->cbTaunt);
+			f->cbNoTaunt);
 		m.insert(Dmflags::ZACOMPATF_NO_CROSSHAIR,
-			f->cbUseCrosshairs);
+			f->cbNoUseCrosshairs);
 		// - Disallow
 		m.insert(Dmflags::ZACOMPATF_NO_LAND,
-			f->cbUseLandConsoleCommand);
+			f->cbNoUseLandConsoleCommand);
 		// Compatibility
 		m.insert(Dmflags::ZACOMPATF_PLASMA_BUMP_BUG,
 			f->cbCompatPlasmaBumpBug);
@@ -193,9 +193,9 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 
 		// Players
 		m.insert(Dmflags::DF_NO_FOV,
-			f->cbUseFOV);
+			f->cbNoUseFOV);
 		m.insert(Dmflags::DF_NO_FREELOOK,
-			f->cbUseFreelook);
+			f->cbNoUseFreelook);
 		m.insert(Dmflags::DF_INFINITE_AMMO,
 			f->cbInfiniteAmmo);
 
@@ -263,13 +263,13 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 		// Players
 		// - Disallow
 		m.insert(Dmflags::DF2_NOSUICIDE,
-			f->cbSuicide);
+			f->cbNoSuicide);
 		m.insert(Dmflags::DF2_NO_RESPAWN,
-			f->cbRespawn);
+			f->cbNoRespawn);
 		m.insert(Dmflags::DF2_NO_AUTOMAP,
-			f->cbUseAutomap);
+			f->cbNoUseAutomap);
 		m.insert(Dmflags::DF2_NOAUTOAIM,
-			f->cbUseAutoaim);
+			f->cbNoUseAutoaim);
 		// - Abilities
 		m.insert(Dmflags::DF2_INFINITE_INVENTORY,
 			f->cbInfiniteInventory);
@@ -333,11 +333,11 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 		// Players
 		// - Disallow 2
 		m.insert(Dmflags::ZADF_NO_IDENTIFY_TARGET,
-			f->cbTargetIdentify);
+			f->cbNoTargetIdentify);
 		m.insert(Dmflags::ZADF_NO_COOP_INFO,
-			f->cbDisplayCoopInfo);
+			f->cbNoDisplayCoopInfo);
 		m.insert(Dmflags::ZADF_MAX_BLOOD_SCALAR,
-			f->cbMaxBloodScalar);
+			f->cbNoMaxBloodScalar);
 		m.insert(Dmflags::ZADF_NODROP, f->cbNoItemDrop);
 		// - Behavior
 		m.insert(Dmflags::ZADF_UNBLOCK_PLAYERS,
@@ -346,11 +346,11 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->rbAlliesCanWalkThroughEachOther);
 
 		m.insert(Dmflags::ZADF_NO_ROCKET_JUMPING,
-			f->cbRocketJump);
+			f->cbNoRocketJump);
 		m.insert(Dmflags::ZADF_FORCE_GL_DEFAULTS,
-			f->cbUseCustomGLLightingSettings);
+			f->cbNoUseCustomGLLightingSettings);
 		m.insert(Dmflags::ZADF_FORCE_ALPHA,
-			f->cbTurnOffTranslucency);
+			f->cbNoTurnOffTranslucency);
 
 		// Cooperative
 		m.insert(Dmflags::ZADF_SHARE_KEYS,

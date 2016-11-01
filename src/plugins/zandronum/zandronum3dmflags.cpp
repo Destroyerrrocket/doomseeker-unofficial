@@ -112,55 +112,57 @@ DMFlagsSection Dmflags::compatFlags2()
 
 DMFlagsSection Dmflags::zandronumCompatFlags()
 {
+	using namespace ZandronumGameSettingsNames;
+
 	DMFlagsSection section("ZA Compat. flags");
-	section << DMFlag("Net scripts are client side", ZACOMPATF_NETSCRIPTS_ARE_CLIENTSIDE,
+	section << DMFlag(COMPAT_NETSCRIPTS_ARE_CLIENTSIDE, ZACOMPATF_NETSCRIPTS_ARE_CLIENTSIDE,
 		tr("Net scripts are client side"));
-	section << DMFlag("Clients send full button info", ZACOMPATF_CLIENTS_SEND_FULL_BUTTON_INFO,
+	section << DMFlag(COMPAT_CLIENTS_SEND_FULL_BUTTON_INFO, ZACOMPATF_CLIENTS_SEND_FULL_BUTTON_INFO,
 		tr("Clients send full button info"));
-	section << DMFlag("Players can't use 'land' CCMD", ZACOMPATF_NO_LAND,
+	section << DMFlag(NO_USE_LAND_CONSOLE_COMMAND, ZACOMPATF_NO_LAND,
 		tr("Players can't use 'land' CCMD"));
-	section << DMFlag("Use Doom's original random number generator",
+	section << DMFlag(COMPAT_OLD_RANDOM_NUMBER_GENERATOR,
 		ZACOMPATF_OLD_RANDOM_GENERATOR,
 		tr("Use Doom's original random number generator"));
-	section << DMFlag("Spheres have NOGRAVITY flag", ZACOMPATF_NOGRAVITY_SPHERES,
+	section << DMFlag(COMPAT_ADD_NOGRAVITYFLAG_TO_SPHERES, ZACOMPATF_NOGRAVITY_SPHERES,
 		tr("Spheres have NOGRAVITY flag"));
-	section << DMFlag("Don't stop player scripts on disconnect",
+	section << DMFlag(DONT_STOP_PLAYER_SCRIPTS_ON_DISCONNECT,
 		ZACOMPATF_DONT_STOP_PLAYER_SCRIPTS_ON_DISCONNECT,
 		tr("Don't stop player scripts on disconnect"));
-	section << DMFlag("Use horizontal explosion thrust of old ZDoom versions",
+	section << DMFlag(OLD_ZDOOM_HORIZONTAL_THRUST,
 		ZACOMPATF_OLD_EXPLOSION_THRUST,
 		tr("Use horizontal explosion thrust of old ZDoom versions"));
-	section << DMFlag("Non-SOLID things fall through invisible bridges",
+	section << DMFlag(OLD_ZDOOM_BRIDGE_DROPS,
 		ZACOMPATF_OLD_BRIDGE_DROPS,
 		tr("Non-SOLID things fall through invisible bridges"));
-	section << DMFlag("Use old ZDoom jump physics", ZACOMPATF_OLD_ZDOOM_ZMOVEMENT,
+	section << DMFlag(OLD_ZDOOM_JUMP_PHYSICS, ZACOMPATF_OLD_ZDOOM_ZMOVEMENT,
 		tr("Use old ZDoom jump physics"));
-	section << DMFlag("Disallow weapon change when in mid raise/lower",
+	section << DMFlag(COMPAT_FULL_WEAPON_LOWER,
 		ZACOMPATF_FULL_WEAPON_LOWER,
 		tr("Disallow weapon change when in mid raise/lower"));
-	section << DMFlag("Use vanilla's autoaim tracer behavior", ZACOMPATF_AUTOAIM,
+	section << DMFlag(COMPAT_USE_VANILLA_AUTOAIM_TRACER_BEHAVIOR, ZACOMPATF_AUTOAIM,
 		tr("Use vanilla's autoaim tracer behavior"));
-	section << DMFlag("West spawns are silent", ZACOMPATF_SILENT_WEST_SPAWNS,
+	section << DMFlag(COMPAT_WEST_SPAWNS_ARE_SILENT, ZACOMPATF_SILENT_WEST_SPAWNS,
 		tr("West spawns are silent"));
-	section << DMFlag("Limited movement in the air", ZACOMPATF_LIMITED_AIRMOVEMENT,
+	section << DMFlag(COMPAT_LIMITED_MOVEMENT_IN_THE_AIR, ZACOMPATF_LIMITED_AIRMOVEMENT,
 		tr("Limited movement in the air"));
-	section << DMFlag("Allow map01 \"plasma bump\" bug", ZACOMPATF_PLASMA_BUMP_BUG,
+	section << DMFlag(COMPAT_PLASMA_BUMP_BUG, ZACOMPATF_PLASMA_BUMP_BUG,
 		tr("Allow map01 \"plasma bump\" bug"));
-	section << DMFlag("Allow instant respawn after death", ZACOMPATF_INSTANTRESPAWN,
+	section << DMFlag(COMPAT_ALLOW_INSTANT_RESPAWN, ZACOMPATF_INSTANTRESPAWN,
 		tr("Allow instant respawn after death"));
-	section << DMFlag("Disable taunting", ZACOMPATF_DISABLETAUNTS,
+	section << DMFlag(NO_TAUNT, ZACOMPATF_DISABLETAUNTS,
 		tr("Disable taunting"));
-	section << DMFlag("Use doom2.exe's original sound curve", ZACOMPATF_ORIGINALSOUNDCURVE,
+	section << DMFlag(COMPAT_ORIGINAL_SOUND_CURVE, ZACOMPATF_ORIGINALSOUNDCURVE,
 		tr("Use doom2.exe's original sound curve"));
-	section << DMFlag("Use original doom2 intermission music", ZACOMPATF_OLDINTERMISSION,
+	section << DMFlag(COMPAT_USE_OLD_INTERMISSION_SCREENS_MUSIC, ZACOMPATF_OLDINTERMISSION,
 		tr("Use original doom2 intermission music"));
-	section << DMFlag("Disable stealth monsters", ZACOMPATF_DISABLESTEALTHMONSTERS,
+	section << DMFlag(COMPAT_DISABLE_STEALTH_MONSTERS, ZACOMPATF_DISABLESTEALTHMONSTERS,
 		tr("Disable stealth monsters"));
-	section << DMFlag("Radius damage has infinite height", ZACOMPATF_OLDRADIUSDMG,
+	section << DMFlag(COMPAT_OLD_DAMAGE_RADIUS_INFINITE_HEIGHT, ZACOMPATF_OLDRADIUSDMG,
 		tr("Radius damage has infinite height"));
-	section << DMFlag("Disable crosshair", ZACOMPATF_NO_CROSSHAIR,
+	section << DMFlag(NO_USE_CROSSHAIRS, ZACOMPATF_NO_CROSSHAIR,
 		tr("Disable crosshair"));
-	section << DMFlag("Force weapon switch", ZACOMPATF_OLD_WEAPON_SWITCH,
+	section << DMFlag(COMPAT_ORIGINAL_WEAPON_SWITCH, ZACOMPATF_OLD_WEAPON_SWITCH,
 		tr("Force weapon switch"));
 	return section;
 }

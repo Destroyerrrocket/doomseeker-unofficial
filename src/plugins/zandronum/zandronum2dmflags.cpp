@@ -107,7 +107,7 @@ DMFlagsSection Dmflags::zandronumCompatFlags()
 		tr("Net scripts are client side"));
 	section << DMFlag(COMPAT_CLIENTS_SEND_FULL_BUTTON_INFO, ZACOMPATF_CLIENTS_SEND_FULL_BUTTON_INFO,
 		tr("Clients send full button info"));
-	section << DMFlag(USE_LAND_CONSOLE_COMMAND, ZACOMPATF_NO_LAND,
+	section << DMFlag(NO_USE_LAND_CONSOLE_COMMAND, ZACOMPATF_NO_LAND,
 		tr("Players can't use 'land' CCMD"));
 	section << DMFlag(COMPAT_OLD_RANDOM_NUMBER_GENERATOR,
 		ZACOMPATF_OLD_RANDOM_GENERATOR,
@@ -138,7 +138,7 @@ DMFlagsSection Dmflags::zandronumCompatFlags()
 		tr("Allow map01 \"plasma bump\" bug"));
 	section << DMFlag(COMPAT_ALLOW_INSTANT_RESPAWN, ZACOMPATF_INSTANTRESPAWN,
 		tr("Allow instant respawn after death"));
-	section << DMFlag(TAUNT, ZACOMPATF_DISABLETAUNTS,
+	section << DMFlag(NO_TAUNT, ZACOMPATF_DISABLETAUNTS,
 		tr("Disable taunting"));
 	section << DMFlag(COMPAT_ORIGINAL_SOUND_CURVE, ZACOMPATF_ORIGINALSOUNDCURVE,
 		tr("Use doom2.exe's original sound curve"));
@@ -148,7 +148,7 @@ DMFlagsSection Dmflags::zandronumCompatFlags()
 		tr("Disable stealth monsters"));
 	section << DMFlag(COMPAT_OLD_DAMAGE_RADIUS_INFINITE_HEIGHT, ZACOMPATF_OLDRADIUSDMG,
 		tr("Radius damage has infinite height"));
-	section << DMFlag(USE_CROSSHAIRS, ZACOMPATF_NO_CROSSHAIR,
+	section << DMFlag(NO_USE_CROSSHAIRS, ZACOMPATF_NO_CROSSHAIR,
 		tr("Disable crosshair"));
 	section << DMFlag(COMPAT_ORIGINAL_WEAPON_SWITCH, ZACOMPATF_OLD_WEAPON_SWITCH,
 		tr("Force weapon switch"));
