@@ -23,7 +23,7 @@
 #ifndef id0bc86735_418c_47d6_a765_374dfc391a5e
 #define id0bc86735_418c_47d6_a765_374dfc391a5e
 
-#include "dptr.h"
+#include <dptr.h>
 
 class FlagsPage;
 class IniSection;

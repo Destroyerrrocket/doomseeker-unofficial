@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// zandronumdmflags.cpp
+// zandronum3dmflags.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,81 +18,99 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2016 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "zandronumdmflags.h"
+#include "zandronum3dmflags.h"
 
-#include "serverapi/serverstructs.h"
+#include <serverapi/serverstructs.h>
+#include "zandronumgamesettings.h"
 
-DMFlagsSection ZandronumDmflags::compatFlags()
+namespace Zandronum3
 {
+
+DMFlagsSection Dmflags::compatFlags()
+{
+	using namespace ZandronumGameSettingsNames;
+
 	DMFlagsSection section("Compat. flags");
-	section << DMFlag("Use Doom's shortest texture behavior", COMPATF_SHORTTEX,
+	section << DMFlag(COMPAT_FIND_SHORTEST_TEXTURES_LIKE_DOOM, COMPATF_SHORTTEX,
 		tr("Use Doom's shortest texture behavior"));
-	section << DMFlag("Don't fix loop index for stair building", COMPATF_STAIRINDEX,
+	section << DMFlag(COMPAT_USE_BUGGIER_STAIR_BUILDING, COMPATF_STAIRINDEX,
 		tr("Don't fix loop index for stair building"));
-	section << DMFlag("Pain elemental is limited to 20 lost souls", COMPATF_LIMITPAIN,
+	section << DMFlag(COMPAT_LIMIT_PAIN_ELEMENTALS, COMPATF_LIMITPAIN,
 		tr("Pain elemental is limited to 20 lost souls"));
-	section << DMFlag("Pickups are only heard locally", COMPATF_SILENTPICKUP,
+	section << DMFlag(COMPAT_DONT_LET_OTHERS_HEAR_PICKUPS, COMPATF_SILENTPICKUP,
 		tr("Pickups are only heard locally"));
-	section << DMFlag("Infinitly tall actors", COMPATF_NO_PASSMOBJ,
-		tr("Infinitly tall actors"));
-	section << DMFlag("Limit actors to only one sound", COMPATF_MAGICSILENCE,
+	section << DMFlag(COMPAT_ACTORS_ARE_INFINITELY_TALL, COMPATF_NO_PASSMOBJ,
+		tr("Infinitely tall actors"));
+	section << DMFlag(COMPAT_ALLOW_SILENT_BFGTRICK, COMPATF_MAGICSILENCE,
 		tr("Limit actors to only one sound"));
-	section << DMFlag("Enable wallrunning", COMPATF_WALLRUN,
+	section << DMFlag(COMPAT_ENABLE_WALL_RUNNING, COMPATF_WALLRUN,
 		tr("Enable wallrunning"));
-	section << DMFlag("Dropped items spawn on floor", COMPATF_NOTOSSDROPS,
+	section << DMFlag(COMPAT_SPAWN_ITEM_DROPS_ON_THE_FLOOR, COMPATF_NOTOSSDROPS,
 		tr("Dropped items spawn on floor"));
-	section << DMFlag("Special lines block use line", COMPATF_USEBLOCKING,
+	section << DMFlag(COMPAT_ALL_SPECIAL_LINES_CAN_DROP_USE_LINES, COMPATF_USEBLOCKING,
 		tr("Special lines block use line"));
-	section << DMFlag("Disable BOOM local door light effect", COMPATF_NODOORLIGHT,
+	section << DMFlag(COMPAT_DISABLE_BOOM_DOOR_LIGHT_EFFECT, COMPATF_NODOORLIGHT,
 		tr("Disable BOOM local door light effect"));
-	section << DMFlag("Raven's scrollers use their original speed", COMPATF_RAVENSCROLL,
+	section << DMFlag(COMPAT_RAVENS_SCROLLERS_USE_ORIGINAL_SPEED, COMPATF_RAVENSCROLL,
 		tr("Raven's scrollers use their original speed"));
-	section << DMFlag("Use sector based sound target code", COMPATF_SOUNDTARGET,
+	section << DMFlag(COMPAT_USE_SECTOR_BASED_SOUND_TARGET_CODE, COMPATF_SOUNDTARGET,
 		tr("Use sector based sound target code"));
-	section << DMFlag("Limit dehacked MaxHealth to health bonus", COMPATF_DEHHEALTH,
+	section << DMFlag(COMPAT_LIMIT_DEH_MAX_HEALTH_TO_HEALTH_BONUS, COMPATF_DEHHEALTH,
 		tr("Limit dehacked MaxHealth to health bonus"));
-	section << DMFlag("Trace ignores lines with the same sector on both sides", COMPATF_TRACE,
+	section << DMFlag(COMPAT_TRACE_IGNORE_LINES_WITHOUT_SAME_SECTOR_ON_BOTH_SIDES, COMPATF_TRACE,
 		tr("Trace ignores lines with the same sector on both sides"));
-	section << DMFlag("Monsters can not move when hanging over a drop off", COMPATF_DROPOFF,
+	section << DMFlag(COMPAT_NO_MONSTERS_DROPOFF_MOVE, COMPATF_DROPOFF,
 		tr("Monsters can not move when hanging over a drop off"));
-	section << DMFlag("Scrolling sectors are additive like Boom", COMPATF_BOOMSCROLL,
+	section << DMFlag(COMPAT_SCROLLING_SECTORS_ARE_ADDITIVE, COMPATF_BOOMSCROLL,
 		tr("Scrolling sectors are additive like Boom"));
-	section << DMFlag("Monsters can see semi-invisible players", COMPATF_INVISIBILITY,
+	section << DMFlag(COMPAT_MONSTERS_SEE_SEMI_INVISIBLE_PLAYERS, COMPATF_INVISIBILITY,
 		tr("Monsters can see semi-invisible players"));
-	section << DMFlag("Instantly moving floors are not silent", COMPATF_SILENT_INSTANT_FLOORS,
+	section << DMFlag(COMPAT_INSTANTLY_MOVING_FLOORS_ARENT_SILENT, COMPATF_SILENT_INSTANT_FLOORS,
 		tr("Instantly moving floors are not silent"));
-	section << DMFlag("Sector sounds use original method for sound origin", COMPATF_SECTORSOUNDS,
+	section << DMFlag(COMPAT_SECTOR_SOUNDS_USE_ORIGINAL_METHOD, COMPATF_SECTORSOUNDS,
 		tr("Sector sounds use original method for sound origin"));
-	section << DMFlag("Use original Doom heights for clipping against projectiles", COMPATF_MISSILECLIP,
+	section << DMFlag(COMPAT_USE_ORIGINAL_MISSILE_CLIPPING_HEIGHT, COMPATF_MISSILECLIP,
 		tr("Use original Doom heights for clipping against projectiles"));
-	section << DMFlag("Monsters can't be pushed over dropoffs", COMPATF_CROSSDROPOFF,
+	section << DMFlag(COMPAT_MONSTERS_CANT_BE_PUSHED_OFF_CLIFFS, COMPATF_CROSSDROPOFF,
 		tr("Monsters can't be pushed over dropoffs"));
-	section << DMFlag("Any monster which calls BOSSDEATH counts for level specials", COMPATF_ANYBOSSDEATH,
+	section << DMFlag(COMPAT_ANY_BOSS_DEATH_ACTIVATES_MAP_SPECIALS, COMPATF_ANYBOSSDEATH,
 		tr("Any monster which calls BOSSDEATH counts for level specials"));
-	section << DMFlag("Minotaur's floor flame is exploded immediately when feet are clipped", COMPATF_MINOTAUR,
+	section << DMFlag(COMPAT_MINOTAUR, COMPATF_MINOTAUR,
 		tr("Minotaur's floor flame is exploded immediately when feet are clipped"));
-	section << DMFlag("Force original velocity calculations for A_Mushroom in Dehacked mods", COMPATF_MUSHROOM,
+	section << DMFlag(COMPAT_ORIGINAL_VELOCITY_CALC_FOR_MUSHROOM_IN_DEHACKED, COMPATF_MUSHROOM,
 		tr("Force original velocity calculations for A_Mushroom in Dehacked mods"));
-	section << DMFlag("Monsters are affected by friction and pushers/pullers", COMPATF_MBFMONSTERMOVE,
+	section << DMFlag(COMPAT_FRICTION_PUSHERS_PULLERS_AFFECT_MONSTERS, COMPATF_MBFMONSTERMOVE,
 		tr("Monsters are affected by friction and pushers/pullers"));
-	section << DMFlag("Crushed monsters are turned into gibs, rather than replaced by gibs", COMPATF_CORPSEGIBS,
+	section << DMFlag(COMPAT_CRUSHER_GIBS_BY_MORPHING_NOT_REPLACEMENT, COMPATF_CORPSEGIBS,
 		tr("Crushed monsters are turned into gibs, rather than replaced by gibs"));
-	section << DMFlag("Friendly monsters aren't blocked by monster-blocking lines", COMPATF_NOBLOCKFRIENDS,
+	section << DMFlag(COMPAT_BLOCK_MONSTER_LINES_IGNORE_FRIENDLY_MONSTERS, COMPATF_NOBLOCKFRIENDS,
 		tr("Friendly monsters aren't blocked by monster-blocking lines"));
-	section << DMFlag("Invert sprite sorting order for sprites of equal distance", COMPATF_SPRITESORT,
+	section << DMFlag(COMPAT_SPRITE_SORT_ORDER_INVERTED, COMPATF_SPRITESORT,
 		tr("Invert sprite sorting order for sprites of equal distance"));
-	section << DMFlag("Hitscans use original blockmap and hit check code", COMPATF_HITSCAN,
+	section << DMFlag(COMPAT_HITSCANS_ORIGINAL_BLOCKMAP, COMPATF_HITSCAN,
 		tr("Hitscans use original blockmap and hit check code"));
-	section << DMFlag("Find neighboring light level like like Doom", COMPATF_LIGHT,
+	section << DMFlag(COMPAT_FIND_NEIGHBORING_LIGHT_LEVEL_LIKE_DOOM, COMPATF_LIGHT,
 		tr("Find neighboring light level like like Doom"));
-	section << DMFlag("Draw polyobjects the old fashioned way", COMPATF_POLYOBJ,
+	section << DMFlag(COMPAT_DRAW_POLYOBJECTS_OLD, COMPATF_POLYOBJ,
 		tr("Draw polyobjects the old fashioned way"));
+	section << DMFlag("Ignore compositing when drawing masked midtextures", COMPATF_MASKEDMIDTEX,
+		tr("Ignore compositing when drawing masked midtextures"));
 	return section;
 }
 
-DMFlagsSection ZandronumDmflags::zandronumCompatFlags()
+DMFlagsSection Dmflags::compatFlags2()
+{
+	DMFlagsSection section("Compat. flags 2");
+	section << DMFlag("It is impossible to directly face cardinal direction", COMPATF2_BADANGLES,
+		tr("It is impossible to directly face cardinal direction"));
+	section << DMFlag("Use the same floor motion behavior as Doom", COMPATF2_FLOORMOVE,
+		tr("Use the same floor motion behavior as Doom"));
+	return section;
+}
+
+DMFlagsSection Dmflags::zandronumCompatFlags()
 {
 	DMFlagsSection section("ZA Compat. flags");
 	section << DMFlag("Net scripts are client side", ZACOMPATF_NETSCRIPTS_ARE_CLIENTSIDE,
@@ -147,7 +165,7 @@ DMFlagsSection ZandronumDmflags::zandronumCompatFlags()
 	return section;
 }
 
-DMFlagsSection ZandronumDmflags::dmflags()
+DMFlagsSection Dmflags::dmflags()
 {
 	DMFlagsSection section("DMFlags");
 	section << DMFlag("Do not spawn health items (DM)", DF_NO_HEALTH,
@@ -208,7 +226,6 @@ DMFlagsSection ZandronumDmflags::dmflags()
 		tr("Lose ammo on respawn (COOP)"));
 	section << DMFlag("Lose half your ammo on respawn (COOP)", DF_COOP_HALVE_AMMO,
 		tr("Lose half your ammo on respawn (COOP)"));
-	// Why do these two exist anyway?
 	section << DMFlag("Jumping allowed", DF_YES_JUMP,
 		tr("Jumping allowed"));
 	section << DMFlag("Crouching allowed", DF_YES_CROUCH,
@@ -216,7 +233,7 @@ DMFlagsSection ZandronumDmflags::dmflags()
 	return section;
 }
 
-DMFlagsSection ZandronumDmflags::dmflags2()
+DMFlagsSection Dmflags::dmflags2()
 {
 	DMFlagsSection section("DMFlags2");
 	section << DMFlag("Drop weapons upon death", DF2_YES_WEAPONDROP,
@@ -269,10 +286,13 @@ DMFlagsSection ZandronumDmflags::dmflags2()
 		tr("Don't check ammo when switching weapons"));
 	section << DMFlag("Kill all monsters spawned by a boss cube when the boss dies", DF2_KILLBOSSMONST,
 		tr("Kill all monsters spawned by a boss cube when the boss dies"));
+	section << DMFlag("Do not count monsters in 'end level when dying' sectors towards kill count",
+		DF2_NOCOUNTENDMONST,
+		tr("Do not count monsters in 'end level when dying' sectors towards kill count"));
 	return section;
 }
 
-DMFlagsSection ZandronumDmflags::zandronumDmflags()
+DMFlagsSection Dmflags::zandronumDmflags()
 {
 	DMFlagsSection section("Zandronum Flags");
 	section << DMFlag("Clients can't identify targets", ZADF_NO_IDENTIFY_TARGET,
@@ -307,10 +327,12 @@ DMFlagsSection ZandronumDmflags::zandronumDmflags()
 		tr("Force blood screen brightness on clients to emulate vanilla"));
 	section << DMFlag("Teammates don't block each other", ZADF_UNBLOCK_ALLIES,
 		tr("Teammates don't block each other"));
+	section << DMFlag("No dropping allowed", ZADF_NODROP,
+		tr("No dropping allowed"));
 	return section;
 }
 
-QList<DMFlagsSection> ZandronumDmflags::flags()
+QList<DMFlagsSection> Dmflags::flags()
 {
 	QList<DMFlagsSection> result;
 	result << dmflags();
@@ -318,5 +340,8 @@ QList<DMFlagsSection> ZandronumDmflags::flags()
 	result << zandronumDmflags();
 	result << compatFlags();
 	result << zandronumCompatFlags();
+	result << compatFlags2();
 	return result;
+}
+
 }

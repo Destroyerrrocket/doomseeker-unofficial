@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// zandronumdmflags.h
+// zandronum2dmflags.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -25,13 +25,17 @@
 
 #include <QList>
 #include <QObject>
+#include "zandronumgamesettings.h"
 
 class DMFlagsSection;
+
+namespace Zandronum2
+{
 
 /**
  * @brief Common dmflags.
  */
-class ZandronumDmflags : public QObject
+class Dmflags : public QObject
 {
 	Q_OBJECT
 
@@ -267,12 +271,16 @@ class ZandronumDmflags : public QObject
 			ZACOMPATF_OLD_WEAPON_SWITCH		= 1 << 26,
 		};
 
+		QList<DMFlagsSection> flags();
+
+	private:
 		DMFlagsSection compatFlags();
 		DMFlagsSection dmflags();
 		DMFlagsSection dmflags2();
-		QList<DMFlagsSection> flags();
 		DMFlagsSection zandronumCompatFlags();
 		DMFlagsSection zandronumDmflags();
 };
+
+}
 
 #endif

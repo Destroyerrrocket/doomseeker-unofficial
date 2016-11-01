@@ -26,10 +26,21 @@
 #include "ui_flagspage.h"
 #include <gui/widgets/createserverdialogpage.h>
 
+namespace Zandronum2
+{
+class FlagsPageValueController;
+}
+
+namespace Zandronum3
+{
+class FlagsPageValueController;
+}
+
 class FlagsPage : public CreateServerDialogPage, private Ui::FlagsPage
 {
 	friend class FlagsId;
-	friend class FlagsPageValueController;
+	friend class Zandronum2::FlagsPageValueController;
+	friend class Zandronum3::FlagsPageValueController;
 
 	Q_OBJECT;
 

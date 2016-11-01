@@ -18,15 +18,10 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2016 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #ifndef DOOMSEEKER_PLUGIN_ZANDRONUM_CREATESERVERDIALOGPAGES_FLAGSPAGEVALUECONTROLLER_H
 #define DOOMSEEKER_PLUGIN_ZANDRONUM_CREATESERVERDIALOGPAGES_FLAGSPAGEVALUECONTROLLER_H
-
-#include <QAbstractButton>
-#include <QMap>
-
-class FlagsPage;
 
 /**
  * @brief Converts numerical flags values to widget representation
@@ -34,49 +29,9 @@ class FlagsPage;
  */
 class FlagsPageValueController
 {
-	public:
-		FlagsPageValueController(FlagsPage* flagsPage);
-
-		void convertNumericalToWidgets();
-		void convertWidgetsToNumerical();
-
-	private:
-		unsigned compatflags;
-		unsigned zandronumCompatflags;
-
-		unsigned dmflags;
-		unsigned dmflags2;
-		unsigned zandronumDmflags;
-
-		unsigned lmsAllowedWeapons;
-		unsigned lmsSpectatorSettings;
-
-		QMap<unsigned, QAbstractButton*> compatflagsCheckboxes;
-		QMap<unsigned, QAbstractButton*> dmflagsCheckboxes;
-		QMap<unsigned, QAbstractButton*> dmflags2Checkboxes;
-		QMap<unsigned, QAbstractButton*> lmsAllowedWeaponsCheckboxes;
-		QMap<unsigned, QAbstractButton*> lmsSpectatorSettingsCheckboxes;
-		QMap<unsigned, QAbstractButton*> zandronumCompatflagsCheckboxes;
-		QMap<unsigned, QAbstractButton*> zandronumDmflagsCheckboxes;
-
-		FlagsPage* flagsPage;
-
-		void convertToNumericalGeneral();
-		void convertToNumericalPlayers();
-		void convertToNumericalCooperative();
-		void convertToNumericalDeathmatch();
-
-		void convertCheckboxesToNumerical(const QMap<unsigned, QAbstractButton*>& checkboxMap,
-			unsigned& flagsValue);
-		void convertNumericalToCheckboxes(QMap<unsigned, QAbstractButton*>& checkboxMap,
-			unsigned flagsValue);
-
-		void convertToWidgetGeneral();
-		void convertToWidgetPlayers();
-		void convertToWidgetCooperative();
-		void convertToWidgetDeathmatch();
-
-		void readFlagsFromTextInputs();
+public:
+	virtual void convertNumericalToWidgets() = 0;
+	virtual void convertWidgetsToNumerical() = 0;
 };
 
 #endif

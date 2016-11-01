@@ -22,7 +22,8 @@
 //------------------------------------------------------------------------------
 #include "zandronumserverdmflagsparser.h"
 
-#include "zandronumdmflags.h"
+#include "zandronum2dmflags.h"
+#include "zandronum3dmflags.h"
 #include "zandronumgameinfo.h"
 #include "zandronumserver.h"
 #include <serverapi/serverstructs.h>
@@ -51,7 +52,7 @@ QList<DMFlagsSection> ZandronumServerDmflagsParser::sequential32Parse(
 	// Read each dmflags section separately.
 	for (int i = 0; i < knownFlags.count() && i < numSections; ++i)
 	{
-		unsigned int dmflags = in.readQInt32();
+		quint32 dmflags = in.readQUInt32();
 
 		const DMFlagsSection& knownSection = knownFlags[i];
 		DMFlagsSection detectedSection = knownSection.copyEmpty();
@@ -91,5 +92,5 @@ QList<DMFlagsSection> ZandronumServerNullParser::parse()
 
 QList<DMFlagsSection> ZandronumServer2point0DmflagsParser::parse()
 {
-	return sequential32Parse(ZandronumDmflags().flags());
+	return sequential32Parse(Zandronum2::Dmflags().flags());
 }

@@ -6,9 +6,9 @@
 #include <ini/inisection.h>
 
 #include "createserverdialogpages/flagsid.h"
-#include "createserverdialogpages/flagspagevaluecontroller.h"
+#include "createserverdialogpages/flagspagevaluecontroller2.h"
+#include "createserverdialogpages/flagspagevaluecontroller3.h"
 #include "createserverdialogpages/votingsetupwidget.h"
-#include "zandronumdmflags.h"
 #include "zandronumgameinfo.h"
 
 const unsigned DEFAULT_LMSALLOWEDWEAPONS = 1023;
@@ -60,6 +60,7 @@ FlagsPage::FlagsPage(CreateServerDialog* pParentDialog)
 	leDmflags2->setValidator(&d->validator);
 	leZandronumDmflags->setValidator(&d->validator);
 	leCompatflags->setValidator(&d->validator);
+	leCompatflags2->setValidator(&d->validator);
 	leZandronumCompatflags->setValidator(&d->validator);
 	leLMSAllowedWeapons->setValidator(&d->validator);
 	leLMSSpectatorSettings->setValidator(&d->validator);
@@ -85,7 +86,7 @@ FlagsPage::~FlagsPage()
 
 void FlagsPage::applyWidgetsChange()
 {
-	FlagsPageValueController controller(this);
+	Zandronum2::FlagsPageValueController controller(this);
 	controller.convertWidgetsToNumerical();
 }
 
@@ -97,6 +98,8 @@ QStringList FlagsPage::generateGameRunParameters()
 	params << "+dmflags2" << leDmflags2->text();
 	params << "+zadmflags" << leZandronumDmflags->text();
 	params << "+compatflags" << leCompatflags->text();
+	if (leCompatflags2->isEnabled() && leCompatflags2->isVisible())
+		params << "+compatflags2" << leCompatflags2->text();
 	params << "+zacompatflags" << leZandronumCompatflags->text();
 	params << "+lmsallowedweapons" << leLMSAllowedWeapons->text();
 	params << "+lmsspectatorsettings" << leLMSSpectatorSettings->text();
@@ -189,13 +192,13 @@ bool FlagsPage::loadConfig(Ini& ini)
 
 void FlagsPage::propagateFlagsCheckboxChanges()
 {
-	FlagsPageValueController controller(this);
+	Zandronum2::FlagsPageValueController controller(this);
 	controller.convertWidgetsToNumerical();
 }
 
 void FlagsPage::propagateFlagsInputsChanges()
 {
-	FlagsPageValueController controller(this);
+	Zandronum2::FlagsPageValueController controller(this);
 	controller.convertNumericalToWidgets();
 }
 

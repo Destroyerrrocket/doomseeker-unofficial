@@ -20,7 +20,8 @@ set(ZANDRONUM_QT_FILES
 	huffmanudpsocket.h
 	zandronumbinaries.h
 	zandronumbroadcast.h
-	zandronumdmflags.h
+	zandronum2dmflags.h
+	zandronum3dmflags.h
 	zandronumgameexefactory.h
 	zandronumgamehost.h
 	zandronumgameinfo.h
@@ -31,7 +32,8 @@ set(ZANDRONUM_QT_FILES
 
 set(ZANDRONUM_FILES
 	createserverdialogpages/flagsid.cpp
-	createserverdialogpages/flagspagevaluecontroller.cpp
+	createserverdialogpages/flagspagevaluecontroller2.cpp
+	createserverdialogpages/flagspagevaluecontroller3.cpp
 	createserverdialogpages/flagspage.cpp
 	createserverdialogpages/votingsetupwidget.cpp
 	huffman/bitreader.cpp
@@ -43,12 +45,14 @@ set(ZANDRONUM_FILES
 	huffmanudpsocket.cpp
 	zandronumbinaries.cpp
 	zandronumbroadcast.cpp
-	zandronumdmflags.cpp
+	zandronum2dmflags.cpp
+	zandronum3dmflags.cpp
 	zandronumengineplugin.cpp
 	zandronumgameexefactory.cpp
 	zandronumgamehost.cpp
 	zandronumgameinfo.cpp
 	zandronumgamerunner.cpp
+	zandronumgamesettings.cpp
 	zandronummasterclient.cpp
 	zandronumrconprotocol.cpp
 	zandronumserver.cpp
@@ -58,7 +62,8 @@ set(ZANDRONUM_FILES
 set(HEADER_FILES
 	${ZANDRONUM_QT_FILES}
 	createserverdialogpages/flagsid.h
-	createserverdialogpages/flagspagevaluecontroller.h
+	createserverdialogpages/flagspagevaluecontroller2.h
+	createserverdialogpages/flagspagevaluecontroller3.h
 	huffman/bitreader.h
 	huffman/bitwriter.h
 	huffman/codec.h
@@ -66,6 +71,7 @@ set(HEADER_FILES
 	huffman/huffman.h
 	zandronumengineplugin.h
 	zandronumgamerunner.h
+	zandronumgamesettings.h
 	zandronumserverdmflagsparser.h
 )
 

@@ -25,135 +25,12 @@
 #include <ini/inisection.h>
 #include <ini/inivariable.h>
 #include "createserverdialogpages/flagspage.h"
+#include "zandronumgamesettings.h"
 
 #include <QCheckBox>
 
 namespace FlagNames
 {
-static const QString COMPAT_ALLOW_SILENT_BFGTRICK = "CompatAllowSilentBFGTrick";
-static const QString COMPAT_ENABLE_WALL_RUNNING = "CompatEnableWallRunning";
-static const QString COMPAT_DONT_LET_OTHERS_HEAR_PICKUPS = "CompatDontLetOthersHearPickups";
-static const QString COMPAT_MONSTERS_SEE_SEMI_INVISIBLE_PLAYERS = "CompatMonstersSeeSemiInvisiblePlayers";
-static const QString COMPAT_NO_MONSTERS_DROPOFF_MOVE = "CompatNoMonstersDropoffMove";
-static const QString COMPAT_SCROLLING_SECTORS_ARE_ADDITIVE = "CompatScrollingSectorsAreAdditive";
-static const QString COMPAT_INSTANTLY_MOVING_FLOORS_ARENT_SILENT = "CompatInstantlyMovingFloorsArentSilent";
-static const QString COMPAT_SECTOR_SOUNDS_USE_ORIGINAL_METHOD = "CompatSectorSoundsUseOriginalMethod";
-static const QString COMPAT_ANY_BOSS_DEATH_ACTIVATES_MAP_SPECIALS = "CompatAnyBossDeathActivatesMapSpecials";
-static const QString COMPAT_FRICTION_PUSHERS_PULLERS_AFFECT_MONSTERS = "CompatFrictionPushersPullersAffectMonsters";
-static const QString COMPAT_CRUSHER_GIBS_BY_MORPHING_NOT_REPLACEMENT = "CompatCrusherGibsByMorphingNotReplacement";
-static const QString COMPAT_BLOCK_MONSTER_LINES_IGNORE_FRIENDLY_MONSTERS = "CompatBlockMonsterLinesIgnoreFriendlyMonsters";
-static const QString COMPAT_FIND_NEIGHBORING_LIGHT_LEVEL_LIKE_DOOM = "CompatFindNeighboringLightLevelLikeDoom";
-static const QString COMPAT_FIND_SHORTEST_TEXTURES_LIKE_DOOM = "CompatFindShortestTexturesLikeDoom";
-static const QString COMPAT_USE_BUGGIER_STAIR_BUILDING = "CompatUseBuggierStairBuilding";
-static const QString COMPAT_LIMIT_PAIN_ELEMENTALS = "CompatLimitPainElementals";
-static const QString COMPAT_ACTORS_ARE_INFINITELY_TALL = "CompatActorsAreInfinitelyTall";
-static const QString COMPAT_SPAWN_ITEM_DROPS_ON_THE_FLOOR = "CompatSpawnItemDropsOnTheFloor";
-static const QString COMPAT_ALL_SPECIAL_LINES_CAN_DROP_USE_LINES = "CompatAllSpecialLinesCanDropUseLines";
-static const QString COMPAT_DISABLE_BOOM_DOOR_LIGHT_EFFECT = "CompatDisableBoomDoorLightEffect";
-static const QString COMPAT_RAVENS_SCROLLERS_USE_ORIGINAL_SPEED = "CompatRavensScrollersUseOriginalSpeed";
-static const QString COMPAT_USE_SECTOR_BASED_SOUND_TARGET_CODE = "CompatUseSectorBasedSoundTargetCode";
-static const QString COMPAT_LIMIT_DEH_MAX_HEALTH_TO_HEALTH_BONUS = "CompatLimitDehMaxHealthToHealthBonus";
-static const QString COMPAT_TRACE_IGNORE_LINES_WITHOUT_SAME_SECTOR_ON_BOTH_SIDES = "CompatTraceIgnoreLinesWithoutSameSectorOnBothSides";
-static const QString COMPAT_MONSTERS_CANT_BE_PUSHED_OFF_CLIFFS = "CompatMonstersCantBePushedOffCliffs";
-static const QString COMPAT_USE_ORIGINAL_MISSILE_CLIPPING_HEIGHT = "CompatUseOriginalMissileClippingHeight";
-static const QString COMPAT_MINOTAUR = "CompatMinotaur";
-static const QString COMPAT_ORIGINAL_VELOCITY_CALC_FOR_MUSHROOM_IN_DEHACKED = "CompatOriginalVelocityCalcForMushroomInDehacked";
-static const QString COMPAT_SPRITE_SORT_ORDER_INVERTED = "CompatSpriteSortOrderInverted";
-static const QString COMPAT_HITSCANS_ORIGINAL_BLOCKMAP = "CompatHitscansOriginalBlockmap";
-static const QString COMPAT_DRAW_POLYOBJECTS_OLD = "CompatDrawPolyobjectsOld";
-static const QString TAUNT = "Taunt";
-static const QString USE_CROSSHAIRS = "UseCrosshairs";
-static const QString USE_LAND_CONSOLE_COMMAND = "UseLandConsoleCommand";
-static const QString COMPAT_PLASMA_BUMP_BUG = "CompatPlasmaBumpBug";
-static const QString COMPAT_ORIGINAL_WEAPON_SWITCH = "CompatOriginalWeaponSwitch";
-static const QString COMPAT_LIMITED_MOVEMENT_IN_THE_AIR = "CompatLimitedMovementInTheAir";
-static const QString COMPAT_ALLOW_INSTANT_RESPAWN = "CompatAllowInstantRespawn";
-static const QString COMPAT_USE_OLD_INTERMISSION_SCREENS_MUSIC = "CompatUseOldIntermissionScreensMusic";
-static const QString COMPAT_DISABLE_STEALTH_MONSTERS = "CompatDisableStealthMonsters";
-static const QString COMPAT_OLD_DAMAGE_RADIUS_INFINITE_HEIGHT = "CompatOldDamageRadiusInfiniteHeight";
-static const QString COMPAT_CLIENTS_SEND_FULL_BUTTON_INFO = "CompatClientsSendFullButtonInfo";
-static const QString COMPAT_OLD_RANDOM_NUMBER_GENERATOR = "CompatOldRandomNumberGenerator";
-static const QString COMPAT_NETSCRIPTS_ARE_CLIENTSIDE = "CompatNETScriptsAreClientside";
-static const QString COMPAT_ADD_NOGRAVITYFLAG_TO_SPHERES = "CompatAddNOGRAVITYFlagToSpheres";
-static const QString DONT_STOP_PLAYER_SCRIPTS_ON_DISCONNECT = "DontStopPlayerScriptsOnDisconnect";
-static const QString OLD_ZDOOM_HORIZONTAL_THRUST = "OldZDoomHorizontalThrust";
-static const QString OLD_ZDOOM_BRIDGE_DROPS = "OldZDoomBridgeDrops";
-static const QString OLD_ZDOOM_JUMP_PHYSICS = "OldZDoomJumpPhysics";
-static const QString COMPAT_FULL_WEAPON_LOWER = "CompatFullWeaponLower";
-static const QString COMPAT_ORIGINAL_SOUND_CURVE = "CompatOriginalSoundCurve";
-static const QString COMPAT_USE_VANILLA_AUTOAIM_TRACER_BEHAVIOR = "CompatUseVanillaAutoaimTracerBehavior";
-static const QString COMPAT_WEST_SPAWNS_ARE_SILENT = "CompatWestSpawnsAreSilent";
-static const QString NO_MONSTERS = "NoMonsters";
-static const QString ITEMS_RESPAWN = "ItemsRespawn";
-static const QString MEGA_POWERUPS_RESPAWN = "MegaPowerupsRespawn";
-static const QString USE_FOV = "UseFOV";
-static const QString USE_FREELOOK = "UseFreelook";
-static const QString INFINITE_AMMO = "InfiniteAmmo";
-static const QString DONT_SPAWN_DEATHMATCH_WEAPONS = "DontSpawnDeathmatchWeapons";
-static const QString MONSTERS_ARE_FAST = "MonstersAreFast";
-static const QString MONSTERS_RESPAWN = "MonstersRespawn";
-static const QString LOSE_ALL_INVENTORY = "LoseAllInventory";
-static const QString LOSE_ARMOR = "LoseArmor";
-static const QString LOSE_KEYS = "LoseKeys";
-static const QString LOSE_POWERUPS = "LosePowerups";
-static const QString LOSE_WEAPONS = "LoseWeapons";
-static const QString LOSE_ALL_AMMO = "LoseAllAmmo";
-static const QString LOSE_HALF_AMMO = "LoseHalfAmmo";
-static const QString RESPAWN_AUTOMATICALLY = "RespawnAutomatically";
-static const QString RESPAWN_FARTHEST_AWAY_FROM_OTHERS = "RespawnFarthestAwayFromOthers";
-static const QString WEAPONS_STAY_AFTER_PICKUP = "WeaponsStayAfterPickup";
-static const QString DONT_SPAWN_HEALTH = "DontSpawnHealth";
-static const QString DONT_SPAWN_ARMOR = "DontSpawnArmor";
-static const QString BARRELS_RESPAWN = "BarrelsRespawn";
-static const QString SERVER_PICKS_TEAMS = "ServerPicksTeams";
-static const QString PLAYERS_CANT_SWITCH_TEAMS = "PlayersCantSwitchTeams";
-static const QString KEEP_TEAMS_AFTER_AMAP_CHANGE = "KeepTeamsAfterAMapChange";
-static const QString HIDE_ALLIES_ON_THE_AUTOMAP = "HideAlliesOnTheAutomap";
-static const QString DONT_LET_PLAYERS_SPY_ON_ALLIES = "DontLetPlayersSpyOnAllies";
-static const QString INSTANT_FLAG_SKULL_RETURN = "InstantFlagSkullReturn";
-static const QString SUICIDE = "Suicide";
-static const QString RESPAWN = "Respawn";
-static const QString USE_AUTOMAP = "UseAutomap";
-static const QString USE_AUTOAIM = "UseAutoaim";
-static const QString INFINITE_INVENTORY = "InfiniteInventory";
-static const QString SLOWLY_LOSE_HEALTH_WHEN_OVER100 = "SlowlyLoseHealthWhenOver100";
-static const QString CAN_USE_CHASECAM = "CanUseChasecam";
-static const QString ALLOW_BFGFREEAIMING = "AllowBFGFreeaiming";
-static const QString DONT_CHECK_AMMO_WHEN_SWITCHING_WEAPONS = "DontCheckAmmoWhenSwitchingWeapons";
-static const QString MONSTERS_MUST_BE_KILLED_TO_EXIT = "MonstersMustBeKilledToExit";
-static const QString KILL_BOSS_MONSTERS = "KillBossMonsters";
-static const QString RESPAWN_WHERE_DIED = "RespawnWhereDied";
-static const QString RESPAWN_WITH_ASHOTGUN = "RespawnWithAShotgun";
-static const QString DROP_WEAPON_ON_DEATH = "DropWeaponOnDeath";
-static const QString LOSE_AFRAG_ON_DEATH = "LoseAFragOnDeath";
-static const QString NO_RESPAWN_PROTECTION = "NoRespawnProtection";
-static const QString KEEP_FRAGS_AFTER_MAP_CHANGE = "KeepFragsAfterMapChange";
-static const QString DOUBLE_AMMO = "DoubleAmmo";
-static const QString DONT_SPAWN_RUNES = "DontSpawnRunes";
-static const QString NO_UNLAGGED = "NoUnlagged";
-static const QString ALWAYS_APPLY_LMSSPECTATOR_SETTINGS = "AlwaysApplyLMSSpectatorSettings";
-static const QString NO_MEDALS = "NoMedals";
-static const QString SCORE_DAMAGE_NOT_KILLS = "ScoreDamageNotKills";
-static const QString DONT_SPAWN_ANY_MULTIPLAYER_ITEM = "DontSpawnAnyMultiplayerItem";
-static const QString TARGET_IDENTIFY = "TargetIdentify";
-static const QString DISPLAY_COOP_INFO = "DisplayCoopInfo";
-static const QString MAX_BLOOD_SCALAR = "MaxBloodScalar";
-static const QString ROCKET_JUMP = "RocketJump";
-static const QString USE_CUSTOM_GLLIGHTING_SETTINGS = "UseCustomGLLightingSettings";
-static const QString TURN_OFF_TRANSLUCENCY = "TurnOffTranslucency";
-static const QString SHARE_KEYS = "ShareKeys";
-static const QString LMSCHAINSAW = "LMSChainsaw";
-static const QString LMSPISTOL = "LMSPistol";
-static const QString LMSSHOTGUN = "LMSShotgun";
-static const QString LMSSUPER_SHOTGUN = "LMSSuperShotgun";
-static const QString LMSCHAINGUN = "LMSChaingun";
-static const QString LMSMINIGUN = "LMSMinigun";
-static const QString LMSROCKET_LAUNCHER = "LMSRocketLauncher";
-static const QString LMSGRENADE_LAUNCHER = "LMSGrenadeLauncher";
-static const QString LMSPLASMA_RIFLE = "LMSPlasmaRifle";
-static const QString LMSRAILGUN = "LMSRailgun";
-static const QString LMSSPECTATORS_CAN_TALK_TO_ACTIVE_PLAYERS = "LMSSpectatorsCanTalkToActivePlayers";
-static const QString LMSSPECTATORS_CAN_VIEW_THE_GAME = "LMSSpectatorsCanViewTheGame";
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -204,7 +81,7 @@ void FlagsId::load(const IniSection &cfg)
 // where it is out of sight.
 void FlagsId::assign()
 {
-	using namespace FlagNames;
+	using namespace ZandronumGameSettingsNames;
 
 	FlagsPage* f = d->page;
 
