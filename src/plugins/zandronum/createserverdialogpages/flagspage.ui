@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>820</width>
+    <width>853</width>
     <height>476</height>
    </rect>
   </property>
@@ -25,18 +25,59 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
-        <widget class="QCheckBox" name="cbDefaultDmflags">
-         <property name="toolTip">
-          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <widget class="QWidget" name="widget_8" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="label_15">
+            <property name="text">
+             <string>Game version:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="cboGameVersion"/>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cbDefaultDmflags">
+            <property name="toolTip">
+             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;If this is checked then Zandronum may override some of the settings selected here.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;(+sv_defaultdmflags)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Default DMFlags</string>
-         </property>
+            </property>
+            <property name="text">
+             <string>Default DMFlags</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
@@ -310,6 +351,13 @@ p, li { white-space: pre-wrap; }
                <widget class="QCheckBox" name="cbTaunt">
                 <property name="text">
                  <string>Taunt</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QCheckBox" name="cbNoItemDrop">
+                <property name="text">
+                 <string>Item drop</string>
                 </property>
                </widget>
               </item>
@@ -1615,6 +1663,20 @@ p, li { white-space: pre-wrap; }
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatMaskedMidtex">
+             <property name="text">
+              <string>Ignore compositing when drawing masked midtextures</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatBadAngles">
+             <property name="text">
+              <string>It is impossible to face directly NSEW</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
@@ -1702,6 +1764,13 @@ p, li { white-space: pre-wrap; }
             <widget class="QCheckBox" name="cbCompatWestSpawnsAreSilent">
              <property name="text">
               <string>West spawns are silent</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbCompatFloorMove">
+             <property name="text">
+              <string>Use the same floor motion behavior as Doom</string>
              </property>
             </widget>
            </item>
@@ -1824,7 +1893,7 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item row="1" column="2">
-      <widget class="QLabel" name="label_15">
+      <widget class="QLabel" name="lblCompatflags2">
        <property name="text">
         <string>compatflags2</string>
        </property>
@@ -1923,7 +1992,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>cbLMSSpectatorsCanViewTheGame</tabstop>
   <tabstop>leLMSAllowedWeapons</tabstop>
   <tabstop>leLMSSpectatorSettings</tabstop>
-  <tabstop>cbDefaultDmflags</tabstop>
   <tabstop>cbSuicide</tabstop>
   <tabstop>cbRespawn</tabstop>
   <tabstop>cbRocketJump</tabstop>
@@ -2006,8 +2074,8 @@ p, li { white-space: pre-wrap; }
    <slot>propagateFlagsInputsChanges()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>180</x>
-     <y>453</y>
+     <x>239</x>
+     <y>439</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -2022,8 +2090,8 @@ p, li { white-space: pre-wrap; }
    <slot>propagateFlagsInputsChanges()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>621</x>
-     <y>453</y>
+     <x>809</x>
+     <y>439</y>
     </hint>
     <hint type="destinationlabel">
      <x>349</x>
@@ -2038,8 +2106,8 @@ p, li { white-space: pre-wrap; }
    <slot>propagateFlagsInputsChanges()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>180</x>
-     <y>479</y>
+     <x>239</x>
+     <y>465</y>
     </hint>
     <hint type="destinationlabel">
      <x>124</x>
@@ -2054,8 +2122,8 @@ p, li { white-space: pre-wrap; }
    <slot>propagateFlagsInputsChanges()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>373</x>
-     <y>453</y>
+     <x>500</x>
+     <y>439</y>
     </hint>
     <hint type="destinationlabel">
      <x>572</x>
@@ -2070,8 +2138,8 @@ p, li { white-space: pre-wrap; }
    <slot>propagateFlagsInputsChanges()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>621</x>
-     <y>479</y>
+     <x>809</x>
+     <y>465</y>
     </hint>
     <hint type="destinationlabel">
      <x>567</x>
@@ -2262,7 +2330,7 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>163</x>
+     <x>154</x>
      <y>85</y>
     </hint>
     <hint type="destinationlabel">
@@ -2278,7 +2346,7 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>301</x>
+     <x>237</x>
      <y>85</y>
     </hint>
     <hint type="destinationlabel">
@@ -2294,7 +2362,7 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>163</x>
+     <x>154</x>
      <y>130</y>
     </hint>
     <hint type="destinationlabel">
@@ -2310,7 +2378,7 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>301</x>
+     <x>237</x>
      <y>130</y>
     </hint>
     <hint type="destinationlabel">
@@ -4134,12 +4202,12 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>404</x>
-     <y>287</y>
+     <x>795</x>
+     <y>288</y>
     </hint>
     <hint type="destinationlabel">
      <x>595</x>
-     <y>-2</y>
+     <y>0</y>
     </hint>
    </hints>
   </connection>
@@ -4182,8 +4250,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>352</x>
-     <y>328</y>
+     <x>756</x>
+     <y>334</y>
     </hint>
     <hint type="destinationlabel">
      <x>629</x>
@@ -4198,8 +4266,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>303</x>
-     <y>347</y>
+     <x>707</x>
+     <y>357</y>
     </hint>
     <hint type="destinationlabel">
      <x>631</x>
@@ -4246,8 +4314,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>407</x>
-     <y>281</y>
+     <x>795</x>
+     <y>299</y>
     </hint>
     <hint type="destinationlabel">
      <x>630</x>
@@ -4255,9 +4323,106 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>cbCompatMaskedMidtex</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>131</x>
+     <y>295</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>311</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCompatBadAngles</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>89</x>
+     <y>323</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1</x>
+     <y>338</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCompatFloorMove</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>440</x>
+     <y>314</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>847</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>leCompatflags2</sender>
+   <signal>textEdited(QString)</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>propagateFlagsInputsChanges()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>393</x>
+     <y>454</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>384</x>
+     <y>479</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cboGameVersion</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyGameVersion()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>136</x>
+     <y>48</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1</x>
+     <y>47</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbNoItemDrop</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>323</x>
+     <y>82</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>2</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>propagateFlagsInputsChanges()</slot>
   <slot>applyWidgetsChange()</slot>
+  <slot>applyGameVersion()</slot>
  </slots>
 </ui>

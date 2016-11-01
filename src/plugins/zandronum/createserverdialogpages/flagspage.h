@@ -88,6 +88,17 @@ class FlagsPage : public CreateServerDialogPage, private Ui::FlagsPage
 			EXIT_KillPlayer = 3
 		};
 
+		/**
+		 * This is stored in config and indexing cannot change between versions.
+		 */
+		enum GameVersion
+		{
+			GV_Zandronum2 = 1,
+			GV_Zandronum3 = 2
+		};
+
+		static const GameVersion DEFAULT_GAME_VERSION = GV_Zandronum2;
+
 		FlagsPage(CreateServerDialog* pParentDialog);
 		~FlagsPage();
 
@@ -103,6 +114,9 @@ class FlagsPage : public CreateServerDialogPage, private Ui::FlagsPage
 		void initJumpCrouchComboBoxes(QComboBox* pComboBox);
 		void insertFlagsIfValid(QLineEdit* dst, QString flags, unsigned valIfInvalid = 0);
 
+		void loadGameVersion(GameVersion version);
+		void setGameVersion(GameVersion version);
+
 		PlayerBlock playerBlock() const;
 		void setPlayerBlock(PlayerBlock playerBlock);
 
@@ -110,17 +124,13 @@ class FlagsPage : public CreateServerDialogPage, private Ui::FlagsPage
 		void setLevelExit(LevelExit levelExit);
 
 	private slots:
+		void applyGameVersion();
+
 		/**
 		 * @brief Extracts dmflags values from widgets and inserts their
 		 *        numerical values into the text input widgets.
 		 */
 		void applyWidgetsChange();
-
-		/**
-		 * @brief Takes the checkbox values of flags and applies them to
-		 *        numerical widgets.
-		 */
-		void propagateFlagsCheckboxChanges();
 
 		/**
 		 * @brief Takes the numerical values of flags and applies them to

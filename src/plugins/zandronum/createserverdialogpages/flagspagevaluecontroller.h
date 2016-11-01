@@ -32,6 +32,7 @@ class FlagsPageValueController
 public:
 	virtual void convertNumericalToWidgets() = 0;
 	virtual void convertWidgetsToNumerical() = 0;
+	virtual void setVisible(bool visible) {};
 };
 
 #endif

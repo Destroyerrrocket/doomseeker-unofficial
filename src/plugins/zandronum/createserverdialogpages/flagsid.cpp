@@ -138,6 +138,9 @@ void FlagsId::assign()
 	f->cbCompatOriginalSoundCurve->setProperty("flagname", COMPAT_ORIGINAL_SOUND_CURVE);
 	f->cbCompatUseVanillaAutoaimTracerBehavior->setProperty("flagname", COMPAT_USE_VANILLA_AUTOAIM_TRACER_BEHAVIOR);
 	f->cbCompatWestSpawnsAreSilent->setProperty("flagname", COMPAT_WEST_SPAWNS_ARE_SILENT);
+	f->cbCompatMaskedMidtex->setProperty("flagname", COMPAT_MASKED_MIDTEX);
+	f->cbCompatBadAngles->setProperty("flagname", COMPAT_BAD_ANGLES);
+	f->cbCompatFloorMove->setProperty("flagname", COMPAT_FLOOR_MOVE);
 	f->cbNoMonsters->setProperty("flagname", NO_MONSTERS);
 	f->cbItemsRespawn->setProperty("flagname", ITEMS_RESPAWN);
 	f->cbMegaPowerupsRespawn->setProperty("flagname", MEGA_POWERUPS_RESPAWN);
@@ -193,6 +196,7 @@ void FlagsId::assign()
 	f->cbTargetIdentify->setProperty("flagname", TARGET_IDENTIFY);
 	f->cbDisplayCoopInfo->setProperty("flagname", DISPLAY_COOP_INFO);
 	f->cbMaxBloodScalar->setProperty("flagname", MAX_BLOOD_SCALAR);
+	f->cbNoItemDrop->setProperty("flagname", NO_ITEM_DROP);
 	f->cbRocketJump->setProperty("flagname", ROCKET_JUMP);
 	f->cbUseCustomGLLightingSettings->setProperty("flagname", USE_CUSTOM_GLLIGHTING_SETTINGS);
 	f->cbTurnOffTranslucency->setProperty("flagname", TURN_OFF_TRANSLUCENCY);

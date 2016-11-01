@@ -44,9 +44,11 @@ class FlagsPageValueController : public ::FlagsPageValueController
 
 		void convertNumericalToWidgets();
 		void convertWidgetsToNumerical();
+		void setVisible(bool visible);
 
 	private:
 		unsigned compatflags;
+		unsigned compatflags2;
 		unsigned zandronumCompatflags;
 
 		unsigned dmflags;
@@ -57,6 +59,7 @@ class FlagsPageValueController : public ::FlagsPageValueController
 		unsigned lmsSpectatorSettings;
 
 		QMap<unsigned, QAbstractButton*> compatflagsCheckboxes;
+		QMap<unsigned, QAbstractButton*> compatflags2Checkboxes;
 		QMap<unsigned, QAbstractButton*> dmflagsCheckboxes;
 		QMap<unsigned, QAbstractButton*> dmflags2Checkboxes;
 		QMap<unsigned, QAbstractButton*> lmsAllowedWeaponsCheckboxes;

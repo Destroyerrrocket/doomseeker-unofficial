@@ -1,9 +1,11 @@
 #include "flagspage.h"
 
 #include <QDebug>
+#include <QSharedPointer>
 #include <QValidator>
 #include <ini/ini.h>
 #include <ini/inisection.h>
+#include <log.h>
 
 #include "createserverdialogpages/flagsid.h"
 #include "createserverdialogpages/flagspagevaluecontroller2.h"
@@ -40,8 +42,9 @@ class DmflagsValidator : public QValidator
 ////////////////////////////////////////////////////////////////////////////////
 class FlagsPage::PrivData
 {
-	public:
-		DmflagsValidator validator;
+public:
+	DmflagsValidator validator;
+	QSharedPointer<FlagsPageValueController> flagsController;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,6 +69,9 @@ FlagsPage::FlagsPage(CreateServerDialog* pParentDialog)
 	leLMSSpectatorSettings->setValidator(&d->validator);
 
 	// Init values for widgets.
+	cboGameVersion->addItem(tr("Zandronum 2"), GV_Zandronum2);
+	cboGameVersion->addItem(tr("Zandronum 3 (beta)"), GV_Zandronum3);
+
 	cboFallingDamage->insertItem(FDT_None, tr("None"));
 	cboFallingDamage->insertItem(FDT_Old, tr("Old (ZDoom)"));
 	cboFallingDamage->insertItem(FDT_Hexen, tr("Hexen"));
@@ -74,6 +80,8 @@ FlagsPage::FlagsPage(CreateServerDialog* pParentDialog)
 
 	initJumpCrouchComboBoxes(cboJumping);
 	initJumpCrouchComboBoxes(cboCrouching);
+
+	setGameVersion(GV_Zandronum2);
 
 	// Widget states
 	spinMonsterKillPercentage->setEnabled(false);
@@ -86,8 +94,8 @@ FlagsPage::~FlagsPage()
 
 void FlagsPage::applyWidgetsChange()
 {
-	Zandronum2::FlagsPageValueController controller(this);
-	controller.convertWidgetsToNumerical();
+	if (d->flagsController != NULL)
+		d->flagsController->convertWidgetsToNumerical();
 }
 
 QStringList FlagsPage::generateGameRunParameters()
@@ -144,6 +152,7 @@ void FlagsPage::insertFlagsIfValid(QLineEdit* dst, QString flags, unsigned valIf
 bool FlagsPage::loadConfig(Ini& ini)
 {
 	IniSection section = ini.section("dmflags");
+	loadGameVersion(static_cast<GameVersion>((int) section["gameversion"]));
 
 	// The below numerical flag inserts are here to support old configs.
 	insertFlagsIfValid(leDmflags, section["dmflags"]);
@@ -158,7 +167,7 @@ bool FlagsPage::loadConfig(Ini& ini)
 
 	FlagsId flagsId(this);
 	flagsId.load(section);
-	propagateFlagsCheckboxChanges();
+	applyWidgetsChange();
 
 	IniVariable varKillMonstersPercentage = section["killmonsters_percentage"];
 	if (!varKillMonstersPercentage.value().isNull())
@@ -190,16 +199,10 @@ bool FlagsPage::loadConfig(Ini& ini)
 	return votingPage->loadConfig(ini);
 }
 
-void FlagsPage::propagateFlagsCheckboxChanges()
-{
-	Zandronum2::FlagsPageValueController controller(this);
-	controller.convertWidgetsToNumerical();
-}
-
 void FlagsPage::propagateFlagsInputsChanges()
 {
-	Zandronum2::FlagsPageValueController controller(this);
-	controller.convertNumericalToWidgets();
+	if (d->flagsController != NULL)
+		d->flagsController->convertNumericalToWidgets();
 }
 
 bool FlagsPage::saveConfig(Ini& ini)
@@ -220,6 +223,7 @@ bool FlagsPage::saveConfig(Ini& ini)
 	FlagsId flagsId(this);
 	flagsId.save(section);
 
+	section["gameversion"] = cboGameVersion->itemData(cboGameVersion->currentIndex()).toInt();
 	section["defaultdmflags"] = cbDefaultDmflags->isChecked();
 	section["falling_damage_type"] = cboFallingDamage->currentIndex();
 	section["jump_ability"] = cboJumping->currentIndex();
@@ -236,6 +240,57 @@ bool FlagsPage::saveConfig(Ini& ini)
 		static_cast<float>(spinMonstersDamageFactor->value());
 
 	return votingPage->saveConfig(ini);
+}
+
+void FlagsPage::applyGameVersion()
+{
+	setGameVersion(static_cast<GameVersion>(
+		cboGameVersion->itemData(cboGameVersion->currentIndex()).toInt()));
+}
+
+void FlagsPage::loadGameVersion(GameVersion version)
+{
+	int index = cboGameVersion->findData(version);
+	if (index < 0)
+	{
+		gLog << tr("Unknown game version in the config. Reverting to default.");
+		version = DEFAULT_GAME_VERSION;
+		index = cboGameVersion->findData(version);
+		if (index < 0)
+		{
+			gLog << QString("FlagsPage::loadGameVersion() - oops, a bug!, GameVersion = %1")
+				.arg(version);
+			return;
+		}
+	}
+	setGameVersion(version);
+}
+
+void FlagsPage::setGameVersion(GameVersion version)
+{
+	cboGameVersion->blockSignals(true);
+	int index = cboGameVersion->findData(version);
+	if (index >= 0)
+		cboGameVersion->setCurrentIndex(index);
+	cboGameVersion->blockSignals(false);
+	if (d->flagsController != NULL)
+	{
+		d->flagsController->setVisible(false);
+	}
+	switch (version)
+	{
+	default:
+		gLog << tr("Tried to set unknown game version. Reverting to default.");
+		// intentional fall-through
+	case GV_Zandronum2:
+		d->flagsController.reset(new Zandronum2::FlagsPageValueController(this));
+		break;
+	case GV_Zandronum3:
+		d->flagsController.reset(new Zandronum3::FlagsPageValueController(this));
+		break;
+	}
+	d->flagsController->setVisible(true);
+	d->flagsController->convertWidgetsToNumerical();
 }
 
 FlagsPage::PlayerBlock FlagsPage::playerBlock() const

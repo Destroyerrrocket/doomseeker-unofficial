@@ -32,6 +32,13 @@ namespace Zandronum2
 FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 {
 	this->flagsPage = flagsPage;
+	this->compatflags = 0;
+	this->zandronumCompatflags = 0;
+	this->dmflags = 0;
+	this->dmflags2 = 0;
+	this->zandronumDmflags = 0;
+	this->lmsAllowedWeapons = 0;
+	this->lmsSpectatorSettings = 0;
 
 	FlagsPage* f = flagsPage;
 

@@ -32,6 +32,14 @@ namespace Zandronum3
 FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 {
 	this->flagsPage = flagsPage;
+	this->compatflags = 0;
+	this->compatflags2 = 0;
+	this->zandronumCompatflags = 0;
+	this->dmflags = 0;
+	this->dmflags2 = 0;
+	this->zandronumDmflags = 0;
+	this->lmsAllowedWeapons = 0;
+	this->lmsSpectatorSettings = 0;
 
 	FlagsPage* f = flagsPage;
 
@@ -106,6 +114,16 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbCompatHitscansOriginalBlockmap);
 		m.insert(Dmflags::COMPATF_POLYOBJ,
 			f->cbCompatDrawPolyobjectsOld);
+		m.insert(Dmflags::COMPATF_MASKEDMIDTEX,
+			f->cbCompatMaskedMidtex);
+	}
+
+	// Compatflags2
+	{
+		QMap<unsigned, QAbstractButton*>& m = compatflags2Checkboxes;
+
+		m.insert(Dmflags::COMPATF2_BADANGLES, f->cbCompatBadAngles);
+		m.insert(Dmflags::COMPATF2_FLOORMOVE, f->cbCompatFloorMove);
 	}
 
 	// Zandronum compatflags
@@ -320,6 +338,7 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbDisplayCoopInfo);
 		m.insert(Dmflags::ZADF_MAX_BLOOD_SCALAR,
 			f->cbMaxBloodScalar);
+		m.insert(Dmflags::ZADF_NODROP, f->cbNoItemDrop);
 		// - Behavior
 		m.insert(Dmflags::ZADF_UNBLOCK_PLAYERS,
 			f->rbPlayersCanWalkThroughEachOther);
@@ -381,6 +400,7 @@ void FlagsPageValueController::convertNumericalToWidgets()
 	readFlagsFromTextInputs();
 
 	convertNumericalToCheckboxes(compatflagsCheckboxes, compatflags);
+	convertNumericalToCheckboxes(compatflags2Checkboxes, compatflags2);
 	convertNumericalToCheckboxes(zandronumCompatflagsCheckboxes, zandronumCompatflags);
 	convertNumericalToCheckboxes(dmflagsCheckboxes, dmflags);
 	convertNumericalToCheckboxes(dmflags2Checkboxes, dmflags2);
@@ -400,6 +420,7 @@ void FlagsPageValueController::convertWidgetsToNumerical()
 	readFlagsFromTextInputs();
 
 	convertCheckboxesToNumerical(compatflagsCheckboxes, compatflags);
+	convertCheckboxesToNumerical(compatflags2Checkboxes, compatflags2);
 	convertCheckboxesToNumerical(zandronumCompatflagsCheckboxes, zandronumCompatflags);
 	convertCheckboxesToNumerical(dmflagsCheckboxes, dmflags);
 	convertCheckboxesToNumerical(dmflags2Checkboxes, dmflags2);
@@ -417,6 +438,7 @@ void FlagsPageValueController::convertWidgetsToNumerical()
 	flagsPage->leDmflags2->setText(QString::number(dmflags2));
 	flagsPage->leZandronumDmflags->setText(QString::number(zandronumDmflags));
 	flagsPage->leCompatflags->setText(QString::number(compatflags));
+	flagsPage->leCompatflags2->setText(QString::number(compatflags2));
 	flagsPage->leZandronumCompatflags->setText(QString::number(zandronumCompatflags));
 	flagsPage->leLMSAllowedWeapons->setText(QString::number(lmsAllowedWeapons));
 	flagsPage->leLMSSpectatorSettings->setText(QString::number(lmsSpectatorSettings));
@@ -652,9 +674,20 @@ void FlagsPageValueController::readFlagsFromTextInputs()
 	dmflags2 = flagsPage->leDmflags2->text().toUInt();
 	zandronumDmflags = flagsPage->leZandronumDmflags->text().toUInt();
 	compatflags = flagsPage->leCompatflags->text().toUInt();
+	compatflags2 = flagsPage->leCompatflags2->text().toUInt();
 	zandronumCompatflags = flagsPage->leZandronumCompatflags->text().toUInt();
 	lmsAllowedWeapons = flagsPage->leLMSAllowedWeapons->text().toUInt();
 	lmsSpectatorSettings = flagsPage->leLMSSpectatorSettings->text().toUInt();
+}
+
+void FlagsPageValueController::setVisible(bool visible)
+{
+	flagsPage->leCompatflags2->setVisible(visible);
+	flagsPage->lblCompatflags2->setVisible(visible);
+	flagsPage->cbCompatMaskedMidtex->setVisible(visible);
+	flagsPage->cbNoItemDrop->setVisible(visible);
+	foreach (QWidget *checkbox, compatflags2Checkboxes.values())
+		checkbox->setVisible(visible);
 }
 
 }
