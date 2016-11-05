@@ -25,7 +25,6 @@
 
 #include <QList>
 #include <QObject>
-#include "zandronumgamesettings.h"
 
 class DMFlagsSection;
 

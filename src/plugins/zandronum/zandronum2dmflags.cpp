@@ -22,11 +22,15 @@
 //------------------------------------------------------------------------------
 #include "zandronum2dmflags.h"
 
+#include <QMutex>
 #include <serverapi/serverstructs.h>
 #include "zandronumgamesettings.h"
 
 namespace Zandronum2
 {
+
+static QList<DMFlagsSection> cachedFlags;
+static QMutex cacheMutex;
 
 DMFlagsSection Dmflags::compatFlags()
 {
@@ -320,13 +324,20 @@ DMFlagsSection Dmflags::zandronumDmflags()
 
 QList<DMFlagsSection> Dmflags::flags()
 {
-	QList<DMFlagsSection> result;
-	result << dmflags();
-	result << dmflags2();
-	result << zandronumDmflags();
-	result << compatFlags();
-	result << zandronumCompatFlags();
-	return result;
+	if (cachedFlags.isEmpty())
+	{
+		cacheMutex.lock();
+		if (cachedFlags.isEmpty())
+		{
+			cachedFlags << dmflags();
+			cachedFlags << dmflags2();
+			cachedFlags << zandronumDmflags();
+			cachedFlags << compatFlags();
+			cachedFlags << zandronumCompatFlags();
+		}
+		cacheMutex.unlock();
+	}
+	return cachedFlags;
 }
 
 }
