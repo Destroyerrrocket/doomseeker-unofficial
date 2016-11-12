@@ -63,6 +63,11 @@ void ServerListFilterInfo::copyTrimmed(QStringList& target, const QStringList& s
 
 bool ServerListFilterInfo::isFilteringAnything() const
 {
+	if (!serverName.isEmpty())
+	{
+		return true;
+	}
+
 	if (!bEnabled)
 	{
 		return false;
@@ -80,7 +85,6 @@ bool ServerListFilterInfo::isFilteringAnything() const
 
 	if (!gameModes.isEmpty()
 	||  !gameModesExcluded.isEmpty()
-	||  !serverName.isEmpty()
 	||  !wads.isEmpty()
 	||  !wadsExcluded.isEmpty())
 	{

@@ -22,12 +22,39 @@
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Server Name:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="leServerName">
+      <property name="minimumSize">
+       <size>
+        <width>150</width>
+        <height>0</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QCheckBox" name="cbGroupServersWithPlayersAtTop">
       <property name="text">
        <string>Put populated servers on top</string>
       </property>
       <property name="checked">
        <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line">
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
      </widget>
     </item>
@@ -55,30 +82,22 @@
          <x>0</x>
          <y>0</y>
          <width>224</width>
-         <height>479</height>
+         <height>425</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
-        <property name="margin">
+        <property name="leftMargin">
          <number>0</number>
         </property>
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Server Name:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="leServerName">
-          <property name="minimumSize">
-           <size>
-            <width>150</width>
-            <height>0</height>
-           </size>
-          </property>
-         </widget>
-        </item>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item>
          <widget class="QLabel" name="label_2">
           <property name="text">
@@ -246,7 +265,6 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>leServerName</tabstop>
   <tabstop>spinMaxPing</tabstop>
   <tabstop>leWads</tabstop>
   <tabstop>leExcludeWads</tabstop>
@@ -467,22 +485,6 @@
     <hint type="destinationlabel">
      <x>164</x>
      <y>282</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>leServerName</sender>
-   <signal>textEdited(QString)</signal>
-   <receiver>ServerFilterDock</receiver>
-   <slot>enableFilter()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>189</x>
-     <y>115</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>219</x>
-     <y>87</y>
     </hint>
    </hints>
   </connection>

@@ -171,6 +171,16 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 	{
 		return false;
 	}
+
+	const QString& nameFilter = d->filterInfo.serverName;
+	if (!nameFilter.isEmpty())
+	{
+		if (!s->name().contains(nameFilter, Qt::CaseInsensitive))
+		{
+			return false;
+		}
+	}
+
 	if (!d->filterInfo.bEnabled)
 	{
 		return true;
@@ -213,15 +223,6 @@ bool ServerListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& so
 		else if (d->filterInfo.testingServers == Doomseeker::ShowNone && s->isTestingServer())
 		{
 			return false;
-		}
-
-		const QString& nameFilter = d->filterInfo.serverName;
-		if (!nameFilter.isEmpty())
-		{
-			if (!s->name().contains(nameFilter, Qt::CaseInsensitive))
-			{
-				return false;
-			}
 		}
 
 		if (!d->filterInfo.gameModes.isEmpty())
