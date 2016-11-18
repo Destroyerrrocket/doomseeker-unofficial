@@ -328,6 +328,10 @@ void JoinCommandLineBuilder::onWadseekerDone(int result)
 	{
 		obtainJoinCommandLine();
 	}
+	else
+	{
+		failBuild();
+	}
 }
 
 ServerPtr JoinCommandLineBuilder::server() const
