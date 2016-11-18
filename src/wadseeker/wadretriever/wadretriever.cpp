@@ -23,9 +23,9 @@
 #include "wadretriever.h"
 
 #include "entities/waddownloadinfo.h"
-#include "protocols/entities/networkreplywrapperinfo.h"
 #include "protocols/http.h"
 #include "protocols/networkreplysignalwrapper.h"
+#include "protocols/networkreply.h"
 #include "protocols/urlprovider.h"
 #include "wadretriever/wadinstaller.h"
 #include "wwwseeker/urlparser.h"
@@ -172,7 +172,7 @@ WadRetriever::WadRetrieverInfo* WadRetriever::findRetrieverInfo(const QString& w
 	return NULL;
 }
 
-WadRetriever::WadRetrieverInfo* WadRetriever::findRetrieverInfo(const QNetworkReply* pNetworkReply)
+WadRetriever::WadRetrieverInfo* WadRetriever::findRetrieverInfo(const NetworkReply* pNetworkReply)
 {
 	QList<WadRetrieverInfo* >::iterator it;
 	for (it = d.wads.begin(); it != d.wads.end(); ++it)
@@ -180,7 +180,7 @@ WadRetriever::WadRetrieverInfo* WadRetriever::findRetrieverInfo(const QNetworkRe
 		WadRetrieverInfo& wadInfo = **it;
 		if (wadInfo.pNetworkReply != NULL)
 		{
-			if (*wadInfo.pNetworkReply == pNetworkReply)
+			if (*wadInfo.pNetworkReply == *pNetworkReply)
 			{
 				return &wadInfo;
 			}
@@ -220,7 +220,7 @@ const WadRetriever::WadRetrieverInfo* WadRetriever::findRetrieverInfo(const QStr
 	return NULL;
 }
 
-const WadRetriever::WadRetrieverInfo* WadRetriever::findRetrieverInfo(const QNetworkReply* pNetworkReply) const
+const WadRetriever::WadRetrieverInfo* WadRetriever::findRetrieverInfo(const NetworkReply* pNetworkReply) const
 {
 	QList<WadRetrieverInfo* >::const_iterator it;
 	for (it = d.wads.begin(); it != d.wads.end(); ++it)
@@ -228,7 +228,7 @@ const WadRetriever::WadRetrieverInfo* WadRetriever::findRetrieverInfo(const QNet
 		WadRetrieverInfo& wadInfo = **it;
 		if (wadInfo.pNetworkReply != NULL)
 		{
-			if (*wadInfo.pNetworkReply == pNetworkReply)
+			if (*wadInfo.pNetworkReply == *pNetworkReply)
 			{
 				return &wadInfo;
 			}
@@ -317,7 +317,7 @@ bool WadRetriever::isUrlAllowedToDownloadATM(const QUrl& url) const
 	QList< WadRetrieverInfo* > currentDownloads = getAllCurrentlyRunningDownloadsInfos();
 	foreach (const WadRetrieverInfo* pInfo, currentDownloads)
 	{
-		const QUrl& downloadedUrl = pInfo->pNetworkReply->pReply->request().url();
+		const QUrl& downloadedUrl = pInfo->pNetworkReply->request().url();
 		if (UrlParser::hasSameHost(downloadedUrl, url))
 		{
 			return false;
@@ -327,7 +327,7 @@ bool WadRetriever::isUrlAllowedToDownloadATM(const QUrl& url) const
 	return true;
 }
 
-void WadRetriever::networkQueryDownloadProgress(QNetworkReply* pReply, qint64 current, qint64 total)
+void WadRetriever::networkQueryDownloadProgress(NetworkReply* pReply, qint64 current, qint64 total)
 {
 	WadRetrieverInfo* pInfo = findRetrieverInfo(pReply);
 	if (pInfo != NULL) // if NULL then WTF
@@ -336,7 +336,7 @@ void WadRetriever::networkQueryDownloadProgress(QNetworkReply* pReply, qint64 cu
 	}
 }
 
-void WadRetriever::networkQueryError(QNetworkReply* pReply, QNetworkReply::NetworkError code)
+void WadRetriever::networkQueryError(NetworkReply* pReply, QNetworkReply::NetworkError code)
 {
 	// We shall ignore OperationCanceledError because this error is caused
 	// by a call to QNetworkReply::abort() and it may confuse users.
@@ -352,7 +352,7 @@ void WadRetriever::networkQueryError(QNetworkReply* pReply, QNetworkReply::Netwo
 	qDebug() << "WadRetriever::networkQueryError() " << code;
 }
 
-void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
+void WadRetriever::networkQueryFinished(NetworkReply* pReply)
 {
 	WadRetrieverInfo* pInfo = findRetrieverInfo(pReply);
 	if (pInfo != NULL)
@@ -385,7 +385,6 @@ void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 		emit message(tr("Finished URL: %1").arg(url.toString()),
 					WadseekerLib::Notice);
 
-		NetworkReplyWrapperInfo* pReplyWrapperInfo = pInfo->pNetworkReply;
 		emit wadDownloadFinished(*pInfo->wad);
 
 		// Clear for later reuse of pointer.
@@ -409,16 +408,9 @@ void WadRetriever::networkQueryFinished(QNetworkReply* pReply)
 		{
 			resolveDownloadFinish(pReply, pInfo);
 		}
-
-		// Remember to clean up.
-		pReplyWrapperInfo->deleteMembersLater();
-		delete pReplyWrapperInfo;
 	}
-	else
-	{
-		// if pInfo is NULL then WTF
-		pReply->deleteLater();
-	}
+	pReply->deleteMembersLater();
+	delete pReply;
 }
 
 int WadRetriever::numCurrentRunningDownloads() const
@@ -503,7 +495,7 @@ void WadRetriever::removeWadRetrieverInfo(WadRetrieverInfo* pWadRetrieverInfo)
 	}
 }
 
-void WadRetriever::resolveDownloadFinish(QNetworkReply* pReply, WadRetrieverInfo* pWadRetrieverInfo)
+void WadRetriever::resolveDownloadFinish(NetworkReply* pReply, WadRetrieverInfo* pWadRetrieverInfo)
 {
 	QUrl url = pReply->request().url();
 	if (url.isEmpty())
@@ -527,7 +519,7 @@ void WadRetriever::resolveDownloadFinish(QNetworkReply* pReply, WadRetrieverInfo
 		// Save the contents to temporary file so it can be seeked freely.
 		QTemporaryFile tempFile;
 		tempFile.open();
-		IOUtils::copy(*pReply, tempFile);
+		IOUtils::copy(*pReply->reply, tempFile);
 		tempFile.seek(0);
 
 		// We need to determine the correct filename.
@@ -557,19 +549,20 @@ void WadRetriever::resolveDownloadFinish(QNetworkReply* pReply, WadRetrieverInfo
 	}
 }
 
-void WadRetriever::setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, QNetworkReply* pReply)
+void WadRetriever::setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, 
+	const QNetworkRequest &request, QNetworkReply* pReply)
 {
-	NetworkReplyWrapperInfo* pWrapperInfo = new NetworkReplyWrapperInfo(pReply);
+	NetworkReply* pWrapperInfo = new NetworkReply(request, pReply);
 	pWrapperInfo->startConnectionTimeoutTimer();
-	pWrapperInfo->setProgressTimeout(NetworkReplyWrapperInfo::SUGGESTED_PROGRESS_TIMEOUT_MSECS);
+	pWrapperInfo->setProgressTimeout(NetworkReply::SUGGESTED_PROGRESS_TIMEOUT_MSECS);
 	wadRetrieverInfo.pNetworkReply = pWrapperInfo;
 
-	this->connect(pWrapperInfo->pSignalWrapper, SIGNAL( downloadProgress(QNetworkReply*, qint64, qint64) ),
-		SLOT( networkQueryDownloadProgress(QNetworkReply*, qint64, qint64) ));
-	this->connect(pWrapperInfo->pSignalWrapper, SIGNAL( error(QNetworkReply*, QNetworkReply::NetworkError) ),
-		SLOT( networkQueryError(QNetworkReply*, QNetworkReply::NetworkError) ));
-	this->connect(pWrapperInfo->pSignalWrapper, SIGNAL( finished(QNetworkReply*) ),
-		SLOT( networkQueryFinished(QNetworkReply*) ));
+	this->connect(pWrapperInfo->signalWrapper, SIGNAL( downloadProgress(NetworkReply*, qint64, qint64) ),
+		SLOT( networkQueryDownloadProgress(NetworkReply*, qint64, qint64) ));
+	this->connect(pWrapperInfo->signalWrapper, SIGNAL( error(NetworkReply*, QNetworkReply::NetworkError) ),
+		SLOT( networkQueryError(NetworkReply*, QNetworkReply::NetworkError) ));
+	this->connect(pWrapperInfo->signalWrapper, SIGNAL( finished(NetworkReply*) ),
+		SLOT( networkQueryFinished(NetworkReply*) ));
 }
 
 void WadRetriever::setWads(const QList<WadDownloadInfo>& wads)
@@ -590,7 +583,7 @@ void WadRetriever::skipCurrentUrl(const WadDownloadInfo& wad)
 	WadRetrieverInfo* pInfo = findRetrieverInfo(wad);
 	if (pInfo != NULL && pInfo->pNetworkReply != NULL)
 	{
-		pInfo->pNetworkReply->pReply->abort();
+		pInfo->pNetworkReply->reply->abort();
 	}
 }
 
@@ -644,8 +637,8 @@ void WadRetriever::startNetworkQuery(WadRetrieverInfo& wadRetrieverInfo, const Q
 	qDebug() << "WadRetriever: Starting network query for URL: " << url.toString();
 #endif
 
-	QNetworkReply* pReply = d.pNetworkAccessManager->get(request);
-	setNetworkReply(wadRetrieverInfo, pReply);
+	QNetworkReply* reply = d.pNetworkAccessManager->get(request);
+	setNetworkReply(wadRetrieverInfo, request, reply);
 
 	emit wadDownloadStarted(*wadRetrieverInfo.wad, url);
 }

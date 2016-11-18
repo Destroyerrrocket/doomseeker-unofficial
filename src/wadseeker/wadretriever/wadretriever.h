@@ -33,7 +33,7 @@
 #include "wadretriever/wadinstaller.h"
 #include "wadseekermessagetype.h"
 
-class NetworkReplyWrapperInfo;
+class NetworkReply;
 class URLProvider;
 class WadDownloadInfo;
 
@@ -271,7 +271,7 @@ class WadRetriever : public QObject
 		{
 			public:
 				URLProvider* downloadUrls;
-				NetworkReplyWrapperInfo* pNetworkReply;
+				NetworkReply* pNetworkReply;
 				WadDownloadInfo* wad;
 
 				WadRetrieverInfo(const WadDownloadInfo& wad);
@@ -330,10 +330,10 @@ class WadRetriever : public QObject
 		QUrl extractNextValidUrl(WadRetrieverInfo& wadRetrieverInfo);
 		WadRetrieverInfo* findRetrieverInfo(const WadDownloadInfo& wad);
 		WadRetrieverInfo* findRetrieverInfo(const QString& wadName);
-		WadRetrieverInfo* findRetrieverInfo(const QNetworkReply* pNetworkReply);
+		WadRetrieverInfo* findRetrieverInfo(const NetworkReply* pNetworkReply);
 		const WadRetrieverInfo* findRetrieverInfo(const WadDownloadInfo& wad) const;
 		const WadRetrieverInfo* findRetrieverInfo(const QString& wadName) const;
-		const WadRetrieverInfo* findRetrieverInfo(const QNetworkReply* pNetworkReply) const;
+		const WadRetrieverInfo* findRetrieverInfo(const NetworkReply* pNetworkReply) const;
 
 		QList< WadRetrieverInfo* > getAllCurrentlyRunningDownloadsInfos() const;
 		QList< WadDownloadInfo* > getWadDownloadInfoList();
@@ -369,19 +369,20 @@ class WadRetriever : public QObject
 
 		/**
 		 * @brief Attempts to extract meaningful file data from
-		 *        the QNetworkReply.
+		 *        the NetworkReply.
 		 */
-		void resolveDownloadFinish(QNetworkReply* pReply, WadRetrieverInfo* pWadRetrieverInfo);
+		void resolveDownloadFinish(NetworkReply* pReply, WadRetrieverInfo* pWadRetrieverInfo);
 
-		void setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, QNetworkReply* pReply);
+		void setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, 
+			const QNetworkRequest &request, QNetworkReply* pReply);
 		void startNetworkQuery(WadRetrieverInfo& wadRetrieverInfo, const QUrl& url);
 
 		bool wasUrlUsed(const QUrl& url) const;
 
 	private slots:
-		void networkQueryDownloadProgress(QNetworkReply* pReply, qint64 current, qint64 total);
-		void networkQueryError(QNetworkReply* pReply, QNetworkReply::NetworkError code);
-		void networkQueryFinished(QNetworkReply* pReply);
+		void networkQueryDownloadProgress(NetworkReply* pReply, qint64 current, qint64 total);
+		void networkQueryError(NetworkReply* pReply, QNetworkReply::NetworkError code);
+		void networkQueryFinished(NetworkReply* pReply);
 		void startNextDownloads();
 };
 

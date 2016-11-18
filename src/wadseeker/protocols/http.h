@@ -23,8 +23,9 @@
 #ifndef __HTTP_H_
 #define __HTTP_H_
 
-#include <QNetworkReply>
 #include <QStringList>
+
+class NetworkReply;
 
 /**
  * @brief Extracts information from QNetworkReply assuming it's a HTTP reply.
@@ -39,7 +40,7 @@ class Http
 			Redirect = 302,
 		};
 
-		Http(const QNetworkReply* pReply);
+		Http(const NetworkReply* pReply);
 
 		/**
 		 * @brief Extracts attachment name form contentDisposition() list.
@@ -93,7 +94,7 @@ class Http
 		QString urlFilename() const;
 
 	private:
-		const QNetworkReply* pReply;
+		const NetworkReply* pReply;
 };
 
 #endif

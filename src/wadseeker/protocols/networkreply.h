@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// networkreplywrapperinfo.h
+// NetworkReply.h
 //------------------------------------------------------------------------------
 //
 // This library is free software; you can redistribute it and/or
@@ -20,15 +20,16 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2011 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __NETWORKREPLYWRAPPERINFO_H__
-#define __NETWORKREPLYWRAPPERINFO_H__
+#ifndef __NetworkReply_H__
+#define __NetworkReply_H__
 
 #include <QNetworkReply>
+#include <QScopedPointer>
 
 class NetworkReplySignalWrapper;
 class NetworkReplyTimeouter;
 
-class NetworkReplyWrapperInfo
+class NetworkReply
 {
 	public:
 		/**
@@ -41,14 +42,23 @@ class NetworkReplyWrapperInfo
 		static const unsigned DEFAULT_CONNECTION_TIMEOUT_MSECS = 15 * 1000;
 		static const unsigned SUGGESTED_PROGRESS_TIMEOUT_MSECS = 60 * 1000;
 
-		NetworkReplySignalWrapper* pSignalWrapper;
-		NetworkReplyTimeouter* pTimeouter;
-		QNetworkReply* pReply;
+		NetworkReplySignalWrapper* signalWrapper;
+		NetworkReplyTimeouter* timeouter;
+		QNetworkReply* reply;
 
-		NetworkReplyWrapperInfo(QNetworkReply* pReply);
-		~NetworkReplyWrapperInfo();
+		NetworkReply(const QNetworkRequest &request, QNetworkReply* reply);
+		~NetworkReply();
 
+		void abort();
+		QVariant attribute(QNetworkRequest::Attribute code) const;
+		qint64 bytesAvailable() const;
 		void deleteMembersLater();
+		QNetworkReply::NetworkError error() const;
+		QVariant header(QNetworkRequest::KnownHeaders header) const;
+		QByteArray rawHeader(const QByteArray &headerName) const;
+		QList<QByteArray> rawHeaderList() const;
+		QByteArray readAll();
+		const QNetworkRequest &request() const;
 
 		/**
 		 * @brief Sets timeout that occurs when progress stops.
@@ -78,12 +88,14 @@ class NetworkReplyWrapperInfo
 		 */
 		void startConnectionTimeoutTimer(unsigned timeoutMsecs = DEFAULT_CONNECTION_TIMEOUT_MSECS);
 
+		QUrl url() const;
+
 		/**
-		 * @brief NetworkReplyWrapperInfo objects are equal if their pReply
+		 * @brief NetworkReply objects are equal if their pReply
 		 * is the same.
 		 */
-		bool operator==(const NetworkReplyWrapperInfo& other) const;
-		bool operator!=(const NetworkReplyWrapperInfo& other) const
+		bool operator==(const NetworkReply& other) const;
+		bool operator!=(const NetworkReply& other) const
 		{
 			return ! (*this == other);
 		}
@@ -93,6 +105,10 @@ class NetworkReplyWrapperInfo
 		{
 			return ! (*this == pReply);
 		}
+
+	private:
+		// Store request next to reply because Qt does a bad job at this.
+		QNetworkRequest request_;
 };
 
 #endif

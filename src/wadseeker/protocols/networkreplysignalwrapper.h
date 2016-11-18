@@ -25,6 +25,8 @@
 
 #include <QNetworkReply>
 
+class NetworkReply;
+
 /**
  * @brief Wraps the QNetworkReply so signals carry over pointer to the
  *        calling object
@@ -36,23 +38,23 @@ class NetworkReplySignalWrapper : public QObject
 	Q_OBJECT
 
 	public:
-		NetworkReplySignalWrapper(QNetworkReply* pReply);
+		NetworkReplySignalWrapper(NetworkReply* pReply);
 
-		QNetworkReply& reply()
+		NetworkReply& reply()
 		{
 			return *pReply;
 		}
 
 	signals:
-		void downloadProgress(QNetworkReply* pCaller, qint64 bytesReceived, qint64 bytesTotal);
-		void error(QNetworkReply* pCaller, QNetworkReply::NetworkError code);
-		void finished(QNetworkReply* pCaller);
-		void metaDataChanged(QNetworkReply* pCaller);
-		void sslErrors(QNetworkReply* pCaller, const QList<QSslError> & errors);
-		void uploadProgress(QNetworkReply* pCaller, qint64 bytesSent, qint64 bytesTotal);
+		void downloadProgress(NetworkReply* pCaller, qint64 bytesReceived, qint64 bytesTotal);
+		void error(NetworkReply* pCaller, QNetworkReply::NetworkError code);
+		void finished(NetworkReply* pCaller);
+		void metaDataChanged(NetworkReply* pCaller);
+		void sslErrors(NetworkReply* pCaller, const QList<QSslError> & errors);
+		void uploadProgress(NetworkReply* pCaller, qint64 bytesSent, qint64 bytesTotal);
 
 	private:
-		QNetworkReply* pReply;
+		NetworkReply* pReply;
 
 	private slots:
 		void downloadProgressSlot(qint64 bytesReceived, qint64 bytesTotal);

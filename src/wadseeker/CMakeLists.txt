@@ -87,7 +87,6 @@ set(WADSEEKER_FILES
 	entities/modfile.cpp
 	entities/modset.cpp
 	entities/waddownloadinfo.cpp
-	protocols/entities/networkreplywrapperinfo.cpp
 	protocols/freedoom/freedoominfoparser.cpp
 	protocols/freedoom/freedoomquery.cpp
 	protocols/idgames/idgamesclient.cpp
@@ -99,6 +98,7 @@ set(WADSEEKER_FILES
 	protocols/fixednetworkaccessmanager.cpp
 	protocols/json.cpp
 	protocols/http.cpp
+	protocols/networkreply.cpp
 	protocols/networkreplysignalwrapper.cpp
 	protocols/networkreplytimeouter.cpp
 	protocols/urlprovider.cpp
@@ -127,13 +127,13 @@ set(HEADER_FILES
 	entities/modfile.h
 	entities/modset.h
 	entities/waddownloadinfo.h
-	protocols/entities/networkreplywrapperinfo.h
 	protocols/idgames/idgamesclient.h
 	protocols/idgames/idgamesfile.h
 	protocols/idgames/idgamesfilematcher.h
 	protocols/idgames/idgamesresult.h
 	protocols/json.h
 	protocols/http.h
+	protocols/networkreply.h
 	protocols/urlprovider.h
 	wadretriever/wadinstaller.h
 	wwwseeker/entities/fileseekinfo.h
