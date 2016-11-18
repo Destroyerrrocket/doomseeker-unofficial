@@ -90,7 +90,7 @@ void IwadPicker::loadIwads()
 	const QString iwads[] = {
 		"doom.wad", "doom1.wad", "doom2.wad",
 		"tnt.wad", "plutonia.wad", "heretic.wad",
-		"hexen.wad", "hexdd.wad", "freedoom.wad", "freedm.wad",
+		"hexen.wad", "freedoom.wad", "freedm.wad",
 		"freedoom1.wad", "freedoom2.wad", "strife1.wad", ""
 	};
 
