@@ -23,7 +23,7 @@
 #include "wadseekerversioninfo.h"
 #include <QObject>
 
-#define VERSION_STRING "1.1~beta-9"
+#define VERSION_STRING "1.1~beta-10"
 
 QString WadseekerVersionInfo::author()
 {

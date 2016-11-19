@@ -143,7 +143,7 @@ HeaderError EndOfCentralDirectory::read(QIODevice *io, EndOfCentralDirectory &ou
 	if (signature != SIGNATURE)
 		return NotHeader;
 
-	QByteArray header = QByteArray(4, 0xcc) + io->read(MINIMAL_SIZE - 4);
+	QByteArray header = QByteArray(4, 0xccU) + io->read(MINIMAL_SIZE - 4);
 	if (header.size() < MINIMAL_SIZE)
 		return EndOfFileReached;
 
@@ -184,7 +184,7 @@ HeaderError CentralDirectoryFileHeader::read(QIODevice *io, CentralDirectoryFile
 	if (signature != SIGNATURE)
 		return NotHeader;
 
-	QByteArray header = QByteArray(4, 0xcc) + io->read(MINIMAL_SIZE - 4);
+	QByteArray header = QByteArray(4, 0xccU) + io->read(MINIMAL_SIZE - 4);
 	if (header.size() < MINIMAL_SIZE)
 		return EndOfFileReached;
 
@@ -202,7 +202,7 @@ HeaderError CentralDirectoryFileHeader::read(QIODevice *io, CentralDirectoryFile
 	out.fileName = QString::fromUtf8(fileName);
 
 	// Skip past the extra data in the header.
-	quint32 extraSize = out.fileCommentLength + out.extraFieldLength;
+	qint32 extraSize = out.fileCommentLength + out.extraFieldLength;
 	QByteArray extra = io->read(extraSize);
 	if (extra.size() < extraSize)
 		return EndOfFileReached;
