@@ -24,7 +24,7 @@
 #define __UNZIP_H_
 
 #include "../wadseeker.h"
-#include "localfileheader.h"
+#include "zipfile.h"
 #include "unarchive.h"
 #include <QFile>
 #include <QFileInfo>
@@ -37,12 +37,6 @@ class UnZip : public UnArchive
 	public:
 		UnZip(QIODevice *device);
 		~UnZip();
-
-
-		/**
-		 * @brief Extracts all data headers found in the zip file
-		 */
-		QList<ZipLocalFileHeader> allDataHeaders();
 
 		/**
 		 * @brief Extracts file to specified path.
@@ -93,13 +87,7 @@ class UnZip : public UnArchive
 		bool isZip();
 
 	private:
-		/**
-		 * @brief This method expects the iodevice to be already open
-		 *        and it won't close it.
-		 *
-		 * @return ZipLocalFileHeader::HeaderError value
-		 */
-		int readHeader(qint64 pos, ZipLocalFileHeader& zip);
+		ZipFile::CentralDirectory centralDirectory;
 
 		/**
 		 * @brief This method expects the iodevice to be already open
@@ -107,7 +95,15 @@ class UnZip : public UnArchive
 		 *
 		 * @return ZipLocalFileHeader::HeaderError value
 		 */
-		int readHeaderFromFileIndex(int file, ZipLocalFileHeader& zip);
+		ZipFile::HeaderError readHeader(qint64 pos, ZipFile::LocalFileHeader& zip);
+
+		/**
+		 * @brief This method expects the iodevice to be already open
+		 *        and it won't close it.
+		 *
+		 * @return ZipLocalFileHeader::HeaderError value
+		 */
+		ZipFile::HeaderError readHeaderFromFileIndex(int file, ZipFile::LocalFileHeader& zip);
 
 		int uncompress(QIODevice& streamIn, QIODevice& streamOut, unsigned long compressedSize);
 };
