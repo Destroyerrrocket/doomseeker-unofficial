@@ -33,8 +33,8 @@
 # Requirements:
 # Following requirements must be met for this script to work correctly:
 # - "ruby" executable must be in ENV["PATH"].
-# - 'OS' gem must be installed:
-#   `gem install OS`
+# - 'os' gem must be installed:
+#   `gem install os`
 # - CREATE_PACKAGE_SCRIPT_NAME must exist in current working directory and its
 #   requirements must be met.
 # - PACKAGE_CONFIGS_DIR must exist and contain .js files, one for each package.
