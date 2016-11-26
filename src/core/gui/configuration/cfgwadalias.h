@@ -53,6 +53,7 @@ class CFGWadAlias : public ConfigurationBaseBox
 		void applyAliasToRow(int row, const FileAlias &alias);
 		QList<FileAlias> aliases() const;
 		int findRowWithWad(const QString &wadName);
+		void resizeRowsToContents();
 		QTableWidgetItem *toolTipItem(const QString &contents);
 
 	private slots:

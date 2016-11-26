@@ -26,6 +26,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "gui/commongui.h"
 #include "pathfinder/filealias.h"
+#include <QTimer>
 
 DClass<CFGWadAlias> : public Ui::CFGWadAlias
 {
@@ -35,14 +36,19 @@ public:
 		ColWad,
 		ColAliases
 	};
+
+	QTimer resizeTimer;
 };
 
-DPointered(CFGWadAlias)
+DPointeredNoCopy(CFGWadAlias)
 
 CFGWadAlias::CFGWadAlias(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
 	d->setupUi(this);
+
+	connect(&d->resizeTimer, SIGNAL(timeout()), d->table, SLOT(resizeRowsToContents()));
+
 	QHeaderView *header = d->table->horizontalHeader();
 	header->resizeSection(PrivData<CFGWadAlias>::ColWad, 150);
 #if QT_VERSION >= 0x050000
@@ -78,7 +84,7 @@ void CFGWadAlias::addAliasToTable(const FileAlias &alias)
 	}
 
 	d->table->setSortingEnabled(wasSortingEnabled);
-	d->table->resizeRowsToContents();
+	resizeRowsToContents();
 }
 
 void CFGWadAlias::addDefaults()
@@ -176,6 +182,11 @@ void CFGWadAlias::readSettings()
 void CFGWadAlias::removeSelected()
 {
 	CommonGUI::removeSelectedRowsFromQTableWidget(d->table);
+}
+
+void CFGWadAlias::resizeRowsToContents()
+{
+	d->resizeTimer.start(0);
 }
 
 void CFGWadAlias::saveSettings()
