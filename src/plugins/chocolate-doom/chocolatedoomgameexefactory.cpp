@@ -71,7 +71,7 @@ GameFile ChocolateDoomGameExeFactory::executableForIwad(const QString &iwad)
 	{
 		return list.findByConfigName("ChocolateHereticBinaryPath");
 	}
-	else if (iwad == "strife.wad" || iwad == "strife0.wad")
+	else if (iwad == "strife1.wad" || iwad == "strife0.wad")
 	{
 		return list.findByConfigName("ChocolateStrifeBinaryPath");
 	}

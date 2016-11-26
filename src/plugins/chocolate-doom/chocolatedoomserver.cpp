@@ -141,7 +141,7 @@ void ChocolateDoomServer::interpretIwad(int mission, int gameMode)
 		}
 		else
 		{
-			setIwad("strife.wad");
+			setIwad("strife1.wad");
 		}
 		break;
 	default:
