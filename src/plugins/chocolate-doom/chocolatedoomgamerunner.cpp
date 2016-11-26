@@ -110,6 +110,7 @@ void ChocolateDoomGameClientRunner::joinPopulatedServer()
 	dialog->setIwadByName(server->iwad());
 	if (dialog->exec() == QDialog::Accepted)
 	{
+		overwriteExecutable = dialog->executable();
 		args() << "-iwad" << dialog->iwadPath();
 		foreach (const QString &file, dialog->filePaths())
 		{
