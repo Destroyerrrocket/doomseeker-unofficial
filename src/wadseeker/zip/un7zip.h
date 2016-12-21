@@ -32,10 +32,9 @@
 
 extern "C"
 {
-#include "Archive/7z/7zHeader.h"
-#include "Archive/7z/7zExtract.h"
-#include "Archive/7z/7zIn.h"
+#include "7z.h"
 #include "7zCrc.h"
+#include "7zTypes.h"
 }
 
 class SZByteStream

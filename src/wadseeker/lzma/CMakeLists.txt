@@ -5,21 +5,45 @@ if( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL
 endif()
 
 set( LZMA_FILES
-	C/Archive/7z/7zDecode.c
-	C/Archive/7z/7zExtract.c
-	C/Archive/7z/7zHeader.c
-	C/Archive/7z/7zIn.c
-	C/Archive/7z/7zItem.c
+	C/7zArcIn.c
 	C/7zBuf.c
+	C/7zBuf2.c
 	C/7zCrc.c
+	C/7zCrcOpt.c
+	C/7zDec.c
+	C/7zFile.c
 	C/7zStream.c
+	C/Aes.c
+	C/AesOpt.c
 	C/Alloc.c
 	C/Bcj2.c
+	C/Bcj2Enc.c
+	C/Bra.c
 	C/Bra86.c
+	C/BraIA64.c
+	C/CpuArch.c
+	C/Delta.c
+	C/DllSecur.c
 	C/LzFind.c
 	C/LzFindMt.c
+	C/Lzma2Dec.c
+	C/Lzma2Enc.c
+	C/Lzma86Dec.c
+	C/Lzma86Enc.c
 	C/LzmaDec.c
 	C/LzmaEnc.c
-	C/LzmaLib.c )
+	C/LzmaLib.c
+	C/MtCoder.c
+	C/Ppmd7.c
+	C/Ppmd7Dec.c
+	C/Ppmd7Enc.c
+	C/Sha256.c
+	C/Sort.c
+	C/Xz.c
+	C/XzCrc64.c
+	C/XzCrc64Opt.c
+	C/XzDec.c
+	C/XzEnc.c
+	C/XzIn.c  )
 
 add_library( lzma OBJECT ${LZMA_FILES} C/Threads.c)
