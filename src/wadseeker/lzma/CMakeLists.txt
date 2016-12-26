@@ -17,7 +17,6 @@ set( LZMA_FILES
 	C/AesOpt.c
 	C/Alloc.c
 	C/Bcj2.c
-	C/Bcj2Enc.c
 	C/Bra.c
 	C/Bra86.c
 	C/BraIA64.c
@@ -25,7 +24,6 @@ set( LZMA_FILES
 	C/Delta.c
 	C/DllSecur.c
 	C/LzFind.c
-	C/LzFindMt.c
 	C/Lzma2Dec.c
 	C/Lzma2Enc.c
 	C/Lzma86Dec.c
@@ -33,7 +31,6 @@ set( LZMA_FILES
 	C/LzmaDec.c
 	C/LzmaEnc.c
 	C/LzmaLib.c
-	C/MtCoder.c
 	C/Ppmd7.c
 	C/Ppmd7Dec.c
 	C/Ppmd7Enc.c
@@ -46,4 +43,17 @@ set( LZMA_FILES
 	C/XzEnc.c
 	C/XzIn.c  )
 
-add_library( lzma OBJECT ${LZMA_FILES} C/Threads.c)
+if (WIN32)
+	set (LZMA_FILES
+		${LZMA_FILES}
+		C/Bcj2Enc.c
+		C/LzFindMt.c
+		C/MtCoder.c
+		C/Threads.c
+		)
+endif (WIN32)
+
+add_library( lzma OBJECT ${LZMA_FILES})
+if (NOT WIN32)
+	add_definitions(-D_7ZIP_ST)
+endif (NOT WIN32)
