@@ -48,11 +48,6 @@ class QtMetaPointer
 
 		~QtMetaPointer() {}
 
-		bool operator==(const QtMetaPointer* fPtr) const
-		{
-			return (ptr == fPtr);
-		}
-
 		friend bool operator==(const void* fPtr, const QtMetaPointer& ref)
 		{
 			return (fPtr == ref.ptr);
