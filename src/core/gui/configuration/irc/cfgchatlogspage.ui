@@ -14,7 +14,16 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -124,6 +133,13 @@
       <widget class="QLineEdit" name="leDir"/>
      </item>
      <item>
+      <widget class="QLabel" name="lblDirWarning">
+       <property name="pixmap">
+        <pixmap resource="../../../../../media/resources.qrc">:/icons/exclamation_16.png</pixmap>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="btnBrowseDir">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -172,7 +188,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../../../media/resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>btnBrowseDir</sender>

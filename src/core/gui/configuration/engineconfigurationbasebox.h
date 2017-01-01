@@ -71,6 +71,7 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox
 		 */
 		const EnginePlugin *plugin() const;
 		QString title() const;
+		virtual Validation validate();
 
 	protected:
 		/**

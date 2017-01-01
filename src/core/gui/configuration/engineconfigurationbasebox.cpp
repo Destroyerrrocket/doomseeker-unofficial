@@ -272,3 +272,14 @@ void EngineConfigurationBaseBox::updateCustomParametersSaveState()
 	d->btnSaveCustomParameters->setVisible(!isEmpty && !paramExists);
 	d->btnDeleteCustomParameters->setVisible(!isEmpty && paramExists);
 }
+
+ConfigurationBaseBox::Validation EngineConfigurationBaseBox::validate()
+{
+	bool allFilesOk = true;
+	foreach (FilePickWidget *filePicker, d->filePickers)
+	{
+		bool thisFileOk = filePicker->validate();
+		allFilesOk = allFilesOk && thisFileOk;
+	}
+	return allFilesOk ? VALIDATION_OK : VALIDATION_ERROR;
+}

@@ -46,6 +46,7 @@ FilePickWidget::FilePickWidget(QWidget *parent)
 	d->setupUi(this);
 	d->changed = false;
 	d->neighbourStrategy = QSharedPointer<NeighbourStrategy>(new NeighbourStrategy);
+	d->lblWarning->hide();
 	this->connect(d->lePath, SIGNAL(editingFinished()), SLOT(emitPathChangedIfChanged()));
 	this->connect(d->lePath, SIGNAL(textEdited(QString)), SLOT(trackEdit()));
 }
@@ -134,4 +135,24 @@ void FilePickWidget::load(const IniSection &cfg)
 void FilePickWidget::save(IniSection &cfg)
 {
 	cfg[d->file.configName()].setValue(d->lePath->text());
+}
+
+bool FilePickWidget::validate()
+{
+	QString error;
+
+	QFileInfo fileInfo = path();
+	if (error.isEmpty() && !fileInfo.exists())
+	{
+		error = tr("File doesn't exist.");
+	}
+
+	if (error.isEmpty() && fileInfo.isDir())
+	{
+		error = tr("This is a directory.");
+	}
+
+	d->lblWarning->setVisible(!error.isEmpty());
+	d->lblWarning->setToolTip(error);
+	return error.isEmpty();
 }

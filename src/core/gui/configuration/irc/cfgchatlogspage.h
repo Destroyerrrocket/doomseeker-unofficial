@@ -27,6 +27,8 @@
 #include "dptr.h"
 #include <QIcon>
 
+class QFileInfo;
+
 class CfgChatLogsPage : public ConfigurationBaseBox
 {
 Q_OBJECT
@@ -39,6 +41,7 @@ public:
 	QString name() const { return tr("Logging"); }
 	void readSettings();
 	QString title() const { return tr("IRC - Logging"); }
+	Validation validate();
 
 protected:
 	void saveSettings();
@@ -47,6 +50,7 @@ private:
 	DPtr<CfgChatLogsPage> d;
 
 	bool checkDir(const QString &directory);
+	QString validateChatLogsPath(const QFileInfo &path) const;
 
 private slots:
 	void browseStorageDirectory();

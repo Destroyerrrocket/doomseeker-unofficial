@@ -59,6 +59,9 @@ CFGFilePaths::CFGFilePaths(QWidget* parent)
 
 	connect(d->btnAddWadPath, SIGNAL( clicked() ), this, SLOT( btnAddWadPath_Click()) );
 	connect(d->btnRemoveWadPath, SIGNAL( clicked() ), this, SLOT( btnRemoveWadPath_Click()) );
+	this->connect(d->lstIwadAndPwadPaths->itemDelegate(),
+		SIGNAL(closeEditor(QWidget*, QAbstractItemDelegate::EndEditHint)),
+		SIGNAL(validationRequested()));
 }
 
 CFGFilePaths::~CFGFilePaths()
@@ -72,13 +75,13 @@ void CFGFilePaths::addPath(const FileSearchPath& fileSearchPath)
 		return;
 	}
 
-	QStandardItemModel* model = static_cast<QStandardItemModel*>(d->lstIwadAndPwadPaths->model());
+	QStandardItemModel *model = static_cast<QStandardItemModel*>(d->lstIwadAndPwadPaths->model());
 
 	if (!isPathAlreadyDefined(fileSearchPath.path()))
 	{
-		QStandardItem* path = new QStandardItem(fileSearchPath.path());
+		QStandardItem *path = new QStandardItem(fileSearchPath.path());
 		path->setData(fileSearchPath.path(), Qt::ToolTipRole);
-		QStandardItem* recurse = new QStandardItem();
+		QStandardItem *recurse = new QStandardItem();
 		recurse->setCheckable(true);
 		recurse->setCheckState(fileSearchPath.isRecursive() ? Qt::Checked : Qt::Unchecked);
 		recurse->setData(Qt::AlignCenter, Qt::TextAlignmentRole);
@@ -94,6 +97,7 @@ void CFGFilePaths::btnAddWadPath_Click()
 {
 	QString strDir = QFileDialog::getExistingDirectory(this, tr("Doomseeker - Add wad path"));
 	addPath(strDir);
+	emit validationRequested();
 }
 
 void CFGFilePaths::btnRemoveWadPath_Click()
@@ -114,6 +118,7 @@ void CFGFilePaths::btnRemoveWadPath_Click()
 		QModelIndex index = model->indexFromItem(itemList[i]);
 		model->removeRow(index.row());
 	}
+	emit validationRequested();
 }
 
 QIcon CFGFilePaths::icon() const
@@ -163,17 +168,48 @@ void CFGFilePaths::saveSettings()
 	QList<FileSearchPath> wadPaths;
 
 	QStandardItemModel* model = static_cast<QStandardItemModel*>(d->lstIwadAndPwadPaths->model());
+	for(int i = 0; i < model->rowCount(); ++i)
 	{
-		for(int i = 0; i < model->rowCount(); ++i)
-		{
-			QStandardItem* itemPath = model->item(i, COL_PATH);
-			QStandardItem* itemRecurse = model->item(i, COL_RECURSE);
-			FileSearchPath fileSearchPath(itemPath->text());
-			fileSearchPath.setRecursive(itemRecurse->checkState() == Qt::Checked);
-			wadPaths << fileSearchPath;
-		}
+		QStandardItem* itemPath = model->item(i, COL_PATH);
+		QStandardItem* itemRecurse = model->item(i, COL_RECURSE);
+		FileSearchPath fileSearchPath(itemPath->text());
+		fileSearchPath.setRecursive(itemRecurse->checkState() == Qt::Checked);
+		wadPaths << fileSearchPath;
 	}
 
 	gConfig.doomseeker.wadPaths = wadPaths;
 	gConfig.doomseeker.bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn = d->cbTellMeWhereAreMyWads->isChecked();
+}
+
+ConfigurationBaseBox::Validation CFGFilePaths::validate()
+{
+	bool allPathsValid = true;
+	QStandardItemModel *model = static_cast<QStandardItemModel*>(d->lstIwadAndPwadPaths->model());
+	for (int i = 0; i < model->rowCount(); ++i)
+	{
+		QStandardItem *itemPath = model->item(i, COL_PATH);
+		
+		QString validationError = validatePath(itemPath->text());
+		bool valid = validationError.isEmpty();
+		allPathsValid = allPathsValid && valid;
+	
+		itemPath->setIcon(valid ? QIcon() : QIcon(":/icons/exclamation_16.png"));
+		itemPath->setToolTip(validationError);
+	}
+	return allPathsValid ? VALIDATION_OK : VALIDATION_ERROR;
+}
+
+QString CFGFilePaths::validatePath(const QFileInfo &path) const
+{
+	if (!path.exists())
+	{
+		return tr("Path doesn't exist.");
+	}
+
+	if (!path.isDir())
+	{
+		return tr("Path is not a directory.");
+	}
+
+	return QString();
 }

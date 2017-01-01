@@ -23,11 +23,11 @@
 #ifndef __CONFIGUREDIALOG_H_
 #define __CONFIGUREDIALOG_H_
 
+#include "gui/configuration/configurationbasebox.h"
 #include "dptr.h"
 
 #include <QDialog>
 
-class ConfigurationBaseBox;
 class QAbstractButton;
 class QModelIndex;
 class QStandardItem;
@@ -61,7 +61,7 @@ class ConfigurationDialog : public QDialog
 		/**
 		 *	@brief Adds a label node to the options tree view.
 		 *
-		 *	Such node has no ConfigurationBoxInfo attached. It serves only
+		 *	Such node has no ConfigurationBaseBox attached. It serves only
 		 *	organizational purposes.
 		 *	@param rootItem
 		 *		Pointer to the root node of the tree to which the new box
@@ -77,7 +77,6 @@ class ConfigurationDialog : public QDialog
 		 */
 		QStandardItem* addLabel(QStandardItem* rootItem, const QString& label, int position = -1);
 		bool isConfigurationBoxOnTheList(ConfigurationBaseBox* pConfigurationBox);
-
 
 	protected:
 		bool canConfigurationBoxBeAddedToList(ConfigurationBaseBox* pConfigurationBox);
@@ -98,18 +97,22 @@ class ConfigurationDialog : public QDialog
 		 */
 		void showConfigurationBox(ConfigurationBaseBox* widget);
 		void saveSettings();
-		void switchToItem(const QModelIndex&);
 
 		virtual bool validate() { return true; }
 
 	protected slots:
 		void btnClicked(QAbstractButton *button);
-		void onOptionListCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
 
 	private:
 		DPtr<ConfigurationDialog> d;
 
 		bool hasItemOnList(QStandardItem* pItem) const;
+		QModelIndex findPageModelIndex(ConfigurationBaseBox *page);
+		void validatePage(ConfigurationBaseBox *page);
+
+	private slots:
+		void onPageValidationRequested();
+		void switchToItem(const QModelIndex &current, const QModelIndex &previous);
 };
 
 #endif

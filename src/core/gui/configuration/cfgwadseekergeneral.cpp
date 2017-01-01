@@ -32,6 +32,11 @@
 
 DClass<CFGWadseekerGeneral> : public Ui::CFGWadseekerGeneral
 {
+public:
+	QString targetDirectory() const
+	{
+		return cbTargetDirectory->currentText().trimmed();
+	}
 };
 
 DPointered(CFGWadseekerGeneral)
@@ -43,8 +48,13 @@ CFGWadseekerGeneral::CFGWadseekerGeneral(QWidget* parent)
 
 	// Settings defined in this widget are ATM unused.
 	d->widgetTimeouts->setVisible(false);
+	d->lblDirectoryWarning->setPixmap(QPixmap(":/icons/exclamation_16.png"));
+	d->lblDirectoryWarning->hide();
+	d->lblDirectoryWarning->setWordWrap(true);
 
 	d->cbTargetDirectory->setCompleter(new QCompleter(new QDirModel()));
+	this->connect(d->cbTargetDirectory, SIGNAL(editTextChanged(QString)),
+		SIGNAL(validationRequested()));
 }
 
 CFGWadseekerGeneral::~CFGWadseekerGeneral()
@@ -70,45 +80,61 @@ void CFGWadseekerGeneral::readSettings()
 
 void CFGWadseekerGeneral::saveSettings()
 {
-	gConfig.wadseeker.targetDirectory = d->cbTargetDirectory->currentText();
+	gConfig.wadseeker.targetDirectory = d->targetDirectory();
+	gConfig.wadseeker.connectTimeoutSeconds = d->spinConnectTimeout->value();
+	gConfig.wadseeker.downloadTimeoutSeconds = d->spinDownloadTimeout->value();
+	gConfig.wadseeker.maxConcurrentSiteDownloads = d->spinMaxConcurrentSiteSeeks->value();
+	gConfig.wadseeker.maxConcurrentWadDownloads = d->spinMaxConcurrentWadDownloads->value();
+}
 
-	QFileInfo targetDirectoryInfo(d->cbTargetDirectory->currentText());
-	if(!targetDirectoryInfo.isWritable())
+ConfigurationBaseBox::Validation CFGWadseekerGeneral::validate()
+{
+	QString error;
+
+	QFileInfo targetDirectory = d->targetDirectory();
+	if (error.isEmpty() && !targetDirectory.exists())
 	{
-		QMessageBox::warning(this, tr("Wadseeker - error"),
-			tr("The target directory you selected for Wadseeker can not be written to."));
+		error = tr("This path doesn't exist.");
 	}
-	else
-	{
-		// If path seems valid:
-		// Also take a look at the file paths configuration.  Warn if it is not on the list.
-		bool pathPossible = false;
 
-		QFileInfo wadseekerTargetDirectoryFileInfo(d->cbTargetDirectory->currentText());
-		foreach (FileSearchPath possiblePath, gConfig.doomseeker.wadPaths)
+	if (error.isEmpty() && !targetDirectory.isDir())
+	{
+		error = tr("This is not a directory.");
+	}
+
+	if (error.isEmpty() && !targetDirectory.isWritable())
+	{
+		error = tr("This directory cannot be written to.");
+	}
+
+	// If path seems valid also take a look at the file
+	// paths configuration. Warn if it is not on the list.
+	if (error.isEmpty())
+	{
+		bool pathOnList = false;
+		foreach(FileSearchPath possiblePath, gConfig.doomseeker.wadPaths)
 		{
 			// Bring paths to QFileInfo before string comparison. Two same paths
 			// may have different string representations.
 			// TODO: Consider recursive paths.
 			QFileInfo possiblePathFileInfo(possiblePath.path());
 
-			if (possiblePathFileInfo == wadseekerTargetDirectoryFileInfo)
+			if (possiblePathFileInfo == targetDirectory)
 			{
-				pathPossible = true;
+				pathOnList = true;
 				break;
 			}
 		}
 
-		if (!pathPossible)
+		if (!pathOnList)
 		{
-			QMessageBox::warning(this, tr("Wadseeker - error"),
-				tr("The specified target directory for Wadseeker could not be found on the file (WAD) paths list.\n\n"
-					"Doomseeker will automatically add this path to the file search paths."));
+			error = tr(
+				"The specified target directory for Wadseeker could not be found on the file (WAD) paths list.\n\n"
+				"Doomseeker will automatically add this path to the file search paths.");
 		}
 	}
 
-	gConfig.wadseeker.connectTimeoutSeconds = d->spinConnectTimeout->value();
-	gConfig.wadseeker.downloadTimeoutSeconds = d->spinDownloadTimeout->value();
-	gConfig.wadseeker.maxConcurrentSiteDownloads = d->spinMaxConcurrentSiteSeeks->value();
-	gConfig.wadseeker.maxConcurrentWadDownloads = d->spinMaxConcurrentWadDownloads->value();
+	d->lblDirectoryWarning->setVisible(!error.isEmpty());
+	d->lblDirectoryWarning->setText(error);
+	return error.isEmpty() ? VALIDATION_OK : VALIDATION_ERROR;
 }

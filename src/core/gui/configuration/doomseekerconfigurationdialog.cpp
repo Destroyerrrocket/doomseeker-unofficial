@@ -196,13 +196,13 @@ void DoomseekerConfigurationDialog::showPluginConfiguration(const EnginePlugin *
 	for(int i = 0;i < enginesRoot->rowCount();++i)
 	{
 		QStandardItem *page = enginesRoot->child(i);
-		QtMetaPointer metaPointer = page->data().value<QtMetaPointer>();
+		QtMetaPointer metaPointer = page->data(Qt::UserRole).value<QtMetaPointer>();
 		void* pointer = metaPointer;
 		EngineConfigurationBaseBox *engineConfig = (EngineConfigurationBaseBox*)pointer;
 
 		if(engineConfig->plugin() == plugin)
 		{
-			switchToItem(page->index());
+			showConfigurationBox(engineConfig);
 		}
 	}
 }

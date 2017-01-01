@@ -59,6 +59,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="lblNicknameUsedWarning">
+         <property name="pixmap">
+          <pixmap resource="../../../../../media/resources.qrc">:/icons/exclamation_16.png</pixmap>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="btnBrowseNicknameUsed">
          <property name="maximumSize">
           <size>
@@ -100,6 +107,13 @@
         <widget class="QLineEdit" name="lePrivateMessage">
          <property name="toolTip">
           <string>Sound played when private message is received.</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lblPrivateMessageWarning">
+         <property name="pixmap">
+          <pixmap resource="../../../../../media/resources.qrc">:/icons/exclamation_16.png</pixmap>
          </property>
         </widget>
        </item>

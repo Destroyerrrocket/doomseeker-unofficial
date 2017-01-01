@@ -28,6 +28,7 @@
 #include "dptr.h"
 
 class FileSearchPath;
+class QFileInfo;
 
 class CFGFilePaths : public ConfigurationBaseBox
 {
@@ -38,6 +39,7 @@ class CFGFilePaths : public ConfigurationBaseBox
 		~CFGFilePaths();
 
 		void readSettings();
+		Validation validate();
 
 	protected:
 		void addPath(const FileSearchPath& fileSearchPath);
@@ -56,6 +58,8 @@ class CFGFilePaths : public ConfigurationBaseBox
 
 	private:
 		DPtr<CFGFilePaths> d;
+
+		QString validatePath(const QFileInfo &path) const;
 };
 
 #endif

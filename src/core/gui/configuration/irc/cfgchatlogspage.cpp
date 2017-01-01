@@ -41,6 +41,10 @@ CfgChatLogsPage::CfgChatLogsPage(QWidget *parent)
 : ConfigurationBaseBox(parent)
 {
 	d->setupUi(this);
+	d->lblDirWarning->hide();
+
+	this->connect(d->leDir, SIGNAL(editingFinished()),
+		SIGNAL(validationRequested()));
 }
 
 CfgChatLogsPage::~CfgChatLogsPage()
@@ -54,6 +58,7 @@ void CfgChatLogsPage::browseStorageDirectory()
 	if (!path.isEmpty())
 	{
 		d->leDir->setText(path);
+		emit validationRequested();
 	}
 }
 
@@ -71,9 +76,10 @@ bool CfgChatLogsPage::checkDir(const QString &directory)
 		QMessageBox::critical(this, tr("Directory error"), tr("Directory doesn't exist."));
 		return false;
 	}
-	if (!dir.isDir())
+	QString validationError = validateChatLogsPath(directory);
+	if (!validationError.isEmpty())
 	{
-		QMessageBox::critical(this, tr("Directory error"), tr("Specified path isn't a directory."));
+		QMessageBox::critical(this, tr("Directory error"), validationError);
 		return false;
 	}
 	return true;
@@ -81,10 +87,11 @@ bool CfgChatLogsPage::checkDir(const QString &directory)
 
 void CfgChatLogsPage::exploreStorageDirectory()
 {
-	if (checkDir(d->leDir->text()))
+	QString path = d->leDir->text().trimmed();
+	if (checkDir(path))
 	{
-		QString path = QDir::toNativeSeparators(d->leDir->text());
-		QDesktopServices::openUrl(QString("file:///%1").arg(path));
+		QDesktopServices::openUrl(QString("file:///%1").arg(
+			QDir::toNativeSeparators(path)));
 	}
 }
 
@@ -101,9 +108,26 @@ void CfgChatLogsPage::readSettings()
 void CfgChatLogsPage::saveSettings()
 {
 	ChatLogsCfg cfg;
-	cfg.setChatLogsRootDir(d->leDir->text());
+	cfg.setChatLogsRootDir(d->leDir->text().trimmed());
 	cfg.setStoreLogs(d->cbStoreLogs->isChecked());
 	cfg.setRestoreChatFromLogs(d->cbRestoreLogs->isChecked());
 	cfg.setRemoveOldLogs(d->groupRemoveOldArchives->isChecked());
 	cfg.setOldLogsRemovalDaysThreshold(d->spinLogRemovalAge->value());
+}
+
+ConfigurationBaseBox::Validation CfgChatLogsPage::validate()
+{
+	QString error = validateChatLogsPath(d->leDir->text().trimmed());
+	d->lblDirWarning->setToolTip(error);
+	d->lblDirWarning->setVisible(!error.isEmpty());
+	return error.isEmpty() ? VALIDATION_OK : VALIDATION_ERROR;
+}
+
+QString CfgChatLogsPage::validateChatLogsPath(const QFileInfo &path) const
+{
+	if (path.exists() && !path.isDir())
+	{
+		return tr("Specified path isn't a directory.");
+	}
+	return "";
 }

@@ -56,6 +56,7 @@ public:
 
 	void load(const IniSection &cfg);
 	void save(IniSection &cfg);
+	bool validate();
 
 public slots:
 	void findPath();

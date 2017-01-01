@@ -26,6 +26,7 @@
 #include "gui/configuration/configurationbasebox.h"
 #include <QIcon>
 
+class QFileInfo;
 class QLineEdit;
 
 class CFGIRCSounds : public ConfigurationBaseBox
@@ -40,6 +41,7 @@ class CFGIRCSounds : public ConfigurationBaseBox
 		QString name() const { return tr("Sounds"); }
 		void readSettings();
 		QString title() const { return tr("IRC - Sounds"); }
+		Validation validate();
 
 	protected:
 		void saveSettings();
@@ -51,6 +53,7 @@ class CFGIRCSounds : public ConfigurationBaseBox
 		DPtr<CFGIRCSounds> d;
 
 		void playSound(const QString &path) const;
+		QString validateFilePath(const QFileInfo &path) const;
 
 	private slots:
 		void browseNicknameUsed();

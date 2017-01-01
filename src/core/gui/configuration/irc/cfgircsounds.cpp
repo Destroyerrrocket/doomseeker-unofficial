@@ -21,6 +21,13 @@ CFGIRCSounds::CFGIRCSounds(QWidget* parent)
 : ConfigurationBaseBox(parent)
 {
 	d->setupUi(this);
+	d->lblNicknameUsedWarning->hide();
+	d->lblPrivateMessageWarning->hide();
+
+	this->connect(d->leNicknameUsed, SIGNAL(editingFinished()),
+		SIGNAL(validationRequested()));
+	this->connect(d->lePrivateMessage, SIGNAL(editingFinished()),
+		SIGNAL(validationRequested()));
 }
 
 CFGIRCSounds::~CFGIRCSounds()
@@ -75,10 +82,10 @@ void CFGIRCSounds::readSettings()
 void CFGIRCSounds::saveSettings()
 {
 	gIRCConfig.sounds.bUseNicknameUsedSound = d->cbNicknameUsed->isChecked();
-	gIRCConfig.sounds.bUsePrivateMessageReceivedSound = d->cbPrivateMessage->isChecked();
+	gIRCConfig.sounds.nicknameUsedSound = d->leNicknameUsed->text().trimmed();
 
-	gIRCConfig.sounds.nicknameUsedSound = d->leNicknameUsed->text();
-	gIRCConfig.sounds.privateMessageReceivedSound = d->lePrivateMessage->text();
+	gIRCConfig.sounds.bUsePrivateMessageReceivedSound = d->cbPrivateMessage->isChecked();
+	gIRCConfig.sounds.privateMessageReceivedSound = d->lePrivateMessage->text().trimmed();
 }
 
 void CFGIRCSounds::setPath(QLineEdit* pLineEdit, const QString& path)
@@ -88,4 +95,33 @@ void CFGIRCSounds::setPath(QLineEdit* pLineEdit, const QString& path)
 	{
 		pLineEdit->setText(trimmedPath);
 	}
+	emit validationRequested();
+}
+
+ConfigurationBaseBox::Validation CFGIRCSounds::validate()
+{
+	QString nicknameUsedError = validateFilePath(d->leNicknameUsed->text().trimmed());
+	d->lblNicknameUsedWarning->setVisible(!nicknameUsedError.isEmpty());
+	d->lblNicknameUsedWarning->setToolTip(nicknameUsedError);
+
+	QString privateMessageError = validateFilePath(d->lePrivateMessage->text().trimmed());
+	d->lblPrivateMessageWarning->setVisible(!privateMessageError.isEmpty());
+	d->lblPrivateMessageWarning->setToolTip(privateMessageError);
+
+	return nicknameUsedError.isEmpty() && privateMessageError.isEmpty() ? VALIDATION_OK : VALIDATION_ERROR;
+}
+
+QString CFGIRCSounds::validateFilePath(const QFileInfo &path) const
+{
+	QFileInfo fileInfo(path);
+	if (!path.exists())
+	{
+		return tr("File doesn't exist.");
+	}
+
+	if (!path.isFile())
+	{
+		return tr("This is not a file.");
+	}
+	return "";
 }

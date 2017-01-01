@@ -81,3 +81,8 @@ QString ConfigurationBaseBox::title() const
 {
 	return name();
 }
+
+ConfigurationBaseBox::Validation ConfigurationBaseBox::validate()
+{
+	return VALIDATION_OK;
+}

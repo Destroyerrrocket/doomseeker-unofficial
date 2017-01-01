@@ -39,6 +39,7 @@ class CFGWadseekerGeneral : public ConfigurationBaseBox
 		QString name() const { return tr("General"); }
 		void readSettings();
 		QString title() const { return tr("Wadseeker - General"); }
+		Validation validate();
 
 	protected:
 		void fillTargetDirectoryComboBox();

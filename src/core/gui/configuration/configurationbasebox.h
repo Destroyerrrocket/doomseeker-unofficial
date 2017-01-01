@@ -45,6 +45,12 @@ class MAIN_EXPORT ConfigurationBaseBox : public QWidget
 	Q_OBJECT;
 
 	public:
+		enum Validation
+		{
+			VALIDATION_OK,
+			VALIDATION_ERROR,
+		};
+
 		ConfigurationBaseBox(QWidget* parent = NULL);
 		virtual ~ConfigurationBaseBox();
 
@@ -95,6 +101,36 @@ class MAIN_EXPORT ConfigurationBaseBox : public QWidget
 		 */
 		virtual QString title() const;
 
+		/**
+		 * @brief Validate settings on this page.
+		 *
+		 * If settings seem to be configured incorrectly (paths point
+		 * to missing directories or files, data is missing, etc.),
+		 * the page can decide to notify the user about a problem.
+		 * Validation result determines how the problem notification
+		 * will be displayed by Doomseeker in the configuration dialog box.
+		 * Still, the page itself must also take care to precisely pinpoint
+		 * the reason of the failure. When user navigates to the page,
+		 * it must be immediatelly visible what caused the problem
+		 * and why.
+		 *
+		 * This is used purely for notification purposes. User
+		 * should not be blocked from saving the configuration
+		 * even if validation fails spectacularly.
+		 *
+		 * This method can be called at any time by Doomseeker
+		 * and must not block. It's expected that all checks
+		 * will be light-weight.
+		 *
+		 * A page can also decide to validate itself at any time.
+		 * This is done by emitting the validationRequested() signal,
+		 * upon which Doomseeker will call validate().
+		 *
+		 * @return Return result of validation. Default implementation
+		 * always returns VALIDATION_OK.
+		 */
+		virtual Validation validate();
+
 	signals:
 		/**
 		 * @brief Emit to tell Doomseeker to redraw certain widgets.
@@ -104,6 +140,14 @@ class MAIN_EXPORT ConfigurationBaseBox : public QWidget
 		 * program's appearance so that program can redraw affected widgets.
 		 */
 		void appearanceChanged();
+
+		/**
+		 * @brief Request that the page should be (re-)validated.
+		 *
+		 * Emit this whenever page data changes and you wish Doomseeker
+		 * to re-evaluate the validity of the configuration.
+		 */
+		void validationRequested();
 
 	protected:
 		/**
