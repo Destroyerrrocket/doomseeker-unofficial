@@ -45,9 +45,12 @@ class MAIN_EXPORT ConfigPage : public QWidget
 	Q_OBJECT;
 
 	public:
+		/// Result of validate()
 		enum Validation
 		{
+			/// Validation detected no problems.
 			VALIDATION_OK,
+			/// Validation detected at least one problem.
 			VALIDATION_ERROR,
 		};
 
