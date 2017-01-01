@@ -57,6 +57,11 @@ DClass<PluginLoader::Plugin>
 		#else
 			void *library;
 		#endif
+
+		static bool isForbiddenPlugin(QString file)
+		{
+			return QFileInfo(file).fileName().toLower().contains("vavoom");
+		}
 };
 
 DPointered(PluginLoader::Plugin)
@@ -64,6 +69,13 @@ DPointered(PluginLoader::Plugin)
 PluginLoader::Plugin::Plugin(unsigned int type, QString file)
 {
 	d->file = file;
+	d->library = NULL;
+	d->info = NULL;
+	if (PrivData<PluginLoader::Plugin>::isForbiddenPlugin(file))
+	{
+		gLog << QObject::tr("Skipping loading of forbidden plugin: %1").arg(file);
+		return;
+	}
 	// Load the library
 	d->library = dlopen(d->file.toUtf8().constData(), RTLD_NOW);
 
