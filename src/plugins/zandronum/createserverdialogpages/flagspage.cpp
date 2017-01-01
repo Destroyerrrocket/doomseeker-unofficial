@@ -283,10 +283,12 @@ void FlagsPage::setGameVersion(GameVersion version)
 		gLog << tr("Tried to set unknown Zandronum version. Reverting to default.");
 		// intentional fall-through
 	case GV_Zandronum2:
-		d->flagsController.reset(new Zandronum2::FlagsPageValueController(this));
+		d->flagsController = QSharedPointer<FlagsPageValueController>(
+			new Zandronum2::FlagsPageValueController(this));
 		break;
 	case GV_Zandronum3:
-		d->flagsController.reset(new Zandronum3::FlagsPageValueController(this));
+		d->flagsController = QSharedPointer<FlagsPageValueController>(
+			new Zandronum3::FlagsPageValueController(this));
 		break;
 	}
 	d->flagsController->setVisible(true);
