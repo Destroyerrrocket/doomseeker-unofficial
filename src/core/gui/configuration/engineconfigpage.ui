@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>EngineConfigurationBaseBox</class>
- <widget class="QWidget" name="EngineConfigurationBaseBox">
+ <class>EngineConfigPage</class>
+ <widget class="QWidget" name="EngineConfigPage">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -162,7 +162,7 @@
   <connection>
    <sender>btnSaveCustomParameters</sender>
    <signal>clicked()</signal>
-   <receiver>EngineConfigurationBaseBox</receiver>
+   <receiver>EngineConfigPage</receiver>
    <slot>saveCustomParameters()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -178,7 +178,7 @@
   <connection>
    <sender>btnDeleteCustomParameters</sender>
    <signal>clicked()</signal>
-   <receiver>EngineConfigurationBaseBox</receiver>
+   <receiver>EngineConfigPage</receiver>
    <slot>removeCurrentCustomParametersFromStorage()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -194,7 +194,7 @@
   <connection>
    <sender>cboCustomParameters</sender>
    <signal>editTextChanged(QString)</signal>
-   <receiver>EngineConfigurationBaseBox</receiver>
+   <receiver>EngineConfigPage</receiver>
    <slot>updateCustomParametersSaveState()</slot>
    <hints>
     <hint type="sourcelabel">

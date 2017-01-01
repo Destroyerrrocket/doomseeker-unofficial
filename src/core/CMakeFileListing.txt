@@ -13,7 +13,7 @@ set(UI_FILES
 	gui/configuration/cfgwadseekeridgames.ui
 	gui/configuration/cfgwadseekersites.ui
 	gui/configuration/configurationdialog.ui
-	gui/configuration/engineconfigurationbasebox.ui
+	gui/configuration/engineconfigpage.ui
 	gui/configuration/irc/cfgchatlogspage.ui
 	gui/configuration/irc/cfgircappearance.ui
 	gui/configuration/irc/cfgircdefinenetworkdialog.ui
@@ -87,10 +87,10 @@ set(HEADER_FILES
 	gui/configuration/cfgwadseekergeneral.h
 	gui/configuration/cfgwadseekeridgames.h
 	gui/configuration/cfgwadseekersites.h
-	gui/configuration/configurationbasebox.h
+	gui/configuration/configpage.h
 	gui/configuration/configurationdialog.h
 	gui/configuration/doomseekerconfigurationdialog.h
-	gui/configuration/engineconfigurationbasebox.h
+	gui/configuration/engineconfigpage.h
 	gui/configuration/irc/cfgchatlogspage.h
 	gui/configuration/irc/cfgircappearance.h
 	gui/configuration/irc/cfgircdefinenetworkdialog.h
@@ -313,10 +313,10 @@ set(SOURCE_FILES
 	gui/configuration/cfgwadseekergeneral.cpp
 	gui/configuration/cfgwadseekeridgames.cpp
 	gui/configuration/cfgwadseekersites.cpp
-	gui/configuration/configurationbasebox.cpp
+	gui/configuration/configpage.cpp
 	gui/configuration/configurationdialog.cpp
 	gui/configuration/doomseekerconfigurationdialog.cpp
-	gui/configuration/engineconfigurationbasebox.cpp
+	gui/configuration/engineconfigpage.cpp
 	gui/configuration/irc/cfgchatlogspage.cpp
 	gui/configuration/irc/cfgircappearance.cpp
 	gui/configuration/irc/cfgircdefinenetworkdialog.cpp

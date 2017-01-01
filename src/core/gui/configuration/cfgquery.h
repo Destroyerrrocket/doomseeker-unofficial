@@ -24,11 +24,11 @@
 #ifndef __CFG_QUERY_H__
 #define __CFG_QUERY_H__
 
-#include "gui/configuration/configurationbasebox.h"
+#include "gui/configuration/configpage.h"
 #include "dptr.h"
 #include <QIcon>
 
-class CFGQuery : public ConfigurationBaseBox
+class CFGQuery : public ConfigPage
 {
 	Q_OBJECT
 

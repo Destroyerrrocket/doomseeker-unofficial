@@ -43,7 +43,7 @@ public:
 DPointeredNoCopy(CFGWadAlias)
 
 CFGWadAlias::CFGWadAlias(QWidget *parent)
-: ConfigurationBaseBox(parent)
+: ConfigPage(parent)
 {
 	d->setupUi(this);
 

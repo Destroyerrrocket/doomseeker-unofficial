@@ -24,9 +24,9 @@
 #ifndef __ENGINE_SKULLTAG_CONFIG_H_
 #define __ENGINE_SKULLTAG_CONFIG_H_
 
-#include "gui/configuration/engineconfigurationbasebox.h"
+#include "gui/configuration/engineconfigpage.h"
 
-class EngineSkulltagConfigBox : public EngineConfigurationBaseBox
+class EngineSkulltagConfigBox : public EngineConfigPage
 {
 	Q_OBJECT
 
@@ -40,7 +40,7 @@ class EngineSkulltagConfigBox : public EngineConfigurationBaseBox
 		void btnBrowseTestingPathClicked();
 
 	protected:
-		
+
 		void saveSettings();
 
 		QGroupBox *groupTesting;

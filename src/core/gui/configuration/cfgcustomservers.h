@@ -23,18 +23,17 @@
 #ifndef __CFGCUSTOMSERVERS_H_
 #define __CFGCUSTOMSERVERS_H_
 
-#include "gui/configuration/configurationbasebox.h"
+#include "gui/configuration/configpage.h"
 #include "dptr.h"
 #include <QIcon>
 
-class ConfigurationBoxInfo;
 class CustomServerInfo;
 class EnginePlugin;
 class QModelIndex;
 class QStandardItem;
 class QStandardItemModel;
 
-class CFGCustomServers : public ConfigurationBaseBox
+class CFGCustomServers : public ConfigPage
 {
 	Q_OBJECT
 

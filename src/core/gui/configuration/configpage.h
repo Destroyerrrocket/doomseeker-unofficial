@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// configurationbasebox.h
+// configpage.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -21,8 +21,8 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 
-#ifndef __CONFIGURATION_BASE_BOX_H_
-#define __CONFIGURATION_BASE_BOX_H_
+#ifndef _CONFIG_PAGE_H_
+#define _CONFIG_PAGE_H_
 
 #include "global.h"
 #include "dptr.h"
@@ -36,11 +36,11 @@
  * in order to configure program's modules. Specific settings are
  * read and saved through virtual methods: saveSettings() and readSettings().
  *
- * Plugins should rather inherit from EngineConfigurationBaseBox
+ * Plugins should rather inherit from EngineConfigPage
  * as this provides some default, common behavior, like executable path or
  * custom program parameters configuration.
  */
-class MAIN_EXPORT ConfigurationBaseBox : public QWidget
+class MAIN_EXPORT ConfigPage : public QWidget
 {
 	Q_OBJECT;
 
@@ -51,8 +51,8 @@ class MAIN_EXPORT ConfigurationBaseBox : public QWidget
 			VALIDATION_ERROR,
 		};
 
-		ConfigurationBaseBox(QWidget* parent = NULL);
-		virtual ~ConfigurationBaseBox();
+		ConfigPage(QWidget* parent = NULL);
+		virtual ~ConfigPage();
 
 		/**
 		 * @brief Does this page allow to save the new settings?
@@ -68,16 +68,16 @@ class MAIN_EXPORT ConfigurationBaseBox : public QWidget
 
 		/**
 		 * @brief Reimplement this to return a displayable icon for the
-		 *        ConfigurationBaseBox.
+		 *        ConfigPage.
 		 *
-		 * If there is no QIcon associated with this box just return
+		 * If there is no QIcon associated with this page just return
 		 * a QIcon object with argument-less constructor.
 		 */
 		virtual QIcon icon() const = 0;
 
 		/**
 		 * @brief Reimplement this to return a list-displayable name for this
-		 *        ConfigurationBaseBox.
+		 *        ConfigPage.
 		 */
 		virtual QString name() const = 0;
 
@@ -161,7 +161,7 @@ class MAIN_EXPORT ConfigurationBaseBox : public QWidget
 		virtual void saveSettings()=0;
 
 	private:
-		DPtr<ConfigurationBaseBox> d;
+		DPtr<ConfigPage> d;
 };
 
 #endif

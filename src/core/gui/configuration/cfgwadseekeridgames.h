@@ -23,11 +23,11 @@
 #ifndef __WADSEEKERCONFIG_IDGAMES_H_
 #define __WADSEEKERCONFIG_IDGAMES_H_
 
-#include "gui/configuration/configurationbasebox.h"
+#include "gui/configuration/configpage.h"
 #include "dptr.h"
 #include <QIcon>
 
-class CFGWadseekerIdgames : public ConfigurationBaseBox
+class CFGWadseekerIdgames : public ConfigPage
 {
 	Q_OBJECT
 

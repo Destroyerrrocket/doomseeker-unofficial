@@ -23,7 +23,7 @@
 #ifndef __CFGIRCNETWORKS_H__
 #define __CFGIRCNETWORKS_H__
 
-#include "gui/configuration/configurationbasebox.h"
+#include "gui/configuration/configpage.h"
 #include "dptr.h"
 #include <QtContainerFwd>
 #include <QIcon>
@@ -32,7 +32,7 @@ class IRCNetworkEntity;
 class QModelIndex;
 class QStandardItem;
 
-class CFGIRCNetworks : public ConfigurationBaseBox
+class CFGIRCNetworks : public ConfigPage
 {
 	Q_OBJECT
 

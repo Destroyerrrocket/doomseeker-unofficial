@@ -31,7 +31,7 @@ DClass<CFGIRCAppearance> : public Ui::CFGIRCAppearance
 DPointered(CFGIRCAppearance)
 
 CFGIRCAppearance::CFGIRCAppearance(QWidget* parent)
-: ConfigurationBaseBox(parent)
+: ConfigPage(parent)
 {
 	d->setupUi(this);
 }
@@ -83,5 +83,3 @@ void CFGIRCAppearance::saveSettings()
 	gIRCConfig.appearance.timestamps = d->cbTimestamps->isChecked();
 	gIRCConfig.appearance.windowAlertOnImportantChatEvent = d->cbWindowAlertOnImportantEvent->isChecked();
 }
-
-

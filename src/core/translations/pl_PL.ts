@@ -2582,7 +2582,7 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>EngineConfigurationBaseBox</name>
+    <name>EngineConfigPage</name>
     <message>
         <source> Configuration</source>
         <translation type="obsolete">Konfiguracja</translation>
@@ -2644,12 +2644,12 @@ Musisz użyć przycisku przeglądaj.</translation>
         <translation type="vanished">Ścieżka do pliku wykonywanego serwera:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_engineconfigurationbasebox.h" line="149"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_engineconfigpage.h" line="149"/>
         <source>Custom parameters:</source>
         <translation>Dodatkowe parametry:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_engineconfigurationbasebox.h" line="151"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_engineconfigpage.h" line="151"/>
         <source>[error]</source>
         <translation>[błąd]</translation>
     </message>
@@ -2658,7 +2658,7 @@ Musisz użyć przycisku przeglądaj.</translation>
         <translation type="obsolete">Dodatkowe parametry:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_engineconfigurationbasebox.h" line="150"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_engineconfigpage.h" line="150"/>
         <source>Masterserver address:</source>
         <translation>Adres masterserwera:</translation>
     </message>

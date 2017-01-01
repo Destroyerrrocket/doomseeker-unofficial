@@ -37,7 +37,7 @@ DClass<CFGFilePaths> : public Ui::CFGFilePaths
 DPointered(CFGFilePaths)
 
 CFGFilePaths::CFGFilePaths(QWidget* parent)
-: ConfigurationBaseBox(parent)
+: ConfigPage(parent)
 {
 	d->setupUi(this);
 
@@ -181,18 +181,18 @@ void CFGFilePaths::saveSettings()
 	gConfig.doomseeker.bTellMeWhereAreTheWADsWhenIHoverCursorOverWADSColumn = d->cbTellMeWhereAreMyWads->isChecked();
 }
 
-ConfigurationBaseBox::Validation CFGFilePaths::validate()
+ConfigPage::Validation CFGFilePaths::validate()
 {
 	bool allPathsValid = true;
 	QStandardItemModel *model = static_cast<QStandardItemModel*>(d->lstIwadAndPwadPaths->model());
 	for (int i = 0; i < model->rowCount(); ++i)
 	{
 		QStandardItem *itemPath = model->item(i, COL_PATH);
-		
+
 		QString validationError = validatePath(itemPath->text());
 		bool valid = validationError.isEmpty();
 		allPathsValid = allPathsValid && valid;
-	
+
 		itemPath->setIcon(valid ? QIcon() : QIcon(":/icons/exclamation_16.png"));
 		itemPath->setToolTip(validationError);
 	}

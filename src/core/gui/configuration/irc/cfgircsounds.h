@@ -23,13 +23,13 @@
 #ifndef __CFGIRCSOUNDS_H__
 #define __CFGIRCSOUNDS_H__
 
-#include "gui/configuration/configurationbasebox.h"
+#include "gui/configuration/configpage.h"
 #include <QIcon>
 
 class QFileInfo;
 class QLineEdit;
 
-class CFGIRCSounds : public ConfigurationBaseBox
+class CFGIRCSounds : public ConfigPage
 {
 	Q_OBJECT
 

@@ -35,7 +35,7 @@
 #include <QPushButton>
 
 EngineZandronumConfigBox::EngineZandronumConfigBox(EnginePlugin* plugin, IniSection& cfg, QWidget* parent)
-: EngineConfigurationBaseBox(plugin, cfg, parent)
+: EngineConfigPage(plugin, cfg, parent)
 {
 	// Create the testing box, we might as well do this in code.
 	groupTesting = new QGroupBox();
@@ -74,7 +74,7 @@ void EngineZandronumConfigBox::btnBrowseTestingPathClicked()
 
 void EngineZandronumConfigBox::readSettings()
 {
-	EngineConfigurationBaseBox::readSettings();
+	EngineConfigPage::readSettings();
 
 	IniSection& config = *ZandronumEnginePlugin::staticInstance()->data()->pConfig;
 
@@ -85,7 +85,7 @@ void EngineZandronumConfigBox::readSettings()
 
 void EngineZandronumConfigBox::saveSettings()
 {
-	EngineConfigurationBaseBox::saveSettings();
+	EngineConfigPage::saveSettings();
 
 	QString strVal;
 

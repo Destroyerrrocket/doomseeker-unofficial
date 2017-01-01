@@ -23,7 +23,7 @@
 #ifndef __CONFIGUREDIALOG_H_
 #define __CONFIGUREDIALOG_H_
 
-#include "gui/configuration/configurationbasebox.h"
+#include "gui/configuration/configpage.h"
 #include "dptr.h"
 
 #include <QDialog>
@@ -42,49 +42,45 @@ class ConfigurationDialog : public QDialog
 		~ConfigurationDialog();
 
 		/**
-		 *	@brief Adds a new configuration box to the options tree view.
+		 * @brief Adds a new configuration page to the options tree view.
 		 *
-		 *	@param rootItem
-		 *		Pointer to the root node of the tree to which the new box
-		 *		will be attached. If NULL the standard model root is used.
-		 *	@param pConfigurationBox
-		 *		Pointer to configuration Group Box.
-		 *	@param position
-		 *		Passing <0 will use appendRow method, otherwise the new
-		 *		tree view node will be inserted at specified position.
+		 * @param rootItem
+		 *     Pointer to the root node of the tree to which the new box
+		 *     will be attached. If NULL, the standard model root is used.
+		 * @param configPage
+		 *     Pointer to ConfigPage instance.
+		 * @param position
+		 *     Passing <0 will use appendRow method, otherwise the new
+		 *     tree view node will be inserted at specified position.
 		 *
-		 *	@return NULL if ConfigurationBox was not added. Pointer to a new
-		 *	tree node if operation was successful.
+		 * @return NULL if ConfigPage was not added. Pointer to a new
+		 * tree node if operation was successful.
 		 */
-		virtual QStandardItem* addConfigurationBox(QStandardItem* rootItem, ConfigurationBaseBox* pConfigurationBox, int position = -1);
+		virtual QStandardItem* addConfigPage(QStandardItem* rootItem, ConfigPage* configPage, int position = -1);
 
 		/**
-		 *	@brief Adds a label node to the options tree view.
+		 * @brief Adds a label node to the options tree view.
 		 *
-		 *	Such node has no ConfigurationBaseBox attached. It serves only
-		 *	organizational purposes.
-		 *	@param rootItem
-		 *		Pointer to the root node of the tree to which the new box
-		 *		will be attached. If NULL the standard model root is used.
-		 *	@param label
-		 *		Label for the new node.
-		  *	@param position
-		 *		Passing <0 will use appendRow method, otherwise the new
-		 *		tree view node will be inserted at specified position.
+		 * Such node has no ConfigPage attached. It serves only
+		 * organizational purposes.
 		 *
-		 *	@return Newly created options tree view node. NULL if rootItem
-		 *	was not a member of the tree view.
+		 * @param rootItem
+		 *     Pointer to the root node of the tree to which the new label
+		 *     will be attached. If NULL, the standard model root is used.
+		 * @param label
+		 *     Label for the new node.
+		 * @param position
+		 *     Passing <0 will use appendRow method, otherwise the new
+		 *     tree view node will be inserted at specified position.
+		 *
+		 * @return Newly created options tree view node. NULL if rootItem
+		 * was not a member of the tree view.
 		 */
 		QStandardItem* addLabel(QStandardItem* rootItem, const QString& label, int position = -1);
-		bool isConfigurationBoxOnTheList(ConfigurationBaseBox* pConfigurationBox);
 
 	protected:
-		bool canConfigurationBoxBeAddedToList(ConfigurationBaseBox* pConfigurationBox);
-
 		virtual void doSaveSettings() {};
 		virtual void keyPressEvent(QKeyEvent* e);
-
-		bool isConfigurationBoxInfoValid(ConfigurationBaseBox* pConfigurationBox);
 
 		/**
 		 * @brief Returns pointer to the tree widget that contains
@@ -93,24 +89,25 @@ class ConfigurationDialog : public QDialog
 		QTreeView* optionsTree();
 
 		/**
-		 * 	@param widget - hide currently displayed box if NULL.
+		 * @param widget - hide currently displayed box if NULL.
 		 */
-		void showConfigurationBox(ConfigurationBaseBox* widget);
-		void saveSettings();
+		void showConfigPage(ConfigPage* widget);
 
 		virtual bool validate() { return true; }
-
-	protected slots:
-		void btnClicked(QAbstractButton *button);
 
 	private:
 		DPtr<ConfigurationDialog> d;
 
+		bool canConfigPageBeAdded(ConfigPage* configPage);
+		bool isConfigPageValid(ConfigPage* configPage);
+		bool hasConfigPage(ConfigPage* configPage);
 		bool hasItemOnList(QStandardItem* pItem) const;
-		QModelIndex findPageModelIndex(ConfigurationBaseBox *page);
-		void validatePage(ConfigurationBaseBox *page);
+		QModelIndex findPageModelIndex(ConfigPage *page);
+		void saveSettings();
+		void validatePage(ConfigPage *page);
 
 	private slots:
+		void btnClicked(QAbstractButton *button);
 		void onPageValidationRequested();
 		void switchToItem(const QModelIndex &current, const QModelIndex &previous);
 };

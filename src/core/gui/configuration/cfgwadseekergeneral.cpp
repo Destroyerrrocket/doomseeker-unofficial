@@ -42,7 +42,7 @@ public:
 DPointered(CFGWadseekerGeneral)
 
 CFGWadseekerGeneral::CFGWadseekerGeneral(QWidget* parent)
-: ConfigurationBaseBox(parent)
+: ConfigPage(parent)
 {
 	d->setupUi(this);
 
@@ -87,7 +87,7 @@ void CFGWadseekerGeneral::saveSettings()
 	gConfig.wadseeker.maxConcurrentWadDownloads = d->spinMaxConcurrentWadDownloads->value();
 }
 
-ConfigurationBaseBox::Validation CFGWadseekerGeneral::validate()
+ConfigPage::Validation CFGWadseekerGeneral::validate()
 {
 	QString error;
 

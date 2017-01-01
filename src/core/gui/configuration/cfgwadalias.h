@@ -23,13 +23,13 @@
 #ifndef idBE57B8CD_234F_4EEE_AC1B1FAAFB11B1CD
 #define idBE57B8CD_234F_4EEE_AC1B1FAAFB11B1CD
 
-#include "gui/configuration/configurationbasebox.h"
+#include "gui/configuration/configpage.h"
 #include "dptr.h"
 
 class FileAlias;
 class QTableWidgetItem;
 
-class CFGWadAlias : public ConfigurationBaseBox
+class CFGWadAlias : public ConfigPage
 {
 	Q_OBJECT
 

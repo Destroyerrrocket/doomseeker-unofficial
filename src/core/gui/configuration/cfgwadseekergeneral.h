@@ -23,11 +23,11 @@
 #ifndef __WADSEEKERCONFIG_GENERAL_H_
 #define __WADSEEKERCONFIG_GENERAL_H_
 
-#include "gui/configuration/configurationbasebox.h"
+#include "gui/configuration/configpage.h"
 #include "dptr.h"
 #include <QIcon>
 
-class CFGWadseekerGeneral : public ConfigurationBaseBox
+class CFGWadseekerGeneral : public ConfigPage
 {
 	Q_OBJECT
 

@@ -38,7 +38,7 @@ DPointered(CfgChatLogsPage)
 
 
 CfgChatLogsPage::CfgChatLogsPage(QWidget *parent)
-: ConfigurationBaseBox(parent)
+: ConfigPage(parent)
 {
 	d->setupUi(this);
 	d->lblDirWarning->hide();
@@ -115,7 +115,7 @@ void CfgChatLogsPage::saveSettings()
 	cfg.setOldLogsRemovalDaysThreshold(d->spinLogRemovalAge->value());
 }
 
-ConfigurationBaseBox::Validation CfgChatLogsPage::validate()
+ConfigPage::Validation CfgChatLogsPage::validate()
 {
 	QString error = validateChatLogsPath(d->leDir->text().trimmed());
 	d->lblDirWarning->setToolTip(error);

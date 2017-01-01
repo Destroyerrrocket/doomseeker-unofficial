@@ -23,13 +23,13 @@
 #ifndef id65026263_73af_4292_be84_ddb5bf7f606b
 #define id65026263_73af_4292_be84_ddb5bf7f606b
 
-#include "gui/configuration/configurationbasebox.h"
+#include "gui/configuration/configpage.h"
 #include "dptr.h"
 #include <QIcon>
 
 class QFileInfo;
 
-class CfgChatLogsPage : public ConfigurationBaseBox
+class CfgChatLogsPage : public ConfigPage
 {
 Q_OBJECT
 

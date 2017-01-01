@@ -23,14 +23,14 @@
 #ifndef DOOMSEEKER_PLUGIN_ZANDRONUM_ENGINE_ZANDRONUM_CONFIG_H
 #define DOOMSEEKER_PLUGIN_ZANDRONUM_ENGINE_ZANDRONUM_CONFIG_H
 
-#include "gui/configuration/engineconfigurationbasebox.h"
+#include "gui/configuration/engineconfigpage.h"
 
 class QCheckBox;
 class QGroupBox;
 class QLineEdit;
 class QPushButton;
 
-class EngineZandronumConfigBox : public EngineConfigurationBaseBox
+class EngineZandronumConfigBox : public EngineConfigPage
 {
 	Q_OBJECT
 

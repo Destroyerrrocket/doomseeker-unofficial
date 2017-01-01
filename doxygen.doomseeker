@@ -748,8 +748,8 @@ INPUT                  = src/core \
                          src/core/serverapi \
                          src/core/plugins \
                          src/core/masterserver \
-                         src/core/gui/configuration/engineconfigurationbasebox.h \
-                         src/core/gui/configuration/configurationbasebox.h
+                         src/core/gui/configuration/engineconfigpage.h \
+                         src/core/gui/configuration/configpage.h
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

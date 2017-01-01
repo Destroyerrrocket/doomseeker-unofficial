@@ -50,7 +50,7 @@ DClass<CFGServerPasswords> : public Ui::CFGServerPasswords
 DPointered(CFGServerPasswords)
 
 CFGServerPasswords::CFGServerPasswords(QWidget* parent)
-: ConfigurationBaseBox(parent)
+: ConfigPage(parent)
 {
 	d->setupUi(this);
 	d->bHidingPasswordsMode = true;

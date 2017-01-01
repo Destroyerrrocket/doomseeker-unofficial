@@ -23,7 +23,7 @@
 #include "configurationdialog.h"
 #include "ui_configurationdialog.h"
 
-#include "configurationbasebox.h"
+#include "configpage.h"
 #include "qtmetapointer.h"
 #include <cassert>
 #include <Qt>
@@ -46,16 +46,16 @@ public:
 		COLSIZE,
 	};
 
-	QList<ConfigurationBaseBox*> configBoxesList;
-	ConfigurationBaseBox* currentlyDisplayedCfgBox;
+	QList<ConfigPage*> configPages;
+	ConfigPage* currentlyDisplayedPage;
 
-	QModelIndex findPageModelIndex(const QModelIndex &rootIndex, ConfigurationBaseBox *page)
+	QModelIndex findPageModelIndex(const QModelIndex &rootIndex, ConfigPage *page)
 	{
 		QStandardItemModel *model = static_cast<QStandardItemModel*>(tvOptionsList->model());
 		for (int row = 0; row < model->rowCount(rootIndex); ++row)
 		{
 			QModelIndex index = model->index(row, COL_META, rootIndex);
-			ConfigurationBaseBox *pageAtIndex = pageFromIndex(index);
+			ConfigPage *pageAtIndex = pageFromIndex(index);
 			if (pageAtIndex == page)
 			{
 				return index;
@@ -69,19 +69,19 @@ public:
 		return QModelIndex();
 	}
 
-	ConfigurationBaseBox *pageFromIndex(const QModelIndex &index)
+	ConfigPage *pageFromIndex(const QModelIndex &index)
 	{
 		QModelIndex pageIndex = index.sibling(index.row(), COL_META);
 		QtMetaPointer metaPointer = pageIndex.data(Qt::UserRole).value<QtMetaPointer>();
 		void* pointer = metaPointer;
-		return static_cast<ConfigurationBaseBox*>(pointer);
+		return static_cast<ConfigPage*>(pointer);
 	}
 
-	QIcon validationIcon(ConfigurationBaseBox::Validation validation) const
+	QIcon validationIcon(ConfigPage::Validation validation) const
 	{
 		switch (validation)
 		{
-		case ConfigurationBaseBox::VALIDATION_ERROR:
+		case ConfigPage::VALIDATION_ERROR:
 			return QIcon(":icons/exclamation_16.png");
 		default:
 			return QIcon();
@@ -116,7 +116,7 @@ ConfigurationDialog::ConfigurationDialog(QWidget* parent)
 		PrivData<ConfigurationDialog>::COL_VALIDATION, QHeaderView::ResizeToContents);
 #endif
 
-	d->currentlyDisplayedCfgBox = NULL;
+	d->currentlyDisplayedPage = NULL;
 	connect(d->buttonBox, SIGNAL( clicked(QAbstractButton *) ), this, SLOT ( btnClicked(QAbstractButton *) ));
 	this->connect(d->tvOptionsList->selectionModel(), SIGNAL(currentChanged(QModelIndex, QModelIndex)),
 		SLOT(switchToItem(QModelIndex, QModelIndex)));
@@ -124,16 +124,16 @@ ConfigurationDialog::ConfigurationDialog(QWidget* parent)
 
 ConfigurationDialog::~ConfigurationDialog()
 {
-	for(int i = 0; i < d->configBoxesList.count(); ++i)
+	for(int i = 0; i < d->configPages.count(); ++i)
 	{
-		delete d->configBoxesList[i];
+		delete d->configPages[i];
 	}
 }
 
-QStandardItem* ConfigurationDialog::addConfigurationBox(
-	QStandardItem* rootItem, ConfigurationBaseBox* pConfigurationBox, int position)
+QStandardItem* ConfigurationDialog::addConfigPage(
+	QStandardItem* rootItem, ConfigPage* configPage, int position)
 {
-	if (!canConfigurationBoxBeAddedToList(pConfigurationBox))
+	if (!canConfigPageBeAdded(configPage))
 	{
 		return NULL;
 	}
@@ -151,14 +151,13 @@ QStandardItem* ConfigurationDialog::addConfigurationBox(
 
 	QList<QStandardItem*> row;
 
-	QStandardItem* nameItem = new QStandardItem(pConfigurationBox->name());
-	nameItem->setIcon(pConfigurationBox->icon());
+	QStandardItem* nameItem = new QStandardItem(configPage->name());
+	nameItem->setIcon(configPage->icon());
 
 	row.insert(PrivData<ConfigurationDialog>::COL_NAME, nameItem);
 
-	QtMetaPointer metaPointer = pConfigurationBox;
-	QVariant variantConfigurationBox = qVariantFromValue(metaPointer);
-	nameItem->setData(variantConfigurationBox, Qt::UserRole);
+	QtMetaPointer metaPointer = configPage;
+	nameItem->setData(qVariantFromValue(metaPointer), Qt::UserRole);
 
 	row.insert(PrivData<ConfigurationDialog>::COL_VALIDATION, new QStandardItem());
 
@@ -170,16 +169,16 @@ QStandardItem* ConfigurationDialog::addConfigurationBox(
 	{
 		rootItem->insertRow(position, row);
 	}
-	
-	d->configBoxesList << pConfigurationBox;
-	this->connect(pConfigurationBox, SIGNAL(validationRequested()),
+
+	d->configPages << configPage;
+	this->connect(configPage, SIGNAL(validationRequested()),
 		SLOT(onPageValidationRequested()));
 
-	if (!pConfigurationBox->areSettingsAlreadyRead())
+	if (!configPage->areSettingsAlreadyRead())
 	{
-		pConfigurationBox->read();
+		configPage->read();
 	}
-	validatePage(pConfigurationBox);
+	validatePage(configPage);
 
 	return nameItem;
 }
@@ -248,27 +247,27 @@ void ConfigurationDialog::btnClicked(QAbstractButton *button)
 	}
 }
 
-bool ConfigurationDialog::canConfigurationBoxBeAddedToList(ConfigurationBaseBox* pConfigurationBox)
+bool ConfigurationDialog::canConfigPageBeAdded(ConfigPage* configPage)
 {
-	return isConfigurationBoxInfoValid(pConfigurationBox) && !isConfigurationBoxOnTheList(pConfigurationBox);
+	return isConfigPageValid(configPage) && !hasConfigPage(configPage);
 }
 
-QModelIndex ConfigurationDialog::findPageModelIndex(ConfigurationBaseBox *page)
+QModelIndex ConfigurationDialog::findPageModelIndex(ConfigPage *page)
 {
 	QStandardItemModel *model = static_cast<QStandardItemModel*>(d->tvOptionsList->model());
 	return d->findPageModelIndex(model->indexFromItem(model->invisibleRootItem()), page);
 }
 
-bool ConfigurationDialog::isConfigurationBoxInfoValid(ConfigurationBaseBox* pConfigurationBox)
+bool ConfigurationDialog::isConfigPageValid(ConfigPage* configPage)
 {
-	return pConfigurationBox != NULL && !pConfigurationBox->name().isEmpty();
+	return configPage != NULL && !configPage->name().isEmpty();
 }
 
-bool ConfigurationDialog::isConfigurationBoxOnTheList(ConfigurationBaseBox* pConfigurationBox)
+bool ConfigurationDialog::hasConfigPage(ConfigPage* configPage)
 {
-	foreach (ConfigurationBaseBox* pBoxOnTheList, d->configBoxesList)
+	foreach (ConfigPage* addedPage, d->configPages)
 	{
-		if (pConfigurationBox == pBoxOnTheList)
+		if (configPage == addedPage)
 		{
 			return true;
 		}
@@ -311,7 +310,7 @@ bool ConfigurationDialog::hasItemOnList(QStandardItem* pItem) const
 
 void ConfigurationDialog::onPageValidationRequested()
 {
-	ConfigurationBaseBox *page = qobject_cast<ConfigurationBaseBox*>(sender());
+	ConfigPage *page = qobject_cast<ConfigPage*>(sender());
 	assert(page != NULL);
 	validatePage(page);
 }
@@ -320,13 +319,13 @@ void ConfigurationDialog::switchToItem(const QModelIndex& current, const QModelI
 {
 	if (current.isValid() && current != previous)
 	{
-		ConfigurationBaseBox* pConfigBox = d->pageFromIndex(current);
+		ConfigPage* configPage = d->pageFromIndex(current);
 
 		// Something with sense was selected, display this something
 		// and hide previous box.
-		if (isConfigurationBoxInfoValid(pConfigBox))
+		if (isConfigPageValid(configPage))
 		{
-			showConfigurationBox(pConfigBox);
+			showConfigPage(configPage);
 		}
 	}
 }
@@ -339,9 +338,9 @@ QTreeView* ConfigurationDialog::optionsTree()
 void ConfigurationDialog::saveSettings()
 {
 	// Iterate through every engine and execute it's saving method
-	for (int i = 0; i < d->configBoxesList.count(); ++i)
+	for (int i = 0; i < d->configPages.count(); ++i)
 	{
-		d->configBoxesList[i]->save();
+		d->configPages[i]->save();
 	}
 
 	doSaveSettings();
@@ -349,35 +348,35 @@ void ConfigurationDialog::saveSettings()
 	if(isVisible())
 	{
 		// Allow panels such as the one for Wadseeker update their contents.
-		for (int i = 0; i < d->configBoxesList.count(); ++i)
+		for (int i = 0; i < d->configPages.count(); ++i)
 		{
-			d->configBoxesList[i]->read();
-			validatePage(d->configBoxesList[i]);
+			d->configPages[i]->read();
+			validatePage(d->configPages[i]);
 		}
 	}
 }
 
-void ConfigurationDialog::showConfigurationBox(ConfigurationBaseBox* widget)
+void ConfigurationDialog::showConfigPage(ConfigPage* page)
 {
-	if (d->currentlyDisplayedCfgBox != NULL)
+	if (d->currentlyDisplayedPage != NULL)
 	{
-		validatePage(d->currentlyDisplayedCfgBox);
-		d->currentlyDisplayedCfgBox->hide();
+		validatePage(d->currentlyDisplayedPage);
+		d->currentlyDisplayedPage->hide();
 		d->mainPanel->setTitle(QString());
 	}
-	d->currentlyDisplayedCfgBox = widget;
+	d->currentlyDisplayedPage = page;
 
-	if (widget != NULL)
+	if (page != NULL)
 	{
-		widget->setAllowSave(true);
-		validatePage(widget);
-		d->mainPanel->layout()->addWidget(widget);
-		d->mainPanel->setTitle(widget->title());
-		widget->show();
+		page->setAllowSave(true);
+		validatePage(page);
+		d->mainPanel->layout()->addWidget(page);
+		d->mainPanel->setTitle(page->title());
+		page->show();
 	}
 }
 
-void ConfigurationDialog::validatePage(ConfigurationBaseBox *page)
+void ConfigurationDialog::validatePage(ConfigPage *page)
 {
 	assert(page != NULL);
 	QModelIndex pageIndex = findPageModelIndex(page);

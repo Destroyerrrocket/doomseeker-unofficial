@@ -34,8 +34,8 @@ class DoomseekerConfigurationDialog : public ConfigurationDialog
 	public:
 		DoomseekerConfigurationDialog(QWidget* parent = NULL);
 
-		QStandardItem* addConfigurationBox(QStandardItem* rootItem, ConfigurationBaseBox* pConfigurationBox, int position = -1);
-		bool addEngineConfiguration(ConfigurationBaseBox* pConfigurationBox);
+		QStandardItem* addConfigPage(QStandardItem* rootItem, ConfigPage* configPage, int position = -1);
+		bool addEngineConfiguration(ConfigPage* configPage);
 		bool appearanceChanged() const { return bAppearanceChanged; }
 		bool customServersChanged() const { return bCustomServersChanged; }
 		void initOptionsList();
@@ -46,7 +46,7 @@ class DoomseekerConfigurationDialog : public ConfigurationDialog
 	private:
 		bool bAppearanceChanged;
 		bool bCustomServersChanged;
-		ConfigurationBaseBox* customServersCfgBox;
+		ConfigPage* customServersCfgBox;
 		QStandardItem* enginesRoot;
 
 		void appendFilePathsConfigurationBoxes();

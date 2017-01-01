@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// engineconfigurationbasebox.cpp
+// engineconfigpage.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -21,8 +21,8 @@
 // Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include "engineconfigurationbasebox.h"
-#include "ui_engineconfigurationbasebox.h"
+#include "engineconfigpage.h"
+#include "ui_engineconfigpage.h"
 #include "gui/widgets/filepickwidget.h"
 #include "ini/ini.h"
 #include "plugins/engineplugin.h"
@@ -33,14 +33,14 @@
 #include <QFileDialog>
 #include <QTimer>
 
-DClass<EngineConfigurationBaseBox> : public Ui::EngineConfigurationBaseBox
+DClass<EngineConfigPage> : public Ui::EngineConfigPage
 {
 	public:
 		class KnownNeighbours : public FilePickWidget::NeighbourStrategy
 		{
 		public:
-			DPtr< ::EngineConfigurationBaseBox> *wrapper;
-			KnownNeighbours(DPtr< ::EngineConfigurationBaseBox> *wrapper)
+			DPtr< ::EngineConfigPage> *wrapper;
+			KnownNeighbours(DPtr< ::EngineConfigPage> *wrapper)
 			{
 				this->wrapper = wrapper;
 			}
@@ -51,7 +51,7 @@ DClass<EngineConfigurationBaseBox> : public Ui::EngineConfigurationBaseBox
 		};
 
 
-		::EngineConfigurationBaseBox *parent;
+		::EngineConfigPage *parent;
 		IniSection *config;
 		EnginePlugin *plugin;
 		bool clientOnly;
@@ -74,11 +74,11 @@ DClass<EngineConfigurationBaseBox> : public Ui::EngineConfigurationBaseBox
 		}
 };
 
-DPointeredNoCopy(EngineConfigurationBaseBox)
+DPointeredNoCopy(EngineConfigPage)
 
 
-EngineConfigurationBaseBox::EngineConfigurationBaseBox(EnginePlugin *plugin, IniSection &cfg, QWidget *parent)
-: ConfigurationBaseBox(parent)
+EngineConfigPage::EngineConfigPage(EnginePlugin *plugin, IniSection &cfg, QWidget *parent)
+: ConfigPage(parent)
 {
 	d->parent = this;
 	d->plugin = plugin;
@@ -100,18 +100,18 @@ EngineConfigurationBaseBox::EngineConfigurationBaseBox(EnginePlugin *plugin, Ini
 		d->masterAddressBox->hide();
 }
 
-EngineConfigurationBaseBox::~EngineConfigurationBaseBox()
+EngineConfigPage::~EngineConfigPage()
 {
 }
 
-void EngineConfigurationBaseBox::addWidget(QWidget *widget)
+void EngineConfigPage::addWidget(QWidget *widget)
 {
 	layout()->removeItem(d->verticalSpacer);
 	layout()->addWidget(widget);
 	layout()->addItem(d->verticalSpacer);
 }
 
-void EngineConfigurationBaseBox::autoFindNeighbouringPaths()
+void EngineConfigPage::autoFindNeighbouringPaths()
 {
 	FilePickWidget *picker = qobject_cast<FilePickWidget*>(sender());
 	if (QFileInfo(picker->path()).isFile())
@@ -129,7 +129,7 @@ void EngineConfigurationBaseBox::autoFindNeighbouringPaths()
 	}
 }
 
-QStringList EngineConfigurationBaseBox::collectKnownGameFilePaths() const
+QStringList EngineConfigPage::collectKnownGameFilePaths() const
 {
 	QStringList knownPaths;
 	foreach (const FilePickWidget *picker, d->filePickers)
@@ -142,20 +142,20 @@ QStringList EngineConfigurationBaseBox::collectKnownGameFilePaths() const
 	return knownPaths;
 }
 
-QString EngineConfigurationBaseBox::currentCustomParameters() const
+QString EngineConfigPage::currentCustomParameters() const
 {
 	return d->cboCustomParameters->currentText().trimmed();
 }
 
-QIcon EngineConfigurationBaseBox::icon() const
+QIcon EngineConfigPage::icon() const
 {
 	return d->plugin->icon();
 }
 
-void EngineConfigurationBaseBox::makeFileBrowsers()
+void EngineConfigPage::makeFileBrowsers()
 {
 	QSharedPointer<FilePickWidget::NeighbourStrategy> neighbours(
-			new PrivData<EngineConfigurationBaseBox>::KnownNeighbours(&d));
+			new PrivData<EngineConfigPage>::KnownNeighbours(&d));
 	QList<GameFile> files = d->plugin->gameExe()->gameFiles().asQList();
 	foreach (const GameFile &file, files)
 	{
@@ -170,17 +170,17 @@ void EngineConfigurationBaseBox::makeFileBrowsers()
 	}
 }
 
-QString EngineConfigurationBaseBox::name() const
+QString EngineConfigPage::name() const
 {
 	return d->plugin->data()->name;
 }
 
-const EnginePlugin *EngineConfigurationBaseBox::plugin() const
+const EnginePlugin *EngineConfigPage::plugin() const
 {
 	return d->plugin;
 }
 
-void EngineConfigurationBaseBox::readSettings()
+void EngineConfigPage::readSettings()
 {
 	foreach (FilePickWidget *filePicker, d->filePickers)
 	{
@@ -198,7 +198,7 @@ void EngineConfigurationBaseBox::readSettings()
 	updateCustomParametersSaveState();
 }
 
-void EngineConfigurationBaseBox::removeCurrentCustomParametersFromStorage()
+void EngineConfigPage::removeCurrentCustomParametersFromStorage()
 {
 	QString currentParams = currentCustomParameters();
 	removeStoredCustomParametersFromConfig(currentParams);
@@ -206,14 +206,14 @@ void EngineConfigurationBaseBox::removeCurrentCustomParametersFromStorage()
 	updateCustomParametersSaveState();
 }
 
-void EngineConfigurationBaseBox::removeStoredCustomParametersFromConfig(const QString &parameters)
+void EngineConfigPage::removeStoredCustomParametersFromConfig(const QString &parameters)
 {
 	QStringList storedParameters = d->readStoredCustomParameters();
 	storedParameters.removeAll(parameters);
 	d->saveStoredCustomParameters(storedParameters);
 }
 
-void EngineConfigurationBaseBox::removeStoredCustomParametersFromWidget(const QString &parameters)
+void EngineConfigPage::removeStoredCustomParametersFromWidget(const QString &parameters)
 {
 	int indexInWidget = d->cboCustomParameters->findText(parameters);
 	if (indexInWidget >= 0)
@@ -223,7 +223,7 @@ void EngineConfigurationBaseBox::removeStoredCustomParametersFromWidget(const QS
 	}
 }
 
-void EngineConfigurationBaseBox::saveCustomParameters()
+void EngineConfigPage::saveCustomParameters()
 {
 	if (!d->existsInStoredCustomParameters(currentCustomParameters()))
 	{
@@ -235,7 +235,7 @@ void EngineConfigurationBaseBox::saveCustomParameters()
 	updateCustomParametersSaveState();
 }
 
-void EngineConfigurationBaseBox::saveSettings()
+void EngineConfigPage::saveSettings()
 {
 	foreach (FilePickWidget *filePicker, d->filePickers)
 	{
@@ -248,24 +248,24 @@ void EngineConfigurationBaseBox::saveSettings()
 	}
 }
 
-void EngineConfigurationBaseBox::showError(const QString &error)
+void EngineConfigPage::showError(const QString &error)
 {
 	d->lblError->setText(error);
 	d->lblError->show();
 	d->errorTimer.start();
 }
 
-void EngineConfigurationBaseBox::showFindFailError()
+void EngineConfigPage::showFindFailError()
 {
 	showError(tr("Failed to automatically find file.\nYou may need to use the browse button."));
 }
 
-QString EngineConfigurationBaseBox::title() const
+QString EngineConfigPage::title() const
 {
 	return tr("Game - %1").arg(name());
 }
 
-void EngineConfigurationBaseBox::updateCustomParametersSaveState()
+void EngineConfigPage::updateCustomParametersSaveState()
 {
 	bool paramExists = d->existsInStoredCustomParameters(currentCustomParameters());
 	bool isEmpty = currentCustomParameters().isEmpty();
@@ -273,7 +273,7 @@ void EngineConfigurationBaseBox::updateCustomParametersSaveState()
 	d->btnDeleteCustomParameters->setVisible(!isEmpty && paramExists);
 }
 
-ConfigurationBaseBox::Validation EngineConfigurationBaseBox::validate()
+ConfigPage::Validation EngineConfigPage::validate()
 {
 	bool allFilesOk = true;
 	foreach (FilePickWidget *filePicker, d->filePickers)

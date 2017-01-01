@@ -38,7 +38,7 @@ DClass<CFGWadseekerIdgames> : public Ui::CFGWadseekerIdgames
 DPointered(CFGWadseekerIdgames)
 
 CFGWadseekerIdgames::CFGWadseekerIdgames(QWidget* parent)
-: ConfigurationBaseBox(parent)
+: ConfigPage(parent)
 {
 	d->setupUi(this);
 

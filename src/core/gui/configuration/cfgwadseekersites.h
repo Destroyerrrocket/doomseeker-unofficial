@@ -23,13 +23,13 @@
 #ifndef __WADSEEKERCONFIG_SITES_H_
 #define __WADSEEKERCONFIG_SITES_H_
 
-#include "gui/configuration/configurationbasebox.h"
+#include "gui/configuration/configpage.h"
 #include "dptr.h"
 #include <QIcon>
 
 class QUrl;
 
-class CFGWadseekerSites : public ConfigurationBaseBox
+class CFGWadseekerSites : public ConfigPage
 {
 	Q_OBJECT
 

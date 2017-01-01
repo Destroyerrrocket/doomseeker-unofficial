@@ -98,7 +98,7 @@ void ZandronumEnginePlugin::setupConfig(IniSection &config)
 		DataPaths::defaultInstance()->pluginDocumentsLocationPath(*this));
 }
 
-ConfigurationBaseBox *ZandronumEnginePlugin::configuration(QWidget *parent)
+ConfigPage *ZandronumEnginePlugin::configuration(QWidget *parent)
 {
 	return new EngineZandronumConfigBox(staticInstance(), *data()->pConfig, parent);
 }

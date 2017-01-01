@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// engineconfigurationbasebox.h
+// engineconfigpage.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@
 #ifndef __ENGINECONFIGBASE_H__
 #define __ENGINECONFIGBASE_H__
 
-#include "gui/configuration/configurationbasebox.h"
+#include "gui/configuration/configpage.h"
 #include "dptr.h"
 
 class EnginePlugin;
@@ -36,7 +36,7 @@ class QLineEdit;
  * @brief Base for configuration pages for plugins; provides some default
  *        behavior.
  *
- * An extension of ConfigurationBaseBox. This class is already prepared to
+ * An extension of ConfigPage. This class is already prepared to
  * support most common and basic settings which include paths to the game's
  * client and server executables, custom parameters and master server address.
  * Plugins can reimplement this widget to benefit from this default behavior
@@ -45,7 +45,7 @@ class QLineEdit;
  * New subclassed instances of this configuration page can be created and
  * returned in a reimplementation of the EnginePlugin::configuration() method.
  */
-class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox
+class MAIN_EXPORT EngineConfigPage : public ConfigPage
 {
 	Q_OBJECT
 
@@ -60,12 +60,11 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox
 		 * @param parent
 		 *     Parent widget, most likely configuration dialog box.
 		 */
-		EngineConfigurationBaseBox(EnginePlugin *plugin, IniSection &cfg, QWidget *parent=NULL);
-		virtual ~EngineConfigurationBaseBox();
+		EngineConfigPage(EnginePlugin *plugin, IniSection &cfg, QWidget *parent=NULL);
+		virtual ~EngineConfigPage();
 
 		QIcon icon() const;
 		QString name() const;
-		void readSettings();
 		/**
 		 * @brief Parent plugin handled by this page.
 		 */
@@ -78,11 +77,12 @@ class MAIN_EXPORT EngineConfigurationBaseBox : public ConfigurationBaseBox
 		 * @brief Add a new, custom widget below the standard ones.
 		 */
 		void addWidget(QWidget *widget);
+		void readSettings();
 		void saveSettings();
 
 	private:
-		DPtr<EngineConfigurationBaseBox> d;
-		friend class PrivData<EngineConfigurationBaseBox>;
+		DPtr<EngineConfigPage> d;
+		friend class PrivData<EngineConfigPage>;
 
 		QStringList collectKnownGameFilePaths() const;
 		void makeFileBrowsers();

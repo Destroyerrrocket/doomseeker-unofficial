@@ -34,7 +34,7 @@ public:
 		timeoutBox->setValue(speed.delayBetweenSingleServerAttempts);
 		queryIntervalBox->setValue(speed.intervalBetweenServers);
 	}
-	
+
 	QuerySpeed querySpeed() const
 	{
 		QuerySpeed speed;
@@ -48,7 +48,7 @@ public:
 DPointered(CFGQuery)
 
 CFGQuery::CFGQuery(QWidget *parent)
-: ConfigurationBaseBox(parent)
+: ConfigPage(parent)
 {
 	d->setupUi(this);
 }

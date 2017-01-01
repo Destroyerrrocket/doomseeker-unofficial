@@ -35,7 +35,7 @@ DClass<CFGAutoUpdates> : public Ui::CFGAutoUpdates
 DPointered(CFGAutoUpdates)
 
 CFGAutoUpdates::CFGAutoUpdates(QWidget *parent)
-: ConfigurationBaseBox(parent)
+: ConfigPage(parent)
 {
 	d->setupUi(this);
 	// Hide if not supported on target platform.

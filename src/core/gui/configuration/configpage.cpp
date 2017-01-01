@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// configurationbasebox.cpp
+// configpage.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,18 +20,18 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "configurationbasebox.h"
+#include "configpage.h"
 
-DClass<ConfigurationBaseBox>
+DClass<ConfigPage>
 {
 	public:
 		bool bAllowSave;
 		bool bSettingsAlreadyRead;
 };
 
-DPointered(ConfigurationBaseBox)
+DPointered(ConfigPage)
 
-ConfigurationBaseBox::ConfigurationBaseBox(QWidget* parent)
+ConfigPage::ConfigPage(QWidget* parent)
 : QWidget(parent)
 {
 	d->bAllowSave = false;
@@ -39,27 +39,27 @@ ConfigurationBaseBox::ConfigurationBaseBox(QWidget* parent)
 	hide();
 }
 
-ConfigurationBaseBox::~ConfigurationBaseBox()
+ConfigPage::~ConfigPage()
 {
 }
 
-bool ConfigurationBaseBox::allowSave()
+bool ConfigPage::allowSave()
 {
 	return d->bAllowSave;
 }
 
-bool ConfigurationBaseBox::areSettingsAlreadyRead()
+bool ConfigPage::areSettingsAlreadyRead()
 {
 	return d->bSettingsAlreadyRead;
 }
 
-void ConfigurationBaseBox::read()
+void ConfigPage::read()
 {
 	d->bSettingsAlreadyRead = true;
 	readSettings();
 }
 
-bool ConfigurationBaseBox::save()
+bool ConfigPage::save()
 {
 	if (d->bAllowSave)
 	{
@@ -72,17 +72,17 @@ bool ConfigurationBaseBox::save()
 	}
 }
 
-void ConfigurationBaseBox::setAllowSave(bool b)
+void ConfigPage::setAllowSave(bool b)
 {
 	d->bAllowSave = b;
 }
 
-QString ConfigurationBaseBox::title() const
+QString ConfigPage::title() const
 {
 	return name();
 }
 
-ConfigurationBaseBox::Validation ConfigurationBaseBox::validate()
+ConfigPage::Validation ConfigPage::validate()
 {
 	return VALIDATION_OK;
 }

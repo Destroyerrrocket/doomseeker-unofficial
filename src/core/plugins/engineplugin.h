@@ -52,7 +52,7 @@
 	}
 
 class Broadcast;
-class ConfigurationBaseBox;
+class ConfigPage;
 class CreateServerDialog;
 class CreateServerDialogPage;
 class GameCVarProvider;
@@ -324,7 +324,7 @@ class MAIN_EXPORT EnginePlugin
 		/**
 		 *	@brief Engine's configuration widget.
 		 */
-		virtual ConfigurationBaseBox* configuration(QWidget *parent);
+		virtual ConfigPage* configuration(QWidget *parent);
 
 		/**
 		 * @brief Creates a list of custom Create Game dialog pages.

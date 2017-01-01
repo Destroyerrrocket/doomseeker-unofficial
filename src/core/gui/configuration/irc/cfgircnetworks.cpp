@@ -38,7 +38,7 @@ DClass<CFGIRCNetworks> : public Ui::CFGIRCNetworks
 DPointered(CFGIRCNetworks)
 
 CFGIRCNetworks::CFGIRCNetworks(QWidget* parent)
-: ConfigurationBaseBox(parent)
+: ConfigPage(parent)
 {
 	d->setupUi(this);
 

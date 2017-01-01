@@ -92,7 +92,7 @@ void SkulltagEnginePlugin::setupConfig(IniSection &config)
 	config.createSetting("EnableTesting", true);
 }
 
-ConfigurationBaseBox *SkulltagEnginePlugin::configuration(QWidget *parent) const
+ConfigPage *SkulltagEnginePlugin::configuration(QWidget *parent) const
 {
 	return new EngineSkulltagConfigBox(staticInstance(), *data()->pConfig, parent);
 }

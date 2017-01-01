@@ -40,7 +40,7 @@ DClass<CFGCustomServers> : public Ui::CFGCustomServers
 DPointered(CFGCustomServers)
 
 CFGCustomServers::CFGCustomServers(QWidget *parent)
-: ConfigurationBaseBox(parent)
+: ConfigPage(parent)
 {
 	d->setupUi(this);
 

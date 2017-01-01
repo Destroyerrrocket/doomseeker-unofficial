@@ -38,7 +38,7 @@ DClass<CFGAppearance> : public Ui::CFGAppearance
 DPointered(CFGAppearance)
 
 CFGAppearance::CFGAppearance(QWidget *parent)
-: ConfigurationBaseBox(parent)
+: ConfigPage(parent)
 {
 	d->setupUi(this);
 }

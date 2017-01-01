@@ -31,7 +31,7 @@ DClass<CFGWadseekerAppearance> : public Ui::CFGWadseekerAppearance
 DPointered(CFGWadseekerAppearance)
 
 CFGWadseekerAppearance::CFGWadseekerAppearance(QWidget* parent)
-: ConfigurationBaseBox(parent)
+: ConfigPage(parent)
 {
 	d->setupUi(this);
 }

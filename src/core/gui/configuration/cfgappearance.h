@@ -24,11 +24,11 @@
 #ifndef __CFG_APPEARANCE_H__
 #define __CFG_APPEARANCE_H__
 
-#include "gui/configuration/configurationbasebox.h"
+#include "gui/configuration/configpage.h"
 #include "dptr.h"
 #include <QIcon>
 
-class CFGAppearance : public ConfigurationBaseBox
+class CFGAppearance : public ConfigPage
 {
 	Q_OBJECT
 

@@ -33,7 +33,7 @@ class SkulltagEnginePlugin : public EnginePlugin
 
 		void setupConfig(IniSection &config);
 
-		ConfigurationBaseBox *configuration(QWidget *parent) const;
+		ConfigPage *configuration(QWidget *parent) const;
 
 		QList<GameCVar> limits(const GameMode& gm) const;
 

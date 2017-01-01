@@ -23,7 +23,7 @@
 #ifndef idEB6A779F_CFBD_4900_AFC803D7BF80EC31
 #define idEB6A779F_CFBD_4900_AFC803D7BF80EC31
 
-#include "gui/configuration/configurationbasebox.h"
+#include "gui/configuration/configpage.h"
 #include "dptr.h"
 #include <QIcon>
 
@@ -31,7 +31,7 @@ class ServerPassword;
 class QTableWidget;
 class QTableWidgetItem;
 
-class CFGServerPasswords : public ConfigurationBaseBox
+class CFGServerPasswords : public ConfigPage
 {
 	Q_OBJECT
 

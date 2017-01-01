@@ -24,13 +24,13 @@
 #ifndef __CFG_FILE_PATHS_H_
 #define __CFG_FILE_PATHS_H_
 
-#include "gui/configuration/configurationbasebox.h"
+#include "gui/configuration/configpage.h"
 #include "dptr.h"
 
 class FileSearchPath;
 class QFileInfo;
 
-class CFGFilePaths : public ConfigurationBaseBox
+class CFGFilePaths : public ConfigPage
 {
 	Q_OBJECT
 

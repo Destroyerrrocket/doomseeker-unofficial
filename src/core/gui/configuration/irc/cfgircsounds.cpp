@@ -18,7 +18,7 @@ DClass<CFGIRCSounds> : public Ui::CFGIRCSounds
 DPointered(CFGIRCSounds)
 
 CFGIRCSounds::CFGIRCSounds(QWidget* parent)
-: ConfigurationBaseBox(parent)
+: ConfigPage(parent)
 {
 	d->setupUi(this);
 	d->lblNicknameUsedWarning->hide();
@@ -98,7 +98,7 @@ void CFGIRCSounds::setPath(QLineEdit* pLineEdit, const QString& path)
 	emit validationRequested();
 }
 
-ConfigurationBaseBox::Validation CFGIRCSounds::validate()
+ConfigPage::Validation CFGIRCSounds::validate()
 {
 	QString nicknameUsedError = validateFilePath(d->leNicknameUsed->text().trimmed());
 	d->lblNicknameUsedWarning->setVisible(!nicknameUsedError.isEmpty());

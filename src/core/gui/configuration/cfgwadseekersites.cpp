@@ -39,7 +39,7 @@ DClass<CFGWadseekerSites> : public Ui::CFGWadseekerSites
 DPointered(CFGWadseekerSites)
 
 CFGWadseekerSites::CFGWadseekerSites(QWidget* parent)
-: ConfigurationBaseBox(parent)
+: ConfigPage(parent)
 {
 	d->setupUi(this);
 

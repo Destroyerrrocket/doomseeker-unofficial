@@ -21,7 +21,7 @@
 // Copyright (C) 2011 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
-#include "gui/configuration/engineconfigurationbasebox.h"
+#include "gui/configuration/engineconfigpage.h"
 #include "ini/ini.h"
 #include "irc/entities/ircnetworkentity.h"
 #include "pathfinder/pathfind.h"
@@ -89,9 +89,9 @@ EnginePlugin::~EnginePlugin()
 	delete d;
 }
 
-ConfigurationBaseBox* EnginePlugin::configuration(QWidget *parent)
+ConfigPage* EnginePlugin::configuration(QWidget *parent)
 {
-	return new EngineConfigurationBaseBox(this, *d->pConfig, parent);
+	return new EngineConfigPage(this, *d->pConfig, parent);
 }
 
 QList<DMFlagsSection> EnginePlugin::dmFlags() const

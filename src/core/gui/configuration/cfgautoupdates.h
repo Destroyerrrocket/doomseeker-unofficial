@@ -23,11 +23,11 @@
 #ifndef DOOMSEEKER_GUI_CONFIGURATION_CFGAUTOPUDATES_H
 #define DOOMSEEKER_GUI_CONFIGURATION_CFGAUTOPUDATES_H
 
-#include "gui/configuration/configurationbasebox.h"
+#include "gui/configuration/configpage.h"
 #include "dptr.h"
 #include <QIcon>
 
-class CFGAutoUpdates : public ConfigurationBaseBox
+class CFGAutoUpdates : public ConfigPage
 {
 	Q_OBJECT
 
