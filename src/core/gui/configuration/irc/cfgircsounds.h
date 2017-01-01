@@ -53,7 +53,7 @@ class CFGIRCSounds : public ConfigPage
 		DPtr<CFGIRCSounds> d;
 
 		void playSound(const QString &path) const;
-		QString validateFilePath(const QFileInfo &path) const;
+		QString validateFilePath(const QString &path) const;
 
 	private slots:
 		void browseNicknameUsed();

@@ -127,6 +127,7 @@ void EngineConfigPage::autoFindNeighbouringPaths()
 			}
 		}
 	}
+	emit validationRequested();
 }
 
 QStringList EngineConfigPage::collectKnownGameFilePaths() const
@@ -164,6 +165,7 @@ void EngineConfigPage::makeFileBrowsers()
 		widget->setNeighbourStrategy(neighbours);
 		this->connect(widget, SIGNAL(findFailed()), SLOT(showFindFailError()));
 		this->connect(widget, SIGNAL(pathChanged()), SLOT(autoFindNeighbouringPaths()));
+		this->connect(widget, SIGNAL(pathChanged()), SIGNAL(validationRequested()));
 
 		d->exePickArea->layout()->addWidget(widget);
 		d->filePickers << widget;

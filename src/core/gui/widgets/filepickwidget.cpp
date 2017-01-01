@@ -142,14 +142,17 @@ bool FilePickWidget::validate()
 	QString error;
 
 	QFileInfo fileInfo = path();
-	if (error.isEmpty() && !fileInfo.exists())
+	if (!path().isEmpty())
 	{
-		error = tr("File doesn't exist.");
-	}
+		if (error.isEmpty() && !fileInfo.exists())
+		{
+			error = tr("File doesn't exist.");
+		}
 
-	if (error.isEmpty() && fileInfo.isDir())
-	{
-		error = tr("This is a directory.");
+		if (error.isEmpty() && fileInfo.isDir())
+		{
+			error = tr("This is a directory.");
+		}
 	}
 
 	d->lblWarning->setVisible(!error.isEmpty());

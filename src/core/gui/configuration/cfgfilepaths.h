@@ -59,7 +59,7 @@ class CFGFilePaths : public ConfigPage
 	private:
 		DPtr<CFGFilePaths> d;
 
-		QString validatePath(const QFileInfo &path) const;
+		QString validatePath(const QString &path) const;
 };
 
 #endif

@@ -199,14 +199,20 @@ ConfigPage::Validation CFGFilePaths::validate()
 	return allPathsValid ? VALIDATION_OK : VALIDATION_ERROR;
 }
 
-QString CFGFilePaths::validatePath(const QFileInfo &path) const
+QString CFGFilePaths::validatePath(const QString &path) const
 {
-	if (!path.exists())
+	if (path.trimmed().isEmpty())
+	{
+		return tr("No path specified.");
+	}
+
+	QFileInfo fileInfo(path.trimmed());
+	if (!fileInfo.exists())
 	{
 		return tr("Path doesn't exist.");
 	}
 
-	if (!path.isDir())
+	if (!fileInfo.isDir())
 	{
 		return tr("Path is not a directory.");
 	}

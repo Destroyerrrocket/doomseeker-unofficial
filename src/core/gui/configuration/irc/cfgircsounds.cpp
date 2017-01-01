@@ -111,15 +111,20 @@ ConfigPage::Validation CFGIRCSounds::validate()
 	return nicknameUsedError.isEmpty() && privateMessageError.isEmpty() ? VALIDATION_OK : VALIDATION_ERROR;
 }
 
-QString CFGIRCSounds::validateFilePath(const QFileInfo &path) const
+QString CFGIRCSounds::validateFilePath(const QString &path) const
 {
-	QFileInfo fileInfo(path);
-	if (!path.exists())
+	if (path.trimmed().isEmpty())
+	{
+		return tr("No path specified.");
+	}
+
+	QFileInfo fileInfo(path.trimmed());
+	if (!fileInfo.exists())
 	{
 		return tr("File doesn't exist.");
 	}
 
-	if (!path.isFile())
+	if (!fileInfo.isFile())
 	{
 		return tr("This is not a file.");
 	}
