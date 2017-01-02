@@ -33,6 +33,8 @@
 DClass<CFGWadseekerGeneral> : public Ui::CFGWadseekerGeneral
 {
 public:
+	bool completerActive;
+
 	QString targetDirectory() const
 	{
 		return cbTargetDirectory->currentText().trimmed();
@@ -45,6 +47,7 @@ CFGWadseekerGeneral::CFGWadseekerGeneral(QWidget* parent)
 : ConfigPage(parent)
 {
 	d->setupUi(this);
+	d->completerActive = false;
 
 	// Settings defined in this widget are ATM unused.
 	d->widgetTimeouts->setVisible(false);
@@ -52,13 +55,28 @@ CFGWadseekerGeneral::CFGWadseekerGeneral(QWidget* parent)
 	d->lblDirectoryWarning->hide();
 	d->lblDirectoryWarning->setWordWrap(true);
 
-	d->cbTargetDirectory->setCompleter(new QCompleter(new QDirModel()));
 	this->connect(d->cbTargetDirectory, SIGNAL(editTextChanged(QString)),
 		SIGNAL(validationRequested()));
 }
 
 CFGWadseekerGeneral::~CFGWadseekerGeneral()
 {
+}
+
+void CFGWadseekerGeneral::activateCompleter()
+{
+	// Lazy activation of completer prevents floppy drive clicking
+	// on QComboBox::addItem() if you're on Windows and if you
+	// actually have a floppy drive.
+	//
+	// The floppy drive will still click *one time* when user tries to type
+	// anything, but at least it won't click on readSettings() anymore
+	// (so, essentially, when user opens config box).
+	if (!d->completerActive)
+	{
+		d->cbTargetDirectory->setCompleter(new QCompleter(new QDirModel()));
+		d->completerActive = true;
+	}
 }
 
 void CFGWadseekerGeneral::fillTargetDirectoryComboBox()
@@ -85,6 +103,12 @@ void CFGWadseekerGeneral::saveSettings()
 	gConfig.wadseeker.downloadTimeoutSeconds = d->spinDownloadTimeout->value();
 	gConfig.wadseeker.maxConcurrentSiteDownloads = d->spinMaxConcurrentSiteSeeks->value();
 	gConfig.wadseeker.maxConcurrentWadDownloads = d->spinMaxConcurrentWadDownloads->value();
+}
+
+void CFGWadseekerGeneral::showEvent(QShowEvent *event)
+{
+	activateCompleter();
+	ConfigPage::showEvent(event);
 }
 
 ConfigPage::Validation CFGWadseekerGeneral::validate()
