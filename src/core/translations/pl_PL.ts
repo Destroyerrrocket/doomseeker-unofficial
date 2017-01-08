@@ -659,7 +659,7 @@ jest katalogiem lub nie istnieje.</translation>
         <translation>Port</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/cfgcustomservers.h" line="46"/>
+        <location filename="../gui/configuration/cfgcustomservers.h" line="45"/>
         <source>Custom Servers</source>
         <translation>Serwery własne</translation>
     </message>
@@ -708,36 +708,51 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Rekursywnie</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/cfgfilepaths.cpp" line="95"/>
+        <location filename="../gui/configuration/cfgfilepaths.cpp" line="98"/>
         <source>Doomseeker - Add wad path</source>
         <translation>Doomseeker - dodaj ścieżkę do WADów</translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/cfgfilepaths.cpp" line="206"/>
+        <source>No path specified.</source>
+        <translation>Nie podano ścieżki.</translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/cfgfilepaths.cpp" line="212"/>
+        <source>Path doesn&apos;t exist.</source>
+        <translation>Ścieżka nie istnieje.</translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/cfgfilepaths.cpp" line="217"/>
+        <source>Path is not a directory.</source>
+        <translation>Ścieżka nie jest katalogiem.</translation>
     </message>
     <message>
         <source>File paths</source>
         <translation type="obsolete">Ścieżki plików</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgfilepaths.h" line="110"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgfilepaths.h" line="111"/>
         <source>IWAD and PWAD paths:</source>
         <translation>Ścieżki do IWADów i PWADów:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgfilepaths.h" line="111"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgfilepaths.h" line="112"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;WARNING: &lt;/span&gt;It&apos;s highly discouraged to enable recursion for directories with lots of subdirectories. You may experience heavy performance loss and high hard drive usage if recursion is used recklessly. When recursion is enabled, file search operations will go the entire way down to the bottom of the directory tree if necessary.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;UWAGA: &lt;/span&gt;Włączanie rekursji dla katalogów z wieloma podkatalogami jest wielce niezalecane. Możesz doświadczyć ciężkej utraty wydajności i dużego zużycia dysku twardego, jeżeli rekursja zostanie użyta lekkomyślnie. Gdy rekursja jest włączona, operacje poszukujące pliki będą przeszukiwały całe drzewo katalogów aż do ostatniego liścia w razie potrzeby.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgfilepaths.h" line="112"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgfilepaths.h" line="113"/>
         <source>Add</source>
         <translation>Dodaj</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgfilepaths.h" line="113"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgfilepaths.h" line="114"/>
         <source>Remove</source>
         <translation>Usuń</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgfilepaths.h" line="115"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgfilepaths.h" line="116"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -752,12 +767,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Powyższe także dotyczy kolumny IWAD.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgfilepaths.h" line="123"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgfilepaths.h" line="124"/>
         <source>Tell me where are my WADs located</source>
         <translation>Mów mi, gdzie znajdują się moje WADy</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/cfgfilepaths.h" line="49"/>
+        <location filename="../gui/configuration/cfgfilepaths.h" line="51"/>
         <source>File Paths</source>
         <translation>Scieżki plików</translation>
     </message>
@@ -1122,55 +1137,70 @@ Tylko litery, cyfry, spacje i &quot;%1&quot; są dozwolone.</translation>
 <context>
     <name>CFGIRCSounds</name>
     <message>
-        <location filename="../gui/configuration/irc/cfgircsounds.cpp" line="42"/>
+        <location filename="../gui/configuration/irc/cfgircsounds.cpp" line="49"/>
         <source>Pick Sound File</source>
         <translation>Wybierz plik dźwiękowy</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/irc/cfgircsounds.cpp" line="44"/>
+        <location filename="../gui/configuration/irc/cfgircsounds.cpp" line="51"/>
         <source>WAVE (*.wav)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/configuration/irc/cfgircsounds.h" line="40"/>
+        <location filename="../gui/configuration/irc/cfgircsounds.cpp" line="118"/>
+        <source>No path specified.</source>
+        <translation>Nie podano ścieżki.</translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/irc/cfgircsounds.cpp" line="124"/>
+        <source>File doesn&apos;t exist.</source>
+        <translation>Plik nie istnieje.</translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/irc/cfgircsounds.cpp" line="129"/>
+        <source>This is not a file.</source>
+        <translation>To nie jest plik.</translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/irc/cfgircsounds.h" line="41"/>
         <source>Sounds</source>
         <translation>Dźwięki</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/irc/cfgircsounds.h" line="42"/>
+        <location filename="../gui/configuration/irc/cfgircsounds.h" line="43"/>
         <source>IRC - Sounds</source>
         <translation>IRC - Dźwięki</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="154"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="168"/>
         <source>Nickname used:</source>
         <translation>Użyto nicka:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="155"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="169"/>
         <source>Private message:</source>
         <translation>Wiadomość prywatna:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="158"/>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="161"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="172"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="175"/>
         <source>Sound played when your nickname is used in a channel.</source>
         <translation>Dźwięk odtwarzany, gdy twój nick zostanie wypowiedziany na kanale.</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="163"/>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="171"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="177"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="185"/>
         <source>...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="166"/>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="169"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="180"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="183"/>
         <source>Sound played when private message is received.</source>
         <translation>Dźwięk odtwarzany, gdy otrzymano prywatną wiadomość.</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="172"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgircsounds.h" line="186"/>
         <source>&lt;b&gt;Note:&lt;/b&gt; Use sounds in .WAV format.</source>
         <translation>&lt;b&gt;Uwaga:&lt;/b&gt; Używaj dźwięków tylko w formacie .WAV.</translation>
     </message>
@@ -1509,18 +1539,35 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CFGWadseekerGeneral</name>
     <message>
-        <location filename="../gui/configuration/cfgwadseekergeneral.cpp" line="78"/>
-        <location filename="../gui/configuration/cfgwadseekergeneral.cpp" line="104"/>
         <source>Wadseeker - error</source>
-        <translation>Wadseeker - błąd</translation>
+        <translation type="vanished">Wadseeker - błąd</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/cfgwadseekergeneral.cpp" line="79"/>
         <source>The target directory you selected for Wadseeker can not be written to.</source>
-        <translation>W tym katalogu wybranym dla Wadseekera nie można tworzyć plików do zapisu.</translation>
+        <translation type="vanished">W tym katalogu wybranym dla Wadseekera nie można tworzyć plików do zapisu.</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/cfgwadseekergeneral.cpp" line="105"/>
+        <location filename="../gui/configuration/cfgwadseekergeneral.cpp" line="121"/>
+        <source>No path specified.</source>
+        <translation>Nie podano ścieżki.</translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/cfgwadseekergeneral.cpp" line="126"/>
+        <source>This path doesn&apos;t exist.</source>
+        <translation>Ta ścieżka nie istnieje.</translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/cfgwadseekergeneral.cpp" line="131"/>
+        <source>This is not a directory.</source>
+        <translation>To nie jest katalog.</translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/cfgwadseekergeneral.cpp" line="136"/>
+        <source>This directory cannot be written to.</source>
+        <translation>Do tego katalogu nie można zapisywać.</translation>
+    </message>
+    <message>
+        <location filename="../gui/configuration/cfgwadseekergeneral.cpp" line="160"/>
         <source>The specified target directory for Wadseeker could not be found on the file (WAD) paths list.
 
 Doomseeker will automatically add this path to the file search paths.</source>
@@ -1542,7 +1589,7 @@ Doomseeker doda tą ścieżkę automatycznie do ścieżek wyszukiwania plików.<
         <translation>Ogólne</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/cfgwadseekergeneral.h" line="41"/>
+        <location filename="../gui/configuration/cfgwadseekergeneral.h" line="40"/>
         <source>Wadseeker - General</source>
         <translation>Wadseeker - ogólne</translation>
     </message>
@@ -1551,14 +1598,14 @@ Doomseeker doda tą ścieżkę automatycznie do ścieżek wyszukiwania plików.<
         <translation type="obsolete">Katalog do którego Wadseeker będzie zapisywał WADy:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="216"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="223"/>
         <source>Directory where Wadseeker will put WADs into:</source>
         <translation>Katalog do którego Wadseeker będzie zapisywał WADy:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="218"/>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="227"/>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="252"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="225"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="234"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="259"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -1573,14 +1620,14 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;(min: 20 sekund, max: 360 sekund)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="225"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="232"/>
         <source>Connect timeout (seconds):</source>
         <translation>Timeout połączenia (sekundy):</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="235"/>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="244"/>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="261"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="242"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="251"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="268"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -1595,17 +1642,17 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;(min: 60 sekund, max: 360 sekund)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="242"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="249"/>
         <source>Download timeout (seconds):</source>
         <translation>Timeout pobierania (sekundy):</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="259"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="266"/>
         <source>Max concurrent site seeks:</source>
         <translation>Max. liczna jednoczesnych poszukiwań:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="268"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgwadseekergeneral.h" line="275"/>
         <source>Max concurrent WAD downloads:</source>
         <translation>Max. liczba jednoczesnych pobierań WADów:</translation>
     </message>
@@ -1716,84 +1763,84 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CfgChatLogsPage</name>
     <message>
-        <location filename="../gui/configuration/irc/cfgchatlogspage.cpp" line="53"/>
+        <location filename="../gui/configuration/irc/cfgchatlogspage.cpp" line="57"/>
         <source>Browse chat logs storage directory</source>
         <translation>Przeglądaj katalog przechowujący logi z chata</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/irc/cfgchatlogspage.cpp" line="64"/>
-        <location filename="../gui/configuration/irc/cfgchatlogspage.cpp" line="71"/>
+        <location filename="../gui/configuration/irc/cfgchatlogspage.cpp" line="69"/>
         <location filename="../gui/configuration/irc/cfgchatlogspage.cpp" line="76"/>
+        <location filename="../gui/configuration/irc/cfgchatlogspage.cpp" line="82"/>
         <source>Directory error</source>
         <translation>Błąd katalogu</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/irc/cfgchatlogspage.cpp" line="64"/>
+        <location filename="../gui/configuration/irc/cfgchatlogspage.cpp" line="69"/>
         <source>Directory not specified.</source>
         <translation>Katalog nie został podany.</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/irc/cfgchatlogspage.cpp" line="71"/>
+        <location filename="../gui/configuration/irc/cfgchatlogspage.cpp" line="76"/>
         <source>Directory doesn&apos;t exist.</source>
         <translation>Katalog nie istnieje.</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/irc/cfgchatlogspage.cpp" line="76"/>
+        <location filename="../gui/configuration/irc/cfgchatlogspage.cpp" line="130"/>
         <source>Specified path isn&apos;t a directory.</source>
         <translation>Podana ścieżka nie jest katalogiem.</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/irc/cfgchatlogspage.h" line="39"/>
+        <location filename="../gui/configuration/irc/cfgchatlogspage.h" line="41"/>
         <source>Logging</source>
         <translation>Logowanie</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/irc/cfgchatlogspage.h" line="41"/>
+        <location filename="../gui/configuration/irc/cfgchatlogspage.h" line="43"/>
         <source>IRC - Logging</source>
         <translation>IRC - Logowanie</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="150"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="157"/>
         <source>Form</source>
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="151"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="158"/>
         <source>Store chat logs?</source>
         <translation>Przechowuj logi z chata?</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="152"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="159"/>
         <source>Restore logs when re-entering chat?</source>
         <translation>Przywracaj logi podczas ponownego wejścia na chata?</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="153"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="160"/>
         <source>Remove old log archives</source>
         <translation>Usuwanie starych archiwów logów</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="154"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="161"/>
         <source>Remove all older than:</source>
         <translation>Usuń wszystkie starsze niż:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="155"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="162"/>
         <source> days</source>
         <translation>dni</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="156"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="163"/>
         <source>Logs storage directory:</source>
         <translation>Katalog przechowujący logi:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="157"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="164"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="158"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgchatlogspage.h" line="165"/>
         <source>Explore</source>
         <translation>Eksploruj</translation>
     </message>
@@ -1894,7 +1941,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConfigurationDialog</name>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_configurationdialog.h" line="86"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_configurationdialog.h" line="88"/>
         <source>Doomseeker - Configuration</source>
         <translation>Doomseeker - konfiguracja</translation>
     </message>
@@ -2620,14 +2667,14 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Ścieżka do pliku wykonywalnego:</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/engineconfigurationbasebox.cpp" line="260"/>
+        <location filename="../gui/configuration/engineconfigpage.cpp" line="262"/>
         <source>Failed to automatically find file.
 You may need to use the browse button.</source>
         <translation>Nie udało się automatycznie znaleźć pliku.
 Musisz użyć przycisku przeglądaj.</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/engineconfigurationbasebox.cpp" line="265"/>
+        <location filename="../gui/configuration/engineconfigpage.cpp" line="267"/>
         <source>Game - %1</source>
         <translation>Gra - %1</translation>
     </message>
@@ -2716,34 +2763,44 @@ jest katalogiem lub nie istnieje.</translation>
         <translation type="obsolete">Ścieżka do %1 - plik %2:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_filepickwidget.h" line="89"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_filepickwidget.h" line="96"/>
         <source>Form</source>
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_filepickwidget.h" line="90"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_filepickwidget.h" line="97"/>
         <source>Path to file:</source>
         <translation>Ścieżka do pliku:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_filepickwidget.h" line="91"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_filepickwidget.h" line="98"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_filepickwidget.h" line="93"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_filepickwidget.h" line="100"/>
         <source>Find</source>
         <translation>Znajdź</translation>
     </message>
     <message>
-        <location filename="../gui/widgets/filepickwidget.cpp" line="60"/>
+        <location filename="../gui/widgets/filepickwidget.cpp" line="61"/>
         <source>Doomseeker - choose executable file</source>
         <translation>Doomseeker - wybierz plik wykonywalny</translation>
     </message>
     <message>
-        <location filename="../gui/widgets/filepickwidget.cpp" line="96"/>
+        <location filename="../gui/widgets/filepickwidget.cpp" line="97"/>
         <source>Path to %1 executable:</source>
         <translation>Ścieżka do pliku wykonywalnego - %1:</translation>
+    </message>
+    <message>
+        <location filename="../gui/widgets/filepickwidget.cpp" line="149"/>
+        <source>File doesn&apos;t exist.</source>
+        <translation>Plik nie istnieje.</translation>
+    </message>
+    <message>
+        <location filename="../gui/widgets/filepickwidget.cpp" line="154"/>
+        <source>This is a directory.</source>
+        <translation>To jest katalog.</translation>
     </message>
 </context>
 <context>
@@ -4431,7 +4488,7 @@ Wadseeker nie będzie pobierał komercyjnych IWADów.
         <translation type="vanished">PWADy: %1</translation>
     </message>
     <message>
-        <location filename="../joincommandlinebuilder.cpp" line="352"/>
+        <location filename="../joincommandlinebuilder.cpp" line="356"/>
         <source>Game installation failure</source>
         <translation>Błąd instalacji gry</translation>
     </message>
@@ -5572,32 +5629,37 @@ Jeżeli nie masz tego pliku, a należy on do gry w sprzedaży, to musisz kupić 
         <translation>Czy chcesz, aby wtyczka %1 dodała swoje kanały IRCa do automatycznej listy dołączenia dla %2?</translation>
     </message>
     <message>
-        <location filename="../plugins/pluginloader.cpp" line="79"/>
+        <location filename="../plugins/pluginloader.cpp" line="76"/>
+        <source>Skipping loading of forbidden plugin: %1</source>
+        <translation>Pomijam ładowanie zabronionej wtyczki: %1</translation>
+    </message>
+    <message>
+        <location filename="../plugins/pluginloader.cpp" line="91"/>
         <source>plugin ABI version mismatch; plugin: %1, Doomseeker: %2</source>
         <translation>wersja ABI wtyczki nie pasuje; wtyczka: %1, Doomseeker: %2</translation>
     </message>
     <message>
-        <location filename="../plugins/pluginloader.cpp" line="85"/>
+        <location filename="../plugins/pluginloader.cpp" line="97"/>
         <source>plugin doesn&apos;t report its ABI version</source>
         <translation>wtyczka  nie zgłasza swojej wersji ABI</translation>
     </message>
     <message>
-        <location filename="../plugins/pluginloader.cpp" line="87"/>
+        <location filename="../plugins/pluginloader.cpp" line="99"/>
         <source>Cannot load plugin %1, reason: %2.</source>
         <translation>Nie można załadować wtyczki %1, powód: %2.</translation>
     </message>
     <message>
-        <location filename="../plugins/pluginloader.cpp" line="106"/>
+        <location filename="../plugins/pluginloader.cpp" line="118"/>
         <source>Loaded plugin: &quot;%1&quot;!</source>
         <translation>Załadowano wtyczkę: &quot;%1&quot;!</translation>
     </message>
     <message>
-        <location filename="../plugins/pluginloader.cpp" line="111"/>
+        <location filename="../plugins/pluginloader.cpp" line="123"/>
         <source>Failed to open plugin: %1</source>
         <translation>Otwarcie wtyczki nie udane: %1</translation>
     </message>
     <message>
-        <location filename="../plugins/pluginloader.cpp" line="180"/>
+        <location filename="../plugins/pluginloader.cpp" line="192"/>
         <source>Failed to locate plugins.</source>
         <translation>Nie udało się zlokalizować wtyczek.</translation>
     </message>
@@ -5809,7 +5871,7 @@ Jeżeli nie masz tego pliku, a należy on do gry w sprzedaży, to musisz kupić 
         <translation type="vanished">&amp;Filtr serwerów</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="238"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="245"/>
         <source>Server Filter</source>
         <translation>Filtr serwerów</translation>
     </message>
@@ -5820,62 +5882,62 @@ players at the top of the list</source>
 z graczami na górze listy</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="239"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="247"/>
         <source>Put populated servers on top</source>
         <translation>Umieść niepuste serwery na górze</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="240"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="248"/>
         <source>Filtering enabled</source>
         <translation>Filtrowanie włączone</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="241"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="246"/>
         <source>Server Name:</source>
         <translation>Nazwa serwera:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="242"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="249"/>
         <source>Max. Ping:</source>
         <translation>Max. ping:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="244"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="251"/>
         <source>Set &apos;0&apos; to disable.</source>
         <translation>Ustaw &apos;0&apos; aby wyłączyć.</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="246"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="253"/>
         <source>WADs:</source>
         <translation>WADy:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="248"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="255"/>
         <source>Use &apos;,&apos; (a comma) to separate multiple wads.</source>
         <translation>Użyj &apos;,&apos; (przecinka) aby oddzielić wiele WADów.</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="250"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="257"/>
         <source>Exclude WADs:</source>
         <translation>Wyłączone WADy:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="252"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="259"/>
         <source>Servers with WADs on this list won&apos;t be displayed. Use &apos;,&apos; (a comma) to separate multiple wads.</source>
         <translation>Serwery z WADami na tej liście nie będą wyświetlane. Użyj &apos;,&apos; (przecinka) aby oddzielić wiele WADów.</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="254"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="261"/>
         <source>Game modes:</source>
         <translation>Tryby gry:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="255"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="262"/>
         <source>Exclude game modes:</source>
         <translation>Wyłącz tryby gry:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="257"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="264"/>
         <source>Selected game modes won&apos;t appear on the server list.</source>
         <translation>Wybrane tryby gry nie pojawią się na liście serwerów.</translation>
     </message>
@@ -5884,27 +5946,27 @@ z graczami na górze listy</translation>
         <translation type="obsolete">Tryb gry:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="259"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="266"/>
         <source>Show full servers</source>
         <translation>Pokaż pełne serwery</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="260"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="267"/>
         <source>Show empty servers</source>
         <translation>Pokaż puste serwery</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="261"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="268"/>
         <source>Show only valid servers</source>
         <translation>Pokaż tylko prawidłowe serwery</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="262"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="269"/>
         <source>Show testing servers</source>
         <translation>Pokaż serwery testujące</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="263"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_serverfilterdock.h" line="270"/>
         <source>Clear</source>
         <translation>Wyczyść</translation>
     </message>
