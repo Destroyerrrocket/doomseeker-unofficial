@@ -47,10 +47,10 @@
         <translation></translation>
     </message>
     <message>
-        <source>Copyright © 2009 - 2016 The Doomseeker Team
+        <source>Copyright © 2009 - 2017 The Doomseeker Team
 
 This program is distributed under the terms of the GPL v2.</source>
-        <translation type="vanished">Copyright © 2009 - 2016 The Doomseeker Team
+        <translation type="vanished">Copyright © 2009 - 2017 The Doomseeker Team
 
 Ten program jest rozprowadzany na zasadach licencji GPL v2.</translation>
     </message>
@@ -80,7 +80,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../../../vs2013_5_7_0/src/core/ui_aboutdialog.h" line="412"/>
-        <source>Copyright © 2009 - 2016 The Doomseeker Team
+        <source>Copyright © 2009 - 2017 The Doomseeker Team
 
 This program is distributed under the terms of the GPL v2.
 
@@ -91,7 +91,7 @@ This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unpo
 
 GeoLite2 available at:
 https://dev.maxmind.com/geoip/geoip2/geolite2/</source>
-        <translation>Copyright © 2009 - 2016 The Doomseeker Team
+        <translation>Copyright © 2009 - 2017 The Doomseeker Team
 
 Ten program jest rozprowadzany na zasadach licencji GPL v2.
 
