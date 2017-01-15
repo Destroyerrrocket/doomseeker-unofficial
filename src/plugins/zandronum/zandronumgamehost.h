@@ -24,6 +24,7 @@
 #define id7CCF5C41_0664_487D_926B2383C451D847
 
 #include <serverapi/gamehost.h>
+#include "zandronumgameinfo.h"
 
 class ZandronumGameHost : public GameHost
 {
@@ -41,6 +42,7 @@ class ZandronumGameHost : public GameHost
 		void addDMFlags();
 
 		QString strArg(const QString &val);
+		ZandronumGameInfo::GameVersion gameVersion() const;
 };
 
 #endif // header

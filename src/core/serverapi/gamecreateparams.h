@@ -174,6 +174,20 @@ class MAIN_EXPORT GameCreateParams
 		const QString& name() const;
 		void setName(const QString& name);
 
+		/**
+		 * @brief Option is a means for game plugin to set plugin specific settings.
+		 *
+		 * Plugins can implement custom "create game" pages and through
+		 * setOption() and option() pass options to their GameHost
+		 * implementation where they can be further processed.
+		 *
+		 * These options do not necessarily need to produce any game
+		 * command line arguments, but they may be used to alter
+		 * the generation of others. The exact usage is up to the plugin.
+		 */
+		QVariant option(const QString &name) const;
+		void setOption(const QString &name, const QVariant &value);
+
 		unsigned short port() const;
 		void setPort(unsigned short port);
 

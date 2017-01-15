@@ -28,12 +28,13 @@
 #include <QWidget>
 
 class CreateServerDialog;
+class GameCreateParams;
 class Ini;
 
 /**
  * @ingroup group_pluginapi
- * @brief Base class to be used by plugins to define custom pages in Create
- *        Server dialog.
+ * @brief Base class to be used by plugins to define custom pages
+ *        in Create Game dialog.
  */
 class MAIN_EXPORT CreateServerDialogPage : public QWidget
 {
@@ -42,12 +43,16 @@ class MAIN_EXPORT CreateServerDialogPage : public QWidget
 		virtual ~CreateServerDialogPage();
 
 		/**
-		 * @brief Generates game run parameters basing on the page's contents.
+		 * @brief Fills in GameCreateParams structure with the page's contents.
 		 *
-		 * These parameters are passed as arguments to the executable when
-		 * the game process is started.
+		 * The page is free to modify the params structure as it pleases.
+		 * Touching most of the fields should not be necessary, however,
+		 * as Doomseeker already provides common facilities for setting most
+		 * of the parameters. Any behavior in this method should do fine by
+		 * sticking to GameCreateParams::addOption() and
+		 * GameCreateParams::customParameters().
 		 */
-		virtual QStringList generateGameRunParameters() = 0;
+		virtual void fillInGameCreateParams(GameCreateParams &params) = 0;
 
 		const QString& name() const;
 
@@ -56,7 +61,7 @@ class MAIN_EXPORT CreateServerDialogPage : public QWidget
 		 *
 		 * This config is saved by Doomseeker when it calls saveConfig()
 		 * method.
-
+		 *
 		 * @return Return true on success.
 		 */
 		virtual bool loadConfig(Ini& ini) = 0;
@@ -65,18 +70,22 @@ class MAIN_EXPORT CreateServerDialogPage : public QWidget
 		 * @brief Saves variables defined by this page to a config.
 		 *
 		 * This config is loaded by Doomseeker when it calls loadConfig()
-		 * method.
+		 * method. Please remember that the config should be saved as best
+		 * as possible even if validate() returns false.
 		 *
 		 * @return Return true on success.
 		 */
 		virtual bool saveConfig(Ini& ini) = 0;
 
 		/**
-		 * @brief Validates contents of the page before the saveConfig().
+		 * @brief Validates contents of the page before fillInGameCreateParams().
 		 *
-		 * Should return true on validation success or false otherwise. This may
-		 * be used to modify the page contents, appearance or behavior.
-		 * Validation is run before the game is run. No validation is performed
+		 * Should return true on validation success or false otherwise.
+		 * During validate() call, the page contents, appearance or behavior
+		 * can be modified to display to the user what's wrong.
+		 * Validation is run before the game is run.
+		 *
+		 * No validation is performed
 		 * before saveConfig() or after loadConfig().
 		 *
 		 * Pages must take care of displaying their own error messages.

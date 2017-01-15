@@ -71,6 +71,17 @@ class ZandronumGameInfo : public QObject
 			GAMEMODE_DOMINATION
 		};
 
+		/**
+		 * This is stored in config and indexing cannot change between versions.
+		 */
+		enum GameVersion
+		{
+			GV_Zandronum2 = 1,
+			GV_Zandronum3 = 2
+		};
+
+		static const QString OPTION_GAMEVERSION;
+
 		static QList<GameMode> gameModes();
 		static QList<GameCVar> gameModifiers();
 };

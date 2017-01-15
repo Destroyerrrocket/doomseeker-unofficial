@@ -49,6 +49,7 @@ DClass<GameCreateParams>
 		int maxPlayers;
 		QString motd;
 		QString name;
+		QMap<QString, QVariant> options;
 		unsigned short port;
 		QList<bool> pwadsOptional;
 		QStringList pwadsPaths;
@@ -213,6 +214,16 @@ const QString& GameCreateParams::motd() const
 const QString& GameCreateParams::name() const
 {
 	return d->name;
+}
+
+QVariant GameCreateParams::option(const QString &name) const
+{
+	return d->options[name];
+}
+
+void GameCreateParams::setOption(const QString &name, const QVariant &value)
+{
+	d->options[name] = value;
 }
 
 unsigned short GameCreateParams::port() const

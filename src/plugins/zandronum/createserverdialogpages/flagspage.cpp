@@ -5,6 +5,7 @@
 #include <QValidator>
 #include <ini/ini.h>
 #include <ini/inisection.h>
+#include <serverapi/gamecreateparams.h>
 #include <log.h>
 
 #include "createserverdialogpages/flagsid.h"
@@ -69,8 +70,8 @@ FlagsPage::FlagsPage(CreateServerDialog* pParentDialog)
 	leLMSSpectatorSettings->setValidator(&d->validator);
 
 	// Init values for widgets.
-	cboGameVersion->addItem(tr("Zandronum 2"), GV_Zandronum2);
-	cboGameVersion->addItem(tr("Zandronum 3 (beta)"), GV_Zandronum3);
+	cboGameVersion->addItem(tr("Zandronum 2"), ZandronumGameInfo::GV_Zandronum2);
+	cboGameVersion->addItem(tr("Zandronum 3 (beta)"), ZandronumGameInfo::GV_Zandronum3);
 
 	cboFallingDamage->insertItem(FDT_None, tr("None"));
 	cboFallingDamage->insertItem(FDT_Old, tr("Old (ZDoom)"));
@@ -81,7 +82,7 @@ FlagsPage::FlagsPage(CreateServerDialog* pParentDialog)
 	initJumpCrouchComboBoxes(cboJumping);
 	initJumpCrouchComboBoxes(cboCrouching);
 
-	setGameVersion(GV_Zandronum2);
+	setGameVersion(ZandronumGameInfo::GV_Zandronum2);
 
 	// Widget states
 	spinMonsterKillPercentage->setEnabled(false);
@@ -98,7 +99,7 @@ void FlagsPage::applyWidgetsChange()
 		d->flagsController->convertWidgetsToNumerical();
 }
 
-QStringList FlagsPage::generateGameRunParameters()
+void FlagsPage::fillInGameCreateParams(GameCreateParams &gameCreateParams)
 {
 	QStringList params;
 
@@ -126,7 +127,8 @@ QStringList FlagsPage::generateGameRunParameters()
 
 	params << votingPage->generateGameRunParameters();
 
-	return params;
+	gameCreateParams.setOption("GameVersion", gameVersion());
+	gameCreateParams.customParameters() << params;
 }
 
 void FlagsPage::initJumpCrouchComboBoxes(QComboBox* pComboBox)
@@ -152,7 +154,7 @@ void FlagsPage::insertFlagsIfValid(QLineEdit* dst, QString flags, unsigned valIf
 bool FlagsPage::loadConfig(Ini& ini)
 {
 	IniSection section = ini.section("dmflags");
-	loadGameVersion(static_cast<GameVersion>((int) section["gameversion"]));
+	loadGameVersion(static_cast<ZandronumGameInfo::GameVersion>((int)section["gameversion"]));
 
 	// The below numerical flag inserts are here to support old configs.
 	insertFlagsIfValid(leDmflags, section["dmflags"]);
@@ -244,11 +246,11 @@ bool FlagsPage::saveConfig(Ini& ini)
 
 void FlagsPage::applyGameVersion()
 {
-	setGameVersion(static_cast<GameVersion>(
+	setGameVersion(static_cast<ZandronumGameInfo::GameVersion>(
 		cboGameVersion->itemData(cboGameVersion->currentIndex()).toInt()));
 }
 
-void FlagsPage::loadGameVersion(GameVersion version)
+void FlagsPage::loadGameVersion(ZandronumGameInfo::GameVersion version)
 {
 	int index = cboGameVersion->findData(version);
 	if (index < 0)
@@ -266,7 +268,7 @@ void FlagsPage::loadGameVersion(GameVersion version)
 	setGameVersion(version);
 }
 
-void FlagsPage::setGameVersion(GameVersion version)
+void FlagsPage::setGameVersion(ZandronumGameInfo::GameVersion version)
 {
 	cboGameVersion->blockSignals(true);
 	int index = cboGameVersion->findData(version);
@@ -282,17 +284,22 @@ void FlagsPage::setGameVersion(GameVersion version)
 	default:
 		gLog << tr("Tried to set unknown Zandronum version. Reverting to default.");
 		// intentional fall-through
-	case GV_Zandronum2:
+	case ZandronumGameInfo::GV_Zandronum2:
 		d->flagsController = QSharedPointer<FlagsPageValueController>(
 			new Zandronum2::FlagsPageValueController(this));
 		break;
-	case GV_Zandronum3:
+	case ZandronumGameInfo::GV_Zandronum3:
 		d->flagsController = QSharedPointer<FlagsPageValueController>(
 			new Zandronum3::FlagsPageValueController(this));
 		break;
 	}
 	d->flagsController->setVisible(true);
 	d->flagsController->convertWidgetsToNumerical();
+}
+
+ZandronumGameInfo::GameVersion FlagsPage::gameVersion() const
+{
+	return static_cast<ZandronumGameInfo::GameVersion>(cboGameVersion->currentData().toInt());
 }
 
 FlagsPage::PlayerBlock FlagsPage::playerBlock() const

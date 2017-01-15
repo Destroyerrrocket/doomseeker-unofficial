@@ -24,6 +24,7 @@
 #define DOOMSEEKER_PLUGIN_ZANDRONUM_CREATESERVERDIALOGPAGES_FLAGSPAGE_H
 
 #include "ui_flagspage.h"
+#include "zandronumgameinfo.h"
 #include <gui/widgets/createserverdialogpage.h>
 
 namespace Zandronum2
@@ -35,6 +36,8 @@ namespace Zandronum3
 {
 class FlagsPageValueController;
 }
+
+class GameCreateParams;
 
 class FlagsPage : public CreateServerDialogPage, private Ui::FlagsPage
 {
@@ -88,21 +91,12 @@ class FlagsPage : public CreateServerDialogPage, private Ui::FlagsPage
 			EXIT_KillPlayer = 3
 		};
 
-		/**
-		 * This is stored in config and indexing cannot change between versions.
-		 */
-		enum GameVersion
-		{
-			GV_Zandronum2 = 1,
-			GV_Zandronum3 = 2
-		};
-
-		static const GameVersion DEFAULT_GAME_VERSION = GV_Zandronum2;
+		static const ZandronumGameInfo::GameVersion DEFAULT_GAME_VERSION = ZandronumGameInfo::GV_Zandronum2;
 
 		FlagsPage(CreateServerDialog* pParentDialog);
 		~FlagsPage();
 
-		virtual QStringList generateGameRunParameters();
+		virtual void fillInGameCreateParams(GameCreateParams &params);
 		virtual bool loadConfig(Ini& ini);
 		virtual bool saveConfig(Ini& ini);
 
@@ -114,8 +108,9 @@ class FlagsPage : public CreateServerDialogPage, private Ui::FlagsPage
 		void initJumpCrouchComboBoxes(QComboBox* pComboBox);
 		void insertFlagsIfValid(QLineEdit* dst, QString flags, unsigned valIfInvalid = 0);
 
-		void loadGameVersion(GameVersion version);
-		void setGameVersion(GameVersion version);
+		ZandronumGameInfo::GameVersion gameVersion() const;
+		void loadGameVersion(ZandronumGameInfo::GameVersion version);
+		void setGameVersion(ZandronumGameInfo::GameVersion version);
 
 		PlayerBlock playerBlock() const;
 		void setPlayerBlock(PlayerBlock playerBlock);

@@ -341,7 +341,7 @@ bool CreateServerDialog::fillInParamsFromPluginPages(GameCreateParams &params)
 	{
 		if (page->validate())
 		{
-			params.customParameters() << page->generateGameRunParameters();
+			page->fillInGameCreateParams(params);
 		}
 		else
 		{

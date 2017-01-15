@@ -134,12 +134,25 @@ void ZandronumGameHost::addExtra()
 	}
 }
 
+ZandronumGameInfo::GameVersion ZandronumGameHost::gameVersion() const
+{
+	return static_cast<ZandronumGameInfo::GameVersion>(
+		params().option(ZandronumGameInfo::OPTION_GAMEVERSION).toInt());
+}
+
 QString ZandronumGameHost::strArg(const QString &val)
 {
 	if (val.isEmpty())
 	{
 		// This will reset the value to nothing.
-		return "\"\"";
+		if (gameVersion() == ZandronumGameInfo::GV_Zandronum2)
+		{
+			return "\"\"";
+		}
+		else
+		{
+			return "";
+		}
 	}
 	else
 	{

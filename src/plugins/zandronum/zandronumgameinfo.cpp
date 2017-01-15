@@ -22,6 +22,8 @@
 //------------------------------------------------------------------------------
 #include "zandronumgameinfo.h"
 
+const QString ZandronumGameInfo::OPTION_GAMEVERSION = "GameVersion";
+
 QList<GameMode> ZandronumGameInfo::gameModes()
 {
 	QList<GameMode> gameModesList;
