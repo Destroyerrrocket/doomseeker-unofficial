@@ -50,7 +50,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 FlagsPage::FlagsPage(CreateServerDialog* pParentDialog)
-: CreateServerDialogPage(pParentDialog, tr("Flags"))
+: CreateServerDialogPage(pParentDialog, tr("Zandronum"))
 {
 	setupUi(this);
 
