@@ -57,15 +57,19 @@ class MAIN_EXPORT GameCreateParams
 		 * @brief Password that allows clients to connect to the server.
 		 */
 		const QString& connectPassword() const;
+		void setConnectPassword(const QString& pass);
 
 		QStringList& customParameters();
 		const QStringList& customParameters() const;
+		void setCustomParameters(const QStringList& customParameters);
+
 		/**
 		 * @brief Contents of this list will be passed as "+consoleCommand value"
 		 *        to the command line.
 		 */
 		QList<GameCVar>& cvars();
 		const QList<GameCVar>& cvars() const;
+		void setCvars(const QList<GameCVar>& cvars);
 
 		/**
 		 * @brief Use if running in HostMode::Demo mode or recording a demo.
@@ -85,6 +89,8 @@ class MAIN_EXPORT GameCreateParams
 		 * @see demoRecord()
 		 */
 		const QString& demoPath() const;
+		void setDemoPath(const QString& demoPath);
+
 		/**
 		 * @brief Type of demo to record; applicable only in Offline game.
 		 *
@@ -97,23 +103,39 @@ class MAIN_EXPORT GameCreateParams
 
 		QList<DMFlagsSection>& dmFlags();
 		const QList<DMFlagsSection>& dmFlags() const;
+
 		const QString& email() const;
+		void setEmail(const QString& email);
+
 		/**
 		 * @brief Path to the game executable.
 		 */
 		const QString& executablePath() const;
+		void setExecutablePath(const QString& executablePath);
+
 		const GameMode& gameMode() const;
+		void setGameMode(const GameMode& mode);
+
 		HostMode hostMode() const;
+		void setHostMode(HostMode mode);
 
 		bool isBroadcastToLan() const;
+		void setBroadcastToLan(bool b);
+
 		bool isBroadcastToMaster() const;
+		void setBroadcastToMaster(bool b);
+
 		bool isRandomMapRotation() const;
+		void setRandomMapRotation(bool b);
 
 		/**
 		 * @brief Internal game password.
 		 */
 		const QString& ingamePassword() const;
+		void setIngamePassword(const QString& pass);
+
 		const QString& iwadPath() const;
+		void setIwadPath(const QString& iwadPath);
 
 		/**
 		 * @brief Name of IWAD, derived from iwadPath().
@@ -124,12 +146,20 @@ class MAIN_EXPORT GameCreateParams
 		 * @brief Level name as in E1M1 or MAP01.
 		 */
 		const QString& map() const;
+		void setMap(const QString& map);
+
 		/**
 		 * @brief List of maps in cycle, as in MAP01, MAP02, MAP03, and so on.
 		 */
 		const QStringList& mapList() const;
+		void setMapList(const QStringList& mapList);
+
 		int maxClients() const;
+		void setMaxClients(int num);
+
 		int maxPlayers() const;
+		void setMaxPlayers(int num);
+
 		/**
 		 * @brief Derived basing on maxClients() and maxPlayers() value;
 		 *        higher value wins.
@@ -139,12 +169,21 @@ class MAIN_EXPORT GameCreateParams
 		 * @brief Message of the Day.
 		 */
 		const QString& motd() const;
+		void setMotd(const QString& motd);
+
 		const QString& name() const;
+		void setName(const QString& name);
+
 		unsigned short port() const;
+		void setPort(unsigned short port);
+
 		QList<bool>& pwadsOptional();
 		const QList<bool>& pwadsOptional() const;
+		void setPwadsOptional(const QList<bool>& pwadsOptional);
+
 		QStringList& pwadsPaths();
 		const QStringList& pwadsPaths() const;
+		void setPwadsPaths(const QStringList& pwadsPaths);
 
 		/**
 		 * @brief PWad objects with just the file names and optional statuses.
@@ -160,41 +199,19 @@ class MAIN_EXPORT GameCreateParams
 		 * @brief Password required to connect to remote admin console.
 		 */
 		const QString& rconPassword() const;
-
-		void setBroadcastToLan(bool b);
-		void setBroadcastToMaster(bool b);
-		void setConnectPassword(const QString& pass);
-		void setCustomParameters(const QStringList& customParameters);
-		void setCvars(const QList<GameCVar>& cvars);
-		void setDemoPath(const QString& demoPath);
-		void setEmail(const QString& email);
-		void setExecutablePath(const QString& executablePath);
-		void setGameMode(const GameMode& mode);
-		void setHostMode(HostMode mode);
-		void setIngamePassword(const QString& pass);
-		void setIwadPath(const QString& iwadPath);
-		void setMap(const QString& map);
-		void setMapList(const QStringList& mapList);
-		void setMaxClients(int num);
-		void setMaxPlayers(int num);
-		void setMotd(const QString& motd);
-		void setName(const QString& name);
-		void setPort(unsigned short port);
-		void setPwadsOptional(const QList<bool>& pwadsOptional);
-		void setPwadsPaths(const QStringList& pwadsPaths);
-		void setRandomMapRotation(bool b);
 		void setRconPassword(const QString& pass);
-		void setSkill(int skill);
-		void setUrl(const QString& url);
 
 		/**
 		 * @brief Difficulty level.
 		 */
 		int skill() const;
+		void setSkill(int skill);
+
 		/**
 		 * @brief URL for server's website or for WADs download.
 		 */
 		const QString& url() const;
+		void setUrl(const QString& url);
 
 		/**
 		 * @brief If set, the game should try to enable UPnP.
