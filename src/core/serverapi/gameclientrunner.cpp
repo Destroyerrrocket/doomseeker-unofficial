@@ -260,6 +260,7 @@ void GameClientRunner::addWads()
 		if (!isIwadFound())
 		{
 			d->joinError.setMissingIwad(d->server->iwad());
+			d->joinError.setType(JoinError::MissingWads);
 		}
 		d->joinError.setMissingWads(d->missingPwads);
 		foreach(const PWad &wad, d->missingPwads)
