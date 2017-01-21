@@ -51,6 +51,13 @@ class WADSEEKER_API UnArchive : public QObject
 		 * @return true if extract was successful.
 		 */
 		virtual bool extract(int file, const QString &where)=0;
+
+		/**
+		 * @brief File name from given index.
+		 *
+		 * @see extract()
+		 * @see files()
+		 */
 		virtual QString fileNameFromIndex(int file)=0;
 
 		/**
@@ -62,6 +69,16 @@ class WADSEEKER_API UnArchive : public QObject
 		 * @return The index is negative if entry was not found.
 		 */
 		virtual int findFileEntry(const QString &entryName)=0;
+
+		/**
+		* @brief Return list of all files in the archive.
+		*
+		* The order of the files on the returned list must be consistent with
+		* file indices used in other methods. extract() and fileNameFromIndex()
+		* must work with indices of the returned list.
+		*/
+		virtual QStringList files() = 0;
+
 		virtual bool isValid()=0;
 
 		/**

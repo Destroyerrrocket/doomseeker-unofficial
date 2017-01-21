@@ -60,6 +60,11 @@ CentralDirectory::CentralDirectory(const EndOfCentralDirectory &eocd)
 	d->eocd = eocd;
 }
 
+int CentralDirectory::fileCount() const
+{
+	return d->fileHeaders.size();
+}
+
 int CentralDirectory::fileIndex(const QString &file) const
 {
 	for (int index = 0; index < d->fileHeaders.size(); ++index)

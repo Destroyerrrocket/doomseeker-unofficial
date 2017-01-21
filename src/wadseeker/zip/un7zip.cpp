@@ -138,6 +138,14 @@ int Un7Zip::findFileEntry(const QString &entryName)
 	return -1;
 }
 
+QStringList Un7Zip::files()
+{
+	QStringList files;
+	for (unsigned int i = 0; i < db.NumFiles; i++)
+		files << fileNameFromIndex(i);
+	return files;
+}
+
 void Un7Zip::Init()
 {
 	if (g_CrcTable[1] == 0)

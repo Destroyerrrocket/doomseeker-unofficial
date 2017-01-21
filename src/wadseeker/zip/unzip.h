@@ -38,38 +38,10 @@ class UnZip : public UnArchive
 		UnZip(QIODevice *device);
 		~UnZip();
 
-		/**
-		 * @brief Extracts file to specified path.
-		 *
-		 * @param file
-		 *      File index. It can be extracted in following ways:
-		 *      - By counting indices of list returned by allDataHeaders().
-		 *        Each index corresponds directly to this param.
-		 *      - Through findFileEntry()
-		 * @param where
-		 *      Path in the file system to which the file should be extracted.
-		 */
 		bool extract(int file, const QString& where);
-
-		/**
-		 * @brief File index for given entry name.
-		 *
-		 * This is an opposite of fileNameFromIndex()
-		 *
-		 * @return Value that can be passed to extract() or negative value
-		 *         if entry not found or error occurred.
-		 */
 		int findFileEntry(const QString& entryName);
-
-		/**
-		 * @brief File name fron given index.
-		 *
-		 * This is an opposite of fileNameFromIndex()
-		 *
-		 * @see allDataHeaders()
-		 * @see extract()
-		 */
 		QString fileNameFromIndex(int file);
+		QStringList files();
 
 		/**
 		 * @brief true if the QIODevice specified in the constructor

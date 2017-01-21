@@ -122,6 +122,14 @@ QString UnZip::fileNameFromIndex(int file)
 	return centralDirectory[file].fileName;
 }
 
+QStringList UnZip::files()
+{
+	QStringList files;
+	for (int i = 0; i < centralDirectory.fileCount(); ++i)
+		files << centralDirectory[i].fileName;
+	return files;
+}
+
 bool UnZip::isZip()
 {
 	return centralDirectory.isValid();

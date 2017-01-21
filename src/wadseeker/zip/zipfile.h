@@ -52,6 +52,7 @@ public:
 
 	CentralDirectory();
 
+	int fileCount() const;
 	int fileIndex(const QString &file) const;
 	bool isValid() const;
 	CentralDirectoryFileHeader operator[](int index) const;

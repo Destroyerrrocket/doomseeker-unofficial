@@ -42,6 +42,7 @@ class UnTar : public UnArchive
 		bool extract(int file, const QString &where);
 		QString fileNameFromIndex(int file);
 		int findFileEntry(const QString &entryName);
+		QStringList files();
 		bool isValid() { return valid; }
 
 	protected:

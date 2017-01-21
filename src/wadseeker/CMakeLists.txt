@@ -114,6 +114,7 @@ set(WADSEEKER_FILES
 	zip/untar.cpp
 	zip/unzip.cpp
 	zip/zipfile.cpp
+	filefind.cpp
 	freedoom.cpp
 	ioutils.cpp
 	modinstall.cpp
@@ -141,6 +142,7 @@ set(HEADER_FILES
 	wwwseeker/htmlparser.h
 	wwwseeker/urlparser.h
 	zip/zipfile.h
+	filefind.h
 	ioutils.h
 	wadseekerexportinfo.h
 	wadseekermessagetype.h

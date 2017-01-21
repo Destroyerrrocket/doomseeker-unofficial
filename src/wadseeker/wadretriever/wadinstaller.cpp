@@ -25,6 +25,7 @@
 #include "entities/waddownloadinfo.h"
 #include "zip/unarchive.h"
 #include "ioutils.h"
+#include "filefind.h"
 
 #include <QDebug>
 #include <QDir>
@@ -45,17 +46,33 @@ WadInstaller::WadInstallerResult WadInstaller::installArchive(UnArchive& archive
 	}
 
 	WadInstallerResult result;
+#ifndef NDEBUG
+	foreach(const QString &file, archive.files())
+	{
+		qDebug() << "archive file entry " << file;
+	}
+#endif
+	FileFind fileFinder(archive.files());
 
 	// We will try to find all requested WADs in the single archive.
 	foreach (const WadDownloadInfo* pWadInfo, requestedWads)
 	{
 		const QString& name = pWadInfo->name();
+#ifndef NDEBUG
+		qDebug() << "requestedWad " << name;
+#endif
 
-		int entryIndex = archive.findFileEntry(name);
+		int entryIndex = fileFinder.findFilename(name);
+#ifndef NDEBUG
+		qDebug() << "requestedWad index in the archive " << entryIndex;
+#endif
 		if (entryIndex >= 0)
 		{
 			// File was found in the archive. Attempt extraction.
 			QString filePath = installDir.absoluteFilePath(name);
+#ifndef NDEBUG
+			qDebug() << "extracting requestedWad to path " << filePath;
+#endif
 			if (archive.extract(entryIndex, filePath))
 			{
 				result.installedWads << filePath;
