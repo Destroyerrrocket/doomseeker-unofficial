@@ -44,6 +44,7 @@ class CFGWadAlias : public ConfigPage
 
 	protected:
 		void saveSettings();
+		void showEvent(QShowEvent *event);
 
 	private:
 		DPtr<CFGWadAlias> d;

@@ -47,6 +47,7 @@ CFGWadAlias::CFGWadAlias(QWidget *parent)
 {
 	d->setupUi(this);
 
+	d->resizeTimer.setSingleShot(true);
 	connect(&d->resizeTimer, SIGNAL(timeout()), d->table, SLOT(resizeRowsToContents()));
 
 	QHeaderView *header = d->table->horizontalHeader();
@@ -107,6 +108,7 @@ void CFGWadAlias::addNewEntry()
 	d->table->setItem(row, PrivData<CFGWadAlias>::ColAliases, new QTableWidgetItem());
 
 	d->table->setSortingEnabled(wasSortingEnabled);
+	resizeRowsToContents();
 }
 
 QList<FileAlias> CFGWadAlias::aliases() const
@@ -192,6 +194,11 @@ void CFGWadAlias::resizeRowsToContents()
 void CFGWadAlias::saveSettings()
 {
 	gConfig.doomseeker.setWadAliases(aliases());
+}
+
+void CFGWadAlias::showEvent(QShowEvent *event)
+{
+	resizeRowsToContents();
 }
 
 QTableWidgetItem *CFGWadAlias::toolTipItem(const QString &contents)
