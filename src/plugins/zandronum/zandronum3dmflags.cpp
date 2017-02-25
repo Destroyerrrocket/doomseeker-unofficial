@@ -335,6 +335,8 @@ DMFlagsSection Dmflags::zandronumDmflags()
 		tr("Teammates don't block each other"));
 	section << DMFlag("No dropping allowed", ZADF_NODROP,
 		tr("No dropping allowed"));
+	section << DMFlag("No map reset on death in survival", ZADF_SURVIVAL_NO_MAP_RESET_ON_DEATH,
+		tr("No map reset on death in survival"));
 	return section;
 }
 

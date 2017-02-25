@@ -355,6 +355,8 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 		// Cooperative
 		m.insert(Dmflags::ZADF_SHARE_KEYS,
 			f->cbShareKeys);
+		m.insert(Dmflags::ZADF_SURVIVAL_NO_MAP_RESET_ON_DEATH,
+			f->cbSurvivalNoMapResetOnDeath);
 	}
 
 	// LMSAllowedWeapons
@@ -686,6 +688,7 @@ void FlagsPageValueController::setVisible(bool visible)
 	flagsPage->lblCompatflags2->setVisible(visible);
 	flagsPage->cbCompatMaskedMidtex->setVisible(visible);
 	flagsPage->cbNoItemDrop->setVisible(visible);
+	flagsPage->cbSurvivalNoMapResetOnDeath->setVisible(visible);
 	foreach (QWidget *checkbox, compatflags2Checkboxes.values())
 		checkbox->setVisible(visible);
 }

@@ -164,6 +164,11 @@ class Dmflags : public QObject
 
 			// [TP] No dropping allowed.
 			ZADF_NODROP = 1 << 15,
+
+			// [Zalewa] Don't reset map when all players die in survival.
+			// Just respawn the players with fresh set of lives and allow
+			// the ones in queue to join.
+			ZADF_SURVIVAL_NO_MAP_RESET_ON_DEATH = 1 << 16,
 		};
 
 		// [RH] Compatibility flags.

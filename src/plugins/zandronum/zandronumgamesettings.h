@@ -145,6 +145,7 @@ extern const QString NO_ROCKET_JUMP;
 extern const QString NO_USE_CUSTOM_GLLIGHTING_SETTINGS;
 extern const QString NO_TURN_OFF_TRANSLUCENCY;
 extern const QString SHARE_KEYS;
+extern const QString SURVIVAL_NO_MAP_RESET_ON_DEATH;
 extern const QString LMSCHAINSAW;
 extern const QString LMSPISTOL;
 extern const QString LMSSHOTGUN;

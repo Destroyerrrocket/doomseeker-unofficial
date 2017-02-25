@@ -140,6 +140,7 @@ const QString NO_ROCKET_JUMP = "NoRocketJump";
 const QString NO_USE_CUSTOM_GLLIGHTING_SETTINGS = "NoUseCustomGLLightingSettings";
 const QString NO_TURN_OFF_TRANSLUCENCY = "NoTurnOffTranslucency";
 const QString SHARE_KEYS = "ShareKeys";
+const QString SURVIVAL_NO_MAP_RESET_ON_DEATH = "SurvivalNoMapResetOnDeath";
 const QString LMSCHAINSAW = "LMSChainsaw";
 const QString LMSPISTOL = "LMSPistol";
 const QString LMSSHOTGUN = "LMSShotgun";

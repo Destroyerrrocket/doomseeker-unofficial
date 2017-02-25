@@ -29,10 +29,6 @@
 
 #include <QCheckBox>
 
-namespace FlagNames
-{
-}
-
 ///////////////////////////////////////////////////////////////////////////
 
 DClass<FlagsId>
@@ -201,6 +197,7 @@ void FlagsId::assign()
 	f->cbNoUseCustomGLLightingSettings->setProperty("flagname", NO_USE_CUSTOM_GLLIGHTING_SETTINGS);
 	f->cbNoTurnOffTranslucency->setProperty("flagname", NO_TURN_OFF_TRANSLUCENCY);
 	f->cbShareKeys->setProperty("flagname", SHARE_KEYS);
+	f->cbSurvivalNoMapResetOnDeath->setProperty("flagname", SURVIVAL_NO_MAP_RESET_ON_DEATH);
 	f->cbLMSChainsaw->setProperty("flagname", LMSCHAINSAW);
 	f->cbLMSPistol->setProperty("flagname", LMSPISTOL);
 	f->cbLMSShotgun->setProperty("flagname", LMSSHOTGUN);
