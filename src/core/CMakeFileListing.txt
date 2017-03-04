@@ -224,7 +224,9 @@ set(HEADER_FILES
 	qtmetapointer.h
 	random.h
 	refresher/canrefreshserver.h
+	refresher/hostport.h
 	refresher/refresher.h
+	refresher/udpsocketpool.h
 	scanner.h
 	serverapi/broadcast.h
 	serverapi/broadcastmanager.h
@@ -445,7 +447,9 @@ set(SOURCE_FILES
 	plugins/pluginloader.cpp
 	random.cpp
 	refresher/canrefreshserver.cpp
+	refresher/hostport.cpp
 	refresher/refresher.cpp
+	refresher/udpsocketpool.cpp
 	scanner.cpp
 	serverapi/broadcast.cpp
 	serverapi/broadcastmanager.cpp

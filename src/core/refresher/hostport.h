@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// queryspeed.cpp
+// hostport.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,41 +18,41 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2017 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "queryspeed.h"
+#ifndef id769c5e06_8b14_4e1e_b71c_3a1632b446c3
+#define id769c5e06_8b14_4e1e_b71c_3a1632b446c3
 
-const QuerySpeed QuerySpeed::MAX_SPEED = {1, 1000, 1};
-const int QuerySpeed::MAX_ATTEMPTS_PER_SERVER = 10;
+#include <QHostAddress>
 
-QuerySpeed QuerySpeed::cautious()
+class HostPort
 {
-	QuerySpeed result;
-	result.attemptsPerServer = 3;
-	result.delayBetweenSingleServerAttempts = 3500;
-	result.intervalBetweenServers = 60;
-	return result;
-}
+public:
+	QHostAddress host;
+	unsigned short port;
 
-QuerySpeed QuerySpeed::moderate()
-{
-	QuerySpeed result;
-	result.attemptsPerServer = 3;
-	result.delayBetweenSingleServerAttempts = 3000;
-	result.intervalBetweenServers = 30;
-	return result;
-}
+	HostPort()
+	{
+		this->port = 0;
+	}
 
-QuerySpeed QuerySpeed::aggressive()
-{
-	QuerySpeed result;
-	result.attemptsPerServer = 2;
-	result.delayBetweenSingleServerAttempts = 2000;
-	result.intervalBetweenServers = 5;
-	return result;
-}
+	HostPort(const QHostAddress &host, unsigned short port)
+	{
+		this->host = host;
+		this->port = port;
+	}
 
-QuerySpeed QuerySpeed::veryAggressive()
-{
-	return MAX_SPEED;
-}
+	bool operator<(const HostPort &other) const
+	{
+		return host != other.host ? host.toString() < other.host.toString() : port < other.port;
+	}
+
+	bool operator==(const HostPort &other) const
+	{
+		return host == other.host && port == other.port;
+	}
+};
+
+uint qHash(const HostPort &hostPort);
+
+#endif

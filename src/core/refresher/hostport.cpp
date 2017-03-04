@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// queryspeed.cpp
+// hostport.cpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,41 +18,11 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2017 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "queryspeed.h"
+#include "hostport.h"
 
-const QuerySpeed QuerySpeed::MAX_SPEED = {1, 1000, 1};
-const int QuerySpeed::MAX_ATTEMPTS_PER_SERVER = 10;
-
-QuerySpeed QuerySpeed::cautious()
+uint qHash(const HostPort &hostPort)
 {
-	QuerySpeed result;
-	result.attemptsPerServer = 3;
-	result.delayBetweenSingleServerAttempts = 3500;
-	result.intervalBetweenServers = 60;
-	return result;
-}
-
-QuerySpeed QuerySpeed::moderate()
-{
-	QuerySpeed result;
-	result.attemptsPerServer = 3;
-	result.delayBetweenSingleServerAttempts = 3000;
-	result.intervalBetweenServers = 30;
-	return result;
-}
-
-QuerySpeed QuerySpeed::aggressive()
-{
-	QuerySpeed result;
-	result.attemptsPerServer = 2;
-	result.delayBetweenSingleServerAttempts = 2000;
-	result.intervalBetweenServers = 5;
-	return result;
-}
-
-QuerySpeed QuerySpeed::veryAggressive()
-{
-	return MAX_SPEED;
+	return qHash(hostPort.host) + qHash(hostPort.port);
 }

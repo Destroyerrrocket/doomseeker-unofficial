@@ -250,7 +250,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->mainWindowState = "";
 	this->mainWindowGeometry = "";
 	this->queryAutoRefreshEverySeconds = 180;
-	setQuerySpeed(QuerySpeed::moderate());
+	setQuerySpeed(QuerySpeed::aggressive());
 	this->previousCreateServerConfigDir = "";
 	this->previousCreateServerExecDir = "";
 	this->previousCreateServerWadDir = "";

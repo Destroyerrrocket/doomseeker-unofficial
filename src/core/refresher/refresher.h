@@ -106,6 +106,7 @@ class Refresher : public QObject
 
 		Refresher();
 
+		void concludeRefresh();
 		bool isAnythingToRefresh() const;
 		Server* findRefreshingServer(const QHostAddress& address, unsigned short port);
 

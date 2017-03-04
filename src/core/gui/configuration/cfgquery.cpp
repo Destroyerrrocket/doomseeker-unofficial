@@ -51,6 +51,13 @@ CFGQuery::CFGQuery(QWidget *parent)
 : ConfigPage(parent)
 {
 	d->setupUi(this);
+
+	const QuerySpeed &min = QuerySpeed::MAX_SPEED;
+	d->triesBox->setMinimum(min.attemptsPerServer);
+	d->timeoutBox->setMinimum(min.delayBetweenSingleServerAttempts);
+	d->queryIntervalBox->setMinimum(min.intervalBetweenServers);
+
+	d->setQuerySpeed(QuerySpeed::aggressive());
 }
 
 CFGQuery::~CFGQuery()
@@ -90,4 +97,9 @@ void CFGQuery::setModerateQueryPreset()
 void CFGQuery::setAggressiveQueryPreset()
 {
 	d->setQuerySpeed(QuerySpeed::aggressive());
+}
+
+void CFGQuery::setVeryAggressiveQueryPreset()
+{
+	d->setQuerySpeed(QuerySpeed::veryAggressive());
 }

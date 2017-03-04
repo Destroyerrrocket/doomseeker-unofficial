@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// queryspeed.cpp
+// udpsocketpool.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,41 +18,36 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2017 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "queryspeed.h"
+#ifndef id42cca172_73df_4d48_99c6_32b537985549
+#define id42cca172_73df_4d48_99c6_32b537985549
 
-const QuerySpeed QuerySpeed::MAX_SPEED = {1, 1000, 1};
-const int QuerySpeed::MAX_ATTEMPTS_PER_SERVER = 10;
+#include "dptr.h"
+#include <QHostAddress>
+#include <QUdpSocket>
 
-QuerySpeed QuerySpeed::cautious()
+class UdpSocketPool : public QObject
 {
-	QuerySpeed result;
-	result.attemptsPerServer = 3;
-	result.delayBetweenSingleServerAttempts = 3500;
-	result.intervalBetweenServers = 60;
-	return result;
-}
+	Q_OBJECT
+	Q_DISABLE_COPY(UdpSocketPool);
 
-QuerySpeed QuerySpeed::moderate()
-{
-	QuerySpeed result;
-	result.attemptsPerServer = 3;
-	result.delayBetweenSingleServerAttempts = 3000;
-	result.intervalBetweenServers = 30;
-	return result;
-}
+public:
+	UdpSocketPool(int sliceSize = 25);
+	~UdpSocketPool();
 
-QuerySpeed QuerySpeed::aggressive()
-{
-	QuerySpeed result;
-	result.attemptsPerServer = 2;
-	result.delayBetweenSingleServerAttempts = 2000;
-	result.intervalBetweenServers = 5;
-	return result;
-}
+	QUdpSocket *acquire(const QHostAddress &address, quint16 port);
+	QUdpSocket *acquireMasterSocket();
+	void releaseAll();
 
-QuerySpeed QuerySpeed::veryAggressive()
-{
-	return MAX_SPEED;
-}
+	bool hasPendingDatagrams() const;
+	QByteArray readNextDatagram(QHostAddress *address = Q_NULLPTR, quint16 *port = Q_NULLPTR);
+
+signals:
+	void readyRead();
+
+private:
+	DPtr<UdpSocketPool> d;
+};
+
+#endif

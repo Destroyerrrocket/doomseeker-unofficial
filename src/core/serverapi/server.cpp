@@ -487,10 +487,10 @@ void Server::refreshStarts()
 
 	emit begunRefreshing(ServerPtr(self()));
 	d->triesLeft = gConfig.doomseeker.querySpeed().attemptsPerServer;
-	if (d->triesLeft > 10) // Limit the maximum number of tries
-	{
-		d->triesLeft = 10;
-	}
+	// Limit the maximum number of tries
+	d->triesLeft = qMin(d->triesLeft, QuerySpeed::MAX_ATTEMPTS_PER_SERVER);
+	// Sanity.
+	d->triesLeft = qMax(d->triesLeft, 1);
 }
 
 void Server::refreshStops(Response response)

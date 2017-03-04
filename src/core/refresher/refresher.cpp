@@ -24,11 +24,13 @@
 
 #include "configuration/queryspeed.h"
 #include "refresher/canrefreshserver.h"
+#include "refresher/udpsocketpool.h"
 #include "serverapi/masterclient.h"
 #include "serverapi/mastermanager.h"
 #include "plugins/pluginloader.h"
 #include "serverapi/server.h"
 #include "configuration/doomseekerconfig.h"
+#include "log.h"
 
 #include <QHash>
 #include <QList>
@@ -39,7 +41,6 @@
 #include <QThread>
 #include <QRunnable>
 #include <QSet>
-#include <QUdpSocket>
 
 class ServerRefreshTime
 {
@@ -74,7 +75,7 @@ class Refresher::Data
 
 		QList<QPointer<Server> > unchallengedServers;
 		QList<ServerRefreshTime> refreshingServers;
-		QUdpSocket* socket;
+		UdpSocketPool socketPool;
 		QSet<MasterClient*> unchallengedMasters;
 
 		bool hasAnyServers() const
@@ -99,6 +100,11 @@ class Refresher::Data
 				}
 			}
 			return NULL;
+		}
+
+		QUdpSocket *socket(const Server *server)
+		{
+			return socketPool.acquire(server->address(), server->port());
 		}
 };
 
@@ -140,15 +146,14 @@ Refresher::Refresher()
 	d->bSleeping = true;
 	d->bKeepRunning = true;
 	d->delayBetweenResends = 1000;
-	d->socket = NULL;
 
 	this->connect(&d->flushPendingDatagramsTimer, SIGNAL(timeout()), SLOT(readAllPendingDatagrams()));
+	this->connect(&d->socketPool, SIGNAL(readyRead()), SLOT(readAllPendingDatagrams()));
 	d->flushPendingDatagramsTimer.start(1000);
 }
 
 Refresher::~Refresher()
 {
-	delete d->socket;
 	delete d;
 }
 
@@ -163,6 +168,13 @@ void Refresher::attemptTimeoutMasters()
 			master->timeoutRefresh();
 		}
 	}
+}
+
+void Refresher::concludeRefresh()
+{
+	d->bSleeping = true;
+	d->socketPool.releaseAll();
+	emit sleepingModeEnter();
 }
 
 Refresher *Refresher::instance()
@@ -228,8 +240,7 @@ void Refresher::masterFinishedRefreshing()
 
 	if (servers.size() == 0 && !isAnythingToRefresh())
 	{
-		d->bSleeping = true;
-		emit sleepingModeEnter();
+		concludeRefresh();
 	}
 
 	emit finishedQueryingMaster(pMaster);
@@ -302,7 +313,7 @@ bool Refresher::registerServer(Server* server)
 
 void Refresher::readAllPendingDatagrams()
 {
-	while(d->socket->hasPendingDatagrams() && d->bKeepRunning)
+	while(d->socketPool.hasPendingDatagrams() && d->bKeepRunning)
 	{
 		readPendingDatagram();
 	}
@@ -311,13 +322,8 @@ void Refresher::readAllPendingDatagrams()
 void Refresher::readPendingDatagram()
 {
 	QHostAddress address;
-	quint16 port;
-	qint64 size = d->socket->pendingDatagramSize();
-	char* data = new char[size];
-	d->socket->readDatagram(data, size, &address, &port);
-
-	QByteArray dataArray(data, size);
-	delete[] data;
+	quint16 port = 0;
+	QByteArray dataArray = d->socketPool.readNextDatagram(&address, &port);
 
 	if (tryReadDatagramByMasterClient(address, port, dataArray))
 	{
@@ -336,7 +342,7 @@ void Refresher::sendMasterQueries()
 		pMasterInfo->fireLastChallengeSentTimer();
 
 		pMaster->refreshStarts();
-		pMaster->sendRequest(d->socket);
+		pMaster->sendRequest(d->socketPool.acquireMasterSocket());
 		d->unchallengedMasters.remove(pMaster);
 	}
 }
@@ -363,8 +369,7 @@ void Refresher::sendServerQueries()
 	{
 		if (!isAnythingToRefresh())
 		{
-			d->bSleeping = true;
-			emit sleepingModeEnter();
+			concludeRefresh();
 		}
 	}
 }
@@ -376,19 +381,7 @@ void Refresher::setDelayBetweenResends(int delay)
 
 bool Refresher::start()
 {
-	QUdpSocket* socket = new QUdpSocket();
-	this->connect(socket, SIGNAL(readyRead()),
-		SLOT(readAllPendingDatagrams()));
-	if (socket->bind())
-	{
-		d->socket = socket;
-		return true;
-	}
-	else
-	{
-		delete socket;
-	}
-	return false;
+	return d->socketPool.acquireMasterSocket() != NULL;
 }
 
 void Refresher::startNewServerRefresh()
@@ -398,7 +391,7 @@ void Refresher::startNewServerRefresh()
 	QPointer<Server> server = d->popNextUnchallengedServer();
 	if (!server.isNull())
 	{
-		if(server->sendRefreshQuery(d->socket))
+		if (server->sendRefreshQuery(d->socket(server)))
 		{
 			d->refreshingServers.append(server);
 		}
@@ -412,7 +405,7 @@ void Refresher::resendCurrentServerRefreshesIfTimeout()
 		ServerRefreshTime &refreshOp = d->refreshingServers[i];
 		if (refreshOp.time.elapsed() > d->delayBetweenResends)
 		{
-			if (refreshOp.server->sendRefreshQuery(d->socket))
+			if (refreshOp.server->sendRefreshQuery(d->socket(refreshOp.server)))
 			{
 				refreshOp.time.start();
 			}
@@ -449,7 +442,7 @@ bool Refresher::tryReadDatagramByMasterClient(QHostAddress& address,
 					unregisterMaster(pMaster);
 					return true;
 				case MasterClient::RESPONSE_REPLY:
-					pMaster->sendRequest(d->socket);
+					pMaster->sendRequest(d->socketPool.acquireMasterSocket());
 					return true;
 				default:
 					return true;
@@ -474,7 +467,7 @@ bool Refresher::tryReadDatagramByServer(const QHostAddress& address,
 		switch(response)
 		{
 			case Server::RESPONSE_REPLY:
-				if(server->sendRefreshQuery(d->socket))
+				if(server->sendRefreshQuery(d->socket(server)))
 				{
 					// Reset timer
 					ServerRefreshTime refreshOp(server);

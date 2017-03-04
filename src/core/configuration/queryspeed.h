@@ -23,12 +23,15 @@
 #ifndef idC8DC23B5_9EE8_4248_A438B00780F217CA
 #define idC8DC23B5_9EE8_4248_A438B00780F217CA
 
-class QuerySpeed
+struct QuerySpeed
 {
-public:
+	static const QuerySpeed MAX_SPEED;
+	static const int MAX_ATTEMPTS_PER_SERVER;
+
 	static QuerySpeed cautious();
 	static QuerySpeed moderate();
 	static QuerySpeed aggressive();
+	static QuerySpeed veryAggressive();
 
 	int attemptsPerServer;
 	int delayBetweenSingleServerAttempts;

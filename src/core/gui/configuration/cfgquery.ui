@@ -126,8 +126,11 @@
           <property name="toolTip">
            <string>How many times Doomseeker will attempt to query each server before deeming it to be not responding.</string>
           </property>
+          <property name="correctionMode">
+           <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+          </property>
           <property name="minimum">
-           <number>3</number>
+           <number>1</number>
           </property>
           <property name="maximum">
            <number>10</number>
@@ -136,7 +139,7 @@
            <number>1</number>
           </property>
           <property name="value">
-           <number>7</number>
+           <number>3</number>
           </property>
          </widget>
         </item>
@@ -155,8 +158,11 @@
           <property name="toolTip">
            <string>Delay in miliseconds between each query attempt.</string>
           </property>
+          <property name="correctionMode">
+           <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+          </property>
           <property name="minimum">
-           <number>500</number>
+           <number>1000</number>
           </property>
           <property name="maximum">
            <number>10000</number>
@@ -179,7 +185,7 @@
         <item row="2" column="1">
          <widget class="QSpinBox" name="queryIntervalBox">
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delay to wait before Doomseeker will check if any free slots open up for server queries (1ms recommended). Number of slots is determined by the &amp;quot;Batch size&amp;quot; setting. Increasing this value may negatively affect the speed of server list refresh, but will free up CPU and decrease bandwidth usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sleep delay that occurs after querying a server and before querying a next one. Increasing this value may negatively affect the speed of server list refresh, but will free up CPU and decrease bandwidth usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="minimum">
            <number>1</number>
@@ -220,14 +226,24 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_4">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Be warned: in this mode correctly working servers may appear as &amp;quot;not responding&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Very Aggressive</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
        <widget class="QPlainTextEdit" name="plainTextEdit">
         <property name="plainText">
-         <string>The three buttons change refresh speed settings to different values. Speed settings determine how long will it take to populate the server list and how accurate the refresh will be. Higher speed can mean lesser accuracy.
+         <string>These buttons change refresh speed settings to different values. Speed settings determine how long will it take to populate the server list and how accurate the refresh will be. Higher speed can mean lesser accuracy.
 
-If you're experiencing problems with refreshing servers, you might prefer &quot;Cautious&quot; preset, while &quot;Aggressive&quot; preset should be preferred with good connection quality.
+If you're experiencing problems with refreshing servers, you might prefer &quot;Cautious&quot; preset, while &quot;Aggressive&quot; presets should be preferred with good connection quality.
 
 These values can be also modified by hand.</string>
         </property>
@@ -276,8 +292,8 @@ These values can be also modified by hand.</string>
    <slot>setModerateQueryPreset()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>226</x>
-     <y>248</y>
+     <x>214</x>
+     <y>256</y>
     </hint>
     <hint type="destinationlabel">
      <x>92</x>
@@ -292,12 +308,28 @@ These values can be also modified by hand.</string>
    <slot>setAggressiveQueryPreset()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>372</x>
-     <y>243</y>
+     <x>319</x>
+     <y>256</y>
     </hint>
     <hint type="destinationlabel">
      <x>337</x>
      <y>395</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_4</sender>
+   <signal>clicked()</signal>
+   <receiver>CFGQuery</receiver>
+   <slot>setVeryAggressiveQueryPreset()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>378</x>
+     <y>243</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>436</x>
+     <y>253</y>
     </hint>
    </hints>
   </connection>
@@ -306,5 +338,6 @@ These values can be also modified by hand.</string>
   <slot>setCautiousQueryPreset()</slot>
   <slot>setModerateQueryPreset()</slot>
   <slot>setAggressiveQueryPreset()</slot>
+  <slot>setVeryAggressiveQueryPreset()</slot>
  </slots>
 </ui>

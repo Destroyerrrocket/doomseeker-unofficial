@@ -50,6 +50,7 @@ class CFGQuery : public ConfigPage
 		void setCautiousQueryPreset();
 		void setModerateQueryPreset();
 		void setAggressiveQueryPreset();
+		void setVeryAggressiveQueryPreset();
 };
 
 #endif /* __CFG_QUERY_H__ */

@@ -40,7 +40,7 @@ class Ini;
 class EnginePlugin;
 class FileAlias;
 class FileSearchPath;
-class QuerySpeed;
+struct QuerySpeed;
 class SettingsProviderQt;
 
 /**
