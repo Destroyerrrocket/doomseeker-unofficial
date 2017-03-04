@@ -57,6 +57,9 @@ known URLs.
 the table with site queries.
 - Wadseeker: Sites and services (idgames & wadarchive) queries can
 be aborted by the user.
+- Wadseeker: install files from archive's subdirectories if archive's root
+doesn't have them. This indirectly fixes problem with Freedoom no longer
+installing from the "Install Freedoom" dialog box.
 - SRB2: New plugin for Sonic Robo Blast 2 - supports game setup,
 master server, server queries, IRC channel.
 - Zandronum: LAN broadcast servers will now appear on server list.
@@ -104,6 +107,17 @@ and clearly notified when Doomseeker detects a configuration problem.
 Configuration dialog page tree will show a warning icon next to pages
 that report problems. Pages that configure file or directory paths
 have been programmed to report validation errors.
+- Query speed improvements:
+    - Split server querying onto several client sockets, max. 25 host-ports per
+      socket. This prevents packets from "getting lost" and servers appearing as
+      "not responding" during aggressive queries.
+    - Lowered speed limits in "Query" configuration page. Users can now
+      configure more aggressive queries (1 attempt per server, 1 second timeout,
+      1 millisecond interval between servers).
+    - Added "Very Aggressive" query preset that will push it to the limit.
+    - "Aggressive" query preset: attempts reduced to 2 (from 3) and interval
+      between servers reduced to 5 ms (from 10).
+    - Made "Aggressive" query mode the default one for new configs.
 - Chocolate Doom: Don't show max players/clients and map list
 widgets in Create Game box.
 - Vavoom: plugin deprecated, discontinued and blacklisted by Doomseeker.
@@ -115,6 +129,8 @@ directory exists and is non-empty. The message box that pops up when
 encountering an unclean directory is slightly different and is displayed
 with a warning icon to inform the user that pre-existing files may be
 overwritten by the installation.
+- Zandronum: Renamed "Flags" Create Game page to "Zandronum". The page has
+more generic stuff now than just "flags" and the new name fits better.
 
 ### Fixed
 - Don't reset difficulty or game limit values in "Create Game"
