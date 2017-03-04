@@ -1221,8 +1221,8 @@ Tylko litery, cyfry, spacje i &quot;%1&quot; są dozwolone.</translation>
         <translation type="obsolete">Odpytaj serwery przy starcie</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="233"/>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="237"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="242"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="246"/>
         <source>How many times Doomseeker will attempt to query each server before deeming it to be not responding.</source>
         <translation>Ile razy Doomseeker powinien odpytać serwer, zanim stwierdzi, że ten nie odpowiada.</translation>
     </message>
@@ -1231,8 +1231,8 @@ Tylko litery, cyfry, spacje i &quot;%1&quot; są dozwolone.</translation>
         <translation type="obsolete">Ilość prób:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="240"/>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="244"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="249"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="253"/>
         <source>Delay in miliseconds between each query attempt.</source>
         <translation>Opóźnienie w milisekundach pomiędzy każdą próbą odpytania.</translation>
     </message>
@@ -1245,90 +1245,117 @@ Tylko litery, cyfry, spacje i &quot;%1&quot; są dozwolone.</translation>
         <translation type="obsolete">Odpytaj zanim wystartujesz grę</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="213"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="222"/>
         <source>Refresh servers on startup</source>
         <translation>Odśwież serwery na starcie</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="214"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="223"/>
         <source>Refresh before launch</source>
         <translation>Odśwież przed wystartowaniem gry</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="215"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="224"/>
         <source>Servers autorefresh</source>
         <translation>Auto-odświeżanie serwerów</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="217"/>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="221"/>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="224"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="226"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="230"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="233"/>
         <source>Minimum value: 30 seconds.</source>
         <translation>Minimum 30 sekund.</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="219"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="228"/>
         <source>Obtain new server list every:</source>
         <translation>Pobierz nową listę serwerów co:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="226"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="235"/>
         <source>seconds</source>
         <translation>sekund</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="228"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="237"/>
         <source>Enabling this will prevent server list from disappearing when you are browsing through it.</source>
         <translation>Włączenie tego zapobiegnie znikaniu listy serwerów w momencie, gdy ją przeglądasz.</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="230"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="239"/>
         <source>Don&apos;t refresh if Doomseeker window is active.</source>
         <translation>Nie odświeżaj, gdy okno Doomseekera jest aktywne.</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="231"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="240"/>
         <source>Refresh speed</source>
         <translation>Prędkość odświeżania</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="235"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="244"/>
         <source>Number of attempts per server:</source>
         <translation>Ilość prób na serwer:</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="242"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="251"/>
         <source>Delay between attemps (ms):</source>
         <translation>Opóźnienie pomiędzy próbami (ms):</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="246"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="255"/>
         <source>Interval between different servers (ms):</source>
         <translation>Opóźnienie pomiędzy poszczególnymi serwerami (ms):</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="250"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="257"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sleep delay that occurs after querying a server and before querying a next one. Increasing this value may negatively affect the speed of server list refresh, but will free up CPU and decrease bandwidth usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Opóźnienie pomiędzy odpytywaniem kolejnych serwerów. Zwiększenie tej wartości może wpłynąć negatywnie na prędkość odświeżania listy serwerów, ale zwolni zasoby procesora i obniży zużycie łącza.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="259"/>
         <source>Cautious</source>
         <translation>Ostrożny</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="251"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="260"/>
         <source>Moderate</source>
         <translation>Umiarkowany</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="252"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="261"/>
         <source>Aggressive</source>
         <translation>Agresywny</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="253"/>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="263"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Be warned: in this mode correctly working servers may appear as &amp;quot;not responding&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Uwaga: w tym trybie poprawnie działające serwery mogą pojawiać się jako &amp;quot;bez odpowiedzi&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html</translation>
+    </message>
+    <message>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="265"/>
+        <source>Very Aggressive</source>
+        <translation>Wściekły</translation>
+    </message>
+    <message>
+        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="266"/>
+        <source>These buttons change refresh speed settings to different values. Speed settings determine how long will it take to populate the server list and how accurate the refresh will be. Higher speed can mean lesser accuracy.
+
+If you&apos;re experiencing problems with refreshing servers, you might prefer &quot;Cautious&quot; preset, while &quot;Aggressive&quot; presets should be preferred with good connection quality.
+
+These values can be also modified by hand.</source>
+        <translation>Te przyciski zmieniają prędkość odświeżania. Ustawienia tej prędkości określają, jak dużo czasu zajmie zapełnianie listy serwerów i jak dokładnie będzie to zrobione. Większe prędkości oznaczają mniejszą dokładność.
+
+Jeżeli masz problemy z odświeżaniem serwerów, powinieneś wybrać tryb &quot;Ostrożny&quot;, podczas gdy tryby &quot;Agresywne&quot; zalecany są dla osób z dobrymi połączeniami internetowymi.
+
+Te wartości mogą być też dostosowywane ręcznie.</translation>
+    </message>
+    <message>
         <source>The three buttons change refresh speed settings to different values. Speed settings determine how long will it take to populate the server list and how accurate the refresh will be. Higher speed can mean lesser accuracy.
 
 If you&apos;re experiencing problems with refreshing servers, you might prefer &quot;Cautious&quot; preset, while &quot;Aggressive&quot; preset should be preferred with good connection quality.
 
 These values can be also modified by hand.</source>
-        <translation>Te trzy przyciski zmieniają prędkość odświeżania. Ustawienia tej prędkości określają, jak dużo czasu zajmie zapełnianie listy serwerów i jak dokładnie będzie to zrobione. Większe prędkości oznaczają mniejszą dokładność.
+        <translation type="vanished">Te trzy przyciski zmieniają prędkość odświeżania. Ustawienia tej prędkości określają, jak dużo czasu zajmie zapełnianie listy serwerów i jak dokładnie będzie to zrobione. Większe prędkości oznaczają mniejszą dokładność.
 
 Jeżeli masz problemy z odświeżaniem serwerów, powinieneś wybrać tryb &quot;Ostrożny&quot;, podczas gdy tryb &quot;Agresywny&quot; zalecany jest dla osób z dobrymi połączeniami internetowymi.
 
@@ -1351,9 +1378,8 @@ Te wartości mogą być też dostosowywane ręcznie.</translation>
         <translation type="obsolete">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Liczba serwerów odpytana w pojedynczej serii (30 zalecane). Zwiększenie tej wartości poprawi prędkość odświeżania listy serwerów, ale może też zwiększyć zużycie procesora i łącza.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../../vs2013_5_7_0/src/core/ui_cfgquery.h" line="248"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delay to wait before Doomseeker will check if any free slots open up for server queries (1ms recommended). Number of slots is determined by the &amp;quot;Batch size&amp;quot; setting. Increasing this value may negatively affect the speed of server list refresh, but will free up CPU and decrease bandwidth usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Opóźnienie zanim Doomseeker sprawdzi, czy udostępniły się wolne miejsca do odpytania serwerów (1ms zalecane). Liczba miejsc jest ustawiana poprzez &quot;Rozmiar serii&quot;. Zwiększenie tej wartości może negatywnie wpłynąć na prędkość odświeżania listy serwerów, ale odciąży procesor i łącze.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Opóźnienie zanim Doomseeker sprawdzi, czy udostępniły się wolne miejsca do odpytania serwerów (1ms zalecane). Liczba miejsc jest ustawiana poprzez &quot;Rozmiar serii&quot;. Zwiększenie tej wartości może negatywnie wpłynąć na prędkość odświeżania listy serwerów, ale odciąży procesor i łącze.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Number of servers to query in a single batch (30 recommended)</source>
@@ -2946,17 +2972,17 @@ Plik wykonywalny: %3</translation>
         <translation>BUG: Wtyczka nie definiuje argumentu dla hasła w grze, a serwer takiego hasła wymaga.</translation>
     </message>
     <message>
-        <location filename="../serverapi/gameclientrunner.cpp" line="285"/>
+        <location filename="../serverapi/gameclientrunner.cpp" line="286"/>
         <source>BUG: Plugin doesn&apos;t specify argument for connect password, but the server is passworded.</source>
         <translation>BUG: Wtyczka nie definiuje argumentu dla hasła do połączenia, a serwer takie hasło posiada.</translation>
     </message>
     <message>
-        <location filename="../serverapi/gameclientrunner.cpp" line="484"/>
+        <location filename="../serverapi/gameclientrunner.cpp" line="485"/>
         <source>Game can be installed by Doomseeker</source>
         <translation>Doomseeker może zainstalować tą grę</translation>
     </message>
     <message>
-        <location filename="../serverapi/gameclientrunner.cpp" line="490"/>
+        <location filename="../serverapi/gameclientrunner.cpp" line="491"/>
         <source>Client binary cannot be obtained for %1, please check the location given in the configuration.</source>
         <translation>Nie można odnaleźć pliku wykonywalnego gry %1, proszę sprawdzić lokację podaną w konfiguracji.</translation>
     </message>
