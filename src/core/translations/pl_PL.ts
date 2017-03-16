@@ -1345,7 +1345,7 @@ If you&apos;re experiencing problems with refreshing servers, you might prefer &
 These values can be also modified by hand.</source>
         <translation>Te przyciski zmieniają prędkość odświeżania. Ustawienia tej prędkości określają, jak dużo czasu zajmie zapełnianie listy serwerów i jak dokładnie będzie to zrobione. Większe prędkości oznaczają mniejszą dokładność.
 
-Jeżeli masz problemy z odświeżaniem serwerów, powinieneś wybrać tryb &quot;Ostrożny&quot;, podczas gdy tryby &quot;Agresywne&quot; zalecany są dla osób z dobrymi połączeniami internetowymi.
+Jeżeli masz problemy z odświeżaniem serwerów, powinieneś wybrać tryb &quot;Ostrożny&quot;, podczas gdy tryby &quot;Agresywne&quot; zalecane są dla osób z dobrymi połączeniami internetowymi.
 
 Te wartości mogą być też dostosowywane ręcznie.</translation>
     </message>
