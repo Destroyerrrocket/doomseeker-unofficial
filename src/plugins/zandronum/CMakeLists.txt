@@ -16,13 +16,10 @@ set(ZANDRONUM_QT_FILES
 	createserverdialogpages/flagspage.h
 	createserverdialogpages/votingsetupwidget.h
 	enginezandronumconfigbox.h
-	huffmanqt.h
-	huffmanudpsocket.h
 	zandronumbinaries.h
 	zandronumbroadcast.h
 	zandronum2dmflags.h
 	zandronum3dmflags.h
-	zandronumgameexefactory.h
 	zandronumgamehost.h
 	zandronumgameinfo.h
 	zandronummasterclient.h
@@ -69,7 +66,10 @@ set(HEADER_FILES
 	huffman/codec.h
 	huffman/huffcodec.h
 	huffman/huffman.h
+	huffmanqt.h
+	huffmanudpsocket.h
 	zandronumengineplugin.h
+	zandronumgameexefactory.h
 	zandronumgamerunner.h
 	zandronumgamesettings.h
 	zandronumserverdmflagsparser.h

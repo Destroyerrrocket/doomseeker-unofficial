@@ -54,7 +54,7 @@ bool IRCCtcpParser::isCtcp() const
 	{
 		return false;
 	}
-	return d->msg[0] == 0x1 && d->msg[d->msg.length() - 1] == 0x1;
+	return d->msg[0].unicode() == 0x1 && d->msg[d->msg.length() - 1].unicode() == 0x1;
 }
 
 bool IRCCtcpParser::parse()

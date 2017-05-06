@@ -64,7 +64,6 @@ include_directories(
 )
 
 set(WADSEEKER_QT_FILES
-	protocols/freedoom/freedoominfoparser.h
 	protocols/freedoom/freedoomquery.h
 	protocols/idgames/idgamesreply.h
 	protocols/wadarchive/wadarchiveclient.h
@@ -130,6 +129,7 @@ set(HEADER_FILES
 	entities/modfile.h
 	entities/modset.h
 	entities/waddownloadinfo.h
+	protocols/freedoom/freedoominfoparser.h
 	protocols/idgames/idgamesclient.h
 	protocols/idgames/idgamesfile.h
 	protocols/idgames/idgamesfilematcher.h
