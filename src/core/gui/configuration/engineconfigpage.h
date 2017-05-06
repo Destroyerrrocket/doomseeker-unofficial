@@ -84,7 +84,15 @@ class MAIN_EXPORT EngineConfigPage : public ConfigPage
 		DPtr<EngineConfigPage> d;
 		friend class PrivData<EngineConfigPage>;
 
+#if __GNUC__ == 4 && __GNUC_MINOR__ == 0
+	// [QT_VERSION] Remove me when Qt4 is dropped since there won't be a real reason to support GCC 4.0
+	// which doesn't support the TR1 nested class visibility change.
+	public:
+#endif
 		QStringList collectKnownGameFilePaths() const;
+#if __GNUC__ == 4 && __GNUC_MINOR__ == 0
+	private:
+#endif
 		void makeFileBrowsers();
 		QString currentCustomParameters() const;
 		void removeStoredCustomParametersFromConfig(const QString &parameters);
