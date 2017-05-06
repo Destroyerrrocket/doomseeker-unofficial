@@ -90,6 +90,8 @@
 	<file alias="flags/HND">flags/HND.png</file> <!-- Honduras -->
 	<file alias="flags/HRV">flags/HRV.png</file> <!-- Croatia -->
 	<file alias="flags/HUN">flags/HUN.png</file> <!-- Hungary -->
+	<file alias="flags/IDN">flags/IDN.png</file> <!-- Indonesia -->
+	<file alias="flags/IMN">flags/IMN.png</file> <!-- Isle of Man -->
 	<file alias="flags/IND">flags/IND.png</file> <!-- India -->
 	<file alias="flags/IRL">flags/IRL.png</file> <!-- Ireland -->
 	<file alias="flags/IRQ">flags/IRQ.png</file> <!-- Iraq -->
