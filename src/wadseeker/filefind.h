@@ -27,6 +27,8 @@
 
 #include <QList>
 
+class QStringList;
+
 /**
  * @brief Case-insensitive filename seeker that seeks in a file tree listing.
  *

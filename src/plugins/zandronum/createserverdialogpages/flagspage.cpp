@@ -299,7 +299,11 @@ void FlagsPage::setGameVersion(ZandronumGameInfo::GameVersion version)
 
 ZandronumGameInfo::GameVersion FlagsPage::gameVersion() const
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)
 	return static_cast<ZandronumGameInfo::GameVersion>(cboGameVersion->currentData().toInt());
+#else
+	return static_cast<ZandronumGameInfo::GameVersion>(cboGameVersion->itemData(cboGameVersion->currentIndex()).toInt());
+#endif
 }
 
 FlagsPage::PlayerBlock FlagsPage::playerBlock() const

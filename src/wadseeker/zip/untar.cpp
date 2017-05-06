@@ -25,6 +25,7 @@
 
 #include <QBuffer>
 #include <QFile>
+#include <QStringList>
 
 UnTar::UnTar(QIODevice *device) : UnArchive(device), valid(true)
 {

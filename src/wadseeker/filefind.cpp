@@ -24,6 +24,7 @@
 
 #include <QFileInfo>
 #include <QSet>
+#include <QStringList>
 
 DClass<FileFind>
 {

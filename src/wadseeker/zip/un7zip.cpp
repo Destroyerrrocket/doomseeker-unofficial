@@ -29,6 +29,7 @@
 
 #include <QBuffer>
 #include <QFile>
+#include <QStringList>
 
 SZByteStream::SZByteStream(QIODevice *buffer) : buffer(buffer)
 {
