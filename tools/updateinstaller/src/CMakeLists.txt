@@ -134,9 +134,9 @@ if (SIGN_UPDATER)
 	add_custom_command(TARGET updater POST_BUILD COMMAND sign-updater.bat updater.exe)
 endif()
 
-get_property(EXE_LOCATION TARGET updater PROPERTY LOCATION)
+# [BL] Clear CMake warning about use of LOCATION property
 add_custom_command(TARGET updater POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${EXE_LOCATION} ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:updater> ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/
 )
 
 if (WIN32)

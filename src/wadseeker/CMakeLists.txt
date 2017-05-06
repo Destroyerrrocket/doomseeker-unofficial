@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 2.8.7)
 
-if(COMMAND cmake_policy)
-	cmake_policy(SET CMP0020 OLD) # This is a DLL, no need for main() of any kind.
+cmake_policy(SET CMP0020 OLD) # This is a DLL, no need for main() of any kind.
+if(POLICY CMP0042)
+	cmake_policy(SET CMP0042 NEW)
 endif()
 
 if (MSVC)

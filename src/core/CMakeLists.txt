@@ -17,12 +17,13 @@ cmake_minimum_required(VERSION 2.8.7)
 # Conclusion: If current MSVC subsystem setup is changed the code may not
 # compile, as the proper entry point will be missing.
 
-if(COMMAND cmake_policy)
-	cmake_policy(SET CMP0003 NEW)
-	cmake_policy(SET CMP0005 NEW)
-	if (POLICY CMP0020)
-		cmake_policy(SET CMP0020 OLD) # We have our own WinMain.
-	endif()
+cmake_policy(SET CMP0003 NEW)
+cmake_policy(SET CMP0005 NEW)
+if (POLICY CMP0020)
+	cmake_policy(SET CMP0020 OLD) # We have our own WinMain.
+endif()
+if (POLICY CMP0046)
+	cmake_policy(SET CMP0046 NEW)
 endif()
 
 # Get the SVN revision
@@ -333,7 +334,7 @@ if(WIN32 OR APPLE)
 			-c stable -i "${CMAKE_INSTALL_PREFIX}"
 			WORKING_DIRECTORY ${AUTOUPDATE_PACKAGE_DIRECTORY})
 		# Build Doomseeker and satellites, then install, then package.
-		add_dependencies(package_beta install_dependable all)
-		add_dependencies(package_stable install_dependable all)
+		add_dependencies(package_beta install_dependable)
+		add_dependencies(package_stable install_dependable)
 	endif()
 endif()
