@@ -5,7 +5,7 @@ if( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL
 endif( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
 
 add_definitions( -DBZ_NO_STDIO )
-add_library( bz2
+set( SOURCES
     blocksort.c
     bzlib.c
     compress.c
@@ -13,4 +13,11 @@ add_library( bz2
     decompress.c
     huffman.c
     randtable.c )
+add_library( bz2 ${SOURCES} )
 target_link_libraries( bz2 )
+
+if (MSVC)
+    # [Doomseeker] doomseeker.exe in Visual Studio needs /MD, but updater.exe needs /MT.
+    add_library( bz2_mt STATIC ${SOURCES} )
+    target_compile_options( bz2_mt PRIVATE "/MT$<$<CONFIG:Debug>:d>" )
+endif()

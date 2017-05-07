@@ -34,7 +34,18 @@ add_library(minizip
 
 # [BL] Doomseeker has copies of libbz2 and libz so we should use the ones we
 # built instead of the binary blobs.
-target_link_libraries(minizip ${ZLIB_LIBRARIES} ${BZIP2_LIBRARIES})
+if (MSVC)
+	add_dependencies(minizip ${ZLIB_LIBRARY}_mt ${BZIP2_LIBRARY}_mt)
+	target_link_libraries(minizip z_mt bz2_mt)
+else ()
+	if (ZLIB_INTERNAL)
+		add_dependencies(minizip ${ZLIB_LIBRARY})
+	endif ()
+	if (BZIP2_INTERNAL)
+		add_dependencies(minizip ${BZIP2_LIBRARY})
+	endif ()
+	target_link_libraries(minizip ${ZLIB_LIBRARIES} ${BZIP2_LIBRARIES})
+endif ()
 
 #if (UNIX)
 	# on Mac, link to libbz2 dynamically, on Linux

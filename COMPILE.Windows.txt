@@ -95,7 +95,6 @@ list should now change and you should see following items:
 - Ungrouped Entries
 - BUILD
 - CMAKE
-- FORCE
 - OPENSSL
 
 When you finish setting everything press "Configure" button again so that all

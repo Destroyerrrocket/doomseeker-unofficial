@@ -18,14 +18,13 @@ if (WIN32)
 	include_directories(external/bzip2)
 	include_directories(external/win32cpp/include)
 
-	# [Zalewa] Removing "/NODEFAULTLIB:libcmt.lib" will cause the .exe projects
-	# to fail to compile in MSVC. Why, one might ask? Because C++, that's why.
-	# (and because of /MT)
-	set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:libcmt.lib")
+	# [Doomseeker]
 	# Link the updater binary statically with the Visual C++ runtime
-	# so that the executable can function standalone
-	set(CMAKE_CXX_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")
-	set(CMAKE_C_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")
+	# so that the executable can function standalone.
+	# Note: it's very important that all library dependencies
+	# are compiled with /MT flag.
+	include(${CMAKE_SOURCE_DIR}/cmake/Modules/Macros.cmake)
+	msvc_mt()
 else()
 	# optimize for reduced code size
 	set(CMAKE_CXX_FLAGS_RELEASE "-Os")

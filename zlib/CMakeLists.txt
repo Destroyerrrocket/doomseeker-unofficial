@@ -138,7 +138,16 @@ if(MINGW)
     set(ZLIB_SRCS ${ZLIB_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj)
 endif(MINGW)
 
-add_library(${ZLIBNAME} ${ZLIB_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
+# [Doomseeker] doomseeker.exe in Visual Studio needs /MD, but updater.exe needs /MT.
+set(ZLIB_ALL_SRCS ${ZLIB_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
+add_library(${ZLIBNAME} ${ZLIB_ALL_SRCS})
+
+# [Doomseeker] doomseeker.exe in Visual Studio needs /MD, but updater.exe needs /MT.
+if(MSVC)
+    add_library(${ZLIBNAME}_mt ${ZLIB_ALL_SRCS})
+    target_compile_options(${ZLIBNAME}_mt PRIVATE "/MT$<$<CONFIG:Debug>:d>")
+endif()
+
 set_target_properties(${ZLIBNAME} PROPERTIES DEFINE_SYMBOL ZLIB_DLL)
 
 set_target_properties(${ZLIBNAME} PROPERTIES SOVERSION 1)
