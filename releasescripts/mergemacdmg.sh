@@ -7,6 +7,7 @@ QT4=$1
 QT5=$2
 shift 2
 
+if true; then
 CC="${QT4_CC}" CXX="${QT4_CXX}" ./makemacdmg.sh -DQT_QMAKE_EXECUTABLE="$QT4/bin/qmake" "$@" || exit
 mkdir Qt4
 mv Doomseeker*.dmg Qt4/
@@ -16,27 +17,85 @@ QT5PATH="$QT5" CC="${QT5_CC}" CXX="${QT5_CXX}" ./makemacdmg.sh "$@" || exit
 mkdir Qt5
 mv Doomseeker*.dmg Qt5/
 mv Doomseeker.app Qt5/
+else
+rm -rf Doomseeker.app
+fi
 
 cp -a Qt4/Doomseeker.app Doomseeker.app
 cp -a Qt5/Doomseeker.app/Contents/Frameworks/Qt* Doomseeker.app/Contents/Frameworks/
 
+function split_qt4_universal()
+{
+	declare File=$1
+	shift
+	echo "Splitting $File"
+
+	lipo $File -thin ppc -output $File.ppc
+	if [ ! -f $File.ppc ]
+	then
+		lipo $File -thin ppc7400 -output $File.ppc
+	fi
+	lipo $File -thin i386 -output $File.i386
+	rm $File
+}
+
+function merge_qt5()
+{
+	declare File=$1
+	shift
+	declare Qt5File=$1
+	shift
+
+	declare Parts=()
+
+	cp $Qt5File $File.x86_64
+	for i in $File.*
+	do
+		Parts+=(-arch ${i##*.} $i)
+	done
+	echo lipo -create ${Parts[@]} -output $File
+	lipo -create ${Parts[@]} -output $File
+	rm $File.*
+}
+
+function flatten_framework()
+{
+	declare Framework=$1
+	shift
+	echo "---- Flattening $Framework ----"
+
+	declare Qt4Framework=$Framework/Versions/4
+	declare Qt5Framework=$Framework/Versions/5
+
+	find $Framework -mindepth 1 -maxdepth 1 -not -type d | xargs rm -f
+
+	if [[ ! -d $Qt4Framework ]]
+	then
+		mv -v $Qt5Framework/* $Framework
+		rm -vrf $Framework/Versions
+		return
+	fi
+
+	mv -v $Qt4Framework/* $Framework
+	find $Qt5Framework -type f | while read -r Filename
+	do
+		Filename=${Filename/*Versions\/5\//}
+		echo $Filename
+		mkdir -p $(dirname $Framework/$Filename)
+		if [[ -f $Framework/$Filename ]] && file $Qt5Framework/$Filename | grep Mach > /dev/null; then
+			split_qt4_universal $Framework/$Filename
+			merge_qt5 $Framework/$Filename $Qt5Framework/$Filename
+		else
+			mv $Qt5Framework/$Filename $Framework/$Filename
+		fi
+	done
+	rm -vrf $Framework/Versions
+}
+
 function mergebin()
 {
-	cp Qt5/$1 $1.x86_64
-	lipo $1 -thin ppc -output $1.ppc
-	if [ ! -f $1.ppc ]
-	then
-		lipo $1 -thin ppc7400 -output $1.ppc
-	fi
-	lipo $1 -thin i386 -output $1.i386
-	rm $1
-	if [ -f $1.ppc ]
-	then
-		lipo -create -arch ppc $1.ppc -arch i386 $1.i386 -arch x86_64 $1.x86_64 -output $1
-	else
-		lipo -create -arch i386 $1.i386 -arch x86_64 $1.x86_64 -output $1
-	fi
-	rm $1.*
+	split_qt4_universal $1
+	merge_qt5 $1 Qt5/$1
 }
 
 # Merge our binaries
@@ -48,8 +107,17 @@ do
 	mergebin Doomseeker.app/Contents/MacOS/engines/$i
 done
 
+# Flatten and merge frameworks for signing
+for i in Doomseeker.app/Contents/Frameworks/Qt*
+do
+	flatten_framework $i
+done
+
 # Copy new plugin directories
-(cd Qt5; find Doomseeker.app/Contents/plugins -type d -exec mkdir -p "../{}" \;)
+(
+	cd Qt5
+	find Doomseeker.app/Contents/plugins -type d -exec mkdir -p "../{}" \;
+)
 
 # Merge common plugins
 for i in `comm -12 <(cd Qt4; find Doomseeker.app/Contents/plugins -name *.dylib | sort) <(cd Qt5; find Doomseeker.app/Contents/plugins -name *.dylib | sort)`
@@ -62,4 +130,5 @@ do
 	cp Qt5/$i $i
 done
 
+exit 0
 ./createmacdmg.sh `(cd Qt5;echo *.dmg)`

@@ -110,8 +110,15 @@ cp {build/,Doomseeker.app/Contents/Frameworks/}libwadseeker.dylib
 for i in $MODULES
 do
 	cp -a ${QTPATH}$i.framework Doomseeker.app/Contents/Frameworks/
+
+	# Qt4 Content directory should probably be Resources
+	if [[ -z "$QT5PATH" ]] && [[ -d Doomseeker.app/Contents/Frameworks/$i.framework/Contents ]]
+	then
+		mv Doomseeker.app/Contents/Frameworks/$i.framework/{Contents,Resources}
+	fi
+
 	# Remove unneeded development files
-	find Doomseeker.app/Contents/Frameworks/$i.framework -name Headers -or -name '*_debug*' -or -name Current | xargs rm -rf
+	find Doomseeker.app/Contents/Frameworks/$i.framework -name Headers -or -name '*_debug*' -or -name '*.prl' -or -name Current | xargs rm -rf
 	rm -rf Doomseeker.app/Contents/Frameworks/$i.framework/Resources
 done
 cp -a {${QTPLPATH},Doomseeker.app/Contents/}plugins
@@ -154,22 +161,22 @@ done
 RELINK_LIST="`ls Doomseeker.app/Contents/{MacOS/{doomseeker,engines/*.so},Frameworks/libwadseeker.dylib}` $QTPLUGINS_LIST"
 for i in $RELINK_LIST
 do
-	if otool -L "$i" | grep -m 1 --only-matching '[/@].*libwadseeker.dylib' > /dev/null
+	if otool -L "$i" | awk '/libwadseeker.dylib/{if(!($0 ~ /\.app/)){print $1;found=1}}END{exit !found}' > /dev/null
 	then
-		install_name_tool -change `otool -L "$i" | grep -m 1 --only-matching '[/@].*libwadseeker.dylib'` @executable_path/../Frameworks/libwadseeker.dylib $i
+		install_name_tool -change $(otool -L "$i" | awk '/libwadseeker.dylib/{if(!($0 ~ /\.app/)){print $1;exit 0}}') @executable_path/../Frameworks/libwadseeker.dylib $i
 	fi
 done
 for i in $MODULES
 do
-	install_name_tool -id {@executable_path/../,Doomseeker.app/Contents/}Frameworks/${i}.framework/Versions/$QT_VERSION/$i
-	for j in `otool -L Doomseeker.app/Contents/Frameworks/${i}.framework/Versions/$QT_VERSION/$i | grep 'Qt[A-Za-z]*.framework' | tail -n +3 | awk '{print $1}'`
+	install_name_tool -id {@executable_path/../,Doomseeker.app/Contents/}Frameworks/${i}.framework/$i
+	for j in `otool -L Doomseeker.app/Contents/Frameworks/${i}.framework/Versions/$QT_VERSION/$i | awk '/architecture/{if(arch)exit 0;arch=1;next}/Qt[A-Za-z]*\.framework/{print $1}'`
 	do
-		current=`echo $j | sed "s,$QTNTPATH,,"`
-		install_name_tool -change {${QTNTPATH},@executable_path/../Frameworks/}$current Doomseeker.app/Contents/Frameworks/${i}.framework/Versions/$QT_VERSION/$i
+		current=`<<<"$j" sed "s,$QTNTPATH,,"`
+		install_name_tool -change ${QTNTPATH}${current} @executable_path/../Frameworks/${current/Versions\/$QT_VERSION\//} Doomseeker.app/Contents/Frameworks/${i}.framework/Versions/$QT_VERSION/$i
 	done
 	for j in $RELINK_LIST
 	do
-		install_name_tool -change {${QTNTPATH},@executable_path/../Frameworks/}${i}.framework/Versions/$QT_VERSION/$i $j
+		install_name_tool -change ${QTNTPATH}${i}.framework/Versions/$QT_VERSION/$i @executable_path/../Frameworks/${i}.framework/$i $j
 	done
 done
 
