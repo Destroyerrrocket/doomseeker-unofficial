@@ -4960,7 +4960,7 @@ Jedno z prawidłowych miejsc dla wtyczek to katalog &quot;engines/&quot;.
     <message>
         <location filename="../gui/mainwindow.cpp" line="1157"/>
         <source>Before you start browsing for servers, please ensure that Doomseeker is properly configured.</source>
-        <translation>Zanim zaczniesz przeglądać serwery, proszę poświęc chwilę aby skonfigurować Doomseekera poprawnie.</translation>
+        <translation>Zanim zaczniesz przeglądać serwery, proszę poświęć chwilę aby skonfigurować Doomseekera poprawnie.</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="1174"/>
