@@ -111,7 +111,8 @@ for i in $MODULES
 do
 	cp -a ${QTPATH}$i.framework Doomseeker.app/Contents/Frameworks/
 	# Remove unneeded development files
-	find Doomseeker.app/Contents/Frameworks/$i.framework -name Headers -or -name '*_debug*' -or -name Current -or -name Resources | xargs rm -rf
+	find Doomseeker.app/Contents/Frameworks/$i.framework -name Headers -or -name '*_debug*' -or -name Current | xargs rm -rf
+	rm -rf Doomseeker.app/Contents/Frameworks/$i.framework/Resources
 done
 cp -a {${QTPLPATH},Doomseeker.app/Contents/}plugins
 find Doomseeker.app/Contents -name '*.dSYM' | xargs rm -rf
