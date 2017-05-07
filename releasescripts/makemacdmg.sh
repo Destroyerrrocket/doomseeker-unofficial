@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SDK_10_4=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.4u.sdk
-SDK_10_7=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk
+SDK_10_9=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk
 
 if [ -z $QT5PATH ]
 then
@@ -52,13 +52,16 @@ mkdir Doomseeker/build
 cd Doomseeker/build
 if [ -z $QT5PATH ]
 then
-	cmake ../../.. -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.0 -DCMAKE_C_COMPILER=/usr/bin/gcc-4.0 -DFORCE_QT4=YES $@
-	cmake ../../.. -DCMAKE_OSX_ARCHITECTURES="ppc;i386" -DCMAKE_OSX_DEPLOYMENT_TARGET=10.4 -DCMAKE_OSX_SYSROOT=${SDK_10_4} -DCMAKE_BUILD_TYPE=Release -DFORCE_QT4=YES $@
+	export MACOSX_DEPLOYMENT_TARGET=10.4
+	echo CC="${CC:-/usr/bin/gcc-4.0}" CXX="${CXX:-/usr/bin/g++-4.0}" cmake ../../.. -DFORCE_QT4=YES "$@" || exit
+	CC="${CC:-/usr/bin/gcc-4.0}" CXX="${CXX:-/usr/bin/g++-4.0}" cmake ../../.. -DFORCE_QT4=YES "$@" || exit
+	cmake ../../.. -DCMAKE_OSX_ARCHITECTURES="ppc;i386" -DCMAKE_OSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET -DCMAKE_OSX_SYSROOT=${SDK_10_4} -DCMAKE_BUILD_TYPE=Release -DFORCE_QT4=YES -DCMAKE_SKIP_RPATH=ON "$@" || exit
 else
-	CMAKE_PREFIX_PATH=$QT5PATH cmake ../../.. $@
-	CMAKE_PREFIX_PATH=$QT5PATH cmake ../../.. -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=10.7 -DCMAKE_OSX_SYSROOT=$SDK_10_7 -DCMAKE_BUILD_TYPE=Release $@
+	export MACOSX_DEPLOYMENT_TARGET=10.9
+	CMAKE_PREFIX_PATH=$QT5PATH cmake ../../.. "$@" || exit
+	CMAKE_PREFIX_PATH=$QT5PATH cmake ../../.. -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET -DCMAKE_OSX_SYSROOT=$SDK_10_9 -DCMAKE_BUILD_TYPE=Release "$@" || exit
 fi
-make -j $NUM_CPU_CORES
+make -j $NUM_CPU_CORES || exit
 ./doomseeker --version-json version.js
 plutil -convert xml1 version.js
 DISPLAYVERSION=`/usr/libexec/PlistBuddy -c Print:doomseeker:display-version version.js`
@@ -69,7 +72,7 @@ QTCORE_STRING=`otool -L build/doomseeker | grep QtCore.framework`
 QTPATH=`echo $QTCORE_STRING | sed 's,QtCore.framework.*,,'`
 
 QTNTPATH=$QTPATH
-if [ ! -z "$QT5PATH" ]
+if [ "$QT5PATH" ]
 then
 	QTPATH="$QT5PATH/lib/"
 fi
@@ -94,7 +97,7 @@ echo "Qt Plugins: $QTPLPATH"
 echo
 
 MODULES=`otool -L build/doomseeker | grep -o 'Qt[A-Za-z]\{1,\}.framework' | sed 's/.framework//'`
-if [ ! -z "$QT5PATH" ]
+if [ "$QT5PATH" ]
 then
 	# Few more modules used by cocoa plugin
 	MODULES="$MODULES QtDBus QtPrintSupport"
@@ -107,11 +110,12 @@ cp {build/,Doomseeker.app/Contents/Frameworks/}libwadseeker.dylib
 for i in $MODULES
 do
 	cp -a ${QTPATH}$i.framework Doomseeker.app/Contents/Frameworks/
-	rm -f `find Doomseeker.app/Contents/Frameworks/$i.framework -name *_debug*`
-	rm -rf `find Doomseeker.app/Contents/Frameworks/$i.framework -name Headers`
+	# Remove unneeded development files
+	find Doomseeker.app/Contents/Frameworks/$i.framework -name Headers -or -name '*_debug*' -or -name Current -or -name Resources | xargs rm -rf
 done
 cp -a {${QTPLPATH},Doomseeker.app/Contents/}plugins
-rm -f `find Doomseeker.app/Contents/plugins -name *_debug*`
+find Doomseeker.app/Contents -name '*.dSYM' | xargs rm -rf
+find Doomseeker.app/Contents/plugins -name '*_debug*' | xargs rm -rf
 cp -R {build/,Doomseeker.app/Contents/MacOS/}engines
 cp -R {build/,Doomseeker.app/Contents/MacOS/}translations
 cp {${QTPLPATH},Doomseeker.app/Contents/MacOS/}translations/qt_pl.qm
@@ -129,7 +133,10 @@ then
 	BINFILES=`find Doomseeker.app -type f -exec sh -c "file -I '{}' | grep -q 'octet-stream'" \; -print`
 	for i in $BINFILES
 	do
-		lipo -remove ppc64 -remove x86_64 $i -output $i
+		if lipo -info $i 2> /dev/null | grep -E '(ppc64|x86_64)' > /dev/null
+		then
+			lipo -remove ppc64 -remove x86_64 $i -output $i
+		fi
 	done
 fi
 
@@ -146,9 +153,9 @@ done
 RELINK_LIST="`ls Doomseeker.app/Contents/{MacOS/{doomseeker,engines/*.so},Frameworks/libwadseeker.dylib}` $QTPLUGINS_LIST"
 for i in $RELINK_LIST
 do
-	if [ "`otool -L $i | grep libwadseeker.dylib`" ]
+	if otool -L "$i" | grep -m 1 --only-matching '[/@].*libwadseeker.dylib' > /dev/null
 	then
-		install_name_tool -change `otool -L $i | grep -m 1 --only-matching '[/@].*libwadseeker.dylib'` @executable_path/../Frameworks/libwadseeker.dylib $i
+		install_name_tool -change `otool -L "$i" | grep -m 1 --only-matching '[/@].*libwadseeker.dylib'` @executable_path/../Frameworks/libwadseeker.dylib $i
 	fi
 done
 for i in $MODULES

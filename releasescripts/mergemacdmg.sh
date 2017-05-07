@@ -7,12 +7,12 @@ QT4=$1
 QT5=$2
 shift 2
 
-./makemacdmg.sh -DQT_QMAKE_EXECUTABLE="$QT4/bin/qmake" "$@"
+CC="${QT4_CC}" CXX="${QT4_CXX}" ./makemacdmg.sh -DQT_QMAKE_EXECUTABLE="$QT4/bin/qmake" "$@" || exit
 mkdir Qt4
 mv Doomseeker*.dmg Qt4/
 mv Doomseeker.app Qt4/
 
-QT5PATH="$QT5" ./makemacdmg.sh "$@"
+QT5PATH="$QT5" CC="${QT5_CC}" CXX="${QT5_CXX}" ./makemacdmg.sh "$@" || exit
 mkdir Qt5
 mv Doomseeker*.dmg Qt5/
 mv Doomseeker.app Qt5/
