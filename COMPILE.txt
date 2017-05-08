@@ -1,9 +1,11 @@
 Doomseeker has the following dependencies:
-* Qt - Version 4.5 or later, requires the QtCore, QtGui, and QtNetwork modules.
-* zlib
+* Qt - Version 4.5 or later (Qt5 recommended), requires the QtCore, QtGui, and QtNetwork modules.
+* Optionally zlib and libbz2
 
 You will also need CMake to generate the Makefile and/or project files.
 Supported compilers are GCC and MSVC.
+
+On Ubuntu the Qt packages required are qtbase5-dev, qtmultimedia5-dev, and qttools5-dev.
 
 Linux compilation instructions:
 
