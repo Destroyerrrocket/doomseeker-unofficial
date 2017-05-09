@@ -120,6 +120,7 @@
 	<file alias="flags/NLD">flags/NLD.png</file> <!-- Netherlands -->
 	<file alias="flags/NOR">flags/NOR.png</file> <!-- Norway -->
 	<file alias="flags/NZL">flags/NZL.png</file> <!-- New Zealand -->
+	<file alias="flags/PAK">flags/PAK.png</file> <!-- Pakistan -->
 	<file alias="flags/PAN">flags/PAN.png</file> <!-- Panama -->
 	<file alias="flags/PER">flags/PER.png</file> <!-- Peru -->
 	<file alias="flags/PHL">flags/PHL.png</file> <!-- Philippines -->
