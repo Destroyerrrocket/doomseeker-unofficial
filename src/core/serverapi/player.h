@@ -48,15 +48,15 @@ class MAIN_EXPORT Player
 		};
 
 		Player();
-		Player(const QString &name, unsigned short score, unsigned short ping,
+		Player(const QString &name, unsigned long score, unsigned long ping,
 			PlayerTeam team=TEAM_NONE, bool spectator=false, bool bot=false);
 		Player(const Player& other);
 		Player& operator=(const Player& other);
 		virtual ~Player();
 
 		const QString &name() const;
-		short score() const;
-		unsigned short ping() const;
+		long score() const;
+		unsigned long ping() const;
 		bool isSpectating() const;
 		bool isBot() const;
 		bool isTeamlessBot() const;

@@ -45,7 +45,8 @@ Player::Player()
 	d->team = TEAM_NONE;
 }
 
-Player::Player(const QString &name, unsigned short score, unsigned short ping, PlayerTeam team, bool spectator, bool bot)
+Player::Player(const QString &name, unsigned long score, unsigned long ping,
+	PlayerTeam team, bool spectator, bool bot)
 {
 	d->name = name;
 	d->score = score;
@@ -137,12 +138,12 @@ QString Player::nameFormatted() const
 	return Strings::colorizeString(ret);
 }
 
-unsigned short Player::ping() const
+unsigned long Player::ping() const
 {
 	return d->ping;
 }
 
-short Player::score() const
+long Player::score() const
 {
 	return d->score;
 }
