@@ -277,7 +277,9 @@ QDataStream &operator>>(QDataStream &stream, PlayerInfo &info)
 		player.name = Srb2::asciiOnly(reader.readRaw(22));
 
 		quint32 ip = 0x7f000001;
+		stream.setByteOrder(QDataStream::BigEndian);
 		stream >> ip;
+		stream.setByteOrder(QDataStream::LittleEndian);
 		player.address = QHostAddress(ip);
 
 		stream >> player.d.team;
@@ -337,6 +339,7 @@ Server::Response Srb2Server::readRequest(const QByteArray &data)
 	buffer.setData(data);
 	buffer.open(QIODevice::ReadOnly);
 	QDataStream stream(&buffer);
+	stream.setByteOrder(QDataStream::LittleEndian);
 
 	if (buffer.bytesAvailable() > 0 && d->header.isNull())
 	{
@@ -428,6 +431,12 @@ Server::Response Srb2Server::processPlayerInfo(const PlayerInfo &info)
 
 QByteArray Srb2Server::createSendRequest()
 {
+	// Reset header if it lingers from a previous refresh.
+	d->header.reset(NULL);
+	// Also reset the old information.
+	d->serverInfo.reset(NULL);
+	d->playerInfo.reset(NULL);
+
 	/*
 		References:
 		- https://wiki.srb2.org/wiki/SRB2_network_documentation
