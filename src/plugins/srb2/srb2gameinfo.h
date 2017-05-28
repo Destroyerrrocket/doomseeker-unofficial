@@ -53,7 +53,6 @@ public:
 		MouseLook,
 		/// When enabled is similar to sv_unblockplayers.
 		TailsPickup,
-		ForceSkin,
 		FriendlyFire,
 		RestrictSkinChange,
 		JoinNextRound,

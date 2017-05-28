@@ -32,8 +32,6 @@ QString Srb2GameInfo::commandFromFlag(Flag flag)
 		return "+allowexitlevel";
 	case AllowTeamChange:
 		return "+allowteamchange";
-	case ForceSkin:
-		return "+forceskin";
 	case FriendlyFire:
 		return "+friendlyfire";
 	case IngameWadDownloads:
@@ -79,8 +77,6 @@ QList<DMFlagsSection> Srb2GameInfo::dmFlags()
 		tr("Allow in-game WAD downloads"));
 	section << DMFlag("Players are non-solid and can be picked up", TailsPickup,
 		tr("Players are non-solid and can be picked up"));
-	section << DMFlag("Force server character (skin)", ForceSkin,
-		tr("Force server character (skin)"));
 	section << DMFlag("Friendly fire", FriendlyFire, tr("Friendly fire"));
 	section << DMFlag("Restrict skin change", RestrictSkinChange,
 		tr("Restrict skin change (game mode specific)"));
@@ -140,6 +136,7 @@ QList<GameCVar> Srb2GameInfo::limits(const GameMode &gameMode)
 	{
 		limits << GameCVar(tr("Flag auto-return time"), "+flagtime", 30);
 	}
+	limits << GameCVar(tr("Force server character (skin)"), "+forceskin", -1);
 	limits << GameCVar(tr("Respawn item time"), "+respawnitemtime", 30);
 	limits << GameCVar(tr("Intermission time"), "+inttime", 20);
 	limits << GameCVar(tr("Max ping"), "+maxping", 0);

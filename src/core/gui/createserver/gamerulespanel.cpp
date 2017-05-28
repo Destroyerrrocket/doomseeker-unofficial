@@ -28,6 +28,8 @@
 #include "serverapi/gamecreateparams.h"
 #include "serverapi/serverstructs.h"
 
+#include <climits>
+
 DClass<GameRulesPanel> : public Ui::GameRulesPanel
 {
 public:
@@ -265,7 +267,9 @@ void GameRulesPanel::setupLimitWidgets(const EnginePlugin *engine, const GameMod
 		QLabel* label = new QLabel(this);
 		label->setText(limit.name());
 		QSpinBox* spinBox = new QSpinBox(this);
-		spinBox->setMaximum(999999);
+		spinBox->setMaximum(INT_MAX);
+		spinBox->setMinimum(INT_MIN);
+		spinBox->setCorrectionMode(QAbstractSpinBox::CorrectToNearestValue);
 		spinBox->setValue(limit.value().toInt());
 
 		d->limitsLayout->addRow(label, spinBox);
