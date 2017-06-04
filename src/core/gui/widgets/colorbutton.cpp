@@ -59,6 +59,14 @@ void ColorButton::setColorHtml(const QString& colorHtml)
 	updateColor(newColor);
 }
 
+QSize ColorButton::sizeHint() const
+{
+	QSize size = QPushButton::sizeHint();
+	// 50 should be the smallest size before the Mac changes to ugly buttons
+	size.setWidth(50);
+	return size;
+}
+
 void ColorButton::thisClicked()
 {
 	QColor colorTmp = QColorDialog::getColor(QColor(color), parentWidget());

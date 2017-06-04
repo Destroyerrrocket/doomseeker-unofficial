@@ -47,6 +47,7 @@ class ColorButton : public QPushButton
 
 		void setColor(unsigned colorValue);
 		void setColorHtml(const QString& colorHtml);
+		QSize sizeHint() const;
 
 	signals:
 		void colorUpdated(QColor oldColor, const QColor& newColor);
