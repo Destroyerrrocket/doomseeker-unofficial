@@ -11,7 +11,16 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -28,7 +37,13 @@
    <item>
     <layout class="QFormLayout" name="formLayout">
      <property name="fieldGrowthPolicy">
-      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+     </property>
+     <property name="labelAlignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="formAlignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
      </property>
      <item row="0" column="0">
       <widget class="QLabel" name="label_2">
@@ -38,11 +53,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="ColorButton" name="btnNoticeMessageColor">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
+      <widget class="ColorButton" name="btnNoticeMessageColor"/>
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_3">
@@ -52,11 +63,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="ColorButton" name="btnErrorMessageColor">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
+      <widget class="ColorButton" name="btnErrorMessageColor"/>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_4">
@@ -66,11 +73,7 @@
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="ColorButton" name="btnCriticalErrorMessageColor">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
+      <widget class="ColorButton" name="btnCriticalErrorMessageColor"/>
      </item>
     </layout>
    </item>

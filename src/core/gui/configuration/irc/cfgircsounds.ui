@@ -69,7 +69,7 @@
         <widget class="QPushButton" name="btnBrowseNicknameUsed">
          <property name="maximumSize">
           <size>
-           <width>40</width>
+           <width>64</width>
            <height>16777215</height>
           </size>
          </property>
@@ -121,7 +121,7 @@
         <widget class="QPushButton" name="btnBrowsePrivateMessage">
          <property name="maximumSize">
           <size>
-           <width>40</width>
+           <width>64</width>
            <height>16777215</height>
           </size>
          </property>

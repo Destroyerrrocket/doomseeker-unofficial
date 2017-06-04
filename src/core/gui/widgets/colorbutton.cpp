@@ -23,11 +23,14 @@
 #include "colorbutton.h"
 #include <QColorDialog>
 
+#define UTF8_FULL_BLOCK "\xE2\x96\x88"
+
 ColorButton::ColorButton(QWidget* parent)
-: QPushButton(parent)
+: QPushButton(QString::fromUtf8(UTF8_FULL_BLOCK UTF8_FULL_BLOCK), parent)
 {
 	connect( this, SIGNAL( clicked() ), this, SLOT( thisClicked() ) );
 
+	setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
 	color.setNamedColor("#ffffff");
 	updateAppearance();
 }
@@ -68,7 +71,7 @@ void ColorButton::thisClicked()
 
 void ColorButton::updateAppearance()
 {
-	static const QString COLOR_STYLE = "QPushButton { background-color : %1; }";
+	static const QString COLOR_STYLE = "QPushButton { color : %1; }";
 
 	QString styleSheet = COLOR_STYLE.arg(color.name());
 	setStyleSheet(styleSheet);

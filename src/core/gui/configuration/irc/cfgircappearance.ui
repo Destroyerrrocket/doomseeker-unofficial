@@ -6,18 +6,30 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>386</height>
+    <width>413</width>
+    <height>470</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
     <layout class="QFormLayout" name="formLayout">
      <property name="fieldGrowthPolicy">
       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
+     <property name="formAlignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
      </property>
      <item row="0" column="0">
       <widget class="QLabel" name="label">
@@ -28,8 +40,11 @@
      </item>
      <item row="0" column="1">
       <widget class="ColorButton" name="btnDefaultTextColor">
-       <property name="text">
-        <string/>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
       </widget>
      </item>
@@ -42,8 +57,11 @@
      </item>
      <item row="1" column="1">
       <widget class="ColorButton" name="btnChannelActionColor">
-       <property name="text">
-        <string/>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
       </widget>
      </item>
@@ -56,8 +74,11 @@
      </item>
      <item row="2" column="1">
       <widget class="ColorButton" name="btnNetworkActionColor">
-       <property name="text">
-        <string/>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
       </widget>
      </item>
@@ -70,8 +91,11 @@
      </item>
      <item row="3" column="1">
       <widget class="ColorButton" name="btnCtcpColor">
-       <property name="text">
-        <string/>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
       </widget>
      </item>
@@ -87,8 +111,11 @@
      </item>
      <item row="4" column="1">
       <widget class="ColorButton" name="btnErrorColor">
-       <property name="text">
-        <string/>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
       </widget>
      </item>
@@ -101,8 +128,11 @@
      </item>
      <item row="5" column="1">
       <widget class="ColorButton" name="btnBackgroundColor">
-       <property name="text">
-        <string/>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
       </widget>
      </item>
@@ -115,8 +145,11 @@
      </item>
      <item row="6" column="1">
       <widget class="ColorButton" name="btnUrlColor">
-       <property name="text">
-        <string/>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
       </widget>
      </item>
@@ -128,7 +161,14 @@
       </widget>
      </item>
      <item row="7" column="1">
-      <widget class="FontButton" name="btnMainFont"/>
+      <widget class="FontButton" name="btnMainFont">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -145,6 +185,9 @@
       <string>User list</string>
      </property>
      <layout class="QFormLayout" name="formLayout_2">
+      <property name="formAlignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="label_7">
         <property name="text">
@@ -153,7 +196,14 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="FontButton" name="btnUserListFont"/>
+       <widget class="FontButton" name="btnUserListFont">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_10">
@@ -164,8 +214,11 @@
       </item>
       <item row="1" column="1">
        <widget class="ColorButton" name="btnUserListSelectedTextColor">
-        <property name="text">
-         <string/>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
        </widget>
       </item>
@@ -178,8 +231,11 @@
       </item>
       <item row="2" column="1">
        <widget class="ColorButton" name="btnUserListSelectedBackgroundColor">
-        <property name="text">
-         <string/>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
        </widget>
       </item>
