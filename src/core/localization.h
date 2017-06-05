@@ -41,7 +41,9 @@ class Localization
 		class LocalizationLoader;
 
 		static QList<QTranslator*> currentlyLoadedTranslations;
-		static QTranslator* loadTranslationFile(const QString& localeName, const QStringList& searchPaths);
+		static void installQtTranslations(const QString &localeName, QStringList searchPaths);
+		static bool installTranslation(const QString &translationName, const QStringList &searchPaths);
+		static QTranslator* loadTranslationFile(const QString& translationName, const QStringList& searchPaths);
 };
 
 #endif

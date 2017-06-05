@@ -3,7 +3,8 @@
     "files" : [
         "translations/translations.def",
         "translations/pl_PL.qm",
-        "translations/qt_pl.qm",
+        "translations/qtbase_pl.qm",
+        "translations/qtmultimedia_pl.qm",
         "LICENSE.txt",
         "doomseeker-portable.bat",
         "msvcp120.dll",

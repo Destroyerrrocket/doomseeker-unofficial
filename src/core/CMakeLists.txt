@@ -156,7 +156,8 @@ if (WIN32 AND Qt5Widgets_FOUND)
 		OUTPUT_STRIP_TRAILING_WHITESPACE)
 	set(QM_FILES
 		${QM_FILES}
-		${QT_TRANSLATIONS_DIR}/qt_pl.qm)
+		${QT_TRANSLATIONS_DIR}/qtbase_pl.qm
+		${QT_TRANSLATIONS_DIR}/qtmultimedia_pl.qm)
 endif ()
 
 # windows.rc
