@@ -24,7 +24,11 @@ CFGIRCSounds::CFGIRCSounds(QWidget* parent)
 	d->lblNicknameUsedWarning->hide();
 	d->lblPrivateMessageWarning->hide();
 
+	this->connect(d->cbNicknameUsed, SIGNAL(toggled(bool)),
+		SIGNAL(validationRequested()));
 	this->connect(d->leNicknameUsed, SIGNAL(editingFinished()),
+		SIGNAL(validationRequested()));
+	this->connect(d->cbPrivateMessage, SIGNAL(toggled(bool)),
 		SIGNAL(validationRequested()));
 	this->connect(d->lePrivateMessage, SIGNAL(editingFinished()),
 		SIGNAL(validationRequested()));
@@ -100,15 +104,22 @@ void CFGIRCSounds::setPath(QLineEdit* pLineEdit, const QString& path)
 
 ConfigPage::Validation CFGIRCSounds::validate()
 {
-	QString nicknameUsedError = validateFilePath(d->leNicknameUsed->text().trimmed());
+	bool error = false;
+	QString nicknameUsedError;
+	if (d->cbNicknameUsed->isChecked())
+		nicknameUsedError = validateFilePath(d->leNicknameUsed->text().trimmed());
 	d->lblNicknameUsedWarning->setVisible(!nicknameUsedError.isEmpty());
 	d->lblNicknameUsedWarning->setToolTip(nicknameUsedError);
+	error = error || !nicknameUsedError.isEmpty();
 
-	QString privateMessageError = validateFilePath(d->lePrivateMessage->text().trimmed());
+	QString privateMessageError;
+	if (d->cbPrivateMessage->isChecked())
+		privateMessageError = validateFilePath(d->lePrivateMessage->text().trimmed());
 	d->lblPrivateMessageWarning->setVisible(!privateMessageError.isEmpty());
 	d->lblPrivateMessageWarning->setToolTip(privateMessageError);
+	error = error || !privateMessageError.isEmpty();
 
-	return nicknameUsedError.isEmpty() && privateMessageError.isEmpty() ? VALIDATION_OK : VALIDATION_ERROR;
+	return !error ? VALIDATION_OK : VALIDATION_ERROR;
 }
 
 QString CFGIRCSounds::validateFilePath(const QString &path) const
