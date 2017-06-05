@@ -6,7 +6,7 @@ Visit this file cleanly formatted in repository:
 This file follows recommendations in accordance to:
 <http://keepachangelog.com/>
 
-## [Development][development]
+## [1.1] - 2017-06-05
 ### Added
 - Provide more information in game status widgets (bottom-right corner).
 Humans and bots are now counted separately and together, refresh progress
@@ -118,6 +118,9 @@ have been programmed to report validation errors.
     - "Aggressive" query preset: attempts reduced to 2 (from 3) and interval
       between servers reduced to 5 ms (from 10).
     - Made "Aggressive" query mode the default one for new configs.
+- Changed appearance of color buttons to mesh better with OS X.
+The altered look affects all OSes.
+- Also for OS X purposes, minimally altered the sizes of "browse" buttons.
 - Chocolate Doom: Don't show max players/clients and map list
 widgets in Create Game box.
 - Vavoom: plugin deprecated, discontinued and blacklisted by Doomseeker.
@@ -176,4 +179,5 @@ archives. Fixes extraction of e1m4b.wad and e1m8b.wad. Thanks, John Romero!
 - Version 1.0 released. No changelog was kept before.
 
 [development]: https://bitbucket.org/Doomseeker/doomseeker/commits/all
+[1.1]: https://bitbucket.org/Doomseeker/doomseeker/commits/tag/1.1
 [1.0]: https://bitbucket.org/Doomseeker/doomseeker/commits/tag/1.0
