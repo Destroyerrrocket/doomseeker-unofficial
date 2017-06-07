@@ -39,7 +39,7 @@
 #include "svnrevision.h"
 
 // Info used by version.cpp
-#define VERSION_STRING "1.1~beta"
+#define VERSION_STRING "1.1"
 
 // Info used by windows.rc
 #define FILEVERSION_DEF 1,1,0,SVN_REVISION_NUMBER
