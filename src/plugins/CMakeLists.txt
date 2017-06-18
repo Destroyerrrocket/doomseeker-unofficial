@@ -2,6 +2,7 @@ add_subdirectory(chocolate-doom)
 add_subdirectory(odamex)
 add_subdirectory(srb2)
 add_subdirectory(zandronum)
+add_subdirectory(turok2ex)
 
 # For unmaintained source ports
 option(BUILD_LEGACY_PLUGINS "Build plugins for discontinued source ports." OFF)

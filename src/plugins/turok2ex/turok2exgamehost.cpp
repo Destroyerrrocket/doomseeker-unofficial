@@ -1,0 +1,60 @@
+//------------------------------------------------------------------------------
+// Turok2Exgamehost.cpp
+//------------------------------------------------------------------------------
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+// 02110-1301, USA.
+//
+//------------------------------------------------------------------------------
+// Copyright (C) 2017 "Edward Richardson" <Edward850@crantime.org>
+//------------------------------------------------------------------------------
+#include "turok2exgamehost.h"
+
+#include <serverapi/gamecreateparams.h>
+#include <serverapi/serverstructs.h>
+#include "turok2exengineplugin.h"
+
+Turok2ExGameHost::Turok2ExGameHost()
+: GameHost(Turok2ExEnginePlugin::staticInstance())
+{
+}
+
+void Turok2ExGameHost::addExtra()
+{
+	const QStringList& mapsList = params().mapList();
+	if (!mapsList.isEmpty())
+	{
+		args() << "+sv_maprotation" << mapsList.join(';');
+	}
+	args() << "+shufflemaplist" << QString::number( static_cast<int>(params().isRandomMapRotation()) );
+
+	unsigned int modeNum = params().gameMode().index();;
+	args() << "+sv_gamemode" << QString::number(modeNum);
+
+	if (!params().map().isEmpty())
+	{
+		args() << "+sv_map" << params().map();
+	}
+
+	args() << "+sv_email" << params().email();
+	args() << "+sv_directservername" << params().name();
+	args() << "+sv_maxplayers" << QString::number(params().maxPlayers());
+	args() << "+sv_website" << params().url();
+
+	QString motd = params().motd();
+	args() << "+sv_motd" << motd.replace("\n", "\\n");
+
+	args() << "+sv_broadcast" << QString::number(static_cast<int>( params().isBroadcastToMaster() ));
+}
