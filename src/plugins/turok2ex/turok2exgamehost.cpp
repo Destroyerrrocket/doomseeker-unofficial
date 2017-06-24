@@ -29,6 +29,8 @@
 Turok2ExGameHost::Turok2ExGameHost()
 : GameHost(Turok2ExEnginePlugin::staticInstance())
 {
+	set_addIwad(&Turok2ExGameHost::addIwad);
+	set_addPwads(&Turok2ExGameHost::addPwads_prefixOnce);
 }
 
 void Turok2ExGameHost::addExtra()
@@ -57,4 +59,9 @@ void Turok2ExGameHost::addExtra()
 	args() << "+sv_motd" << motd.replace("\n", "\\n");
 
 	args() << "+sv_broadcast" << QString::number(static_cast<int>( params().isBroadcastToMaster() ));
+}
+
+void Turok2ExGameHost::addIwad()
+{
+	//nada
 }

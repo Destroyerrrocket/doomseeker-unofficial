@@ -142,11 +142,6 @@ Server::Response Turok2ExServer::readRequest(const QByteArray &data)
 	CHECK_POS QString KPFkey = readString(in);
 	CHECK_POS QString modlist = readString(in);
 
-	if(version != "1.5.5")
-	{
-		return RESPONSE_BAD;
-	}
-
 	setGameVersion(version);
 	setName(name);
 	setMaxPlayers(maxPlayers);
