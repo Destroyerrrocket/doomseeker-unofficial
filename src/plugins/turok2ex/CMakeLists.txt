@@ -40,5 +40,6 @@ include(../Translation.txt)
 
 add_library(${PLUGIN_NAME} MODULE ${TUROK2EX_FILES} ${HEADER_FILES} ${QM_FILES})
 target_link_libraries(${PLUGIN_NAME} ${PLUGIN_LIBS})
+set_property(TARGET ${PLUGIN_NAME} PROPERTY CXX_STANDARD 11)
 
 include(../PluginFooter.txt)
