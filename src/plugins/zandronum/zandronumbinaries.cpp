@@ -410,7 +410,7 @@ bool ZandronumClientExeFile::spawnTestingBatchFile(const QString& versionDir, QS
 	#ifdef Q_OS_MAC
 	content += "\"" + binaryPath + ZANDRONUM_APP_BUNDLE_BIN "\" $*";
 	#else
-	content += "\"" + binaryPath + "\" $*"; // $* deals with all the parameters
+	content += "\"" + binaryPath + "\" \"$@\"\n"; // "$@" deals with all the parameters
 	#endif
 	#endif
 
