@@ -84,6 +84,9 @@ StandardServerConsole::~StandardServerConsole()
 	}
 #endif
 
+	process->disconnect(this);
+	process->terminate();
+	process->waitForFinished(1000);
 	process->close();
 	process->waitForFinished();
 	delete process;
