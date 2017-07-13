@@ -230,6 +230,10 @@ packages_output_dir = File.join(output_dir, PACKAGE_PLATFORM, target_channel)
 successes = []
 failures = []
 versions.each do |pkg_name, version_data|
+    if pkg_name == "doomseeker"
+        $stderr.puts "==== Skipping: #{pkg_name}"
+        next
+    end
     begin
         $stderr.puts "==== Now processing: #{pkg_name}"
         process_package(pkg_name, target_channel, version_data, binary_dir, packages_output_dir)

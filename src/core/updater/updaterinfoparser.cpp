@@ -34,8 +34,7 @@ DClass<UpdaterInfoParser>
 
 		bool hasMainProgramName(const QVariantMap &metaData) const
 		{
-			return metaData.contains(AutoUpdater::MAIN_PROGRAM_PACKAGE_NAME)
-				|| metaData.contains(AutoUpdater::FALLBACK_MAIN_PROGRAM_PACKAGE_NAME);
+			return metaData.contains(AutoUpdater::MAIN_PROGRAM_PACKAGE_NAME);
 		}
 };
 

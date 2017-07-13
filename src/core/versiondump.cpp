@@ -65,8 +65,8 @@ void VersionDump::dumpJsonToIO(QIODevice& io)
 	QVariantMap root;
 	Module doomseeker(Version::name(), QString::number(Version::revisionNumber()),
 		Version::versionRevision());
-	// TODO Remove "doomseeker" on next stable release.
-	root["doomseeker"] = doomseeker.toVariantMap();
+	// "doomseeker" is legacy package and hardcoded to download version 1.1.
+	root["doomseeker"] = Module("Doomseeker", "1496802976", "1.1-170607-0236").toVariantMap();
 	root["doomseeker-core"] = doomseeker.toVariantMap();
 	root["wadseeker"] = Module("Wadseeker", WadseekerVersionInfo::version(),
 		WadseekerVersionInfo::version()).toVariantMap();
