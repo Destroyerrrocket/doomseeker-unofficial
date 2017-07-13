@@ -169,7 +169,6 @@ bool FlagsPage::loadConfig(Ini& ini)
 
 	FlagsId flagsId(this);
 	flagsId.load(section);
-	applyWidgetsChange();
 
 	IniVariable varKillMonstersPercentage = section["killmonsters_percentage"];
 	if (!varKillMonstersPercentage.value().isNull())
@@ -198,7 +197,9 @@ bool FlagsPage::loadConfig(Ini& ini)
 
 	cbDefaultDmflags->setChecked((bool)section["defaultdmflags"]);
 
-	return votingPage->loadConfig(ini);
+	bool loaded = votingPage->loadConfig(ini);
+	applyWidgetsChange();
+	return loaded;
 }
 
 void FlagsPage::propagateFlagsInputsChanges()
