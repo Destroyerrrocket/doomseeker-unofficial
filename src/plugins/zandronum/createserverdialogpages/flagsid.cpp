@@ -198,6 +198,7 @@ void FlagsId::assign()
 	f->cbNoTurnOffTranslucency->setProperty("flagname", NO_TURN_OFF_TRANSLUCENCY);
 	f->cbShareKeys->setProperty("flagname", SHARE_KEYS);
 	f->cbSurvivalNoMapResetOnDeath->setProperty("flagname", SURVIVAL_NO_MAP_RESET_ON_DEATH);
+	f->cbDeadPlayersCanKeepInventory->setProperty("flagname", DEAD_PLAYERS_CAN_KEEP_INVENTORY);
 	f->cbLMSChainsaw->setProperty("flagname", LMSCHAINSAW);
 	f->cbLMSPistol->setProperty("flagname", LMSPISTOL);
 	f->cbLMSShotgun->setProperty("flagname", LMSSHOTGUN);

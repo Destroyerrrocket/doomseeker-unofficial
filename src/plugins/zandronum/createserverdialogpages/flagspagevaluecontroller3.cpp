@@ -357,6 +357,8 @@ FlagsPageValueController::FlagsPageValueController(FlagsPage* flagsPage)
 			f->cbShareKeys);
 		m.insert(Dmflags::ZADF_SURVIVAL_NO_MAP_RESET_ON_DEATH,
 			f->cbSurvivalNoMapResetOnDeath);
+		m.insert(Dmflags::ZADF_DEAD_PLAYERS_CAN_KEEP_INVENTORY,
+			f->cbDeadPlayersCanKeepInventory);
 	}
 
 	// LMSAllowedWeapons
@@ -689,6 +691,7 @@ void FlagsPageValueController::setVisible(bool visible)
 	flagsPage->cbCompatMaskedMidtex->setVisible(visible);
 	flagsPage->cbNoItemDrop->setVisible(visible);
 	flagsPage->cbSurvivalNoMapResetOnDeath->setVisible(visible);
+	flagsPage->cbDeadPlayersCanKeepInventory->setVisible(visible);
 	foreach (QWidget *checkbox, compatflags2Checkboxes.values())
 		checkbox->setVisible(visible);
 }

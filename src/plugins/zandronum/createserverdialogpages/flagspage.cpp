@@ -55,6 +55,10 @@ FlagsPage::FlagsPage(CreateServerDialog* pParentDialog)
 	setupUi(this);
 
 	d = new PrivData();
+
+	setTabOrder(tabWidget, votingPage);
+	setTabOrder(votingPage, leDmflags);
+
 	FlagsId flagsId(this);
 	flagsId.assign();
 
@@ -68,6 +72,10 @@ FlagsPage::FlagsPage(CreateServerDialog* pParentDialog)
 	leZandronumCompatflags->setValidator(&d->validator);
 	leLMSAllowedWeapons->setValidator(&d->validator);
 	leLMSSpectatorSettings->setValidator(&d->validator);
+
+	// Version-specific widgets should all be invisible at this stage.
+	Zandronum2::FlagsPageValueController(this).setVisible(false);
+	Zandronum3::FlagsPageValueController(this).setVisible(false);
 
 	// Init values for widgets.
 	cboGameVersion->addItem(tr("Zandronum 2"), ZandronumGameInfo::GV_Zandronum2);

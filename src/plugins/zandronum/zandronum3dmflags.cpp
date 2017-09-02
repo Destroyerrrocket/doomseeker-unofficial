@@ -337,6 +337,8 @@ DMFlagsSection Dmflags::zandronumDmflags()
 		tr("No dropping allowed"));
 	section << DMFlag("No map reset on death in survival", ZADF_SURVIVAL_NO_MAP_RESET_ON_DEATH,
 		tr("No map reset on death in survival"));
+	section << DMFlag("Dead players can keep inventory", ZADF_DEAD_PLAYERS_CAN_KEEP_INVENTORY,
+		tr("Dead players can keep inventory"));
 	return section;
 }
 

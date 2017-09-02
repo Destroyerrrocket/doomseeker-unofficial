@@ -865,6 +865,16 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QCheckBox" name="cbDeadPlayersCanKeepInventory">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Affects game modes where &amp;quot;max. lives&amp;quot; can be used. If set, players who become dead spectators (run out of lives) will still keep inventory in accordance to the &amp;quot;Lose *&amp;quot; flags above. If unset, players who lose all lives will always lose entire inventory.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Players who lose all lives can keep inventory</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>
@@ -1933,9 +1943,8 @@ p, li { white-space: pre-wrap; }
  </customwidgets>
  <tabstops>
   <tabstop>tabWidget</tabstop>
-  <tabstop>leDmflags</tabstop>
-  <tabstop>leDmflags2</tabstop>
-  <tabstop>leZandronumCompatflags</tabstop>
+  <tabstop>cboGameVersion</tabstop>
+  <tabstop>cbDefaultDmflags</tabstop>
   <tabstop>cboFallingDamage</tabstop>
   <tabstop>cbNoMonsters</tabstop>
   <tabstop>cbItemsRespawn</tabstop>
@@ -1947,10 +1956,25 @@ p, li { white-space: pre-wrap; }
   <tabstop>cbHideAlliesOnTheAutomap</tabstop>
   <tabstop>cbDontLetPlayersSpyOnAllies</tabstop>
   <tabstop>cbInstantFlagSkullReturn</tabstop>
+  <tabstop>cbNoUnlagged</tabstop>
+  <tabstop>cbNoMedals</tabstop>
+  <tabstop>cbAlwaysApplyLMSSpectatorSettings</tabstop>
+  <tabstop>cbNoSuicide</tabstop>
+  <tabstop>cbNoRespawn</tabstop>
+  <tabstop>cbNoItemDrop</tabstop>
+  <tabstop>cbNoRocketJump</tabstop>
+  <tabstop>cbNoTaunt</tabstop>
+  <tabstop>cbNoUseAutomap</tabstop>
+  <tabstop>cbNoUseCustomGLLightingSettings</tabstop>
+  <tabstop>cbNoUseCrosshairs</tabstop>
+  <tabstop>cbNoTurnOffTranslucency</tabstop>
+  <tabstop>cbNoTargetIdentify</tabstop>
+  <tabstop>cbNoDisplayCoopInfo</tabstop>
   <tabstop>cbNoUseAutoaim</tabstop>
   <tabstop>cbNoUseFOV</tabstop>
   <tabstop>cbNoUseFreelook</tabstop>
   <tabstop>cbNoUseLandConsoleCommand</tabstop>
+  <tabstop>cbNoMaxBloodScalar</tabstop>
   <tabstop>cboJumping</tabstop>
   <tabstop>cboCrouching</tabstop>
   <tabstop>cbInfiniteInventory</tabstop>
@@ -1959,12 +1983,19 @@ p, li { white-space: pre-wrap; }
   <tabstop>cbCanUseChasecam</tabstop>
   <tabstop>cbAllowBFGFreeaiming</tabstop>
   <tabstop>rbPlayersCanWalkThroughEachOther</tabstop>
+  <tabstop>rbAlliesCanWalkThroughEachOther</tabstop>
+  <tabstop>rbPlayersBlockEachOtherNormally</tabstop>
+  <tabstop>cbDontCheckAmmoWhenSwitchingWeapons</tabstop>
+  <tabstop>spinForceInactivePlayersSpectatingMins</tabstop>
   <tabstop>cbScoreDamageNotKills</tabstop>
   <tabstop>cbDontSpawnDeathmatchWeapons</tabstop>
+  <tabstop>cbDontSpawnAnyMultiplayerItem</tabstop>
   <tabstop>cbMonstersAreFast</tabstop>
   <tabstop>cbMonstersRespawn</tabstop>
   <tabstop>cbMonstersMustBeKilledToExit</tabstop>
   <tabstop>spinMonsterKillPercentage</tabstop>
+  <tabstop>spinMonstersDamageFactor</tabstop>
+  <tabstop>cbKillBossMonsters</tabstop>
   <tabstop>cbRespawnWhereDied</tabstop>
   <tabstop>cbLoseAllInventory</tabstop>
   <tabstop>cbLoseArmor</tabstop>
@@ -1973,6 +2004,9 @@ p, li { white-space: pre-wrap; }
   <tabstop>cbLoseWeapons</tabstop>
   <tabstop>cbLoseAllAmmo</tabstop>
   <tabstop>cbLoseHalfAmmo</tabstop>
+  <tabstop>cbDeadPlayersCanKeepInventory</tabstop>
+  <tabstop>cbShareKeys</tabstop>
+  <tabstop>cbSurvivalNoMapResetOnDeath</tabstop>
   <tabstop>cbRespawnAutomatically</tabstop>
   <tabstop>cbRespawnFarthestAwayFromOthers</tabstop>
   <tabstop>cbRespawnWithAShotgun</tabstop>
@@ -1998,23 +2032,10 @@ p, li { white-space: pre-wrap; }
   <tabstop>cbLMSGrenadeLauncher</tabstop>
   <tabstop>cbLMSPlasmaRifle</tabstop>
   <tabstop>cbLMSRailgun</tabstop>
-  <tabstop>cbLMSSpectatorsCanTalkToActivePlayers</tabstop>
-  <tabstop>cbLMSSpectatorsCanViewTheGame</tabstop>
   <tabstop>leLMSAllowedWeapons</tabstop>
   <tabstop>leLMSSpectatorSettings</tabstop>
-  <tabstop>cbNoSuicide</tabstop>
-  <tabstop>cbNoRespawn</tabstop>
-  <tabstop>cbNoRocketJump</tabstop>
-  <tabstop>cbNoTaunt</tabstop>
-  <tabstop>cbNoUseAutomap</tabstop>
-  <tabstop>cbNoUseCrosshairs</tabstop>
-  <tabstop>cbNoUseCustomGLLightingSettings</tabstop>
-  <tabstop>cbNoTurnOffTranslucency</tabstop>
-  <tabstop>spinForceInactivePlayersSpectatingMins</tabstop>
-  <tabstop>cbNoTargetIdentify</tabstop>
-  <tabstop>cbNoDisplayCoopInfo</tabstop>
-  <tabstop>cbDontSpawnAnyMultiplayerItem</tabstop>
-  <tabstop>spinMonstersDamageFactor</tabstop>
+  <tabstop>cbLMSSpectatorsCanTalkToActivePlayers</tabstop>
+  <tabstop>cbLMSSpectatorsCanViewTheGame</tabstop>
   <tabstop>cbCompatEnableWallRunning</tabstop>
   <tabstop>cbCompatDontLetOthersHearPickups</tabstop>
   <tabstop>cbCompatAllowInstantRespawn</tabstop>
@@ -2043,6 +2064,20 @@ p, li { white-space: pre-wrap; }
   <tabstop>cbCompatSpriteSortOrderInverted</tabstop>
   <tabstop>cbCompatHitscansOriginalBlockmap</tabstop>
   <tabstop>cbCompatDrawPolyobjectsOld</tabstop>
+  <tabstop>cbCompatUseOriginalMissileClippingHeight</tabstop>
+  <tabstop>cbCompatUseSectorBasedSoundTargetCode</tabstop>
+  <tabstop>cbCompatTraceIgnoreLinesWithoutSameSectorOnBothSides</tabstop>
+  <tabstop>cbCompatLimitDehMaxHealthToHealthBonus</tabstop>
+  <tabstop>cbCompatRavensScrollersUseOriginalSpeed</tabstop>
+  <tabstop>cbCompatAddNOGRAVITYFlagToSpheres</tabstop>
+  <tabstop>cbDontStopPlayerScriptsOnDisconnect</tabstop>
+  <tabstop>cbOldZDoomHorizontalThrust</tabstop>
+  <tabstop>cbOldZDoomBridgeDrops</tabstop>
+  <tabstop>cbOldZDoomJumpPhysics</tabstop>
+  <tabstop>cbCompatUseVanillaAutoaimTracerBehavior</tabstop>
+  <tabstop>cbCompatMaskedMidtex</tabstop>
+  <tabstop>cbCompatBadAngles</tabstop>
+  <tabstop>cbCompatFindShortestTexturesLikeDoom</tabstop>
   <tabstop>cbCompatLimitPainElementals</tabstop>
   <tabstop>cbCompatSpawnItemDropsOnTheFloor</tabstop>
   <tabstop>cbCompatNETScriptsAreClientside</tabstop>
@@ -2051,29 +2086,16 @@ p, li { white-space: pre-wrap; }
   <tabstop>cbCompatDisableBoomDoorLightEffect</tabstop>
   <tabstop>cbCompatAllSpecialLinesCanDropUseLines</tabstop>
   <tabstop>cbCompatOriginalSoundCurve</tabstop>
-  <tabstop>cbNoUnlagged</tabstop>
-  <tabstop>cbAlwaysApplyLMSSpectatorSettings</tabstop>
-  <tabstop>cbNoMedals</tabstop>
-  <tabstop>cbNoMaxBloodScalar</tabstop>
-  <tabstop>cbDontCheckAmmoWhenSwitchingWeapons</tabstop>
-  <tabstop>cbKillBossMonsters</tabstop>
-  <tabstop>cbShareKeys</tabstop>
-  <tabstop>cbOldZDoomJumpPhysics</tabstop>
   <tabstop>cbCompatFullWeaponLower</tabstop>
-  <tabstop>leZandronumDmflags</tabstop>
+  <tabstop>cbCompatWestSpawnsAreSilent</tabstop>
+  <tabstop>cbCompatFloorMove</tabstop>
+  <tabstop>votingPage</tabstop>
+  <tabstop>leDmflags</tabstop>
+  <tabstop>leDmflags2</tabstop>
   <tabstop>leCompatflags</tabstop>
-  <tabstop>rbAlliesCanWalkThroughEachOther</tabstop>
-  <tabstop>rbPlayersBlockEachOtherNormally</tabstop>
-  <tabstop>cbCompatUseSectorBasedSoundTargetCode</tabstop>
-  <tabstop>cbCompatAddNOGRAVITYFlagToSpheres</tabstop>
-  <tabstop>cbDontStopPlayerScriptsOnDisconnect</tabstop>
-  <tabstop>cbCompatTraceIgnoreLinesWithoutSameSectorOnBothSides</tabstop>
-  <tabstop>cbCompatLimitDehMaxHealthToHealthBonus</tabstop>
-  <tabstop>cbCompatRavensScrollersUseOriginalSpeed</tabstop>
-  <tabstop>cbOldZDoomHorizontalThrust</tabstop>
-  <tabstop>cbOldZDoomBridgeDrops</tabstop>
-  <tabstop>cbCompatUseOriginalMissileClippingHeight</tabstop>
-  <tabstop>cbCompatFindShortestTexturesLikeDoom</tabstop>
+  <tabstop>leCompatflags2</tabstop>
+  <tabstop>leZandronumDmflags</tabstop>
+  <tabstop>leZandronumCompatflags</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -2788,8 +2810,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>598</x>
-     <y>87</y>
+     <x>819</x>
+     <y>84</y>
     </hint>
     <hint type="destinationlabel">
      <x>586</x>
@@ -2804,8 +2826,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>598</x>
-     <y>117</y>
+     <x>819</x>
+     <y>111</y>
     </hint>
     <hint type="destinationlabel">
      <x>586</x>
@@ -2820,8 +2842,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>598</x>
-     <y>147</y>
+     <x>819</x>
+     <y>138</y>
     </hint>
     <hint type="destinationlabel">
      <x>586</x>
@@ -2836,8 +2858,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>598</x>
-     <y>177</y>
+     <x>819</x>
+     <y>165</y>
     </hint>
     <hint type="destinationlabel">
      <x>586</x>
@@ -2852,8 +2874,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>598</x>
-     <y>207</y>
+     <x>819</x>
+     <y>192</y>
     </hint>
     <hint type="destinationlabel">
      <x>586</x>
@@ -2868,8 +2890,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>598</x>
-     <y>237</y>
+     <x>819</x>
+     <y>219</y>
     </hint>
     <hint type="destinationlabel">
      <x>586</x>
@@ -2884,8 +2906,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>598</x>
-     <y>267</y>
+     <x>819</x>
+     <y>246</y>
     </hint>
     <hint type="destinationlabel">
      <x>586</x>
@@ -2900,8 +2922,8 @@ p, li { white-space: pre-wrap; }
    <slot>applyWidgetsChange()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>598</x>
-     <y>297</y>
+     <x>819</x>
+     <y>273</y>
     </hint>
     <hint type="destinationlabel">
      <x>586</x>
@@ -4442,6 +4464,22 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>0</x>
      <y>360</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbDeadPlayersCanKeepInventory</sender>
+   <signal>clicked()</signal>
+   <receiver>FlagsPage</receiver>
+   <slot>applyWidgetsChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>664</x>
+     <y>290</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>845</x>
+     <y>291</y>
     </hint>
    </hints>
   </connection>
