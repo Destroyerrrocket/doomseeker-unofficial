@@ -1,13 +1,12 @@
-cmake_minimum_required(VERSION 2.4.4)
+cmake_minimum_required(VERSION 2.8.12)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 
 project(zlib C)
 
 set(VERSION "1.2.7")
 
-if(NOT DEFINED BUILD_SHARED_LIBS)
-    option(BUILD_SHARED_LIBS "Build a shared library form of zlib" OFF)
-endif()
+# [Doomseeker] For our purposes this is here for statically linking
+set(BUILD_SHARED_LIBS OFF)
 
 set(ZLIBNAME z)
 
@@ -60,11 +59,10 @@ if(MSVC)
     set(CMAKE_DEBUG_POSTFIX "d")
     add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
     add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 if( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
 	set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
-endif( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
+endif()
 
 #if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
 #    # If we're doing an out of source build and the user has a zconf.h
@@ -136,11 +134,13 @@ if(MINGW)
                             -o ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj
                             -i ${CMAKE_CURRENT_SOURCE_DIR}/win32/zlib1.rc)
     set(ZLIB_SRCS ${ZLIB_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj)
-endif(MINGW)
+endif()
 
 # [Doomseeker] doomseeker.exe in Visual Studio needs /MD, but updater.exe needs /MT.
 set(ZLIB_ALL_SRCS ${ZLIB_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
 add_library(${ZLIBNAME} ${ZLIB_ALL_SRCS})
+
+target_include_directories(z PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # [Doomseeker] doomseeker.exe in Visual Studio needs /MD, but updater.exe needs /MT.
 if(MSVC)
@@ -183,6 +183,8 @@ endif()
 if(NOT SKIP_INSTALL_FILES AND NOT SKIP_INSTALL_ALL )
     install(FILES zlib.3 DESTINATION share/man/man3)
 endif()
+
+add_library(ZLIB::ZLIB ALIAS z)
 
 #============================================================================
 # Example binaries

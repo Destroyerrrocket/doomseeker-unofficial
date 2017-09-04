@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 2.4 )
+cmake_minimum_required( VERSION 2.8.12 )
 
 if( WIN32 )
 	if( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" )
@@ -13,9 +13,9 @@ if( WIN32 )
 			set( MT_MERGE ON )
 		else( MSVC_VERSION GREATER 1399 )
 			set( TRUSTINFO trustinfo.rc )
-		endif( MSVC_VERSION GREATER 1399 )
-	endif( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" )
-endif( WIN32 )
+		endif()
+	endif()
+endif()
 
 add_executable( updaterevision updaterevision.c ${TRUSTINFO} )
 
@@ -23,4 +23,4 @@ if( MT_MERGE )
 	add_custom_command(TARGET updaterevision POST_BUILD
 		COMMAND mt -inputresource:$<TARGET_FILE:updaterevision> -manifest "${CMAKE_CURRENT_SOURCE_DIR}/trustinfo.txt" -outputresource:$<TARGET_FILE:updaterevision> -nologo
 		COMMENT "Embedding trustinfo into updaterevision" )
-endif( MT_MERGE )
+endif()

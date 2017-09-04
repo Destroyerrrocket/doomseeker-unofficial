@@ -49,7 +49,7 @@ static inline quint32 MAKEID(quint8 a, quint8 b, quint8 c, quint8 d)
 
 // Now we set it up so symbols are properly exported/imported on Windows
 #ifdef Q_OS_WIN32
-#ifdef MODE_MAIN
+#ifdef doomseeker_EXPORTS
 #define MAIN_EXPORT __declspec(dllexport)
 #define PLUGIN_EXPORT __declspec(dllimport)
 #else

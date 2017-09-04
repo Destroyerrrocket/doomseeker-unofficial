@@ -6,12 +6,8 @@
 #  - target_link_libraries(${PLUGIN_NAME} ${PLUGIN_LIBS})
 #  - Include the footer file include(../PluginFooter.txt)
 
-if(COMMAND cmake_policy)
-	cmake_policy(SET CMP0011 OLD) # We want the policy to bleed to the includer.
-	if (POLICY CMP0020)
-		cmake_policy(SET CMP0020 OLD) # These are DLLs, no need for main() of any kind.
-	endif()
-endif()
+cmake_policy(SET CMP0011 OLD) # We want the policy to bleed to the includer.
+cmake_policy(SET CMP0020 OLD) # These are DLLs, no need for main() of any kind.
 
 if(WIN32)
 	add_definitions(-DMODE_PLUGIN)
@@ -25,8 +21,8 @@ if(NOT FORCE_QT4)
 endif()
 
 if(NOT Qt5Widgets_FOUND)
-	find_package(Qt4 REQUIRED)
-	include(${QT_USE_FILE})
+	find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED)
+	set(QT_LIBRARIES Qt4::QtCore Qt4::QtGui Qt4::QtNetwork Qt4::QtXml)
 else()
 	find_package(Qt5LinguistTools REQUIRED)
 	find_package(Qt5Multimedia REQUIRED)

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 2.8.12)
 
 # Regarding Microsoft Visual Studio:
 # Creating proper builds with MSVC required setting subsystem to windows,
@@ -17,11 +17,7 @@ cmake_minimum_required(VERSION 2.8.7)
 # Conclusion: If current MSVC subsystem setup is changed the code may not
 # compile, as the proper entry point will be missing.
 
-cmake_policy(SET CMP0003 NEW)
-cmake_policy(SET CMP0005 NEW)
-if (POLICY CMP0020)
-	cmake_policy(SET CMP0020 OLD) # We have our own WinMain.
-endif()
+cmake_policy(SET CMP0020 OLD) # We have our own WinMain.
 if (POLICY CMP0046)
 	cmake_policy(SET CMP0046 NEW)
 endif()
@@ -38,7 +34,7 @@ if(NOT FORCE_QT4)
 endif()
 
 if(NOT Qt5Widgets_FOUND)
-	find_package(Qt4 REQUIRED)
+	find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED)
 	include(${QT_USE_FILE})
 else()
 	find_package(Qt5Core REQUIRED)
@@ -66,23 +62,14 @@ else()
 	if(Qt5WinExtras_FOUND)
 		set(QT_LIBRARIES ${QT_LIBRARIES} Qt5::WinExtras)
 	endif()
-	set(QT_INCLUDES ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Multimedia_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS} ${Qt5WinExtras_INCLUDE_DIRS})
-	add_definitions(${Qt5Widgets_DEFINITIONS} ${Qt5Multimedia_DEFINITIONS} ${Qt5Network_DEFINITIONS} ${Qt5Xml_DEFINTIONS} ${Qt5WinExtras_DEFINITIONS})
+	#set(QT_INCLUDES ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Multimedia_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS} ${Qt5WinExtras_INCLUDE_DIRS})
+	#add_definitions(${Qt5Widgets_DEFINITIONS} ${Qt5Multimedia_DEFINITIONS} ${Qt5Network_DEFINITIONS} ${Qt5Xml_DEFINTIONS} ${Qt5WinExtras_DEFINITIONS})
+	set(QT_INCLUDES "")
 	get_target_property(QMAKE_EXEC Qt5::qmake LOCATION)
 endif()
-find_package(ZLIB REQUIRED)
 
-include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}/../
-	${CMAKE_CURRENT_SOURCE_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}/gui/
-	${QT_INCLUDES}
-	${CMAKE_CURRENT_BINARY_DIR}
-	${ZLIB_INCLUDE_DIR}
-)
-
-if(WIN32)
-	add_definitions(-DMODE_MAIN)
+if(NOT TARGET ZLIB::ZLIB)
+	find_package(ZLIB REQUIRED)
 endif()
 
 if(WITH_AUTOUPDATES)
@@ -186,11 +173,18 @@ add_executable(doomseeker
 	${HEADER_FILES}
 )
 
+target_include_directories(doomseeker
+PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}/gui/
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_BINARY_DIR}
+)
+
 # Make sure the svnrevision.h file is created before we attempt to compile
 # Doomseeker.
 add_dependencies(doomseeker revision_check)
 
-target_link_libraries(doomseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} ${QT_QTXML_LIBRARIES} wadseeker ${CMAKE_DL_LIBS})
+target_link_libraries(doomseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} ${QT_QTXML_LIBRARIES} wadseeker ZLIB::ZLIB ${CMAKE_DL_LIBS})
 
 # Copy translations
 set(TRANSLATION_FILES_TO_COPY
@@ -213,12 +207,14 @@ set_target_properties(doomseeker PROPERTIES AUTOMOC 1)
 set_target_properties(doomseeker PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR} ENABLE_EXPORTS 1)
 if(WIN32)
 	if(MSVC)
-		set_target_properties(doomseeker PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
-		set_target_properties(doomseeker PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:WINDOWS")
-		set_target_properties(doomseeker PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
+		set_target_properties(doomseeker PROPERTIES
+			LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS"
+			LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:WINDOWS"
+			LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
 	else(MSVC)
-		set_target_properties(doomseeker PROPERTIES LINK_FLAGS_RELEASE "-Wl,-subsystem,windows")
-		set_target_properties(doomseeker PROPERTIES LINK_FLAGS_MINSIZEREL "-Wl,-subsystem,windows")
+		set_target_properties(doomseeker PROPERTIES
+			LINK_FLAGS_RELEASE "-Wl,-subsystem,windows"
+			LINK_FLAGS_MINSIZEREL "-Wl,-subsystem,windows")
 	endif()
 
 	# OpenSSL

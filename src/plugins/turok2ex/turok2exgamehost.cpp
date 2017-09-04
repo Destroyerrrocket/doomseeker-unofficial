@@ -38,7 +38,7 @@ void Turok2ExGameHost::addExtra()
 	const QStringList& mapsList = params().mapList();
 	if (!mapsList.isEmpty())
 	{
-		args() << "+sv_maprotation" << mapsList.join(';');
+		args() << "+sv_maprotation" << mapsList.join(";");
 	}
 	args() << "+shufflemaplist" << QString::number( static_cast<int>(params().isRandomMapRotation()) );
 

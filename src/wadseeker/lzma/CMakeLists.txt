@@ -1,8 +1,4 @@
-cmake_minimum_required( VERSION 2.4 )
-
-if( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
-	set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -fomit-frame-pointer -fPIC" )
-endif()
+cmake_minimum_required( VERSION 2.8.12 )
 
 set( LZMA_FILES
 	C/7zArcIn.c
@@ -51,9 +47,15 @@ if (WIN32)
 		C/MtCoder.c
 		C/Threads.c
 		)
-endif (WIN32)
+endif ()
 
-add_library( lzma OBJECT ${LZMA_FILES})
+add_library( lzma STATIC ${LZMA_FILES})
 if (NOT WIN32)
-	add_definitions(-D_7ZIP_ST)
-endif (NOT WIN32)
+	target_compile_definitions( lzma PRIVATE "-D_7ZIP_ST" )
+endif ()
+
+target_include_directories( lzma INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/C )
+
+if( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
+	target_compile_options( lzma PRIVATE -Wall -Wextra -fomit-frame-pointer -fPIC )
+endif()

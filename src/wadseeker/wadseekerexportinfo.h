@@ -26,7 +26,7 @@
 #include <Qt>
 
 #ifdef Q_OS_WIN32
-#ifdef WADSEEKER_API_EXPORT
+#ifdef wadseeker_EXPORTS
 #define WADSEEKER_API __declspec(dllexport)
 #else
 #define WADSEEKER_API __declspec(dllimport)

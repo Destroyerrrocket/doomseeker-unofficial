@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 2.8.12)
+project(WADSEEKER)
 
 cmake_policy(SET CMP0020 OLD) # This is a DLL, no need for main() of any kind.
 if(POLICY CMP0042)
@@ -9,19 +10,7 @@ if (MSVC)
 	set(CMAKE_SHARED_LIBRARY_PREFIX "lib")
 endif ()
 
-# If we are compiling wadseeker outside of doomseeker prepare its own project.
-if(DEFINED DOOMSEEKER_SOURCE_DIR)
-	include_directories(${DOOMSEEKER_SOURCE_DIR}/src ${DOOMSEEKER_SOURCE_DIR}/src/wadseeker/lzma/C)
-else()
-	project(WADSEEKER)
-	include_directories(${WADSEEKER_SOURCE_DIR}/lzma/C)
-endif()
-
 add_subdirectory(lzma)
-
-if(WIN32)
-	add_definitions(-DWADSEEKER_API_EXPORT)
-endif()
 
 if(NOT FORCE_QT4)
 	find_package(Qt5Core)
@@ -29,7 +18,7 @@ endif()
 
 if(NOT Qt5Core_FOUND)
 	find_package(Qt4 COMPONENTS QtCore QtNetwork REQUIRED)
-	include(${QT_USE_FILE})
+	set(QT_LIBRARIES Qt4::QtCore Qt4::QtNetwork)
 else()
 	find_package(Qt5LinguistTools REQUIRED)
 	find_package(Qt5Network REQUIRED)
@@ -46,22 +35,15 @@ else()
 		qt5_create_translation(${ARGV})
 	endmacro()
 	set(QT_LIBRARIES Qt5::Core Qt5::Network)
-	set(QT_INCLUDES ${Qt5Core_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS})
-	add_definitions(${Qt5Core_DEFINITIONS} ${Qt5Network_DEFINITIONS})
 endif()
 
-if (NOT ZLIB_INCLUDE_DIR OR NOT ZLIB_LIBRARIES)
+if(NOT TARGET ZLIB::ZLIB)
 	find_package(ZLIB REQUIRED)
 endif()
-find_package(BZip2 REQUIRED)
+if(NOT TARGET BZip2::BZip2)
+	find_package(BZip2 REQUIRED)
+endif()
 find_package(Threads REQUIRED)
-
-include_directories(
-	${CMAKE_CURRENT_BINARY_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}
-	${ZLIB_INCLUDE_DIR}
-	${BZIP2_INCLUDE_DIR}
-)
 
 set(WADSEEKER_QT_FILES
 	protocols/freedoom/freedoomquery.h
@@ -155,13 +137,26 @@ if(NOT Qt5Core_FOUND)
 	set(WADSEEKER_QT_FILES ${WADSEEKER_QT_FILES} protocols/fixedftpreply.h)
 endif()
 
-include_directories(${QT_INCLUDES})
-
 qt_wrap_cpp(wadseekerQt WADSEEKER_FILES ${WADSEEKER_QT_FILES})
 
-add_library(wadseeker SHARED ${WADSEEKER_FILES} ${HEADER_FILES} $<TARGET_OBJECTS:lzma>)
+add_library(wadseeker SHARED ${WADSEEKER_FILES} ${HEADER_FILES})
 
-target_link_libraries(wadseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} ${ZLIB_LIBRARIES} ${BZIP2_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+target_include_directories(wadseeker
+PRIVATE
+	${CMAKE_CURRENT_BINARY_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}
+INTERFACE
+	${CMAKE_CURRENT_SOURCE_DIR}/..
+)
+
+target_link_libraries(wadseeker
+LINK_PUBLIC
+	${QT_LIBRARIES}
+LINK_PRIVATE
+	${CMAKE_THREAD_LIBS_INIT}
+	BZip2::BZip2
+	lzma
+	ZLIB::ZLIB)
 
 if(DEFINED DOOMSEEKER_BINARY_DIR)
 	set_target_properties(wadseeker PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${DOOMSEEKER_BINARY_DIR} RUNTIME_OUTPUT_DIRECTORY ${DOOMSEEKER_BINARY_DIR})
