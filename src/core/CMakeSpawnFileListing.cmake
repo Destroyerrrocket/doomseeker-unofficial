@@ -7,7 +7,7 @@ function(append_file_list file_name var_name file_list)
 	file(APPEND ${file_name} ")\n")
 endfunction()
 
-set(FILE_NAME "CMakeFileListing.txt")
+set(FILE_NAME "CMakeFileListing.cmake")
 file(WRITE ${FILE_NAME} "")
 
 file(GLOB_RECURSE UI_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.ui")

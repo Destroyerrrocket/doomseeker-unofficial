@@ -34,6 +34,9 @@ QString CmdArgsHelp::argsHelp()
 		"    IP2C data along with plugins.\n"
 		"    Can be specified multiple times.\n");
 	help += tr(
+		"--help\n"
+		"    Prints this list of command line arguments.\n");
+	help += tr(
 		"--rcon [plugin] [ip]\n"
 		"    Launch the rcon client for the specified ip.\n");
 	help += tr(
