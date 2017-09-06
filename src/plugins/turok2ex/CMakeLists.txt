@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
 set(PLUGIN_NAME turok2ex)
-include(../PluginHeader.txt)
+include(../PluginHeader.cmake)
 
 set(TUROK2EX_QT_FILES
 	turok2exgamehost.h
@@ -36,9 +36,9 @@ set(FILES_TO_TRANSLATE
 	${TUROK2EX_FILES}
 )
 
-include(../Translation.txt)
+include(../Translation.cmake)
 
 add_library(${PLUGIN_NAME} MODULE ${TUROK2EX_FILES} ${HEADER_FILES} ${QM_FILES})
 set_property(TARGET ${PLUGIN_NAME} PROPERTY CXX_STANDARD 11)
 
-include(../PluginFooter.txt)
+include(../PluginFooter.cmake)

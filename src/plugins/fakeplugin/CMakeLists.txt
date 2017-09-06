@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 
 set(PLUGIN_NAME fakeplugin)
 set(DONT_INSTALL ON)
-include(../PluginHeader.txt)
+include(../PluginHeader.cmake)
 
 set(FAKEPLUGIN_QT_FILES
 	responder/masterresponder.h
@@ -32,4 +32,4 @@ qt_wrap_cpp(fakePlugin FAKEPLUGIN_FILES ${FAKEPLUGIN_QT_FILES})
 
 add_library(${PLUGIN_NAME} MODULE ${FAKEPLUGIN_FILES} ${HEADER_FILES})
 
-include(../PluginFooter.txt)
+include(../PluginFooter.cmake)

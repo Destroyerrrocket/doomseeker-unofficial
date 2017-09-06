@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
 set(PLUGIN_NAME zandronum)
-include(../PluginHeader.txt)
+include(../PluginHeader.cmake)
 
 qt4_wrap_ui(ZANDRONUM_UI_FILES
 	createserverdialogpages/flagspage.ui
@@ -82,7 +82,7 @@ set(FILES_TO_TRANSLATE
 	${ZANDRONUM_FILES}
 )
 
-include(../Translation.txt)
+include(../Translation.cmake)
 
 add_library(${PLUGIN_NAME} 
 	MODULE 
@@ -94,4 +94,4 @@ add_library(${PLUGIN_NAME}
 
 target_link_libraries(${PLUGIN_NAME} LINK_PRIVATE wadseeker)
 
-include(../PluginFooter.txt)
+include(../PluginFooter.cmake)

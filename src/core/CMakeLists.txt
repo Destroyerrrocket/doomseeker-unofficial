@@ -68,16 +68,16 @@ if(NOT TARGET ZLIB::ZLIB)
 	find_package(ZLIB REQUIRED)
 endif()
 
-include("CMakeSpawnFileListing.txt")
+include("CMakeSpawnFileListing.cmake")
 # This hack allows CMake to regenerate the project when spawned
 # file listing file changes from outside sources. This covers
 # updating local repo and checking out different revisions.
 configure_file(
-	"${CMAKE_CURRENT_SOURCE_DIR}/CMakeFileListing.txt"
-	"${CMAKE_CURRENT_SOURCE_DIR}/CMakeFileListing.txt"
+	"${CMAKE_CURRENT_SOURCE_DIR}/CMakeFileListing.cmake"
+	"${CMAKE_CURRENT_SOURCE_DIR}/CMakeFileListing.cmake"
 	NEWLINE_STYLE LF
 )
-include("CMakeFileListing.txt")
+include("CMakeFileListing.cmake")
 
 qt4_wrap_ui(doomseekerUI ${UI_FILES})
 

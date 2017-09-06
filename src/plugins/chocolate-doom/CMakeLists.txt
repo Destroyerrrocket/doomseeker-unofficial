@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
 set(PLUGIN_NAME chocolatedoom)
-include(../PluginHeader.txt)
+include(../PluginHeader.cmake)
 
 set(CHOCOLATEDOOM_QT_FILES
 	chocolatedoomgamehost.h
@@ -29,4 +29,4 @@ qt_wrap_cpp(chocolateDoom CHOCOLATEDOOM_FILES ${CHOCOLATEDOOM_QT_FILES})
 
 add_library(${PLUGIN_NAME} MODULE ${CHOCOLATEDOOM_FILES} ${HEADER_FILES})
 
-include(../PluginFooter.txt)
+include(../PluginFooter.cmake)

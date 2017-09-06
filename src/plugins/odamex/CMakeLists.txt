@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
 set(PLUGIN_NAME odamex)
-include(../PluginHeader.txt)
+include(../PluginHeader.cmake)
 
 set(ODAMEX_QT_FILES
 	odamexgamehost.h
@@ -34,8 +34,8 @@ set(FILES_TO_TRANSLATE
 	${ODAMEX_FILES}
 )
 
-include(../Translation.txt)
+include(../Translation.cmake)
 
 add_library(${PLUGIN_NAME} MODULE ${ODAMEX_FILES} ${HEADER_FILES} ${QM_FILES})
 
-include(../PluginFooter.txt)
+include(../PluginFooter.cmake)

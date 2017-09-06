@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
 set(PLUGIN_NAME srb2)
-include(../PluginHeader.txt)
+include(../PluginHeader.cmake)
 
 set(SRB2_QT_FILES
 	srb2gamehost.h
@@ -34,8 +34,8 @@ set(FILES_TO_TRANSLATE
 	${SRB2_FILES}
 )
 
-include(../Translation.txt)
+include(../Translation.cmake)
 
 add_library(${PLUGIN_NAME} MODULE ${SRB2_FILES} ${HEADER_FILES} ${QM_FILES})
 
-include(../PluginFooter.txt)
+include(../PluginFooter.cmake)

@@ -1,10 +1,9 @@
 # Generic Plugin CMakeList.txt
 # Usage:
 #  - Set PLUGIN_NAME to the name of your plugin set(PLUGIN_NAME skulltag)
-#  - Include this file using include(../PluginHeader.txt)
+#  - Include this file using include(../PluginHeader.cmake)
 #  - add_library(${PLUGIN_NAME} MODULE ${STUFF})
-#  - target_link_libraries(${PLUGIN_NAME} ${PLUGIN_LIBS})
-#  - Include the footer file include(../PluginFooter.txt)
+#  - Include the footer file include(../PluginFooter.cmake)
 
 cmake_policy(SET CMP0011 OLD) # We want the policy to bleed to the includer.
 cmake_policy(SET CMP0020 OLD) # These are DLLs, no need for main() of any kind.
