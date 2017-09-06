@@ -92,6 +92,6 @@ add_library(${PLUGIN_NAME}
 	${QM_FILES}
 )
 
-target_link_libraries(${PLUGIN_NAME} ${PLUGIN_LIBS} wadseeker)
+target_link_libraries(${PLUGIN_NAME} LINK_PRIVATE wadseeker)
 
 include(../PluginFooter.txt)

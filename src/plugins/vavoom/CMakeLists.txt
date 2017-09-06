@@ -26,6 +26,5 @@ set(HEADER_FILES
 qt_wrap_cpp(vavoomQt VAVOOM_FILES ${VAVOOM_QT_FILES})
 
 add_library(${PLUGIN_NAME} MODULE ${VAVOOM_FILES} ${HEADER_FILES})
-target_link_libraries(${PLUGIN_NAME} ${PLUGIN_LIBS})
 
 include(../PluginFooter.txt)

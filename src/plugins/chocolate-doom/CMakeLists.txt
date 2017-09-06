@@ -28,6 +28,5 @@ set(HEADER_FILES
 qt_wrap_cpp(chocolateDoom CHOCOLATEDOOM_FILES ${CHOCOLATEDOOM_QT_FILES})
 
 add_library(${PLUGIN_NAME} MODULE ${CHOCOLATEDOOM_FILES} ${HEADER_FILES})
-target_link_libraries(${PLUGIN_NAME} ${PLUGIN_LIBS})
 
 include(../PluginFooter.txt)

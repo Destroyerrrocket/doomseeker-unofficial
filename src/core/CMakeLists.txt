@@ -35,7 +35,6 @@ endif()
 
 if(NOT Qt5Widgets_FOUND)
 	find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED)
-	include(${QT_USE_FILE})
 else()
 	find_package(Qt5Core REQUIRED)
 	find_package(Qt5Gui REQUIRED)
@@ -62,25 +61,12 @@ else()
 	if(Qt5WinExtras_FOUND)
 		set(QT_LIBRARIES ${QT_LIBRARIES} Qt5::WinExtras)
 	endif()
-	#set(QT_INCLUDES ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Multimedia_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS} ${Qt5WinExtras_INCLUDE_DIRS})
-	#add_definitions(${Qt5Widgets_DEFINITIONS} ${Qt5Multimedia_DEFINITIONS} ${Qt5Network_DEFINITIONS} ${Qt5Xml_DEFINTIONS} ${Qt5WinExtras_DEFINITIONS})
-	set(QT_INCLUDES "")
 	get_target_property(QMAKE_EXEC Qt5::qmake LOCATION)
 endif()
 
 if(NOT TARGET ZLIB::ZLIB)
 	find_package(ZLIB REQUIRED)
 endif()
-
-if(WITH_AUTOUPDATES)
-	add_definitions(-DWITH_AUTOUPDATES)
-endif()
-
-if (MSVC)
-	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-endif ()
-
-add_definitions("-DINSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
 
 include("CMakeSpawnFileListing.txt")
 # This hack allows CMake to regenerate the project when spawned
@@ -176,15 +162,32 @@ add_executable(doomseeker
 target_include_directories(doomseeker
 PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}/gui/
-	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_BINARY_DIR}
+PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}
 )
+
+if(WITH_AUTOUPDATES)
+	target_compile_definitions(doomseeker PRIVATE -DWITH_AUTOUPDATES)
+endif()
+
+if (MSVC)
+	target_compile_definitions(doomseeker PRIVATE -D_CRT_SECURE_NO_WARNINGS)
+endif()
+
+target_compile_definitions(doomseeker PRIVATE "-DINSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
 
 # Make sure the svnrevision.h file is created before we attempt to compile
 # Doomseeker.
 add_dependencies(doomseeker revision_check)
 
-target_link_libraries(doomseeker ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} ${QT_QTXML_LIBRARIES} wadseeker ZLIB::ZLIB ${CMAKE_DL_LIBS})
+target_link_libraries(doomseeker
+LINK_PRIVATE
+	wadseeker
+	ZLIB::ZLIB
+	${CMAKE_DL_LIBS}
+LINK_PUBLIC
+	${QT_LIBRARIES})
 
 # Copy translations
 set(TRANSLATION_FILES_TO_COPY

@@ -37,6 +37,5 @@ set(FILES_TO_TRANSLATE
 include(../Translation.txt)
 
 add_library(${PLUGIN_NAME} MODULE ${ODAMEX_FILES} ${HEADER_FILES} ${QM_FILES})
-target_link_libraries(${PLUGIN_NAME} ${PLUGIN_LIBS})
 
 include(../PluginFooter.txt)

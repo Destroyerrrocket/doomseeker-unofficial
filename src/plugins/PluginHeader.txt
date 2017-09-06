@@ -9,11 +9,8 @@
 cmake_policy(SET CMP0011 OLD) # We want the policy to bleed to the includer.
 cmake_policy(SET CMP0020 OLD) # These are DLLs, no need for main() of any kind.
 
-if(WIN32)
-	add_definitions(-DMODE_PLUGIN)
-	if(MSVC)
-		set(CMAKE_SHARED_MODULE_PREFIX "lib")
-	endif()
+if(MSVC)
+	set(CMAKE_SHARED_MODULE_PREFIX "lib")
 endif()
 
 if(NOT FORCE_QT4)
@@ -24,6 +21,8 @@ if(NOT Qt5Widgets_FOUND)
 	find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED)
 	set(QT_LIBRARIES Qt4::QtCore Qt4::QtGui Qt4::QtNetwork Qt4::QtXml)
 else()
+	find_package(Qt5Core REQUIRED)
+	find_package(Qt5Gui REQUIRED)
 	find_package(Qt5LinguistTools REQUIRED)
 	find_package(Qt5Multimedia REQUIRED)
 	find_package(Qt5Network REQUIRED)
@@ -40,20 +39,8 @@ else()
 	macro(qt4_create_translation)
 		qt5_create_translation(${ARGV})
 	endmacro()
-	set(QT_LIBRARIES Qt5::Widgets Qt5::Multimedia Qt5::Network Qt5::Xml)
-	set(QT_INCLUDES ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Multimedia_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS})
-	add_definitions(${Qt5Widgets_DEFINITIONS} ${Qt5Multimedia_DEFINITIONS} ${Qt5Network_DEFINITIONS} ${Qt5Xml_DEFINTIONS})
+	set(QT_LIBRARIES Qt5::Widgets Qt5::Multimedia Qt5::Network Qt5::Xml Qt5::Gui Qt5::Core)
 endif()
 
 message(STATUS "Setting up plugin ${PLUGIN_NAME}. Source dir:\n"
 	"    ${CMAKE_CURRENT_SOURCE_DIR}")
-
-set(PLUGIN_LIBS ${QT_LIBRARIES} ${QT_QTNETWORK_LIBRARIES} doomseeker)
-
-include_directories(
-	${DOOMSEEKER_SOURCE_DIR}/src/core 
-	${DOOMSEEKER_BINARY_DIR}/src/core 
-	${CMAKE_CURRENT_SOURCE_DIR}
-	${CMAKE_CURRENT_BINARY_DIR} 
-	${QT_INCLUDES}
-)

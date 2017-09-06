@@ -1,5 +1,13 @@
 # See PluginHeader.txt
 
+target_include_directories(${PLUGIN_NAME}
+PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_BINARY_DIR} 
+)
+
+target_link_libraries(${PLUGIN_NAME} LINK_PUBLIC ${PLUGIN_LIBS} ${QT_LIBRARIES} doomseeker)
+
 add_dependencies(${PLUGIN_NAME} doomseeker)
 
 # Installation is on by default unless explicitly disabled.
