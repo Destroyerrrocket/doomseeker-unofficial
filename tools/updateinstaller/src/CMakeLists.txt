@@ -8,18 +8,18 @@ if (UNIX)
 	add_definitions(-Wall -Wconversion)
 endif()
 
-include(UsePkgConfig)
-pkgconfig(gtk+-2.0 GTK2_INCLUDE_DIR GTK2_LINK_DIR GTK2_LINK_FLAGS GTK2_CFLAGS)
-
 if (UNIX AND NOT APPLE)
 	set(LINUX TRUE)
 endif()
 
 if (LINUX)
+	find_package(PkgConfig)
+	pkg_search_module(GTK2 gtk+-2.0)
+
 	include_directories(${GTK2_INCLUDE_DIR})
 	add_definitions(${GTK2_CFLAGS})
 	add_library(updatergtk SHARED UpdateDialogGtk.cpp UpdateDialogGtk.h)
-	target_link_libraries(updatergtk ${GTK2_LINK_FLAGS})
+	target_link_libraries(updatergtk ${GTK2_LIBRARIES})
 endif()
 
 add_definitions(-DTIXML_USE_STL)

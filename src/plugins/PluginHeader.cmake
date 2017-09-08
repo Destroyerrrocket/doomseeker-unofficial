@@ -5,9 +5,6 @@
 #  - add_library(${PLUGIN_NAME} MODULE ${STUFF})
 #  - Include the footer file include(../PluginFooter.cmake)
 
-cmake_policy(SET CMP0011 OLD) # We want the policy to bleed to the includer.
-cmake_policy(SET CMP0020 OLD) # These are DLLs, no need for main() of any kind.
-
 if(MSVC)
 	set(CMAKE_SHARED_MODULE_PREFIX "lib")
 endif()

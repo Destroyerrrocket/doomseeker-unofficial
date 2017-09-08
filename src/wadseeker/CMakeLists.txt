@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(WADSEEKER)
 
-cmake_policy(SET CMP0020 OLD) # This is a DLL, no need for main() of any kind.
 if(POLICY CMP0042)
 	cmake_policy(SET CMP0042 NEW)
 endif()

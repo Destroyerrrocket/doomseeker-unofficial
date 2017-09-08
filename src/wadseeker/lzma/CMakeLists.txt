@@ -56,6 +56,6 @@ endif ()
 
 target_include_directories( lzma INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/C )
 
-if( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
+if( CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang" )
 	target_compile_options( lzma PRIVATE -Wall -Wextra -fomit-frame-pointer -fPIC )
 endif()

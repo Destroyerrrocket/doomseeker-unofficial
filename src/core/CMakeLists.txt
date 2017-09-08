@@ -17,7 +17,6 @@ cmake_minimum_required(VERSION 2.8.12)
 # Conclusion: If current MSVC subsystem setup is changed the code may not
 # compile, as the proper entry point will be missing.
 
-cmake_policy(SET CMP0020 OLD) # We have our own WinMain.
 if (POLICY CMP0046)
 	cmake_policy(SET CMP0046 NEW)
 endif()
@@ -137,7 +136,7 @@ endif ()
 # windows.rc
 if(WIN32)
 	# compile the Windows resource file.  How we do this depends on the compiler.
-	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 		add_custom_command(
 			OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/windows.o
 			COMMAND windres -o ${CMAKE_CURRENT_BINARY_DIR}/windows.o -i ${DOOMSEEKER_SOURCE_DIR}/media/windows.rc

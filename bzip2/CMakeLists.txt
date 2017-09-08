@@ -12,7 +12,7 @@ add_library( bz2 STATIC ${SOURCES} )
 target_include_directories( bz2 INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} )
 target_compile_definitions( bz2 PRIVATE -DBZ_NO_STDIO )
 
-if( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
+if( CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang" )
 	target_compile_options( bz2 PRIVATE -Wall -Wextra -fomit-frame-pointer -fPIC )
 endif()
 
