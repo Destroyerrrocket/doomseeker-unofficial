@@ -45,25 +45,6 @@ if(NOT TARGET BZip2::BZip2)
 endif()
 find_package(Threads REQUIRED)
 
-set(WADSEEKER_QT_FILES
-	protocols/freedoom/freedoomquery.h
-	protocols/idgames/idgamesreply.h
-	protocols/wadarchive/wadarchiveclient.h
-	protocols/fixednetworkaccessmanager.h
-	protocols/networkreplysignalwrapper.h
-	protocols/networkreplytimeouter.h
-	wadretriever/wadretriever.h
-	wwwseeker/idgames.h
-	wwwseeker/wwwseeker.h
-	zip/unarchive.h
-	zip/un7zip.h
-	zip/untar.h
-	zip/unzip.h
-	freedoom.h
-	modinstall.h
-	wadseeker.h
-)
-
 set(WADSEEKER_FILES
 	entities/link.cpp
 	entities/modfile.cpp
@@ -106,27 +87,42 @@ set(WADSEEKER_FILES
 
 # For the purpose of generation proper project files.
 set(HEADER_FILES
-	${WADSEEKER_QT_FILES}
 	entities/link.h
 	entities/modfile.h
 	entities/modset.h
 	entities/waddownloadinfo.h
 	protocols/freedoom/freedoominfoparser.h
+	protocols/freedoom/freedoomquery.h
 	protocols/idgames/idgamesclient.h
 	protocols/idgames/idgamesfile.h
 	protocols/idgames/idgamesfilematcher.h
+	protocols/idgames/idgamesreply.h
 	protocols/idgames/idgamesresult.h
+	protocols/wadarchive/wadarchiveclient.h
+	protocols/fixednetworkaccessmanager.h
 	protocols/json.h
 	protocols/http.h
 	protocols/networkreply.h
+	protocols/networkreplysignalwrapper.h
+	protocols/networkreplytimeouter.h
 	protocols/urlprovider.h
 	wadretriever/wadinstaller.h
+	wadretriever/wadretriever.h
 	wwwseeker/entities/fileseekinfo.h
 	wwwseeker/htmlparser.h
+	wwwseeker/idgames.h
 	wwwseeker/urlparser.h
+	wwwseeker/wwwseeker.h
+	zip/unarchive.h
+	zip/un7zip.h
+	zip/untar.h
+	zip/unzip.h
 	zip/zipfile.h
 	filefind.h
+	freedoom.h
 	ioutils.h
+	modinstall.h
+	wadseeker.h
 	wadseekerexportinfo.h
 	wadseekermessagetype.h
 	wadseekerversioninfo.h
@@ -136,8 +132,6 @@ if(NOT Qt5Core_FOUND)
 	set(WADSEEKER_FILES ${WADSEEKER_FILES} protocols/fixedftpreply.cpp)
 	set(WADSEEKER_QT_FILES ${WADSEEKER_QT_FILES} protocols/fixedftpreply.h)
 endif()
-
-qt_wrap_cpp(wadseekerQt WADSEEKER_FILES ${WADSEEKER_QT_FILES})
 
 add_library(wadseeker SHARED ${WADSEEKER_FILES} ${HEADER_FILES})
 
@@ -157,6 +151,8 @@ LINK_PRIVATE
 	BZip2::BZip2
 	lzma
 	ZLIB::ZLIB)
+
+set_target_properties(wadseeker PROPERTIES AUTOMOC ON)
 
 if(DEFINED DOOMSEEKER_BINARY_DIR)
 	set_target_properties(wadseeker PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${DOOMSEEKER_BINARY_DIR} RUNTIME_OUTPUT_DIRECTORY ${DOOMSEEKER_BINARY_DIR})

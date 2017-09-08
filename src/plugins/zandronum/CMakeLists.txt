@@ -8,21 +8,6 @@ qt4_wrap_ui(ZANDRONUM_UI_FILES
 	createserverdialogpages/votingsetupwidget.ui
 )
 
-set(ZANDRONUM_QT_FILES
-	createserverdialogpages/flagspage.h
-	createserverdialogpages/votingsetupwidget.h
-	enginezandronumconfigbox.h
-	zandronumbinaries.h
-	zandronumbroadcast.h
-	zandronum2dmflags.h
-	zandronum3dmflags.h
-	zandronumgamehost.h
-	zandronumgameinfo.h
-	zandronummasterclient.h
-	zandronumrconprotocol.h
-	zandronumserver.h
-)
-
 set(ZANDRONUM_FILES
 	createserverdialogpages/flagsid.cpp
 	createserverdialogpages/flagspagevaluecontroller2.cpp
@@ -53,7 +38,8 @@ set(ZANDRONUM_FILES
 )
 
 set(HEADER_FILES
-	${ZANDRONUM_QT_FILES}
+	createserverdialogpages/flagspage.h
+	createserverdialogpages/votingsetupwidget.h
 	createserverdialogpages/flagsid.h
 	createserverdialogpages/flagspagevaluecontroller2.h
 	createserverdialogpages/flagspagevaluecontroller3.h
@@ -62,22 +48,30 @@ set(HEADER_FILES
 	huffman/codec.h
 	huffman/huffcodec.h
 	huffman/huffman.h
+	enginezandronumconfigbox.h
 	huffmanqt.h
 	huffmanudpsocket.h
+	zandronumbinaries.h
+	zandronumbroadcast.h
+	zandronum2dmflags.h
+	zandronum3dmflags.h
 	zandronumengineplugin.h
 	zandronumgameexefactory.h
+	zandronumgamehost.h
+	zandronumgameinfo.h
 	zandronumgamerunner.h
 	zandronumgamesettings.h
+	zandronummasterclient.h
+	zandronumrconprotocol.h
+	zandronumserver.h
 	zandronumserverdmflagsparser.h
 )
-
-qt_wrap_cpp(zandronum ZANDRONUM_FILES ${ZANDRONUM_QT_FILES})
 
 set(TRANSLATIONS_FILES
 	translations/zandronum_pl_PL.ts
 )
 set(FILES_TO_TRANSLATE
-	${ZANDRONUM_QT_FILES}
+	${HEADER_FILES}
 	${ZANDRONUM_UI_FILES}
 	${ZANDRONUM_FILES}
 )

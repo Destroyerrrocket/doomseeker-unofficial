@@ -3,12 +3,6 @@ cmake_minimum_required(VERSION 2.8.12)
 set(PLUGIN_NAME srb2)
 include(../PluginHeader.cmake)
 
-set(SRB2_QT_FILES
-	srb2gamehost.h
-	srb2gameinfo.h
-	srb2masterclient.h
-	srb2server.h
-)
 set(SRB2_FILES
 	srb2engineplugin.cpp
 	srb2gameclientrunner.cpp
@@ -19,18 +13,19 @@ set(SRB2_FILES
 )
 
 set(HEADER_FILES
-	${SRB2_QT_FILES}
 	srb2engineplugin.h
 	srb2gameclientrunner.h
+	srb2gamehost.h
+	srb2gameinfo.h
+	srb2masterclient.h
+	srb2server.h
 )
-
-qt_wrap_cpp(srb2 SRB2_FILES ${SRB2_QT_FILES})
 
 set(TRANSLATIONS_FILES
 	translations/srb2_pl_PL.ts
 )
 set(FILES_TO_TRANSLATE
-	${SRB2_QT_FILES}
+	${HEADER_FILES}
 	${SRB2_FILES}
 )
 

@@ -8,7 +8,7 @@ PRIVATE
 
 target_link_libraries(${PLUGIN_NAME} LINK_PUBLIC ${PLUGIN_LIBS} ${QT_LIBRARIES} doomseeker)
 
-add_dependencies(${PLUGIN_NAME} doomseeker)
+set_target_properties(${PLUGIN_NAME} PROPERTIES AUTOMOC ON)
 
 # Installation is on by default unless explicitly disabled.
 if (NOT DONT_INSTALL) # if install

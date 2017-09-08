@@ -3,12 +3,6 @@ cmake_minimum_required(VERSION 2.8.12)
 set(PLUGIN_NAME turok2ex)
 include(../PluginHeader.cmake)
 
-set(TUROK2EX_QT_FILES
-	turok2exgamehost.h
-	turok2exgameinfo.h
-	turok2exmasterclient.h
-	turok2exserver.h
-)
 set(TUROK2EX_FILES
 	turok2exengineplugin.cpp
 	turok2exgamehost.cpp
@@ -21,18 +15,19 @@ set(TUROK2EX_FILES
 )
 
 set(HEADER_FILES
-	${TUROK2EX_QT_FILES}
 	turok2exengineplugin.h
+	turok2exgamehost.h
+	turok2exgameinfo.h
 	turok2exgamerunner.h
+	turok2exmasterclient.h
+	turok2exserver.h
 )
-
-qt_wrap_cpp(turok2ex TUROK2EX_FILES ${TUROK2EX_QT_FILES})
 
 set(TRANSLATIONS_FILES
 	translations/turok2ex_pl_PL.ts
 )
 set(FILES_TO_TRANSLATE
-	${TUROK2EX_QT_FILES}
+	${HEADER_FILES}
 	${TUROK2EX_FILES}
 )
 

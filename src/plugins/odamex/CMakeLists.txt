@@ -3,12 +3,6 @@ cmake_minimum_required(VERSION 2.8.12)
 set(PLUGIN_NAME odamex)
 include(../PluginHeader.cmake)
 
-set(ODAMEX_QT_FILES
-	odamexgamehost.h
-	odamexgameinfo.h
-	odamexmasterclient.h
-	odamexserver.h
-)
 set(ODAMEX_FILES
 	odamexengineplugin.cpp
 	odamexgamehost.cpp
@@ -19,18 +13,19 @@ set(ODAMEX_FILES
 )
 
 set(HEADER_FILES
-	${ODAMEX_QT_FILES}
 	odamexengineplugin.h
+	odamexmasterclient.h
+	odamexgamehost.h
+	odamexgameinfo.h
 	odamexgamerunner.h
+	odamexserver.h
 )
-
-qt_wrap_cpp(odamex ODAMEX_FILES ${ODAMEX_QT_FILES})
 
 set(TRANSLATIONS_FILES
 	translations/odamex_pl_PL.ts
 )
 set(FILES_TO_TRANSLATE
-	${ODAMEX_QT_FILES}
+	${ODAMEX_HEADER_FILES}
 	${ODAMEX_FILES}
 )
 
