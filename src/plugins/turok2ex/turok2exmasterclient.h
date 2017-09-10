@@ -47,8 +47,9 @@ class Turok2ExMasterClient : public MasterClient
 		QByteArray createServerListRequest();
 		Response readMasterResponse(const QByteArray &data);
 
-		unsigned int seedIP = 0;
-		unsigned short seedPort = 0;
+	private:
+		unsigned int seedIP;
+		unsigned short seedPort;
 };
 
 #endif /* __Turok2ExMASTERCLIENT_H__ */

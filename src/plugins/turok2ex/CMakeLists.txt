@@ -34,6 +34,5 @@ set(FILES_TO_TRANSLATE
 include(../Translation.cmake)
 
 add_library(${PLUGIN_NAME} MODULE ${TUROK2EX_FILES} ${HEADER_FILES} ${QM_FILES})
-set_property(TARGET ${PLUGIN_NAME} PROPERTY CXX_STANDARD 11)
 
 include(../PluginFooter.cmake)

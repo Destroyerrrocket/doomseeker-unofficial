@@ -31,7 +31,10 @@
 
 #define NETM_MSLIST 11
 
-Turok2ExMasterClient::Turok2ExMasterClient() : MasterClient()
+Turok2ExMasterClient::Turok2ExMasterClient()
+	: MasterClient(),
+	  seedIP(0),
+	  seedPort(0)
 {
 }
 

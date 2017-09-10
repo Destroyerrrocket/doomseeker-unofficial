@@ -25,7 +25,7 @@
 #define __TUROK2EXSERVER_H__
 
 #include <QMap>
-#include <cstdint>
+#include <stdint.h>
 
 #include "serverapi/server.h"
 
@@ -54,6 +54,7 @@ class Turok2ExServer : public Server
 		Response readRequest(const QByteArray &data);
 		QByteArray createSendRequest();
 
+	private:
 		QByteArray encryptPacket(QByteArray & message, uint32_t key);
 		bool decryptPacket(QByteArray & message, uint32_t key);
 
