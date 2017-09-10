@@ -35,6 +35,7 @@ endif()
 
 if(NOT Qt5Widgets_FOUND)
 	find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED)
+	set(QT_LIBRARIES Qt4::QtCore Qt4::QtGui Qt4::QtNetwork Qt4::QtXml)
 else()
 	find_package(Qt5Core REQUIRED)
 	find_package(Qt5Gui REQUIRED)
