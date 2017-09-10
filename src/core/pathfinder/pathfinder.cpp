@@ -78,6 +78,23 @@ DClass<PathFinder>
 {
 	public:
 		QList<FileSearchPath> searchPaths;
+
+		QString resolveDir(const QString &dir)
+		{
+			QFileInfo fileInfo(dir);
+			if(fileInfo.isSymLink())
+				fileInfo = QFileInfo(fileInfo.symLinkTarget());
+
+			if(fileInfo.isBundle())
+				return fileInfo.absoluteFilePath() + "/Contents/MacOS";
+			else
+			{
+				if(fileInfo.isFile())
+					return fileInfo.absoluteDir().absolutePath();
+				else
+					return fileInfo.absoluteFilePath();
+			}
+		}
 };
 
 
@@ -128,36 +145,12 @@ PathFinder PathFinder::genericPathFinder(const QStringList &suffixes)
 
 void PathFinder::addPrioritySearchDir(const QString& dir)
 {
-	QFileInfo fileInfo(dir);
-	if(fileInfo.isSymLink())
-		fileInfo = QFileInfo(fileInfo.symLinkTarget());
-
-	if(fileInfo.isBundle())
-		d->searchPaths.prepend(fileInfo.absoluteFilePath() + "/Contents/MacOS");
-	else
-	{
-		if(fileInfo.isFile())
-			d->searchPaths.prepend(fileInfo.absoluteDir().absolutePath());
-		else
-			d->searchPaths.prepend(fileInfo.absoluteFilePath());
-	}
+	d->searchPaths.prepend(d->resolveDir(dir));
 }
 
 void PathFinder::addSearchDir(const QString &dir)
 {
-	QFileInfo fileInfo(dir);
-	if(fileInfo.isSymLink())
-		fileInfo = QFileInfo(fileInfo.symLinkTarget());
-
-	if(fileInfo.isBundle())
-		d->searchPaths << fileInfo.absoluteFilePath() + "/Contents/MacOS";
-	else
-	{
-		if(fileInfo.isFile())
-			d->searchPaths << fileInfo.absoluteDir().absolutePath();
-		else
-			d->searchPaths << fileInfo.absoluteFilePath();
-	}
+	d->searchPaths << d->resolveDir(dir);
 }
 
 QString PathFinder::findFile(const QString& fileName) const

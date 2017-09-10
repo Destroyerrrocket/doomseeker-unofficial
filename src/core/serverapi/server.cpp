@@ -791,6 +791,10 @@ PathFinder Server::wadPathFinder()
 		Message msg;
 		pathFinder.addPrioritySearchDir(exeFile->pathToExe(msg));
 	}
+	#ifdef Q_OS_UNIX
+	pathFinder.addSearchDir("/usr/local/share/games/doom/");
+	pathFinder.addSearchDir("/usr/share/games/doom/");
+	#endif
 	return pathFinder;
 }
 
