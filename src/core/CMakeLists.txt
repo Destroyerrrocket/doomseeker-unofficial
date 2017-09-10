@@ -65,7 +65,7 @@ else()
 endif()
 
 if(NOT TARGET ZLIB::ZLIB)
-	find_package(ZLIB REQUIRED)
+	find_package_ZLIB(REQUIRED)
 endif()
 
 include("CMakeSpawnFileListing.cmake")

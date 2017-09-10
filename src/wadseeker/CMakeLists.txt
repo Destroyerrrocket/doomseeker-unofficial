@@ -12,6 +12,8 @@ endif ()
 
 add_subdirectory(lzma)
 
+include(${CMAKE_SOURCE_DIR}/cmake/Modules/Macros.cmake)
+
 if(NOT FORCE_QT4)
 	find_package(Qt5Core)
 endif()
@@ -38,10 +40,10 @@ else()
 endif()
 
 if(NOT TARGET ZLIB::ZLIB)
-	find_package(ZLIB REQUIRED)
+	find_package_ZLIB(REQUIRED)
 endif()
 if(NOT TARGET BZip2::BZip2)
-	find_package(BZip2 REQUIRED)
+	find_package_BZip2(REQUIRED)
 endif()
 find_package(Threads REQUIRED)
 

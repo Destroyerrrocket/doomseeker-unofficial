@@ -60,3 +60,66 @@ macro(load_flags)
 		set(${CompilerFlag} ${STORE_${CompilerFlag}})
 	endforeach()
 endmacro()
+
+# Find <package> that ensures target definitions.
+# Maintains forward-compatibility with official CMake Find modules.
+
+macro(find_package_ZLIB)
+	find_package(ZLIB ${ARGV0})
+	# https://github.com/Kitware/CMake/blob/745b56f58c8147aa6015a918f3bfd19abc807b48/Modules/FindZLIB.cmake#L122
+	if(NOT TARGET ZLIB::ZLIB)
+		add_library(ZLIB::ZLIB UNKNOWN IMPORTED)
+		set_target_properties(ZLIB::ZLIB PROPERTIES
+			INTERFACE_INCLUDE_DIRECTORIES "${ZLIB_INCLUDE_DIRS}")
+
+		if(ZLIB_LIBRARY_RELEASE)
+			set_property(TARGET ZLIB::ZLIB APPEND PROPERTY
+				IMPORTED_CONFIGURATIONS RELEASE)
+			set_target_properties(ZLIB::ZLIB PROPERTIES
+				IMPORTED_LOCATION_RELEASE "${ZLIB_LIBRARY_RELEASE}")
+		endif()
+
+		if(ZLIB_LIBRARY_DEBUG)
+			set_property(TARGET ZLIB::ZLIB APPEND PROPERTY
+				IMPORTED_CONFIGURATIONS DEBUG)
+			set_target_properties(ZLIB::ZLIB PROPERTIES
+				IMPORTED_LOCATION_DEBUG "${ZLIB_LIBRARY_DEBUG}")
+		endif()
+
+		if(NOT ZLIB_LIBRARY_RELEASE AND NOT ZLIB_LIBRARY_DEBUG)
+			set_property(TARGET ZLIB::ZLIB APPEND PROPERTY
+				IMPORTED_LOCATION "${ZLIB_LIBRARY}")
+		endif()
+	endif()
+endmacro()
+
+macro(find_package_BZip2)
+	find_package(BZip2 ${ARGV0})
+	# If CMake won't define BZip2::BZip2 target for us,
+	# we need to do it ourselves.
+	# https://github.com/Kitware/CMake/blob/745b56f58c8147aa6015a918f3bfd19abc807b48/Modules/FindBZip2.cmake#L63
+	if (BZIP2_FOUND AND NOT TARGET BZip2::BZip2)
+		add_library(BZip2::BZip2 UNKNOWN IMPORTED)
+		set_target_properties(BZip2::BZip2 PROPERTIES
+		INTERFACE_INCLUDE_DIRECTORIES "${BZIP2_INCLUDE_DIRS}")
+
+		if(BZIP2_LIBRARY_RELEASE)
+			set_property(TARGET BZip2::BZip2 APPEND PROPERTY
+				IMPORTED_CONFIGURATIONS RELEASE)
+			set_target_properties(BZip2::BZip2 PROPERTIES
+				IMPORTED_LOCATION_RELEASE "${BZIP2_LIBRARY_RELEASE}")
+		endif()
+
+		if(BZIP2_LIBRARY_DEBUG)
+			set_property(TARGET BZip2::BZip2 APPEND PROPERTY
+				IMPORTED_CONFIGURATIONS DEBUG)
+			set_target_properties(BZip2::BZip2 PROPERTIES
+				IMPORTED_LOCATION_DEBUG "${BZIP2_LIBRARY_DEBUG}")
+		endif()
+
+		if(NOT BZIP2_LIBRARY_RELEASE AND NOT BZIP2_LIBRARY_DEBUG)
+			set_property(TARGET BZip2::BZip2 APPEND PROPERTY
+				IMPORTED_LOCATION "${BZIP2_LIBRARY}")
+		endif()
+	endif()
+endmacro()
