@@ -26,6 +26,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "configuration/queryspeed.h"
 #include "pathfinder/pathfinder.h"
+#include "pathfinder/wadpathfinder.h"
 #include "plugins/engineplugin.h"
 #include "strings.h"
 #include "serverapi/tooltips/tooltipgenerator.h"
@@ -791,10 +792,6 @@ PathFinder Server::wadPathFinder()
 		Message msg;
 		pathFinder.addPrioritySearchDir(exeFile->pathToExe(msg));
 	}
-	#ifdef Q_OS_UNIX
-	pathFinder.addSearchDir("/usr/local/share/games/doom/");
-	pathFinder.addSearchDir("/usr/share/games/doom/");
-	#endif
 	return pathFinder;
 }
 

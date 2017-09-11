@@ -26,6 +26,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "pathfinder/filesearchpath.h"
 #include "pathfinder/pathfinder.h"
+#include "pathfinder/wadpathfinder.h"
 #include "fileutils.h"
 #include <wadseeker/entities/modset.h>
 #include <wadseeker/freedoom.h>
@@ -150,8 +151,9 @@ void FreedoomDialog::showModInfo(const ModSet &modSet)
 
 void FreedoomDialog::insertModFile(const ModFile &file)
 {
-	PathFinder pathFinder;
-	QString location = pathFinder.findFile(file.fileName());
+	WadPathFinder pathFinder = WadPathFinder(PathFinder());
+	pathFinder.setAllowAliases(false);
+	QString location = pathFinder.find(file.fileName()).path();
 
 	QString status = tr("OK");
 	bool needsInstall = false;

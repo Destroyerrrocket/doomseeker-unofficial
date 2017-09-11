@@ -79,14 +79,28 @@ DClass<WadPathFinder>
 	public:
 		QList<FileAlias> aliases;
 		PathFinder pathFinder;
+		bool aliasesAllowed;
+
+		QStringList defaultPaths()
+		{
+			QStringList paths;
+			#ifdef Q_OS_UNIX
+			paths << "/usr/local/share/games/doom/"
+				<< "/usr/share/games/doom/";
+			#endif
+			return paths;
+		}
 };
 
 DPointered(WadPathFinder)
 
-WadPathFinder::WadPathFinder(const PathFinder &pathFinder)
+WadPathFinder::WadPathFinder(PathFinder pathFinder)
 {
 	d->aliases = gConfig.doomseeker.wadAliases();
+	d->aliasesAllowed = true;
 	d->pathFinder = pathFinder;
+	foreach (const QString &path, d->defaultPaths())
+		d->pathFinder.addSearchDir(path);
 }
 
 WadPathFinder::~WadPathFinder()
@@ -95,6 +109,8 @@ WadPathFinder::~WadPathFinder()
 
 QStringList WadPathFinder::aliases(const QString &name) const
 {
+	if (!d->aliasesAllowed)
+		return QStringList();
 	foreach (const FileAlias &candidate, d->aliases)
 	{
 		if (candidate.name().compare(name, Qt::CaseInsensitive) == 0)
@@ -129,6 +145,12 @@ WadFindResult WadPathFinder::find(const QString &name)
 	}
 	return WadFindResult();
 }
+
+void WadPathFinder::setAllowAliases(bool allowed)
+{
+	d->aliasesAllowed = allowed;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 WadFindResult findWad(ServerPtr server, const QString &wadName)
 {

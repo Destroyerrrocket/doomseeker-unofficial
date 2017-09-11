@@ -51,7 +51,7 @@ void OdamexGameClientRunner::addExtra()
 		args() << "-deh";
 		foreach(QString patch, dehPatches)
 		{
-			QString file = pathFinder().findFile(patch.toLower());
+			QString file = findWad(patch.toLower());
 			args() << file;
 		}
 	}
@@ -74,12 +74,16 @@ void OdamexGameClientRunner::addExtra()
 		{
 			waddir = wadTargetDirectory() + PATH_SEPARATOR;
 		}
-		waddir += pathFinder().findFile(iwad.toLower());
-		waddir.truncate(waddir.length() - iwad.length());
+		QString iwadPath = findWad(iwad.toLower());
+		if (!iwadPath.isEmpty())
+		{
+			waddir += iwadPath;
+			waddir.truncate(waddir.length() - iwad.length());
+		}
 		for (int i = 0;i < server->numWads();i++)
 		{
 			QString wad = server->wad(i).name();
-			QString pwaddir = pathFinder().findFile(wad.toLower());
+			QString pwaddir = findWad(wad.toLower());
 			pwaddir.truncate(pwaddir.length() - wad.length());
 			if(!pwaddir.isEmpty())
 				waddir += PATH_SEPARATOR + pwaddir;

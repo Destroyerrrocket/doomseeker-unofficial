@@ -27,6 +27,7 @@
 #include "ini/settingsproviderqt.h"
 #include "datapaths.h"
 #include "pathfinder/pathfinder.h"
+#include "pathfinder/wadpathfinder.h"
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
 #include "serverapi/gameexeretriever.h"
@@ -276,21 +277,40 @@ void DemoManagerDlg::playSelected()
 	// Locate all the files needed to play the demo
 	PathFinder pf;
 	pf.addPrioritySearchDir(binPath);
-	PathFinderResult wadsPaths = pf.findFiles(d->selectedDemo->wads);
-	if(!wadsPaths.missingFiles().isEmpty())
+	WadPathFinder wadFinder = WadPathFinder(pf);
+
+	QStringList missingWads;
+	QStringList wadPaths;
+
+	foreach (const QString &wad, d->selectedDemo->wads)
+	{
+		WadFindResult findResult = wadFinder.find(wad);
+		if (findResult.isValid())
+			wadPaths << findResult.path();
+		else
+			missingWads << wad;
+	}
+
+	if(!missingWads.isEmpty())
 	{
 		QMessageBox::critical(this, tr("Files not found"),
-			tr("The following files could not be located: ") + wadsPaths.missingFiles().join(", "));
+			tr("The following files could not be located: ") + missingWads.join(", "));
 		return;
 	}
-	PathFinderResult optionalWadPaths = pf.findFiles(d->selectedDemo->optionalWads);
+	QStringList optionalWadPaths;
+	foreach (const QString &wad, d->selectedDemo->optionalWads)
+	{
+		WadFindResult findResult = wadFinder.find(wad);
+		if (findResult.isValid())
+			optionalWadPaths << findResult.path();
+	}
 
 	// Play the demo
 	GameCreateParams params;
 	params.setDemoPath(gDefaultDataPaths->demosDirectoryPath()
 		+ QDir::separator() + d->selectedDemo->filename);
-	params.setIwadPath(wadsPaths.foundFiles()[0]);
-	params.setPwadsPaths(wadsPaths.foundFiles().mid(1) + optionalWadPaths.foundFiles());
+	params.setIwadPath(wadPaths[0]);
+	params.setPwadsPaths(wadPaths.mid(1) + optionalWadPaths);
 	params.setHostMode(GameCreateParams::Demo);
 	params.setExecutablePath(binPath);
 
@@ -303,7 +323,6 @@ void DemoManagerDlg::playSelected()
 	}
 
 	delete gameRunner;
-
 }
 
 

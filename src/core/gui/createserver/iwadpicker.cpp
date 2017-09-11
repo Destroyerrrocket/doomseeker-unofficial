@@ -25,6 +25,7 @@
 
 #include "configuration/doomseekerconfig.h"
 #include "pathfinder/pathfinder.h"
+#include "pathfinder/wadpathfinder.h"
 #include "strings.h"
 #include <QFileDialog>
 #include <QFileInfo>
@@ -97,8 +98,9 @@ void IwadPicker::loadIwads()
 	d->cboIwad->clear();
 	for (int i = 0; !iwads[i].isEmpty(); ++i)
 	{
-		PathFinder pathFinder;
-		QString path = pathFinder.findFile(iwads[i]);
+		WadPathFinder wadPathFinder = WadPathFinder(PathFinder());
+		wadPathFinder.setAllowAliases(false);
+		QString path = wadPathFinder.find(iwads[i]).path();
 		if (!path.isEmpty())
 		{
 			d->cboIwad->addItem(path);
