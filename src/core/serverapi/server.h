@@ -240,6 +240,14 @@ class MAIN_EXPORT Server : public QObject
 		 * by the user in configuration box, and with priority search
 		 * directories set to wherever client and offline executables
 		 * reside, if such executables are available.
+		 *
+		 * Depending on the underlying OS, extra paths may also be added by
+		 * Doomseeker after the user configured directories.
+		 *
+		 * Additional paths appended on Linux:
+		 *
+		 * 1. `/usr/local/share/games/doom/`
+		 * 2. `/usr/share/games/doom/`
 		 */
 		virtual PathFinder wadPathFinder();
 		// END OF VIRTUALS
