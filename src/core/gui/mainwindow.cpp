@@ -1104,6 +1104,7 @@ void MainWindow::menuLog()
 void MainWindow::menuManageDemos()
 {
 	DemoManagerDlg dm;
+	dm.setWindowIcon(this->windowIcon());
 	dm.exec();
 }
 
