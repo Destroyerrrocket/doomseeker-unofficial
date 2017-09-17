@@ -26,11 +26,13 @@
 #include "serverapi/server.h"
 #include <cassert>
 #include <cmath>
+#include <QSet>
 
 DClass<ServerListCountTracker>
 {
 public:
 	const EnginePlugin *plugin;
+	QSet<ServerPtr> countedServers;
 
 	ServerListCount count;
 	bool hasRegisterBeenCalled;
@@ -64,6 +66,7 @@ void ServerListCountTracker::deregisterServer(ServerPtr server)
 {
 	if (d->isPassingPluginFilter(server))
 	{
+		d->countedServers.remove(server);
 		server->disconnect(this);
 		d->count.discountServer(server);
 		if (server->isRefreshing())
@@ -103,6 +106,7 @@ void ServerListCountTracker::registerServer(ServerPtr server)
 
 void ServerListCountTracker::onServerBegunRefreshing(ServerPtr server)
 {
+	d->countedServers.remove(server);
 	d->count.discountPlayers(server);
 	++d->count.numRefreshing;
 	emit updated();
@@ -110,6 +114,9 @@ void ServerListCountTracker::onServerBegunRefreshing(ServerPtr server)
 
 void ServerListCountTracker::onServerUpdated(ServerPtr server)
 {
+	if (d->countedServers.contains(server))
+		return;
+	d->countedServers.insert(server);
 	d->count.countPlayers(server);
 	--d->count.numRefreshing;
 	emit updated();
