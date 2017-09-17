@@ -23,7 +23,7 @@
 #include "logdock.h"
 #include "log.h"
 #include "ui_logdock.h"
-#include <QClipboard>
+#include "clipboard.h"
 
 DClass<LogDock> : public Ui::LogDock
 {
@@ -58,6 +58,5 @@ void LogDock::clearContent()
 
 void LogDock::btnCopyClicked()
 {
-	QClipboard *clipboard = QApplication::clipboard();
-	clipboard->setText(d->teContent->document()->toPlainText());
+	Clipboard::setText(d->teContent->document()->toPlainText());
 }

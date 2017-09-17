@@ -26,9 +26,9 @@
 #include "gui/widgets/serverfilterbuildermenu.h"
 #include "gui/serverlist.h"
 #include "serverapi/server.h"
+#include "clipboard.h"
 #include "strings.h"
 #include <QApplication>
-#include <QClipboard>
 #include <QModelIndex>
 #include <cassert>
 
@@ -220,22 +220,22 @@ ServerListContextMenu::Result ServerListContextMenu::translateQMenuResult(QActio
 	else if(resultAction == d->copyAddress)
 	{
 		QString addr = QString("%1:%2").arg(d->pServer->address().toString()).arg(d->pServer->port());
-		QApplication::clipboard()->setText(addr);
+		Clipboard::setText(addr);
 		return DataCopied;
 	}
 	else if (resultAction == d->copyEmail)
 	{
-		QApplication::clipboard()->setText(d->pServer->email());
+		Clipboard::setText(d->pServer->email());
 		return DataCopied;
 	}
 	else if(resultAction == d->copyName)
 	{
-		QApplication::clipboard()->setText(d->pServer->name());
+		Clipboard::setText(d->pServer->name());
 		return DataCopied;
 	}
 	else if (resultAction == d->copyUrl)
 	{
-		QApplication::clipboard()->setText(d->pServer->webSite());
+		Clipboard::setText(d->pServer->webSite());
 		return DataCopied;
 	}
 	else if(resultAction == d->findMissingWads)

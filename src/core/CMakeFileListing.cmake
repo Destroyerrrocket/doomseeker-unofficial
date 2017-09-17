@@ -56,6 +56,7 @@ set(UI_FILES
 set(HEADER_FILES
 	application.h
 	apprunner.h
+	clipboard.h
 	cmdargshelp.h
 	commandline.h
 	commandlinetokenizer.h
@@ -286,6 +287,7 @@ set(HEADER_FILES
 set(SOURCE_FILES
 	application.cpp
 	apprunner.cpp
+	clipboard.cpp
 	cmdargshelp.cpp
 	commandline.cpp
 	commandlinetokenizer.cpp

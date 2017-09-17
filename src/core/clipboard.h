@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// copytextdlg.cpp
+// clipboard.h
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -18,36 +18,27 @@
 // 02110-1301, USA.
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
+// Copyright (C) 2017 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#include "copytextdlg.h"
-#include "clipboard.h"
+#ifndef DOOMSEEKER_CLIPBOARD_H
+#define DOOMSEEKER_CLIPBOARD_H
 
-DClass<CopyTextDlg> : public Ui::CopyTextDlg
+#include <QString>
+
+/**
+ * @brief Wrapper on QApplication::clipboard() with convenience appliances.
+ */
+class Clipboard
 {
+public:
+	/**
+	 * @brief Sets text both in clipboard and selection modes.
+	 *
+	 * Calling this method is useful when programming custom "Copy" actions.
+	 * See this text for good explanation:
+	 * https://specifications.freedesktop.org/clipboards-spec/clipboards-latest.txt
+	 */
+	static void setText(const QString &text);
 };
 
-DPointered(CopyTextDlg)
-
-CopyTextDlg::CopyTextDlg(const QString& content, const QString& description, QWidget* parent) : QDialog(parent)
-{
-	d->setupUi(this);
-
-	connect(d->btnCopy, SIGNAL( clicked() ), SLOT( copyContent() ) );
-
-	if (!description.isNull())
-	{
-		d->lblDescription->setText(description);
-	}
-
-	d->teContent->document()->setPlainText(content);
-}
-
-CopyTextDlg::~CopyTextDlg()
-{
-}
-
-void CopyTextDlg::copyContent()
-{
-	Clipboard::setText(d->teContent->document()->toPlainText());
-}
+#endif
