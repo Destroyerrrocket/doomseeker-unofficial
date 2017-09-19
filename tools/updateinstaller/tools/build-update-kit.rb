@@ -85,7 +85,7 @@ elsif OS.mac?
     MAIN_EXECUTABLE_FILENAME = "Contents/MacOS/doomseeker"
 end
 CREATE_PACKAGE_SCRIPT_NAME = "create-packages.rb"
-URL_BASE = "http://doomseeker.drdteam.org/updates/"
+URL_BASE = "https://doomseeker.drdteam.org/updates/"
 
 
 ###############################################################################

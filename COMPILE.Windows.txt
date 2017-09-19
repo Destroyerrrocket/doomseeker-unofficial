@@ -40,7 +40,7 @@ Once you modify the PATH variable you may have to reboot your system.
 4. OpenSSL
 
 Link:
-http://doomseeker.drdteam.org/files/dependencies/OpenSSL-1.0.2a-VC-32.7z
+https://doomseeker.drdteam.org/files/dependencies/OpenSSL-1.0.2a-VC-32.7z
 
 This is for completion only, so it's optional. Doomseeker will work without
 OpenSSL, but it won't be able to access HTTPS sites. This is a very crippling
@@ -52,7 +52,7 @@ error messages each time Doomseeker accesses the web.
 ================================================================================
 5. CMake.
 
-http://www.cmake.org/
+https://www.cmake.org/
 
 CMake is a quite useful tool that helps with creation of project files and
 makefiles for various different compilers and Operating Systems. It allows

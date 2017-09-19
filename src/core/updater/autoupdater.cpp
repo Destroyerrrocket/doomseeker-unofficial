@@ -68,7 +68,7 @@ const QString AutoUpdater::PLUGIN_PREFIX = "p-";
 const QString AutoUpdater::MAIN_PROGRAM_PACKAGE_NAME = "doomseeker-core";
 const QString AutoUpdater::QT_PACKAGE_NAME = "qt";
 const QString AutoUpdater::WADSEEKER_PACKAGE_NAME = "wadseeker";
-const QString AutoUpdater::UPDATER_INFO_URL_BASE = "http://doomseeker.drdteam.org/updates/";
+const QString AutoUpdater::UPDATER_INFO_URL_BASE = "https://doomseeker.drdteam.org/updates/";
 
 AutoUpdater::AutoUpdater(QObject* pParent)
 : QObject(pParent)

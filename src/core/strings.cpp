@@ -351,9 +351,10 @@ bool Strings::isUrlSafe(const QString& url)
 	bool bIsSafe1 = scheme.isEmpty();
 	bool bIsSafe2 = (scheme.compare("http", Qt::CaseInsensitive) == 0);
 	bool bIsSafe3 = (scheme.compare("ftp", Qt::CaseInsensitive) == 0);
+	bool bIsSafe4 = (scheme.compare("https", Qt::CaseInsensitive) == 0);
 
 
-	return bIsSafe1 || bIsSafe2 || bIsSafe3;
+	return bIsSafe1 || bIsSafe2 || bIsSafe3 || bIsSafe4;
 }
 
 QString Strings::normalizePath(QString path)

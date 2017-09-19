@@ -45,12 +45,12 @@ public:
 		{
 			return QUrl();
 		}
-		return QUrl(QString("http://www.wad-archive.com/wadseeker/%1").arg(wad.name()));
+		return QUrl(QString("https://www.wad-archive.com/wadseeker/%1").arg(wad.name()));
 	}
 
 	QUrl buildBadUrlReporterUrl(const QUrl &url)
 	{
-		return QUrl(QString("http://www.wad-archive.com/wadseeker/missing/%1")
+		return QUrl(QString("https://www.wad-archive.com/wadseeker/missing/%1")
 			.arg(QString(url.toString().toUtf8().toBase64())));
 	}
 };

@@ -98,7 +98,7 @@ class Location(object):
 
 
 def download_db():
-    url = "http://geolite.maxmind.com/download/geoip/database/GeoLite2-Country-CSV.zip"
+    url = "https://geolite.maxmind.com/download/geoip/database/GeoLite2-Country-CSV.zip"
     f = None
     try:
         with tempfile.NamedTemporaryFile(delete=False) as f:

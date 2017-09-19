@@ -3490,8 +3490,8 @@ nie zawiera pliku wykonywalnego Zandronum</translation>
     <name>ZandronumMasterClient</name>
     <message>
         <location filename="../zandronummasterclient.cpp" line="70"/>
-        <source>You may contact Zandronum staff about this through IRC: &lt;b&gt;irc.zandronum.com #zandronum&lt;/b&gt; or on the forum: &lt;a href=&quot;http://zandronum.com/forum&quot;&gt;http://zandronum.com/forum.&lt;/a&gt;</source>
-        <translation>Możesz skontaktować się z ekipą Zandronum w tym temacie poprzez IRC: &lt;b&gt;irc.zandronum.com #zandronum&lt;/b&gt;, albo na forum: &lt;a href=&quot;http://zandronum.com/forum&quot;&gt;http://zandronum.com/forum.&lt;/a&gt;</translation>
+        <source>You may contact Zandronum staff about this through IRC: &lt;b&gt;irc.zandronum.com #zandronum&lt;/b&gt; or on the forum: &lt;a href=&quot;https://zandronum.com/forum&quot;&gt;https://zandronum.com/forum.&lt;/a&gt;</source>
+        <translation>Możesz skontaktować się z ekipą Zandronum w tym temacie poprzez IRC: &lt;b&gt;irc.zandronum.com #zandronum&lt;/b&gt;, albo na forum: &lt;a href=&quot;https://zandronum.com/forum&quot;&gt;https://zandronum.com/forum.&lt;/a&gt;</translation>
     </message>
 </context>
 <context>

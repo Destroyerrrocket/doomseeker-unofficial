@@ -9,7 +9,7 @@ library.
 Doomseeker is licensed under the GNU GPL v2 and Wadseeker is licensed under the
 GNU LGPL v2.1.
 
-* [Website](http://doomseeker.drdteam.org)
+* [Website](https://doomseeker.drdteam.org)
 
 Compiling
 ---------

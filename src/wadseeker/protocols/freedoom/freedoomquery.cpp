@@ -41,7 +41,7 @@ public:
 
 	QString freedoomUrl() const
 	{
-		return "http://freedoom.github.io/download.json";
+		return "https://freedoom.github.io/download.json";
 	}
 };
 DPointeredNoCopy(FreedoomQuery)

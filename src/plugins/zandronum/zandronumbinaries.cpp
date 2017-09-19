@@ -40,7 +40,7 @@
 #include <ini/inivariable.h>
 #include <strings.h>
 
-#define TESTING_BINARY_URL_BASE "http://zandronum.com/downloads/testing/%1/ZandroDev%1-%2"
+#define TESTING_BINARY_URL_BASE "https://zandronum.com/downloads/testing/%1/ZandroDev%1-%2"
 
 #ifdef Q_OS_WIN32
 #define TESTING_BINARY_URL TESTING_BINARY_URL_BASE"windows.zip"

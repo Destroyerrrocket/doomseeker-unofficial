@@ -93,7 +93,7 @@
 #include <QToolBar>
 #include <QSizePolicy>
 
-const QString MainWindow::HELP_SITE_URL = "http://doomseeker.drdteam.org/help";
+const QString MainWindow::HELP_SITE_URL = "https://doomseeker.drdteam.org/help";
 
 /**
  *	@brief Menu action for Query Menu
