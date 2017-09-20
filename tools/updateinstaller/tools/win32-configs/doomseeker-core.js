@@ -13,7 +13,8 @@
         "updater.exe",
         "doomseeker.ico",
         "CHANGELOG.txt",
-        "LICENSE.json.txt"
+        "LICENSE.json.txt",
+        "LICENSE.updater.txt"
     ],
 
     "updater-binary" : "updater.exe",

@@ -140,5 +140,6 @@ add_custom_command(TARGET updater POST_BUILD
 )
 
 if (WIN32)
-    install(TARGETS updater RUNTIME DESTINATION .)
+	install(TARGETS updater RUNTIME DESTINATION .)
+	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE DESTINATION . RENAME LICENSE.updater.txt)
 endif()
