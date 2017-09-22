@@ -23,7 +23,7 @@
 #include "commandline.h"
 
 #include "apprunner.h"
-#include "strings.h"
+#include "strings.hpp"
 #include <QRegExp>
 
 void CommandLine::escapeArgs(QStringList& args)

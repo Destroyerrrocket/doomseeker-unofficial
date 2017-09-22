@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 #include "datastreamoperatorwrapper.h"
 
-#include "strings.h"
+#include "strings.hpp"
 #include <cassert>
 
 #define RETTYPE(type) \

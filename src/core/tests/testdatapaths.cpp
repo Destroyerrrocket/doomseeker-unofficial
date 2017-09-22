@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 #include "testdatapaths.h"
 #include "datapaths.h"
-#include "strings.h"
+#include "strings.hpp"
 
 TestDataPathsAppDataDirectoryAccess::TestDataPathsAppDataDirectoryAccess(bool bPortable)
 : TestUnitBase("Data Paths - App Data directory access")

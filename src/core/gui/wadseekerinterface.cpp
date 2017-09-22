@@ -29,7 +29,7 @@
 #include "serverapi/server.h"
 #include "application.h"
 #include "mainwindow.h"
-#include "strings.h"
+#include "strings.hpp"
 
 #include <QMessageBox>
 

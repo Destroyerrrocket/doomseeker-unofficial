@@ -4,7 +4,7 @@
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "teststrings.h"
-#include "strings.h"
+#include "strings.hpp"
 
 bool TestStringsWrapUrls::executeTest()
 {

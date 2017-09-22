@@ -52,7 +52,7 @@
 #include "plugins/pluginloader.h"
 #include "refresher/refresher.h"
 #include "serverapi/server.h"
-#include "strings.h"
+#include "strings.hpp"
 #include "tests/testruns.h"
 #include "wadseeker/wadseeker.h"
 #include "updater/updateinstaller.h"

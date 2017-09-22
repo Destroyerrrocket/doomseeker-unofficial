@@ -25,7 +25,7 @@
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
 #include "updater/autoupdater.h"
-#include "strings.h"
+#include "strings.hpp"
 #include "version.h"
 #include <QCoreApplication>
 #include <QFile>

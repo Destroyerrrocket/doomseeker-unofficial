@@ -29,7 +29,7 @@
 #include "updater/updaterscriptparser.h"
 #include "datapaths.h"
 #include "log.h"
-#include "strings.h"
+#include "strings.hpp"
 #include "version.h"
 #include <wadseeker/protocols/fixednetworkaccessmanager.h>
 #include <QByteArray>

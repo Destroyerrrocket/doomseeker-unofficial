@@ -36,7 +36,7 @@
 #include "datapaths.h"
 #include "fileutils.h"
 #include "log.h"
-#include "strings.h"
+#include "strings.hpp"
 #include "version.h"
 
 #include <QLocale>

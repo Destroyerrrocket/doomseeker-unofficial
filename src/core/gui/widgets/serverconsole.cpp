@@ -24,7 +24,7 @@
 #include "gui/widgets/memorylineedit.h"
 #include "serverconsole.h"
 #include "ui_serverconsole.h"
-#include "strings.h"
+#include "strings.hpp"
 
 #include <QRegExp>
 

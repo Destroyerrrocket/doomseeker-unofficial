@@ -27,7 +27,7 @@
 #include "gui/serverlist.h"
 #include "serverapi/server.h"
 #include "clipboard.h"
-#include "strings.h"
+#include "strings.hpp"
 #include <QApplication>
 #include <QModelIndex>
 #include <cassert>

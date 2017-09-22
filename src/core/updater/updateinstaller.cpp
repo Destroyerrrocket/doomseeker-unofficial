@@ -27,7 +27,7 @@
 #include "datapaths.h"
 #include "log.h"
 #include "main.h"
-#include "strings.h"
+#include "strings.hpp"
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>

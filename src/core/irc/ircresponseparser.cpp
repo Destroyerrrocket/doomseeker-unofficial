@@ -34,7 +34,7 @@
 #include "irc/ircuserinfo.h"
 #include "log.h"
 #include "patternlist.h"
-#include "strings.h"
+#include "strings.hpp"
 
 DClass<IRCResponseParser>
 {

@@ -26,7 +26,7 @@
 #include <QHostAddress>
 #include <QString>
 #include "irc/entities/ircnetworkentity.h"
-#include "strings.h"
+#include "strings.hpp"
 
 /**
  *	@brief Struct containing information about client's connection to the

@@ -36,7 +36,7 @@
 #include "datastreamoperatorwrapper.h"
 #include <serverapi/playerslist.h>
 #include <serverapi/message.h>
-#include <strings.h>
+#include <strings.hpp>
 
 #include <QBuffer>
 #include <QDataStream>

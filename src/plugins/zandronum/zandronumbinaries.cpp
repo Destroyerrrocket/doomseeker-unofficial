@@ -38,7 +38,7 @@
 #include <QProgressDialog>
 #include <ini/inisection.h>
 #include <ini/inivariable.h>
-#include <strings.h>
+#include <strings.hpp>
 
 #define TESTING_BINARY_URL_BASE "https://zandronum.com/downloads/testing/%1/ZandroDev%1-%2"
 

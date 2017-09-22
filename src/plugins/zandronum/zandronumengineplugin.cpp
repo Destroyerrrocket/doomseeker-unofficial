@@ -26,7 +26,7 @@
 #include <ini/ini.h>
 #include <pathfinder/pathfinder.h>
 #include <plugins/engineplugin.h>
-#include <strings.h>
+#include <strings.hpp>
 
 #include "huffman/huffman.h"
 #include "createserverdialogpages/flagspage.h"

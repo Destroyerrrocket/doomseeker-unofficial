@@ -28,7 +28,7 @@
 #include "pathfinder/pathfinder.h"
 #include "pathfinder/wadpathfinder.h"
 #include "plugins/engineplugin.h"
-#include "strings.h"
+#include "strings.hpp"
 #include "serverapi/tooltips/tooltipgenerator.h"
 #include "serverapi/exefile.h"
 #include "serverapi/gameclientrunner.h"

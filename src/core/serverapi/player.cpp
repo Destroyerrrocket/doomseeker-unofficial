@@ -21,7 +21,7 @@
 // Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 #include "player.h"
-#include "strings.h"
+#include "strings.hpp"
 
 DClass<Player>
 {

@@ -21,7 +21,7 @@
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #include "log.h"
-#include "strings.h"
+#include "strings.hpp"
 #include <QDateTime>
 #include <QMutexLocker>
 #include <cstdio>

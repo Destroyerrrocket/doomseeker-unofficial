@@ -28,7 +28,7 @@
 #include "ini/inivariable.h"
 #include "plugins/engineplugin.h"
 #include "serverapi/masterclient.h"
-#include "strings.h"
+#include "strings.hpp"
 #include <cassert>
 #include <QDir>
 

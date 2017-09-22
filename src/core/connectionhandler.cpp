@@ -25,7 +25,7 @@
 
 #include "joincommandlinebuilder.h"
 #include "log.h"
-#include "strings.h"
+#include "strings.hpp"
 #include "configuration/doomseekerconfig.h"
 #include "gui/configuration/doomseekerconfigurationdialog.h"
 #include "plugins/engineplugin.h"

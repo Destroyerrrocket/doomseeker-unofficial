@@ -28,7 +28,7 @@
 #include "pathfinder/filesearchpath.h"
 #include "datapaths.h"
 #include "log.h"
-#include "strings.h"
+#include "strings.hpp"
 #include <QDir>
 #include <QFileInfo>
 #include <cstdlib>

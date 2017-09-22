@@ -25,7 +25,7 @@
 #include "gui/standardserverconsole.h"
 #include "serverapi/message.h"
 #include "log.h"
-#include "strings.h"
+#include "strings.hpp"
 #include <QProcess>
 
 bool CommandLineInfo::isValid() const

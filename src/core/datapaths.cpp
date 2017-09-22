@@ -24,7 +24,7 @@
 
 #include <QCoreApplication>
 #include "plugins/engineplugin.h"
-#include "strings.h"
+#include "strings.hpp"
 #include <QDesktopServices>
 #include <QProcessEnvironment>
 #include <cassert>

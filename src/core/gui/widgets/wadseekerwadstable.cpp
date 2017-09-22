@@ -23,7 +23,7 @@
 #include "wadseekerwadstable.h"
 
 #include "speedcalculator.h"
-#include "strings.h"
+#include "strings.hpp"
 
 #include <QDebug>
 #include <QHeaderView>

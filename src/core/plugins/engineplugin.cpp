@@ -32,7 +32,7 @@
 #include "serverapi/gamehost.h"
 #include "serverapi/server.h"
 #include "log.h"
-#include "strings.h"
+#include "strings.hpp"
 
 #include <cstdarg>
 #include <QPixmap>

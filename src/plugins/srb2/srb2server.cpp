@@ -37,7 +37,7 @@
 #include <serverapi/exefile.h>
 #include <serverapi/message.h>
 #include <serverapi/playerslist.h>
-#include <strings.h>
+#include <strings.hpp>
 
 using namespace Srb2ServerPacket;
 

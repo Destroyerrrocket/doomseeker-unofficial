@@ -27,7 +27,7 @@
 #include "widgets/serverconsole.h"
 #include "remoteconsole.h"
 #include "rconpassworddialog.h"
-#include "strings.h"
+#include "strings.hpp"
 #include "ui_remoteconsole.h"
 
 #include <QKeyEvent>

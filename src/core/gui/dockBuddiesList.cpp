@@ -28,7 +28,7 @@
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
 #include "patternlist.h"
-#include "strings.h"
+#include "strings.hpp"
 #include <QMenu>
 #include <QMessageBox>
 #include <QRegExp>

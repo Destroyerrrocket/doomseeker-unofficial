@@ -5,7 +5,7 @@
 //------------------------------------------------------------------------------
 #include "buddyinfo.h"
 #include "scanner.h"
-#include "strings.h"
+#include "strings.hpp"
 
 QString BuddyInfo::createConfigEntry(const QVector<BuddyInfo>& buddies)
 {

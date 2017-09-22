@@ -25,7 +25,7 @@
 #include "ini/settingsprovider.h"
 #include "ini/settingsproviderqt.h"
 #include "log.h"
-#include "strings.h"
+#include "strings.hpp"
 
 #include <cassert>
 

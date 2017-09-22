@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// strings.h
+// strings.hpp
 //------------------------------------------------------------------------------
 //
 // This program is free software; you can redistribute it and/or
@@ -20,8 +20,10 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2010 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __STRINGS_H_
-#define __STRINGS_H_
+#ifndef __STRINGS_HPP_
+#define __STRINGS_HPP_
+// Why hpp in this case? Glibc 2.26 changed string.h to include its strings.h
+// so this file would shadow that header and cause errors.
 
 #include "global.h"
 

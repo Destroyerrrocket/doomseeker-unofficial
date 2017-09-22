@@ -75,7 +75,7 @@
 #include "pathfinder/wadpathfinder.h"
 #include "log.h"
 #include "main.h"
-#include "strings.h"
+#include "strings.hpp"
 #include "ui_mainwindow.h"
 #include <cassert>
 #include <QAction>

@@ -261,7 +261,7 @@ set(HEADER_FILES
 	serverapi/tooltips/tooltipgenerator.h
 	socketsignalsadapter.h
 	speedcalculator.h
-	strings.h
+	strings.hpp
 	svnrevision.h
 	tests/testbase.h
 	tests/testcore.h

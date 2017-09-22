@@ -26,7 +26,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "pathfinder/pathfinder.h"
 #include "pathfinder/wadpathfinder.h"
-#include "strings.h"
+#include "strings.hpp"
 #include <QFileDialog>
 #include <QFileInfo>
 
