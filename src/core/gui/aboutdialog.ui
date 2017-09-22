@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>392</width>
-    <height>498</height>
+    <width>405</width>
+    <height>608</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -162,7 +162,7 @@
          <property name="plainText">
           <string>Copyright © 2009 - 2017 The Doomseeker Team
 
-This program is distributed under the terms of the GPL v2.
+This program is distributed under the terms of the LGPL v2.1.
 
 This program uses GeoLite2 database for IP-to-Country (IP2C) purposes. Database and Contents Copyright (c) 2016 MaxMind, Inc.
 

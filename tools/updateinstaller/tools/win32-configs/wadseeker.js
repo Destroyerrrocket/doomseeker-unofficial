@@ -1,8 +1,7 @@
 {
     "name" : "wadseeker",
     "files" : [
-        "libwadseeker.dll",
-        "LICENSE.wadseeker.txt"
+        "libwadseeker.dll"
     ],
 
     "updater-binary" : "updater.exe",
