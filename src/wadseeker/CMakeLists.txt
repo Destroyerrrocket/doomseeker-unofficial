@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(WADSEEKER)
+project(Wadseeker)
 
 if(POLICY CMP0042)
 	cmake_policy(SET CMP0042 NEW)
@@ -155,8 +155,8 @@ LINK_PRIVATE
 
 set_target_properties(wadseeker PROPERTIES AUTOMOC ON)
 
-if(DEFINED DOOMSEEKER_BINARY_DIR)
-	set_target_properties(wadseeker PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${DOOMSEEKER_BINARY_DIR} RUNTIME_OUTPUT_DIRECTORY ${DOOMSEEKER_BINARY_DIR})
+if(DEFINED Doomseeker_BINARY_DIR)
+	set_target_properties(wadseeker PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${Doomseeker_BINARY_DIR} RUNTIME_OUTPUT_DIRECTORY ${Doomseeker_BINARY_DIR})
 endif()
 
 if(NOT WIN32 AND NOT XCODE_VERSION)

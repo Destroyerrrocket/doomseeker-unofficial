@@ -82,7 +82,7 @@ include("CMakeFileListing.cmake")
 qt4_wrap_ui(doomseekerUI ${UI_FILES})
 
 qt4_add_resources(doomseekerResources
-	${DOOMSEEKER_SOURCE_DIR}/media/resources.qrc
+	${Doomseeker_SOURCE_DIR}/media/resources.qrc
 )
 
 # Translations
@@ -139,14 +139,14 @@ if(WIN32)
 	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 		add_custom_command(
 			OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/windows.o
-			COMMAND windres -o ${CMAKE_CURRENT_BINARY_DIR}/windows.o -i ${DOOMSEEKER_SOURCE_DIR}/media/windows.rc
-			WORKING_DIRECTORY ${DOOMSEEKER_SOURCE_DIR}/media
+			COMMAND windres -o ${CMAKE_CURRENT_BINARY_DIR}/windows.o -i ${Doomseeker_SOURCE_DIR}/media/windows.rc
+			WORKING_DIRECTORY ${Doomseeker_SOURCE_DIR}/media
 			COMMENT "Generating windows resources (windows.rc)"
 		)
 
 		set(SOURCE_FILES ${SOURCE_FILES} windows.o)
 	else()
-		set(SOURCE_FILES ${SOURCE_FILES} ${DOOMSEEKER_SOURCE_DIR}/media/windows.rc)
+		set(SOURCE_FILES ${SOURCE_FILES} ${Doomseeker_SOURCE_DIR}/media/windows.rc)
 	endif()
 endif()
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(DOOMSEEKER)
+project(Doomseeker)
 
 option(FORCE_QT4 "Force Qt4" NO)
 if(WIN32)

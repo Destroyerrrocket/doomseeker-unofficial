@@ -118,7 +118,7 @@ Open OPENSSL branch and point both settings there to appropriate DLL files.
 The setting names tell you which file you need for which setting.
 
 Remember to change CMAKE_INSTALL_PREFIX path to something less stupid than
-"C:\Program Files (x86)\DOOMSEEKER". Be aware that the installed files are
+"C:\Program Files (x86)\Doomseeker". Be aware that the installed files are
 dumped directly to this directory.
 
 ================================================================================
