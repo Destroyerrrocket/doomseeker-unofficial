@@ -5364,7 +5364,7 @@ Pozostałe aktualizacje zostały porzucone.</translation>
     </message>
     <message>
         <location filename="../serverapi/masterclient.cpp" line="160"/>
-        <source>Could not fetch a new server list from the master because not enough time has past.</source>
+        <source>Could not fetch a new server list from the master because not enough time has passed.</source>
         <translation>Nie można było pobrać nowej listy serwerów z mastera, ponieważ upłynęło zbyt mało czasu.</translation>
     </message>
     <message>

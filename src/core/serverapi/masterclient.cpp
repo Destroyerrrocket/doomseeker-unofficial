@@ -158,7 +158,7 @@ void MasterClient::notifyResponse(Response response)
 		}
 		case RESPONSE_WAIT:
 			emit message(engineName(), tr("Could not fetch a new server list from the "
-				"master because not enough time has past."), true);
+				"master because not enough time has passed."), true);
 			readPacketCache();
 			break;
 		case RESPONSE_BAD:
