@@ -113,6 +113,7 @@ int Main::connectToServerByURL()
 	if(handler)
 	{
 		connect(handler, SIGNAL(finished(int)), gApp, SLOT(quit()));
+		handler->run();
 		int ret = gApp->exec();
 		delete handler;
 		return ret;

@@ -39,27 +39,30 @@
 #include "gamedemo.h"
 #include <QDesktopServices>
 #include <QMessageBox>
+#include <QTimer>
 #include <QUrl>
 
 DClass<ConnectionHandler>
 {
 	public:
-		bool handleResponse;
+		/**
+		 * Ensures that the server will be refreshed before joining,
+		 * regardless of the user settings or heuristical necessity
+		 * of refreshing.
+		 */
+		bool forceRefresh;
 		ServerPtr server;
 		QWidget *parentWidget;
 };
 
 DPointered(ConnectionHandler)
 
-ConnectionHandler::ConnectionHandler(ServerPtr server, QWidget *parentWidget,
-	bool handleResponse)
+ConnectionHandler::ConnectionHandler(ServerPtr server, QWidget *parentWidget)
 : QObject(parentWidget)
 {
-	d->handleResponse = handleResponse;
+	d->forceRefresh = false;
 	d->server = server;
 	d->parentWidget = parentWidget;
-	connect(d->server.data(), SIGNAL(updated(ServerPtr, int)),
-		this, SLOT(checkResponse(ServerPtr, int)));
 }
 
 ConnectionHandler::~ConnectionHandler()
@@ -68,26 +71,29 @@ ConnectionHandler::~ConnectionHandler()
 
 void ConnectionHandler::checkResponse(const ServerPtr &server, int response)
 {
+	server->disconnect(this);
 	if(response != Server::RESPONSE_GOOD)
 	{
-		if(d->handleResponse)
+		switch(response)
 		{
-			switch(response)
-			{
-				case Server::RESPONSE_TIMEOUT:
-					QMessageBox::critical(d->parentWidget, tr("Doomseeker - join server"), tr("Connection to server timed out."));
-					break;
-				default:
-					QMessageBox::critical(d->parentWidget, tr("Doomseeker - join server"), tr("An error occured while trying to connect to server."));
-					break;
-			}
+		case Server::RESPONSE_TIMEOUT:
+			QMessageBox::critical(d->parentWidget, tr("Doomseeker - join server"),
+				tr("Connection to server timed out."));
+			break;
+		default:
+			QMessageBox::critical(d->parentWidget, tr("Doomseeker - join server"),
+				tr("An error occured while trying to connect to server."));
+			break;
 		}
-
 		finish(response);
 		return;
 	}
 
-	run();
+	// Since we're potentially returning from a deeply nested network recv,
+	// it will be best to give the call stack a breather and continue execution
+	// from the next iteration of the main loop.
+	// This fixes a crash reported as #3268.
+	QTimer::singleShot(0, this, SLOT(buildJoinCommandLine()));
 }
 
 ConnectionHandler *ConnectionHandler::connectByUrl(const QUrl &url)
@@ -122,15 +128,14 @@ ConnectionHandler *ConnectionHandler::connectByUrl(const QUrl &url)
 
 	// Create the server object
 	ServerPtr server = handler->server(QHostAddress(address), port);
-	ConnectionHandler *connectionHandler = new ConnectionHandler(server, NULL, true);
-	gRefresher->registerServer(server.data());
+	ConnectionHandler *connectionHandler = new ConnectionHandler(server, NULL);
+	connectionHandler->d->forceRefresh = true;
 
 	return connectionHandler;
 }
 
 void ConnectionHandler::finish(int response)
 {
-	d->server->disconnect(this);
 	emit finished(response);
 }
 
@@ -182,8 +187,10 @@ void ConnectionHandler::refreshToJoin()
 	// If the data we have is old we should refresh first to check if we can
 	// still properly join the server.
 	CanRefreshServer refreshCheck(d->server.data());
-	if(refreshCheck.shouldRefresh() && gConfig.doomseeker.bQueryBeforeLaunch)
+	if (d->forceRefresh || (refreshCheck.shouldRefresh() && gConfig.doomseeker.bQueryBeforeLaunch))
 	{
+		this->connect(d->server.data(), SIGNAL(updated(ServerPtr, int)),
+			SLOT(checkResponse(ServerPtr, int)));
 		gRefresher->registerServer(d->server.data());
 	}
 	else
@@ -194,7 +201,7 @@ void ConnectionHandler::refreshToJoin()
 
 void ConnectionHandler::run()
 {
-	buildJoinCommandLine();
+	refreshToJoin();
 }
 
 // -------------------------- URL Handler -------------------------------------

@@ -59,19 +59,12 @@ class ConnectionHandler : public QObject
 	Q_OBJECT
 
 	public:
-		ConnectionHandler(ServerPtr server, QWidget *parentWidget=NULL, bool handleResponse=false);
+		ConnectionHandler(ServerPtr server, QWidget *parentWidget=NULL);
 		~ConnectionHandler();
 
 		void run();
 
 		static ConnectionHandler *connectByUrl(const QUrl &url);
-
-	protected:
-		void finish(int response);
-		void refreshToJoin();
-
-	protected slots:
-		void checkResponse(const ServerPtr &server, int response);
 
 	signals:
 		void finished(int response);
@@ -79,10 +72,13 @@ class ConnectionHandler : public QObject
 	private:
 		DPtr<ConnectionHandler> d;
 
-		void buildJoinCommandLine();
+		void finish(int response);
+		void refreshToJoin();
 		void runCommandLine(const CommandLineInfo &cli);
 
 	private slots:
+		void buildJoinCommandLine();
+		void checkResponse(const ServerPtr &server, int response);
 		void onCommandLineBuildFinished();
 };
 
