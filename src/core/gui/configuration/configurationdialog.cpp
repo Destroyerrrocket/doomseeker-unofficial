@@ -108,12 +108,12 @@ ConfigurationDialog::ConfigurationDialog(QWidget* parent)
 	d->tvOptionsList->header()->setSectionResizeMode(
 		PrivData<ConfigurationDialog>::COL_NAME, QHeaderView::Stretch);
 	d->tvOptionsList->header()->setSectionResizeMode(
-		PrivData<ConfigurationDialog>::COL_VALIDATION, QHeaderView::ResizeToContents);
+		PrivData<ConfigurationDialog>::COL_VALIDATION, QHeaderView::Fixed);
 #else
 	d->tvOptionsList->header()->setResizeMode(
 		PrivData<ConfigurationDialog>::COL_NAME, QHeaderView::Stretch);
 	d->tvOptionsList->header()->setResizeMode(
-		PrivData<ConfigurationDialog>::COL_VALIDATION, QHeaderView::ResizeToContents);
+		PrivData<ConfigurationDialog>::COL_VALIDATION, QHeaderView::Fixed);
 #endif
 
 	d->currentlyDisplayedPage = NULL;

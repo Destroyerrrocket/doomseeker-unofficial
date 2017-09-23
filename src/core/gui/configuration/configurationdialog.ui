@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>663</width>
+    <width>800</width>
     <height>548</height>
    </rect>
   </property>
@@ -30,7 +30,7 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>200</width>
+          <width>240</width>
           <height>16777215</height>
          </size>
         </property>
@@ -39,6 +39,9 @@
         </property>
         <attribute name="headerVisible">
          <bool>false</bool>
+        </attribute>
+        <attribute name="headerDefaultSectionSize">
+         <number>20</number>
         </attribute>
         <attribute name="headerStretchLastSection">
          <bool>false</bool>
