@@ -86,6 +86,8 @@ add_library(${PLUGIN_NAME}
 	${QM_FILES}
 )
 
-target_link_libraries(${PLUGIN_NAME} LINK_PRIVATE wadseeker)
+if (NOT UNIX OR APPLE)
+	target_link_libraries(${PLUGIN_NAME} LINK_PRIVATE wadseeker)
+endif()
 
 include(../PluginFooter.cmake)
