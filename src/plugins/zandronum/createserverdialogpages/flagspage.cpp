@@ -78,8 +78,8 @@ FlagsPage::FlagsPage(CreateServerDialog* pParentDialog)
 	Zandronum3::FlagsPageValueController(this).setVisible(false);
 
 	// Init values for widgets.
-	cboGameVersion->addItem(tr("Zandronum 2"), ZandronumGameInfo::GV_Zandronum2);
-	cboGameVersion->addItem(tr("Zandronum 3 (beta)"), ZandronumGameInfo::GV_Zandronum3);
+	cboGameVersion->addItem(tr("Zandronum 3"), ZandronumGameInfo::GV_Zandronum3);
+	cboGameVersion->addItem(tr("Zandronum 2 (old)"), ZandronumGameInfo::GV_Zandronum2);
 
 	cboFallingDamage->insertItem(FDT_None, tr("None"));
 	cboFallingDamage->insertItem(FDT_Old, tr("Old (ZDoom)"));
@@ -90,7 +90,7 @@ FlagsPage::FlagsPage(CreateServerDialog* pParentDialog)
 	initJumpCrouchComboBoxes(cboJumping);
 	initJumpCrouchComboBoxes(cboCrouching);
 
-	setGameVersion(ZandronumGameInfo::GV_Zandronum2);
+	setGameVersion(ZandronumGameInfo::GV_Zandronum3);
 
 	// Widget states
 	spinMonsterKillPercentage->setEnabled(false);

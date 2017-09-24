@@ -37,13 +37,13 @@
     </message>
     <message>
         <location filename="../createserverdialogpages/flagspage.cpp" line="73"/>
-        <source>Zandronum 2</source>
-        <translation>Zandronum 2</translation>
+        <source>Zandronum 2 (old)</source>
+        <translation>Zandronum 2 (stary)</translation>
     </message>
     <message>
         <location filename="../createserverdialogpages/flagspage.cpp" line="74"/>
-        <source>Zandronum 3 (beta)</source>
-        <translation>Zandronum 3 (beta)</translation>
+        <source>Zandronum 3</source>
+        <translation>Zandronum 3</translation>
     </message>
     <message>
         <location filename="../createserverdialogpages/flagspage.cpp" line="76"/>
