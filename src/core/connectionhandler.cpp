@@ -89,7 +89,7 @@ void ConnectionHandler::checkResponse(const ServerPtr &server, int response)
 		return;
 	}
 
-	// Since we're potentially returning from a deeply nested network recv,
+	// Since we're potentially arriving from a deeply nested network recv,
 	// it will be best to give the call stack a breather and continue execution
 	// from the next iteration of the main loop.
 	// This fixes a crash reported as #3268.
