@@ -87,6 +87,9 @@ add_library(${PLUGIN_NAME}
 )
 
 if (NOT UNIX OR APPLE)
+	# Linking Wadseeker is not needed on Linux and only causes
+	# the resulting .so to get an RPATH. Windows still needs
+	# to link it, though, or otherwise the compilation will fail.
 	target_link_libraries(${PLUGIN_NAME} LINK_PRIVATE wadseeker)
 endif()
 
