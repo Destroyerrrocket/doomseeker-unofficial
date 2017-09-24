@@ -152,7 +152,7 @@ int Main::run()
 		return 0;
 	}
 
-	PluginLoader::init(Strings::combineManyPaths(dataDirectories, "engines/"));
+	PluginLoader::init(gDefaultDataPaths->pluginSearchLocationPaths());
 	PluginUrlHandler::registerAll();
 
 	if (bTestMode)
@@ -320,7 +320,6 @@ bool Main::initDataDirectories()
 {
 	DataPaths::initDefault(bPortableMode);
 	DoomseekerFilePaths::pDataPaths = gDefaultDataPaths;
-	gDefaultDataPaths->setWorkingDirectory(QCoreApplication::applicationDirPath());
 	if (!gDefaultDataPaths->createDirectories())
 	{
 		return false;
@@ -334,9 +333,6 @@ bool Main::initDataDirectories()
 	// Continue with standard dirs:
 	dataDirectories << "./";
 #if defined(Q_OS_LINUX)
-	#ifndef INSTALL_PREFIX // For safety lets check for the defintion
-		#define INSTALL_PREFIX "/usr"
-	#endif
 	// check in /usr/local/share/doomseeker/ on Linux
 	dataDirectories << INSTALL_PREFIX "/share/doomseeker/";
 #endif
@@ -518,7 +514,7 @@ bool Main::interpretCommandLineParameters()
 				// Plugins generate QPixmaps which need a QApplication active
 				Application::init(argumentsCount, arguments);
 				initDataDirectories();
-				PluginLoader::init(Strings::combineManyPaths(dataDirectories, "engines/"));
+				PluginLoader::init(gDefaultDataPaths->pluginSearchLocationPaths());
 				gLog << tr("Dumping version info to file in JSON format.");
 				VersionDump::dumpJsonToIO(f);
 				return false;

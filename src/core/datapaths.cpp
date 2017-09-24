@@ -34,6 +34,11 @@
 #include <QStandardPaths>
 #endif
 
+// Sanity check for INSTALL_PREFIX
+#ifndef INSTALL_PREFIX
+#error Build system should provide definition for INSTALL_PREFIX
+#endif
+
 DClass<DataPaths>
 {
 	public:
@@ -72,7 +77,10 @@ DataPaths::DataPaths(bool bPortableModeOn)
 	d->programsDirectoryName = PROGRAMS_APPDATA_DIR_NAME;
 	d->programsSupportDirectoryName = PROGRAMS_APPDATASUPPORT_DIR_NAME;
 	d->demosDirectoryName = PROGRAMS_APPDATA_DIR_NAME + QDir::separator() + DEMOS_DIR_NAME;
-	d->workingDirectory = "./";
+
+	// Logically this would be "./" but our only use of this class as of
+	// Doomseeker 1.1 would use setWorkingDirectory to applicationDirPath()
+	d->workingDirectory = QCoreApplication::applicationDirPath();
 }
 
 DataPaths::~DataPaths()
@@ -232,6 +240,18 @@ QString DataPaths::pluginDocumentsLocationPath(const EnginePlugin &plugin) const
 			PrivData<DataPaths>::PLUGINS_DIR_NAME, plugin.nameCanonical()));
 }
 
+QStringList DataPaths::pluginSearchLocationPaths() const
+{
+	QStringList paths;
+	paths.append(programsDataSupportDirectoryPath());
+	paths.append(workingDirectory());
+	paths.append("./");
+#ifndef Q_OS_WIN32
+	paths.append(INSTALL_PREFIX "/lib/doomseeker/");
+#endif
+	return Strings::combineManyPaths(paths, "engines/");
+}
+
 QString DataPaths::programFilesDirectory(MachineType machineType)
 {
 	#ifdef Q_OS_WIN32
@@ -298,8 +318,9 @@ QStringList DataPaths::staticDataSearchDirs(const QString& subdir)
 	QStringList paths;
 	paths.append(QDir::currentPath()); // current working dir
 	paths.append(QCoreApplication::applicationDirPath()); // where exe is located
-	paths.append("/usr/share/doomseeker"); // standard linux path
-	paths.append("/usr/local/share/doomseeker"); // standard linux path 2
+#ifndef Q_OS_WIN32
+	paths.append(INSTALL_PREFIX "/share/doomseeker"); // standard arch independent linux path
+#endif
 	QString subdirFiltered = subdir.trimmed();
 	if (!subdirFiltered.isEmpty())
 	{

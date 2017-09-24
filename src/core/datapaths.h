@@ -221,6 +221,14 @@ class MAIN_EXPORT DataPaths
 		QString pluginLocalDataLocationPath(const EnginePlugin &plugin) const;
 
 		/**
+		 * @brief Ordered locations were plugin libraries could be loaded from.
+		 *
+		 * Provides an oreder list of locations where PluginLoader will attempt
+		 * to load EnginePlugins from.
+		 */
+		QStringList pluginSearchLocationPaths() const;
+
+		/**
 		 * @brief Path to directory where this concrete application should
 		 * store its data.
 		 *
@@ -247,6 +255,13 @@ class MAIN_EXPORT DataPaths
 
 		void setPortableModeOn(bool b);
 		void setProgramDirName(const QString& name);
+		/**
+		 * @brief Changes the location returned by workingDirectory.
+		 *
+		 * No longer used internally. Previously this was used to logically set
+		 * the "working directory" to the location of the application binary.
+		 * This makes the name of the functions something of a misnomer.
+		 */
 		void setWorkingDirectory(const QString &workingDirectory);
 
 		/**
@@ -275,6 +290,10 @@ class MAIN_EXPORT DataPaths
 
 		/**
 		 * @brief Program working directory.
+		 *
+		 * Despite the name of the function, for historical reasons, this
+		 * actually returns the binary's location as determined by
+		 * QCoreApplication::applicationDataPath.
 		 */
 		const QString &workingDirectory() const;
 
