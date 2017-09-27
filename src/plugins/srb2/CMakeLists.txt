@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
 set(PLUGIN_NAME srb2)
+set(PLUGIN_VERSION 9)
 include(../PluginHeader.cmake)
 
 set(SRB2_FILES

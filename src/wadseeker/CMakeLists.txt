@@ -46,6 +46,9 @@ if(NOT TARGET BZip2::BZip2)
 endif()
 find_package(Threads REQUIRED)
 
+include("wadseekerversiondefs.cmake")
+configure_file(wadseekerversiondefs.h.in wadseekerversiondefs.h)
+
 set(WADSEEKER_FILES
 	entities/link.cpp
 	entities/modfile.cpp
@@ -126,6 +129,7 @@ set(HEADER_FILES
 	wadseeker.h
 	wadseekerexportinfo.h
 	wadseekermessagetype.h
+	wadseekerversiondefs.h
 	wadseekerversioninfo.h
 )
 
@@ -160,7 +164,30 @@ if(DEFINED Doomseeker_BINARY_DIR)
 endif()
 
 if(NOT WIN32 AND NOT XCODE_VERSION)
-	install(TARGETS wadseeker LIBRARY DESTINATION lib)
+	install(TARGETS wadseeker LIBRARY DESTINATION lib COMPONENT wadseeker)
 elseif(WIN32)
-	install(TARGETS wadseeker RUNTIME DESTINATION .)
+	install(TARGETS wadseeker RUNTIME DESTINATION . COMPONENT wadseeker)
+endif()
+
+install(SCRIPT InstallHeaders.cmake COMPONENT wadseeker-dev)
+
+# We need a newer CPack version to get desirable results.
+if(NOT CMAKE_VERSION VERSION_LESS "3.6.0")
+	cpack_add_component(wadseeker
+		DISPLAY_NAME libwadseeker
+		REQUIRED)
+
+	set(CPACK_PACKAGE_VERSION ${VERSION_STRING})
+
+	set(CPACK_DEBIAN_FILE_NAME "DEB-DEFAULT")
+	set(CPACK_DEBIAN_WADSEEKER_PACKAGE_NAME "libwadseeker")
+	set(CPACK_DEBIAN_WADSEEKER-DEV_PACKAGE_NAME "${CPACK_DEBIAN_WADSEEKER_PACKAGE_NAME}-dev")
+	set(CPACK_DEBIAN_WADSEEKER-DEV_PACKAGE_ARCHITECTURE "all")
+	if(NOT CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+		set(CPACK_DEBIAN_WADSEEKER_PACKAGE_NAME ${CPACK_DEBIAN_WADSEEKER_PACKAGE_NAME} PARENT_SCOPE)
+		set(CPACK_DEBIAN_WADSEEKER-DEV_PACKAGE_NAME ${CPACK_DEBIAN_WADSEEKER-DEV_PACKAGE_NAME} PARENT_SCOPE)
+		set(CPACK_DEBIAN_WADSEEKER-DEV_PACKAGE_ARCHITECTURE ${CPACK_DEBIAN_WADSEEKER-DEV_PACKAGE_ARCHITECTURE} PARENT_SCOPE)
+
+		file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/CPackComponent.version" "${CPACK_DEBIAN_WADSEEKER_PACKAGE_NAME} ${VERSION_STRING}\n${CPACK_DEBIAN_WADSEEKER-DEV_PACKAGE_NAME} ${VERSION_STRING}\n")
+	endif()
 endif()

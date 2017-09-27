@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
 set(PLUGIN_NAME turok2ex)
+set(PLUGIN_VERSION 1)
 include(../PluginHeader.cmake)
 
 set(TUROK2EX_FILES

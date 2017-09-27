@@ -150,6 +150,11 @@ if(WIN32)
 	endif()
 endif()
 
+# Generate versiondefs.h
+include("versiondefs.cmake")
+configure_file(versiondefs.h.in versiondefs.h)
+set(HEADER_FILES "${HEADER_FILES}" versiondefs.h)
+
 add_executable(doomseeker
 	${doomseekerUI}
 	${doomseekerResources}
@@ -223,26 +228,26 @@ if(WIN32)
 	# OpenSSL
 	set(OPENSSL_LIBEAY32_DLL "" CACHE FILEPATH "Path to libeay32.dll v.1.0.2.1")
 	set(OPENSSL_SSLEAY32_DLL "" CACHE FILEPATH "Path to ssleay32.dll v.1.0.2.1")
-	install(FILES ${OPENSSL_LIBEAY32_DLL} ${OPENSSL_SSLEAY32_DLL} DESTINATION .)
+	install(FILES ${OPENSSL_LIBEAY32_DLL} ${OPENSSL_SSLEAY32_DLL} DESTINATION . COMPONENT doomseeker)
 
 	# Install program DIRECTLY to directory specified by
 	# ${CMAKE_INSTALL_PREFIX}. If ${CMAKE_INSTALL_PREFIX} is set to something
 	# stupid like "C:\Program Files\" (this is the CMake's default, BTW)
 	# then program.exe will be dumped to "C:\Program Files\program.exe"
-	install(TARGETS doomseeker RUNTIME DESTINATION .)
+	install(TARGETS doomseeker RUNTIME DESTINATION . COMPONENT doomseeker)
 	# Install Qt libraries.
 	if (Qt5Widgets_FOUND)
 		# Qt5*.dll
 		foreach(qtlib ${QT_LIBRARIES})
 			get_target_property(qtlib_location ${qtlib} LOCATION)
-			install(FILES ${qtlib_location} DESTINATION .)
+			install(FILES ${qtlib_location} DESTINATION . COMPONENT doomseeker)
 		endforeach()
 		# plugins
 		execute_process(COMMAND ${QMAKE_EXEC} -query QT_INSTALL_PLUGINS
 			OUTPUT_VARIABLE QT_PLUGINS_DIR
 			OUTPUT_STRIP_TRAILING_WHITESPACE)
-		install(FILES ${QT_PLUGINS_DIR}/audio/qtaudio_windows.dll DESTINATION audio)
-		install(FILES ${QT_PLUGINS_DIR}/platforms/qwindows.dll DESTINATION platforms)
+		install(FILES ${QT_PLUGINS_DIR}/audio/qtaudio_windows.dll DESTINATION audio COMPONENT doomseeker)
+		install(FILES ${QT_PLUGINS_DIR}/platforms/qwindows.dll DESTINATION platforms COMPONENT doomseeker)
 		# ICU (the 26.6 Megabyte bastard)
 		#
 		# Installation of ICU is optional. If you don't have ICU
@@ -256,7 +261,7 @@ if(WIN32)
 			${QT_LIBEXECS_DIR}/icuin53.dll
 			${QT_LIBEXECS_DIR}/icuuc53.dll
 			${QT_LIBEXECS_DIR}/icudt53.dll
-			DESTINATION . OPTIONAL)
+			DESTINATION . COMPONENT doomseeker OPTIONAL)
 	else()
 		get_filename_component(QT_DLL_DIR ${QT_QMAKE_EXECUTABLE} PATH)
 		set(QT_LIBS_RELEASE
@@ -265,11 +270,12 @@ if(WIN32)
 			${QT_DLL_DIR}/QtNetwork4.dll
 			${QT_DLL_DIR}/QtXml4.dll
 			)
-		install(FILES ${QT_LIBS_RELEASE} DESTINATION .)
+		install(FILES ${QT_LIBS_RELEASE} DESTINATION . COMPONENT doomseeker)
 	endif()
 	# Install .ico file. No idea what purpose would this serve but some
 	# programs come with their icons in the .ico file so why not.
 	install(FILES ${CMAKE_SOURCE_DIR}/media/icon_windows.ico DESTINATION .
+		COMPONENT doomseeker
 		RENAME doomseeker.ico
 	)
 	# Install MSVC runtime. Only Visual 2008 and 2013 are supported at the moment.
@@ -281,7 +287,8 @@ if(WIN32)
 	if (MSVC90)
 		# Install manifest for plugins.
 		install(FILES ${CMAKE_SOURCE_DIR}/media/manifest_for_engines_directory/Microsoft.VC90.CRT.manifest
-			DESTINATION engines)
+			DESTINATION engines
+			COMPONENT doomseeker)
 	endif()
 
 	# License files.
@@ -293,21 +300,36 @@ if(WIN32)
 	)
 	foreach (LICFILE ${LICENSE_FILES})
 		install(FILES "${CMAKE_SOURCE_DIR}/${LICFILE}" DESTINATION .
+			COMPONENT doomseeker
 			RENAME "${LICFILE}.txt")
 	endforeach(LICFILE)
 
 	# Translatons
-	install(FILES ${TRANSLATION_FILES_TO_COPY} DESTINATION translations)
+	install(FILES ${TRANSLATION_FILES_TO_COPY} DESTINATION translations COMPONENT doomseeker)
 	# Other
-	install(FILES ${CMAKE_SOURCE_DIR}/tools/doomseeker-portable.bat DESTINATION .)
-	install(FILES ${CMAKE_SOURCE_DIR}/CHANGELOG.md DESTINATION . RENAME CHANGELOG.txt)
+	install(FILES ${CMAKE_SOURCE_DIR}/tools/doomseeker-portable.bat DESTINATION . COMPONENT doomseeker)
+	install(FILES ${CMAKE_SOURCE_DIR}/CHANGELOG.md DESTINATION . COMPONENT doomseeker RENAME CHANGELOG.txt)
 endif()
 
 if(UNIX AND NOT APPLE)
-	install(TARGETS doomseeker RUNTIME DESTINATION bin)
-	install(FILES ${CMAKE_SOURCE_DIR}/media/icon.png DESTINATION share/icons RENAME doomseeker.png)
-	install(FILES ${TRANSLATION_FILES_TO_COPY} DESTINATION share/doomseeker/translations)
-	install(FILES ${CMAKE_SOURCE_DIR}/media/Doomseeker.desktop DESTINATION share/applications)
+	install(TARGETS doomseeker RUNTIME DESTINATION bin COMPONENT doomseeker)
+	install(FILES ${CMAKE_SOURCE_DIR}/media/icon.png DESTINATION share/icons COMPONENT doomseeker RENAME doomseeker.png)
+	install(FILES ${TRANSLATION_FILES_TO_COPY} DESTINATION share/doomseeker/translations COMPONENT doomseeker)
+	install(FILES ${CMAKE_SOURCE_DIR}/media/Doomseeker.desktop DESTINATION share/applications COMPONENT doomseeker)
+endif()
+
+if(USE_CPACK)
+	cpack_add_component(doomseeker
+		DISPLAY_NAME "Doomseeker"
+		DESCRIPTION "Cross-platform browser for Doom servers."
+		REQUIRED
+		DEPENDS wadseeker)
+
+	set(CPACK_DEBIAN_DOOMSEEKER_PACKAGE_NAME "doomseeker" PARENT_SCOPE)
+	set(CPACK_PACKAGE_VERSION ${VERSION_STRING} PARENT_SCOPE)
+
+	# Not really necessary, but it cleans up extraneous stuff CPack adds to the version string depending on the CPack version.
+	file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/CPackComponent.version" "doomseeker ${VERSION_STRING}\n")
 endif()
 
 if(WIN32 OR APPLE)

@@ -23,8 +23,7 @@
 #ifndef DOOMSEEKER_VERSIONDEFS_H
 #define DOOMSEEKER_VERSIONDEFS_H
 
-// This is a centralized location to store all version information. Make sure
-// to update this file before making a new tag or a new release.
+// This file is generated via the data in Version.cmake
 //
 // NOTE:
 // This file defines the version data but it SHOULD NOT be used to access this
@@ -39,13 +38,13 @@
 #include "svnrevision.h"
 
 // Info used by version.cpp
-#define VERSION_STRING "1.1"
+#define VERSION_STRING "@VERSION_STRING@"
 
 // Info used by windows.rc
-#define FILEVERSION_DEF 1,1,0,SVN_REVISION_NUMBER
-#define PRODUCTVERSION_DEF 1,1,0,SVN_REVISION_NUMBER
-#define FILEVERSION_STR_DEF "1.1.0.0"
-#define PRODUCTVERSION_STR_DEF "1.1.0.0"
-#define LEGALCOPYRIGHT_DEF "The Doomseeker Team 2009 - 2017"
+#define FILEVERSION_DEF @FILEVERSION_DEF@
+#define PRODUCTVERSION_DEF @PRODUCTVERSION_DEF@
+#define FILEVERSION_STR_DEF "@FILEVERSION_STR_DEF@"
+#define PRODUCTVERSION_STR_DEF "@PRODUCTVERSION_STR_DEF@"
+#define LEGALCOPYRIGHT_DEF "@LEGALCOPYRIGHT_DEF@"
 
 #endif

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
 set(PLUGIN_NAME vavoom)
+set(PLUGIN_VERSION 17)
 include(../PluginHeader.cmake)
 
 set(VAVOOM_FILES

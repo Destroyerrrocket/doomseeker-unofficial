@@ -1,6 +1,27 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(Doomseeker)
 
+# We need a newer CPack version to get desirable results.
+if(NOT CMAKE_VERSION VERSION_LESS "3.6.0")
+	set(USE_CPACK ON)
+else()
+	set(USE_CPACK OFF)
+endif()
+
+if(USE_CPACK)
+	# Right now all we support is DEB, but we'll probably want to make this a
+	# user option later?
+	set(CPACK_GENERATOR "DEB")
+	set(CPACK_PACKAGE_CONTACT "First Last <example@example.com>" CACHE STRING "Contact info for archive maintainer.")
+
+	set(CPACK_DEB_COMPONENT_INSTALL ON)
+	set(CPACK_DEBIAN_FILE_NAME "DEB-DEFAULT")
+	set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://doomseeker.drdteam.org")
+	set(CPACK_DEBIAN_COMPRESSION_TYPE "xz")
+
+	include(CPackComponent)
+endif()
+
 option(FORCE_QT4 "Force Qt4" NO)
 if(WIN32)
 	set(FORCE_INTERNAL_ZLIB YES)
@@ -67,3 +88,7 @@ add_subdirectory(src/plugins)
 add_subdirectory(src/wadseeker)
 
 message(STATUS "'INSTALL' will dump files to \"${CMAKE_INSTALL_PREFIX}\"")
+
+if(USE_CPACK)
+	include(CPack)
+endif()

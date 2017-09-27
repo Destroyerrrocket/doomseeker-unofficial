@@ -99,7 +99,7 @@ void PluginEnginePlugin::start()
 {
 	init("Fake Plugin", NULL,
 		EP_Author, "The Doomseeker Team",
-		EP_Version, 1,
+		EP_Version, PLUGIN_VERSION,
 
 		EP_MasterClient, new PluginMasterClient(),
 		EP_DefaultMaster, masterAddress().toUtf8().constData(),

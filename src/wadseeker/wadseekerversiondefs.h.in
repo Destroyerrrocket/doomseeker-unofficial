@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// vavoomengineplugin.cpp
+// wadseekerversiondefs.h
 //------------------------------------------------------------------------------
 //
 // This library is free software; you can redistribute it and/or
@@ -18,49 +18,13 @@
 // 02110-1301  USA
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2017 The Doomseeker Team
 //------------------------------------------------------------------------------
 
-#include "plugins/engineplugin.h"
+#ifndef __WADSEEKERVERSIONDEFS_H__
 
-#include "vavoomgameinfo.h"
-#include "vavoomengineplugin.h"
-#include "vavoommasterclient.h"
-#include "vavoomserver.h"
+// The generated header should only be included by wadseekerversioninfo.cpp.
 
-INSTALL_PLUGIN(VavoomEnginePlugin)
+#define VERSION_STRING "@VERSION_STRING@"
 
-VavoomEnginePlugin::VavoomEnginePlugin()
-{
-	const // clear warnings
-	#include "vavoom.xpm"
-
-	init("Vavoom", vavoom_xpm,
-		EP_Author, "The Doomseeker Team",
-		EP_Version, PLUGIN_VERSION,
-
-		EP_AllowsURL,
-		EP_AllowsEmail,
-		EP_AllowsConnectPassword,
-		EP_AllowsJoinPassword,
-		EP_AllowsRConPassword,
-		EP_AllowsMOTD,
-		EP_DefaultServerPort, 26000,
-		EP_MasterClient, new VavoomMasterClient(),
-		EP_DefaultMaster, "altdeath.com:26001",
-		EP_ServerExeName, "vavoom-dedicated",
-		EP_ClientExeName, "vavoom",
-		EP_GameFileSearchSuffixes, "vavoom",
-		EP_Done
-	);
-}
-
-QList<GameMode> VavoomEnginePlugin::gameModes() const
-{
-	return VavoomGameInfo::gameModes();
-}
-
-ServerPtr VavoomEnginePlugin::mkServer(const QHostAddress &address, unsigned short port) const
-{
-	return ServerPtr(new VavoomServer(address, port));
-}
+#endif

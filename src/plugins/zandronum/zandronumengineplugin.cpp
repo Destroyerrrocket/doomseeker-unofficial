@@ -59,7 +59,7 @@ ZandronumEnginePlugin::ZandronumEnginePlugin()
 
 	init("Zandronum", zandronum_xpm,
 		EP_Author, "The Doomseeker Team",
-		EP_Version, 36,
+		EP_Version, PLUGIN_VERSION,
 
 		EP_AllowsURL,
 		EP_AllowsEmail,

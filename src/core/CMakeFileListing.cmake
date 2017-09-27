@@ -281,7 +281,6 @@ set(HEADER_FILES
 	urlopener.h
 	utf8splitter.h
 	version.h
-	versiondefs.h
 	versiondump.h
 )
 set(SOURCE_FILES

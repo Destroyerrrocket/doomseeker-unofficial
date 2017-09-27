@@ -41,7 +41,7 @@ Turok2ExEnginePlugin::Turok2ExEnginePlugin()
 
 	init("Turok 2 Remaster", turok2ex_xpm,
 		EP_Author, "Night Dive Studios & The Doomseeker Team",
-		EP_Version, 1,
+		EP_Version, PLUGIN_VERSION,
 
 		EP_DefaultMaster, "t2ms.nightdivestudios.com:20700",
 		EP_DefaultServerPort, 5029,
