@@ -240,7 +240,7 @@ int Localization::LocalizationLoader::obtainVersion(QIODevice& io)
 	int version = -1;
 	if (!line.isNull())
 	{
-		// First line contains protocol version.
+		// First line contains PROTOCOL_VERSION.
 		QStringList tokens = line.split("=");
 		if (tokens.size() == NUM_VALID_VERSION_TOKENS)
 		{
