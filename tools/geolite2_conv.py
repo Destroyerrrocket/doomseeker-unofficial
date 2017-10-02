@@ -1,7 +1,7 @@
-#!/usr/bin/python
-#-*- coding: utf-8 -*-
+#!/usr/bin/env python3
+# coding: utf-8
 #
-# GeoLite2 conversion script (c) The Doomseeker Team 2016.
+# GeoLite2 conversion script (c) The Doomseeker Team 2016 - 2017.
 #
 # This script converts GeoLite2 database from the original CSV format into
 # compacted format known to Doomseeker. Compacted format is optimized for faster
@@ -10,6 +10,23 @@
 # Database can either be already stored in locally accessible filesystem or the
 # script can automatically download the newest version directly from MaxMind
 # website. Run with '-h' argument for usage details.
+#
+# ----------------------------------------
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301  USA
 #
 # ----------------------------------------
 #
@@ -29,10 +46,10 @@ import sys
 import shutil
 import struct
 import tempfile
-import urllib
 import zipfile
 from copy import copy
 from multiprocessing import Pool
+from urllib.request import urlopen
 
 
 country_mapping = None
@@ -46,7 +63,10 @@ class Network(object):
     def addr_int(self):
         ip = self.addr.split("/")[0]
         components = map(int, ip.split("."))
-        return reduce(lambda a,b: (a << 8) + b, components)
+        ip_as_int = 0
+        for component in components:
+            ip_as_int = (ip_as_int << 8) + component
+        return ip_as_int
 
     @property
     def mask_int(self):
@@ -110,29 +130,29 @@ def download_db():
             try:
                 os.unlink(f.name)
             except Exception as e:
-                print >>sys.stderr, "Warning: failed to delete file {0}:\n\t{1}".format(f.name, e)
+                _prerr("Warning: failed to delete file {0}:\n\t{1}".format(f.name, e))
     return find_geolite_files(tmpdir), tmpdir
 
 
 def download_url(url, outfile):
-    stream = urllib.urlopen(url)
+    stream = urlopen(url)
     try:
-        print >>sys.stderr, "Receiving URL {0}".format(url)
+        _prerr("Receiving URL {0}".format(url))
         collected = 0
         while True:
             chunk = stream.read(1024 * 20)
             if not chunk:
                 break
             collected += len(chunk)
-            print >>sys.stderr, "Downloaded {0} B".format(collected)
+            _prerr("Downloaded {0} B".format(collected))
             outfile.write(chunk)
     finally:
         stream.close()
 
 
 def unzip(zippath, outdir):
-    print >>sys.stderr, "Extracting downloaded file '{0}'\n\tto directory '{1}'".format(
-        zippath, outdir)
+    _prerr("Extracting downloaded file '{0}'\n\tto directory '{1}'".format(
+        zippath, outdir))
     with zipfile.ZipFile(zippath) as zf:
         zf.extractall(outdir)
 
@@ -223,13 +243,13 @@ def is_help():
 
 
 def usage():
-    print >>sys.stderr, "Usage: {0} <geolite2_blocks.csv> <geolite2_locations.csv> <doomseeker.db>".format(sys.argv[0])
-    print >>sys.stderr, "   or: {0} <doomseeker.db>  # Auto-downloads GeoLite2 database".format(sys.argv[0])
-    print >>sys.stderr, "   or: {0} <-h|--help>      # Prints help".format(sys.argv[0])
+    _prerr("Usage: {0} <geolite2_blocks.csv> <geolite2_locations.csv> <doomseeker.db>".format(sys.argv[0]))
+    _prerr("   or: {0} <doomseeker.db>  # Auto-downloads GeoLite2 database".format(sys.argv[0]))
+    _prerr("   or: {0} <-h|--help>      # Prints help".format(sys.argv[0]))
 
 
 def convert(geolite_blocks_path, geolite_locations_path, doomseeker_path):
-    with open(geolite_blocks_path, "rb") as f:
+    with open(geolite_blocks_path, "r") as f:
         reader = csv.reader(f)
         blocks = {}
         for rownum, row in enumerate(reader):
@@ -247,7 +267,7 @@ def convert(geolite_blocks_path, geolite_locations_path, doomseeker_path):
                 blocks[geoid] = [network]
 
 
-    with open(geolite_locations_path, "rb") as f:
+    with open(geolite_locations_path, "r") as f:
         reader = csv.reader(f)
         locations = {}
         for rownum, row in enumerate(reader):
@@ -263,7 +283,7 @@ def convert(geolite_blocks_path, geolite_locations_path, doomseeker_path):
 
     pool = Pool()
     try:
-        items = list(blocks.iteritems())
+        items = list(blocks.items())
         items.sort(key=lambda el: len(el[1]), reverse=True)
         blocks = dict(pool.imap_unordered(reduce_block, items))
     finally:
@@ -272,21 +292,22 @@ def convert(geolite_blocks_path, geolite_locations_path, doomseeker_path):
 
 
     with open(doomseeker_path, "wb") as f:
-        f.write("IP2C")
-        f.write(struct.pack("<H", 2))  # Version
+        f.write(b"IP2C")
+        f.write(struct.pack(b"<H", 2))  # Version
         num = 1
-        for geoid, location in locations.iteritems():
-            f.write("{0}\0{1}\0".format(location.name, location.code))
-            f.write(struct.pack("<I", len(blocks[geoid])))
+        for geoid, location in locations.items():
+            f.write(location.name.encode("utf-8") + b"\0")
+            f.write(location.code.encode("utf-8") + b"\0")
+            f.write(struct.pack(b"<I", len(blocks[geoid])))
             for network in blocks[geoid]:
-                f.write(struct.pack("<II", network[0], network[1]))
+                f.write(struct.pack(b"<II", network[0], network[1]))
             num += 1
 
 
 def md5(fpath):
     with open(fpath, "rb") as f:
         checksum = hashlib.md5(f.read()).digest()
-        print "MD5: {0}".format(binascii.hexlify(checksum).lower())
+        _prerr("MD5: {0}".format(binascii.hexlify(checksum).lower()))
 
 
 def gzip_file(fpath):
@@ -294,7 +315,7 @@ def gzip_file(fpath):
     with gzip.open(outpath, "wb") as gfile:
         with open(fpath, "rb") as f:
             gfile.write(f.read())
-    print "GZip file generated at: {0}".format(outpath)
+    _prerr("GZip file generated at: {0}".format(outpath))
 
 
 def run():
@@ -303,7 +324,7 @@ def run():
         exit(0)
 
     scriptdir = os.path.dirname(os.path.realpath(__file__))
-    with open(os.path.join(scriptdir, "country_iso3.json"), "rb") as f:
+    with open(os.path.join(scriptdir, "country_iso3.json"), "r") as f:
         global country_mapping
         country_mapping = json.loads(f.read())
 
@@ -327,9 +348,14 @@ def run():
             try:
                 shutil.rmtree(tmpdir)
             except Exception as e:
-                print >>sys.stderr, "Warning: failed to clean up tmpdir '{0}': {1}".format(tmpdir, e)
+                _prerr("Warning: failed to clean up tmpdir '{0}': {1}".format(tmpdir, e))
     md5(doomseeker_path)
     gzip_file(doomseeker_path)
+
+
+def _prerr(*args, **kwargs):
+    kwargs.setdefault("file", sys.stderr)
+    print(*args, **kwargs)
 
 
 if __name__ == "__main__":
