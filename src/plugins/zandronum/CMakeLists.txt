@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
 set(PLUGIN_NAME zandronum)
-set(PLUGIN_VERSION 36)
+set(PLUGIN_VERSION 37)
 include(../PluginHeader.cmake)
 
 qt4_wrap_ui(ZANDRONUM_UI_FILES

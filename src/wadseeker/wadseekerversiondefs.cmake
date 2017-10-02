@@ -21,4 +21,4 @@
 # Copyright (C) 2017 The Doomseeker Team
 #------------------------------------------------------------------------------
 
-set(VERSION_STRING "1.1")
+set(VERSION_STRING "1.2~beta-1")
