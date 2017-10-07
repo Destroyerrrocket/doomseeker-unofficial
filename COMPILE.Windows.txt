@@ -1,6 +1,6 @@
 ================================================================================
-Compiling Doomseeker in Microsoft Visual Studio 2013 Express with Qt 5.x
-Written by Zalewa, September 2015
+Compiling Doomseeker in Microsoft Visual Studio Community 2017 with Qt 5.x
+Written by Zalewa, September 2015, Updated October 2017
 ================================================================================
 1. Quick introduction.
 
@@ -14,10 +14,10 @@ binaries for Doomseeker, Wadseeker and all plugins by yourself.
 2. Compiler.
 
 On Windows only one compiler is officially supported: the one that comes with
-Microsoft Visual Studio 2013.
+Microsoft Visual Studio 2017.
 
 First step:
-Get Microsoft Visual Studio 2013 Express. It's free for commercial
+Get Microsoft Visual Studio Community 2017. It's free for commercial
 and non-commercial use.
 ================================================================================
 3. Qt.
@@ -28,6 +28,11 @@ Using older Qt5 versions is discouraged as they had localization bugs and
 they linked against ICU (about 30MB of additional DLL dependency).
 
 Get Qt 5.7.0 for MSVC 2013 from Qt's official home page and install it.
+http://download.qt.io/archive/qt/5.7/
+
+If, for any reason, you want to use a different Qt version, it should
+be compatible with v120_xp toolset, unless you do not care about
+Windows XP and redist problems and want to use a newer one.
 
 Once Qt is installed you should modify your PATH environment variable so that it
 contains path to the "bin" directory inside your Qt installation. It is possible
@@ -42,12 +47,9 @@ Once you modify the PATH variable you may have to reboot your system.
 Link:
 https://doomseeker.drdteam.org/files/dependencies/OpenSSL-1.0.2a-VC-32.7z
 
-This is for completion only, so it's optional. Doomseeker will work without
-OpenSSL, but it won't be able to access HTTPS sites. This is a very crippling
-flaw in current era. And also, without those libs, you will most likely get
-a very nasty message box popup during startup, followed by a second very nasty
-message box popup. If that doesn't happen, then without this you'll get annoying
-error messages each time Doomseeker accesses the web.
+Doomseeker will work without OpenSSL, but it won't be able to access HTTPS sites.
+Many of the features contact HTTPS sites, therefore lack of OpenSSL will be
+crippling and may result in additional error popups.
 
 ================================================================================
 5. CMake.
@@ -60,8 +62,7 @@ programmers to avoid uploading all that mess that IDEs create when they
 spawn a new project. Also, it helps with keeping track of all the dependencies
 that the program needs in order to compile.
 
-At the moment when this was written the newest stable
-CMake version was 3.7.0-rc1.
+CMake version 3.9.0-rc6 was used when writing this doc.
 
 Get CMake now.
 
@@ -69,7 +70,7 @@ Launch CMake GUI.
 
 The first thing you need to set is "Where to build the binaries". This
 should be located somewhere outside the repository. For example:
-D:/dev/Doomseeker/visual2013
+D:/dev/Doomseeker/visual2017
 
 The second thing is "Where is the source code". Pick the top-most directory
 that contains the CMakeLists.txt file. In case of Doomseeker this is the root
@@ -79,13 +80,13 @@ D:/dev/Doomseeker/repo
 Now press "Configure" button.
 
 CMake should prompt about the type of compiler you want to use. Pick
-"Visual Studio 12". The very important thing here is to define special toolset
+"Visual Studio 15 2017". The very important thing here is to define special toolset
 to ensure that folks who use Windows XP can run Doomseeker. Specify "v120_xp"
 as the toolset. Don't make a typo! Also make sure that
 "Use default native compilers" option is selected.
 
 Now press "Finish". If you did everything right up to this
-point then CMake should find the MSVC 2013 and Qt installations. The initial
+point then CMake should find the MSVC 2017 and Qt installations. The initial
 configuration may take some time but should finish without errors. Once done,
 CMake will display some key-value positions in a table with a red background.
 Red background means that these settings are new.
@@ -100,7 +101,13 @@ list should now change and you should see following items:
 When you finish setting everything press "Configure" button again so that all
 red options should turn to normal background color and then press "Generate"
 button. This should create the ".sln" file in the target directory. You may
-now open this file with Visual Studio 2013 and then try to compile the program.
+now open this file with Visual Studio 2017 and then try to compile the program.
+
+It is also possible to compile from command line by using cmake:
+
+  cd build_dir
+  cmake --build . --config Release
+
 ================================================================================
 6. Tweaks.
 
