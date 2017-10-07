@@ -12,6 +12,26 @@ distros as these dependencies should be provided through package manager
 or other method appropriate for given distro.
 
 
+zlib
+----
+
+zlib 1.2.7 convenience copy obtained from ZDoom's source code:
+https://zdoom.org/files/zdoom/2.5/zdoom-2.5.0-src.7z
+
+zlib 1.2.7 bulding script modified for Doomseeker purposes.
+
+bzip2
+-----
+
+bzip2 1.0.5 convenience copy obtained from ZDoom's source code:
+https://zdoom.org/files/zdoom/2.5/zdoom-2.5.0-src.7z
+
+bzip2 1.0.6 obtained from:
+http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz
+
+bzip2 1.0.6 overwritten over 1.0.5 and building script
+modified for Doomseeker purposes.
+
 --------------------------------------------------------------------
 Copyright (C) 2012 The Doomseeker Team
 

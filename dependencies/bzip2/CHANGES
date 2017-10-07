@@ -12,6 +12,9 @@
  in the file LICENSE.
  ------------------------------------------------------------------
 
+This version of bzip2 source code has been modified for Doomseeker
+(unused content was cut, CMake building configuration was added).
+
 
 0.9.0
 ~~~~~

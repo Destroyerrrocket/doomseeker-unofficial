@@ -1,3 +1,5 @@
+This version of zlib source code has been modified for Doomseeker
+(unused content was cut, CMake building configuration was altered).
 
                 ChangeLog file for zlib
 
