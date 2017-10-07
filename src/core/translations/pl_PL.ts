@@ -47,14 +47,6 @@
         <translation></translation>
     </message>
     <message>
-        <source>Copyright © 2009 - 2017 The Doomseeker Team
-
-This program is distributed under the terms of the GPL v2.</source>
-        <translation type="vanished">Copyright © 2009 - 2017 The Doomseeker Team
-
-Ten program jest rozprowadzany na zasadach licencji GPL v2.</translation>
-    </message>
-    <message>
         <location filename="../../../../vs2013_5_7_0/src/core/ui_aboutdialog.h" line="429"/>
         <source>- Eruanna, Hyper_Eye, Nece228</source>
         <translation></translation>
@@ -82,7 +74,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../../../vs2013_5_7_0/src/core/ui_aboutdialog.h" line="412"/>
         <source>Copyright © 2009 - 2017 The Doomseeker Team
 
-This program is distributed under the terms of the GPL v2.
+This program is distributed under the terms of the LGPL v2.1 or later.
 
 This program uses GeoLite2 database for IP-to-Country (IP2C) purposes. Database and Contents Copyright (c) 2016 MaxMind, Inc.
 
@@ -93,7 +85,7 @@ GeoLite2 available at:
 https://dev.maxmind.com/geoip/geoip2/geolite2/</source>
         <translation>Copyright © 2009 - 2017 The Doomseeker Team
 
-Ten program jest rozprowadzany na zasadach licencji GPL v2.
+Ten program jest rozprowadzany na zasadach licencji LGPL v2.1 lub późniejszej.
 
 Ten program używa bazy danych GeoLite2 aby zapewnić rozpoznawanie krajów po adresach IP (IP2C). Baza danych i jej zawartość - Copyright (c) 2016 MaxMind, Inc
 

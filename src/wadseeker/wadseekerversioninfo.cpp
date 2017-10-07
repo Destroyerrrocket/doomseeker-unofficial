@@ -31,7 +31,7 @@ QString WadseekerVersionInfo::author()
 
 QString WadseekerVersionInfo::description()
 {
-	return QObject::tr("This library is distributed under the terms of the LGPL v2.1.");
+	return QObject::tr("This library is distributed under the terms of the LGPL v2.1 or later.");
 }
 
 QStringList WadseekerVersionInfo::knownWadExtensions()
