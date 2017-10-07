@@ -1,6 +1,12 @@
-This directory contains library dependencies in binary format.
-These dependencies can be download from the various, scattered sites on 
+This directory contains library dependencies.
+
+These dependencies can be download from various, scattered sites on
 the Internet. Because Windows has many different C++ compilers it is difficult
 to find builds of all libraries that will be compatible with your compiler.
+Even each Visual Studio version is a different compiler.
 
-This directory exists to make compilation process (on Windows) easier.
+This directory exists to make compilation process on Windows easier.
+
+Contents of this directory are normally not needed on various GNU/Linux
+distros as these dependencies should be provided through package manager
+or other method appropriate for given distro.

@@ -1,4 +1,0 @@
-Library prepared for static linking.
-
-Original source:
-http://www.bzip.org/
