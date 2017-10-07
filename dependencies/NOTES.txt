@@ -10,3 +10,11 @@ This directory exists to make compilation process on Windows easier.
 Contents of this directory are normally not needed on various GNU/Linux
 distros as these dependencies should be provided through package manager
 or other method appropriate for given distro.
+
+
+--------------------------------------------------------------------
+Copyright (C) 2012 The Doomseeker Team
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.

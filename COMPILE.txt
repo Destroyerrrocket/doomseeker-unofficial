@@ -77,3 +77,11 @@ Building against Qt4
 FORCE_QT4 option, when set to true, will enable compiling with Qt4.
 
   cmake -DFORCE_QT4=true
+
+
+----------------------------------------
+Copyright (C) 2010 The Doomseeker Team
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.

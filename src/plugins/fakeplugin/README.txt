@@ -3,6 +3,7 @@ FakePlugin for Doomseeker by The Doomseeker Team, 2013.
 CONTENTS:
 1. What is This?
 2. Basic Configuration.
+3. Copyright.
 ===============================================================================
 
 1. What is This?
@@ -33,3 +34,10 @@ All values that can be modified are located in file
 "responder/respondercfg.cpp". Refer to documentation
 in "responder/respondercfg.h" to learn what these settings are used for.
 
+3. Copyright
+===============================================================================
+Copyright (C) 2013 The Doomseeker Team
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.

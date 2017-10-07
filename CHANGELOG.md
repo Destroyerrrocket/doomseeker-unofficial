@@ -178,6 +178,16 @@ archives. Fixes extraction of e1m4b.wad and e1m8b.wad. Thanks, John Romero!
 ## [1.0] - 2015-03-22
 - Version 1.0 released. No changelog was kept before.
 
+
+Copyright (this file)
+---------------------
+Copyright (C) 2015 The Doomseeker Team
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+
 [development]: https://bitbucket.org/Doomseeker/doomseeker/commits/all
 [1.1]: https://bitbucket.org/Doomseeker/doomseeker/commits/tag/1.1
 [1.0]: https://bitbucket.org/Doomseeker/doomseeker/commits/tag/1.0

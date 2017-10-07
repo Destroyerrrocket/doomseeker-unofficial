@@ -131,4 +131,10 @@ dumped directly to this directory.
 ================================================================================
 Now you may build the program and while it compiles you may open one
 of the source code files that I created back in 2009 and cry :)
+--------------------------------------------------------------------------------
+Copyright (C) 2012 The Doomseeker Team
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
 ================================================================================
