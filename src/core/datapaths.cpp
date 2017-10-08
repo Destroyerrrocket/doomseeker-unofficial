@@ -247,7 +247,7 @@ QStringList DataPaths::pluginSearchLocationPaths() const
 	paths.append(workingDirectory());
 	paths.append("./");
 #ifndef Q_OS_WIN32
-	paths.append(INSTALL_PREFIX "/lib/doomseeker/");
+	paths.append(INSTALL_PREFIX "/" INSTALL_LIBDIR "/doomseeker/");
 #endif
 	return Strings::combineManyPaths(paths, "engines/");
 }

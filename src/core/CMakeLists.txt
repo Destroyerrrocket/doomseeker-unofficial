@@ -200,7 +200,7 @@ if (MSVC)
 	target_compile_definitions(doomseeker PRIVATE -D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-target_compile_definitions(doomseeker PRIVATE "-DINSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
+target_compile_definitions(doomseeker PRIVATE "-DINSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"" "-DINSTALL_LIBDIR=\"${CMAKE_INSTALL_LIBDIR}\"")
 
 # Make sure the svnrevision.h file is created before we attempt to compile
 # Doomseeker.

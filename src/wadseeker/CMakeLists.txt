@@ -30,6 +30,16 @@ if (MSVC)
 	set(CMAKE_SHARED_LIBRARY_PREFIX "lib")
 endif ()
 
+# Multiarch support - CMAKE_INSTALL_LIBDIR will be set by Doomseeker's CMake
+# or we will get it from GNUInstallDirs.
+if(NOT DEFINED CMAKE_INSTALL_LIBDIR)
+	if(UNIX AND NOT APPLE)
+		include(GNUInstallDirs)
+	else()
+		set(CMAKE_INSTALL_LIBDIR "lib")
+	endif()
+endif()
+
 add_subdirectory(lzma)
 
 include(${CMAKE_SOURCE_DIR}/cmake/Modules/Macros.cmake)
@@ -185,7 +195,7 @@ if(DEFINED Doomseeker_BINARY_DIR)
 endif()
 
 if(NOT WIN32 AND NOT XCODE_VERSION)
-	install(TARGETS wadseeker LIBRARY DESTINATION lib COMPONENT wadseeker)
+	install(TARGETS wadseeker LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT wadseeker)
 elseif(WIN32)
 	install(TARGETS wadseeker RUNTIME DESTINATION . COMPONENT wadseeker)
 endif()

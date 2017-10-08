@@ -42,6 +42,15 @@ if(USE_CPACK)
 	include(CPackComponent)
 endif()
 
+# Multiarch support
+if(UNIX AND NOT APPLE)
+	include(GNUInstallDirs)
+elseif(NOT DEFINED CMAKE_INSTALL_LIBDIR)
+	# Do we care about this on other platforms? CMAKE_ prefix used here to
+	# match the variable set by GNUInstallDirs.
+	set(CMAKE_INSTALL_LIBDIR "lib")
+endif()
+
 option(FORCE_QT4 "Force Qt4" NO)
 if(WIN32)
 	set(FORCE_INTERNAL_ZLIB YES)

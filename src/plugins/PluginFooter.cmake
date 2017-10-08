@@ -36,7 +36,7 @@ set_target_properties(${PLUGIN_NAME} PROPERTIES AUTOMOC ON)
 # Installation is on by default unless explicitly disabled.
 if (NOT DONT_INSTALL) # if install
 	if(UNIX AND NOT APPLE)
-		install(TARGETS ${PLUGIN_NAME} DESTINATION lib/doomseeker/engines COMPONENT ${PLUGIN_NAME})
+		install(TARGETS ${PLUGIN_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR}/doomseeker/engines COMPONENT ${PLUGIN_NAME})
 		if (QM_FILES)
 			install(FILES ${QM_FILES} DESTINATION share/doomseeker/translations COMPONENT ${PLUGIN_NAME})
 		endif ()
