@@ -416,7 +416,7 @@
   <action name="menuActionUpdateIP2C">
    <property name="icon">
     <iconset resource="../../../media/resources.qrc">
-     <normaloff>:/icons/emblem-web.png</normaloff>:/icons/emblem-web.png</iconset>
+     <normaloff>:/icons/internet-web-browser.png</normaloff>:/icons/internet-web-browser.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Update IP2C</string>

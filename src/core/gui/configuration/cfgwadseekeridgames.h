@@ -35,7 +35,7 @@ class CFGWadseekerIdgames : public ConfigPage
 		CFGWadseekerIdgames(QWidget* parent = NULL);
 		~CFGWadseekerIdgames();
 
-		QIcon icon() const { return QIcon(":/icons/arrow-down-double.png"); }
+		QIcon icon() const { return QIcon(":/icons/utilities-file-archiver-2.png"); }
 		QString name() const { return tr("Archives"); }
 		void readSettings();
 		QString title() const { return tr("Wadseeker - Archives"); }

@@ -37,7 +37,7 @@ class CFGWadseekerSites : public ConfigPage
 		CFGWadseekerSites(QWidget* parent = NULL);
 		~CFGWadseekerSites();
 
-		QIcon icon() const { return QIcon(":/icons/emblem-web.png"); }
+		QIcon icon() const { return QIcon(":/icons/internet-web-browser.png"); }
 		QString name() const { return tr("Sites"); }
 		void readSettings();
 		QString title() const { return tr("Wadseeker - Sites"); }

@@ -14,13 +14,12 @@
 	<file>icons/descending.png</file>
 	<file>icons/diskette.png</file>
 	<file>icons/doomseeker_plus.png</file>
-	<file>icons/download.png</file>
-	<file>icons/emblem-web.png</file>
 	<file>icons/exclamation.png</file>
 	<file>icons/exclamation_16.png</file>
 	<file alias="icons/exclamation_16@2x.png">icons/exclamation.png</file>
 	<file>icons/filter.png</file>
 	<file>icons/get-wad.png</file>
+	<file>icons/internet-web-browser.png</file>
 	<file>icons/irc_channel.png</file>
 	<file>icons/joystick.png</file>
 	<file>icons/log.png</file>
@@ -37,6 +36,7 @@
 	<file>icons/preferences-system-4.png</file>
 	<file>icons/refresh.png</file>
 	<file>icons/server_details.png</file>
+	<file>icons/utilities-file-archiver-2.png</file>
 	<file alias="shield.png">icons/shield.png</file>
 	<file alias="t.png">icons/t.png</file>
 	<file>icons/view-refresh-2.png</file>
