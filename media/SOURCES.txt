@@ -31,7 +31,7 @@ icons/shield.png
 
 icon-8bit.png
 logo.png
-logo-src.psd
+logo-src.xcf
 
 - Copyright(C) 2011 Nece228
 
@@ -78,46 +78,50 @@ icons/x.png
 icons/exclamation.png
 icons/exclamation-16.png
 
-- Crystal Clear (crystal_clear)
+- Crystal Clear (crystal_clear) by Everaldo Coelho
 	link: http://commons.wikimedia.org/wiki/Crystal_Clear
 	license: LGPL-2.1
-	license link: http://creativecommons.org/licenses/LGPL/2.1/
+	license link: https://www.gnu.org/licenses/lgpl-2.1.html
 
-icons/arrow-down-double.png (blue hue changed to red)
+icons/arrow-down-double.png (blue hue changed to red by Zalewa)
 icons/view-refresh-2.png
 
 - Oxygen Icons 4.3.1 (KDE) (oxygen)
 	link: http://www.oxygen-icons.org/
 	license: Dual: CC-BY-SA 3.0 or LGPL
 	License link: http://creativecommons.org/licenses/by-sa/3.0/
-			http://creativecommons.org/licenses/LGPL/2.1/
+			https://www.gnu.org/licenses/lgpl-2.1.html
 
 icons/color-fill.png
 icons/diskette.png
-icons/irc_channel.png (hue altered)
+icons/irc_channel.png (hue altered by Zalewa)
 icons/network-connect-3.png
 icons/preferences-system-4.png
 
-- nuovEXT2
-	link:  https://github.com/redtide/nuovext-icon-theme/
-	license: LGPL v2.1
+- Tango Icon Library 0.8.90 (tango)
+	link: http://tango.freedesktop.org/Tango_Icon_Library
+	license: Public Domain
+	License link: http://en.wikipedia.org/wiki/Public_domain
+	formats: svg, png
+	subdirectory: open_icon_library-devel/icons/tango
 
 icons/internet-web-browser.png
 
 - Nuvola 1.0 (KDE 3.x icon set) (nuvola)
 	link: http://www.icon-king.com/projects/nuvola/
 	license: LGPL 2.1
-	license link: http://creativecommons.org/licenses/LGPL/2.1/
+	license link: https://www.gnu.org/licenses/lgpl-2.1.html
 
 icons/joystick.png (originally: games-arcade.png)
 icons/utilities-file-archiver-2.png
 
 - Copyright (C) Aha-Soft
 	link: http://www.aha-soft.com/
+	alt. link: https://www.iconfinder.com/icons/132366/person_icon#size=24
 	license: Attribution 3.0 Unported (CC BY 3.0)
 	license link: https://creativecommons.org/licenses/by/3.0/
 
-icons/person.png (blue hue changed to red)
+icons/person.png (blue hue changed to red by Zalewa)
 
 - Copyright (C) MaxMind
 	link: https://dev.maxmind.com/geoip/geoip2/geolite2/
@@ -127,9 +131,13 @@ icons/person.png (blue hue changed to red)
 		GeoIP2 database, although the format in which this data
 		is stored is native to Doomseeker.
 
+	This product includes GeoLite2 data created by MaxMind,
+	available from http://www.maxmind.com.
+
 IpToCountry.dat
 
-- Copyright unclaimed due to pictures depicting game logos
+- Copyright unclaimed by The Doomseeker Team;
+  pictures depicting game logos
 
 ../src/plugins/chocolate-doom/chocolatedoom.xpm
 ../src/plugins/odamex/odamex.xpm
@@ -144,6 +152,20 @@ http://openiconlibrary.sourceforge.net/
 
 Icon Finder
 http://www.iconfinder.com/
+---------------------------------------
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ----------------------------------------
 This file: Copyright (C) 2017 The Doomseeker Team
 
