@@ -71,13 +71,6 @@ icons/refresh.png
 icons/server_details.png
 icons/x.png
 
-- Danish Royalty Free Icons by Jonas Rask Design
-	link: http://www.iconarchive.com/show/danish-royalty-free-icons-by-jonas-rask.html
-	license: freeware (also for commercial usage)
-
-icons/exclamation.png
-icons/exclamation-16.png
-
 - Crystal Clear (crystal_clear) by Everaldo Coelho
 	link: http://commons.wikimedia.org/wiki/Crystal_Clear
 	license: LGPL-2.1
@@ -102,9 +95,9 @@ icons/preferences-system-4.png
 	link: http://tango.freedesktop.org/Tango_Icon_Library
 	license: Public Domain
 	License link: http://en.wikipedia.org/wiki/Public_domain
-	formats: svg, png
-	subdirectory: open_icon_library-devel/icons/tango
 
+icons/exclamation.png (og name: dialog-warning.png)
+icons/exclamation-16.png (og name: dialog-warning.png)
 icons/internet-web-browser.png
 
 - Nuvola 1.0 (KDE 3.x icon set) (nuvola)
