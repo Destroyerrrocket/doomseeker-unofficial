@@ -12,7 +12,7 @@ icon.png
 icon_small.png
 icon_windows.ico
 
-- Copyright(C) 2009 or Hyper_Eye from Odamex
+- Copyright(C) 2009 Hyper_Eye from Odamex
                2014 MazterQyoun-ae
 
 icon-osx.icns
