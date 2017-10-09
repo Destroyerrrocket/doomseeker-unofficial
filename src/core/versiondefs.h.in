@@ -23,7 +23,7 @@
 #ifndef DOOMSEEKER_VERSIONDEFS_H
 #define DOOMSEEKER_VERSIONDEFS_H
 
-// This file is generated via the data in Version.cmake
+// This file is generated via the data in versiondefs.cmake
 //
 // NOTE:
 // This file defines the version data but it SHOULD NOT be used to access this

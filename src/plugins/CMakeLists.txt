@@ -18,6 +18,12 @@
 #------------------------------------------------------------------------------
 # Copyright (C) 2011 Braden "Blzut3" Obrzut <admin@maniacsvault.net>
 #------------------------------------------------------------------------------
+
+set(PLUGIN_LIST "")
+macro(add_doomseeker_plugin PLUGIN_NAME)
+	set(PLUGIN_LIST ${PLUGIN_LIST} ${PLUGIN_NAME} PARENT_SCOPE)
+endmacro()
+
 add_subdirectory(chocolate-doom)
 add_subdirectory(odamex)
 add_subdirectory(srb2)
@@ -34,3 +40,13 @@ option(BUILD_FAKE_PLUGINS "Build plugins that are used for development purposes 
 if(BUILD_FAKE_PLUGINS)
 	add_subdirectory(fakeplugin)
 endif()
+
+foreach(PLUGIN ${PLUGIN_LIST})
+	string(TOUPPER ${PLUGIN} PLUGIN_UPPER)
+
+	# Multiple layers of add_subdirectory make it difficult to pass variables
+	# like the CPack ones up to the root where they're used.
+	if(USE_CPACK)
+		set(CPACK_DEBIAN_${PLUGIN_UPPER}_PACKAGE_DEPENDS "doomseeker" PARENT_SCOPE)
+	endif()
+endforeach()

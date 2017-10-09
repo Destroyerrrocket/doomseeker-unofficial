@@ -21,6 +21,8 @@
 
 # See PluginHeader.txt
 
+add_doomseeker_plugin(${PLUGIN_NAME})
+
 target_include_directories(${PLUGIN_NAME}
 PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}

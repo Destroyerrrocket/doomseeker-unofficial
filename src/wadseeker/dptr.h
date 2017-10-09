@@ -25,6 +25,8 @@
 
 #include <QScopedPointer>
 
+// WADSEEKER_API - Include in wadseeker dev package
+
 /**
  * Private data structure for your class T. This needs to be specialized.
  */

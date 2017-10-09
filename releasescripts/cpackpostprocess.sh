@@ -67,12 +67,12 @@ do
 				sed -i "s/^Version:.*\$/Version: ${Entry[1]}/" control
 
 				# Repack our control
-				tar c * | gzip -9 > ../control.tar.gz
+				fakeroot tar c * | gzip -9 > ../control.tar.gz
 				cd ..
 				rm -rf control
 
 				# Build new deb
-				ar rc "$DestName" *
+				fakeroot ar rc "$DestName" debian-binary control.tar.gz data.tar.*
 
 				# We want to delete the old file and show what the new file is
 				# named. Easiest way to do that is to overwrite the old file

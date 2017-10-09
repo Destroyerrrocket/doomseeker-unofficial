@@ -346,6 +346,7 @@ if(USE_CPACK)
 		DEPENDS wadseeker)
 
 	set(CPACK_DEBIAN_DOOMSEEKER_PACKAGE_NAME "doomseeker" PARENT_SCOPE)
+	set(CPACK_DEBIAN_DOOMSEEKER_PACKAGE_DEPENDS "libwadseeker" PARENT_SCOPE)
 	set(CPACK_PACKAGE_VERSION ${VERSION_STRING} PARENT_SCOPE)
 
 	# Not really necessary, but it cleans up extraneous stuff CPack adds to the version string depending on the CPack version.
