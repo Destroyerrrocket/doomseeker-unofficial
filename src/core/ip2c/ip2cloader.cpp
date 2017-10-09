@@ -38,6 +38,7 @@ DClass<IP2CLoader>
 		IP2CParser* ip2cParser;
 		IP2CUpdater* ip2cUpdater;
 		bool updateInProgress;
+		bool inFallbackMode;
 };
 
 DPointered(IP2CLoader)
@@ -47,6 +48,7 @@ IP2CLoader::IP2CLoader(QObject *parent)
 :QObject(parent)
 {
 	d->updateInProgress = false;
+	d->inFallbackMode = false;
 
 	d->ip2cParser = new IP2CParser(IP2C::instance());
 	this->connect(d->ip2cParser, SIGNAL( parsingFinished(bool) ),
@@ -156,8 +158,15 @@ void IP2CLoader::ip2cFinishedParsing(bool bSuccess)
 
 	if (!bSuccess)
 	{
+		if (d->inFallbackMode)
+		{
+			gLog << tr("Failed to read IP2C fallback. Stopping.");
+			ip2cJobsFinished();
+			return;
+		}
 		gLog << tr("Failed to read IP2C database. Reverting...");
 
+		d->inFallbackMode = true;
 		if (d->ip2cUpdater == NULL || !d->ip2cUpdater->hasRollbackData())
 		{
 			gLog << tr("IP2C revert attempt failed. Nothing to go back to.");
@@ -201,6 +210,7 @@ void IP2CLoader::ip2cParseDatabase()
 	gLog << tr("Please wait. IP2C database is being read. This may take some time.");
 	// Attempt to read IP2C database.
 
+	d->inFallbackMode = false;
 	IP2C::instance()->setDataAccessLockEnabled(true);
 	d->ip2cParser->readDatabaseThreaded(filePath);
 }

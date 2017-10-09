@@ -3420,6 +3420,10 @@ Nastąpił błąd:
 <context>
     <name>IP2CLoader</name>
     <message>
+        <source>Failed to read IP2C fallback. Stopping.</source>
+        <translation>Odczytanie zapasowej bazy IP2C nie powiodło się. Zakańczam.</translation>
+    </message>
+    <message>
         <source>IP2C parser is still working. Program will close once this job is done.</source>
         <translation type="vanished">Parser IP2C wciąż pracuje. Program zamknie się, gdy ta praca zostanie zakończona.</translation>
     </message>
