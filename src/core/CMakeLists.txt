@@ -344,8 +344,10 @@ if(USE_CPACK)
 		DESCRIPTION "Cross-platform browser for Doom servers."
 		REQUIRED
 		DEPENDS wadseeker)
+	parent_scope_component(doomseeker)
 
 	set(CPACK_DEBIAN_DOOMSEEKER_PACKAGE_NAME "doomseeker" PARENT_SCOPE)
+	set(CPACK_DEBIAN_DOOMSEEKER_PACKAGE_SUMMARY "Server browser for Doom" PARENT_SCOPE)
 	set(CPACK_DEBIAN_DOOMSEEKER_PACKAGE_DEPENDS "libwadseeker" PARENT_SCOPE)
 	set(CPACK_PACKAGE_VERSION ${VERSION_STRING} PARENT_SCOPE)
 

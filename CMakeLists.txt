@@ -41,6 +41,14 @@ if(USE_CPACK)
 	set(CPACK_DEBIAN_COMPRESSION_TYPE "xz")
 
 	include(CPackComponent)
+
+	# Helper macro to get variables set by cpack_add_component propagated back up to the root.
+	macro(parent_scope_component COMP)
+		string(TOUPPER ${COMP} COMP_UPPER)
+		foreach(VARNAME "DISPLAY_NAME" "DESCRIPTION" "GROUP" "DEPENDS" "INSTALL_TYPES" "ARCHIVE_FILE" "HIDDEN" "REQUIRED" "DISABLED" "DOWNLOADED" "PLIST")
+			set(CPACK_COMPONENT_${COMP_UPPER}_${VARNAME} ${CPACK_COMPONENT_${COMP_UPPER}_${VARNAME}} PARENT_SCOPE)
+		endforeach()
+	endmacro()
 endif()
 
 # Multiarch support

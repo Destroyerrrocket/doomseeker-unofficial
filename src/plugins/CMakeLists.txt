@@ -47,6 +47,8 @@ foreach(PLUGIN ${PLUGIN_LIST})
 	# Multiple layers of add_subdirectory make it difficult to pass variables
 	# like the CPack ones up to the root where they're used.
 	if(USE_CPACK)
+		parent_scope_component(${PLUGIN})
+
 		set(CPACK_DEBIAN_${PLUGIN_UPPER}_PACKAGE_DEPENDS "doomseeker" PARENT_SCOPE)
 	endif()
 endforeach()

@@ -57,7 +57,9 @@ if (NOT DONT_INSTALL) # if install
 	if(USE_CPACK)
 		cpack_add_component(${PLUGIN_NAME}
 			DISPLAY_NAME "doomseeker-${PLUGIN_NAME}"
+			DESCRIPTION "Plugin to allow Doomseeker to query servers for ${PLUGIN_NAME}."
 			DEPENDS doomseeker)
+		parent_scope_component(${PLUGIN_NAME})
 
 		file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/CPackComponent.version" "doomseeker-${PLUGIN_NAME} ${PLUGIN_VERSION}\n")
 	endif()
