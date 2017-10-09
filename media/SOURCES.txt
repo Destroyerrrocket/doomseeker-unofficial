@@ -31,7 +31,7 @@ icons/shield.png
 
 icon-8bit.png
 logo.png
-logo-src.xcf
+logo-src.psd
 
 - Copyright(C) 2011 Nece228
 
