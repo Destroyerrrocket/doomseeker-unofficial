@@ -93,8 +93,8 @@ icons/preferences-system-4.png
 - Fugue Icons by Yusuke Kamiyamane
 	link: http://p.yusukekamiyamane.com
 	alt. link: http://www.iconarchive.com/show/fugue-icons-by-yusuke-kamiyamane/tick-shield-icon.html
-	license: CC BY 4.0
-	license link: https://creativecommons.org/licenses/by/4.0/
+	license: CC BY 3.0
+	license link: https://creativecommons.org/licenses/by/3.0/
 
 icons/shield.png
 
