@@ -90,7 +90,14 @@ icons/irc_channel.png (hue altered by Zalewa)
 icons/network-connect-3.png
 icons/preferences-system-4.png
 
-- Fugue Icons by Yusuke Kamiyamane
+- Fugue Icons
+
+  (C) 2013 Yusuke Kamiyamane. All rights reserved.
+
+  These icons are licensed under a Creative Commons
+  Attribution 3.0 License.
+  <http://creativecommons.org/licenses/by/3.0/>
+
 	link: http://p.yusukekamiyamane.com
 	alt. link: http://www.iconarchive.com/show/fugue-icons-by-yusuke-kamiyamane/tick-shield-icon.html
 	license: CC BY 3.0
