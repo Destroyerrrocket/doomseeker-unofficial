@@ -23,6 +23,7 @@
 #include "cfgappearance.h"
 #include "ui_cfgappearance.h"
 
+#include "gui/helpers/playersdiagram.h"
 #include "configuration/doomseekerconfig.h"
 #include <QColorDialog>
 #include <QSystemTrayIcon>
@@ -61,13 +62,27 @@ void CFGAppearance::initLanguagesList()
 	}
 }
 
+void CFGAppearance::initSlotStyles(const QString &selected)
+{
+	QList<PlayersDiagramStyle> styles = PlayersDiagram::availableSlotStyles();
+	d->slotStyle->clear();
+	foreach (const PlayersDiagramStyle &style, styles)
+	{
+		d->slotStyle->addItem(style.displayName, style.name);
+		if (style.name == selected)
+		{
+			d->slotStyle->setCurrentIndex(d->slotStyle->count() - 1);
+		}
+	}
+}
+
 void CFGAppearance::readSettings()
 {
 	if (d->cboLanguage->count() == 0)
 	{
 		initLanguagesList();
 	}
-	d->slotStyle->setCurrentIndex(gConfig.doomseeker.slotStyle);
+	initSlotStyles(gConfig.doomseeker.slotStyle);
 
 	d->btnCustomServersColor->setColorHtml(gConfig.doomseeker.customServersColor);
 	d->btnBuddyServersColor->setColorHtml(gConfig.doomseeker.buddyServersColor);
@@ -120,7 +135,7 @@ void CFGAppearance::readSettings()
 
 void CFGAppearance::saveSettings()
 {
-	gConfig.doomseeker.slotStyle = d->slotStyle->currentIndex();
+	gConfig.doomseeker.slotStyle = d->slotStyle->itemData(d->slotStyle->currentIndex()).toString();
 	gConfig.doomseeker.bMarkServersWithBuddies = d->cbMarkServersWithBuddies->isChecked();
 	gConfig.doomseeker.buddyServersColor = d->btnBuddyServersColor->colorHtml();
 	gConfig.doomseeker.customServersColor = d->btnCustomServersColor->colorHtml();

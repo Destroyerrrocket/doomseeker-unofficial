@@ -298,8 +298,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 	setupToolBar();
 
 	// Player diagram styles
-	int slotStyle = gConfig.doomseeker.slotStyle;
-	PlayersDiagram::loadImages(slotStyle);
+	PlayersDiagram::loadImages(gConfig.doomseeker.slotStyle);
 
 	// IP2C
 	d->menuActionUpdateIP2C->setEnabled(false);

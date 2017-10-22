@@ -91,7 +91,7 @@ class DoomseekerConfig
 			QString serverListColumnState;
 			int serverListSortIndex;
 			int serverListSortDirection;
-			int slotStyle;
+			QString slotStyle;
 			QList<FileSearchPath> wadPaths;
 
 			DoomseekerCfg();

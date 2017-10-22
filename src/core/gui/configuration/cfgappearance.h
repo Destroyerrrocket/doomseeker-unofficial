@@ -46,6 +46,7 @@ class CFGAppearance : public ConfigPage
 
 	private:
 		void initLanguagesList();
+		void initSlotStyles(const QString &selected);
 
 		DPtr<CFGAppearance> d;
 };

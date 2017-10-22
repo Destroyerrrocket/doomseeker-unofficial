@@ -155,7 +155,7 @@ void ServerListRowHandler::fillPlayerColumn()
 {
 	QStandardItem* pItem = item(IDPlayers);
 
-	int style = gConfig.doomseeker.slotStyle;
+	QString style = gConfig.doomseeker.slotStyle;
 	bool botsAreNotPlayers = gConfig.doomseeker.bBotsAreNotPlayers;
 
 	const PlayersList &players = d->server->players();
@@ -170,7 +170,7 @@ void ServerListRowHandler::fillPlayerColumn()
 		sortValue = players.numClients();
 	}
 
-	if(style != NUM_SLOTSTYLES)
+	if(!PlayersDiagram::isNumericStyle(style))
 	{
 		fillItem(pItem, sortValue, PlayersDiagram(d->server).pixmap());
 	}
@@ -181,8 +181,8 @@ void ServerListRowHandler::fillPlayerColumn()
 	}
 
 	// Unset some data if it has been set before.
-	pItem->setData(QVariant(QVariant::Invalid), style == NUM_SLOTSTYLES ? Qt::DecorationRole : Qt::DisplayRole);
-	pItem->setData(style == NUM_SLOTSTYLES ? 0 : USERROLE_RIGHTALIGNDECORATION, Qt::UserRole);
+	pItem->setData(QVariant(QVariant::Invalid), PlayersDiagram::isNumericStyle(style) ? Qt::DecorationRole : Qt::DisplayRole);
+	pItem->setData(PlayersDiagram::isNumericStyle(style) ? 0 : USERROLE_RIGHTALIGNDECORATION, Qt::UserRole);
 }
 
 void ServerListRowHandler::fillPortIconColumn()

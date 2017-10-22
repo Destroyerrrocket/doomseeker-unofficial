@@ -30,17 +30,38 @@
 class Server;
 class QImage;
 
-#define NUM_SLOTSTYLES 2
-
-class PlayersDiagram
+struct PlayersDiagramStyle
 {
+public:
+	QString name;
+	QString displayName;
+
+	PlayersDiagramStyle() {}
+	PlayersDiagramStyle(QString name)
+	: name(name)
+	{
+		displayName = name.toLower();
+		displayName[0] = displayName[0].toUpper();
+	}
+	PlayersDiagramStyle(QString name, QString displayName)
+	: name(name), displayName(displayName)
+	{}
+};
+
+class PlayersDiagram : public QObject
+{
+	Q_OBJECT;
+	Q_DISABLE_COPY(PlayersDiagram);
+
 	public:
+		static QList<PlayersDiagramStyle> availableSlotStyles();
 		/**
-		 *	Loads all the images used to build a diagram. Previous images
-		 *	will be freed. This is be used to change the diagram appearance
-		 *	when Configuration box indicates that such action is required.
+		 * Loads all the images used to build a diagram. Previous images
+		 * will be freed. This is be used to change the diagram appearance
+		 * when Configuration box indicates that such action is required.
 		 */
-		static void loadImages(int style);
+		static void loadImages(const QString &style);
+		static bool isNumericStyle(const QString &style);
 
 		PlayersDiagram(ServerCPtr server);
 
@@ -55,11 +76,7 @@ class PlayersDiagram
 			Human
 		};
 
-		static void deleteImages();
-		static bool isStyleNumberValid(int style);
-
-		static const char* slotStyles[NUM_SLOTSTYLES];
-		static const QImage *openImage, *openSpecImage, *botImage, *playerImage, *spectatorImage;
+		static QImage openImage, openSpecImage, botImage, playerImage, spectatorImage;
 
 		/**
 		 * Colorizes the image to color.  This works is a fairly hacky way.  It
@@ -69,11 +86,11 @@ class PlayersDiagram
 		 * Colorization is done by keeping the hue and saturation if the passed
 		 * in color and applying the value of the color in the image.
 		 */
-		const QImage* colorizePlayer(const QImage *image, const QColor &color);
+		QImage colorizePlayer(QImage image, const QColor &color);
 
 		void draw();
 		void drawTeam(PlayerType playerType, int team, int howMany);
-		void drawPictures(const QImage* image, int howMany);
+		void drawPictures(const QImage &image, int howMany);
 
 		void obtainPlayerNumbers();
 
@@ -86,12 +103,17 @@ class PlayersDiagram
 		int numSpectators;
 
 	private:
+		static const QString DEFAULT_STYLE;
+		static QString currentlyLoadedStyle;
+
 		ServerCPtr server;
 		QPixmap diagram;
 		QPainter* painter;
 		int position;
 		int slotSize;
-		QImage *tmp;
+
+		static QImage loadImage(const QString &style, const QString &name);
+		static QStringList stylePaths();
 };
 
 #endif

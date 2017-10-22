@@ -86,8 +86,7 @@ void ServerListModel::redraw(int row)
 
 void ServerListModel::redrawAll()
 {
-	int slotstyle = gConfig.doomseeker.slotStyle;
-	PlayersDiagram::loadImages(slotstyle);
+	PlayersDiagram::loadImages(gConfig.doomseeker.slotStyle);
 
 	for (int i = 0; i < rowCount(); ++i)
 	{

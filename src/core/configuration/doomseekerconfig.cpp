@@ -219,6 +219,25 @@ DClass<DoomseekerConfig::DoomseekerCfg>
 	public:
 		IniSection section;
 		QuerySpeed querySpeed;
+
+		QString slotStyle() const
+		{
+			// Slot styles were indexed in older versions of Doomseeker.
+			// This here provides compatibility layer that allows to load configuration
+			// files from those versions.
+			const int NUM_SLOTSTYLES = 2;
+			const char* indexedSlotStyles[NUM_SLOTSTYLES] = { "marines", "blocks" };
+			bool isInt = false;
+			int numeric = section["SlotStyle"].value().toInt(&isInt);
+			if (isInt && numeric >= 0 && numeric < NUM_SLOTSTYLES)
+			{
+				return indexedSlotStyles[numeric];
+			}
+			else
+			{
+				return section["SlotStyle"].valueString();
+			}
+		}
 };
 
 DPointered(DoomseekerConfig::DoomseekerCfg)
@@ -363,7 +382,7 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	this->serverListColumnState = (const QString &)section["ServerListColumnState"];
 	this->serverListSortIndex = section["ServerListSortIndex"];
 	this->serverListSortDirection = section["ServerListSortDirection"];
-	this->slotStyle = section["SlotStyle"];
+	this->slotStyle = d->slotStyle();
 
 	// Complex data variables.
 
