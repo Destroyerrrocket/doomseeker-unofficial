@@ -165,7 +165,7 @@ slotstyles/marines/specopen.png
 slotstyles/marines/spectator.png
 
 -- Derivative of id Software's work by MazterQyoun-ae
-media/icons/buddies.png
+icons/buddies.png
 
 ----------------------------------------
 Online Icon Gallery in Open Icon Library:
