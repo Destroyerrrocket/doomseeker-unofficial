@@ -89,6 +89,7 @@
 	<file alias="flags/IMN">flags/IMN.png</file> <!-- Isle of Man -->
 	<file alias="flags/IND">flags/IND.png</file> <!-- India -->
 	<file alias="flags/IRL">flags/IRL.png</file> <!-- Ireland -->
+	<file alias="flags/IRN">flags/IRN.png</file> <!-- Iran -->
 	<file alias="flags/IRQ">flags/IRQ.png</file> <!-- Iraq -->
 	<file alias="flags/ISL">flags/ISL.png</file> <!-- Iceland -->
 	<file alias="flags/ISR">flags/ISR.png</file> <!-- Israel -->
