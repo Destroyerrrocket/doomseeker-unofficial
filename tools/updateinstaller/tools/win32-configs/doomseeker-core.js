@@ -1,6 +1,11 @@
 {
     "name" : "doomseeker-core",
     "files" : [
+        "theme/slots/marines/bot.png",
+        "theme/slots/marines/open.png",
+        "theme/slots/marines/player.png",
+        "theme/slots/marines/specopen.png",
+        "theme/slots/marines/spectator.png",
         "translations/translations.def",
         "translations/pl_PL.qm",
         "translations/qtbase_pl.qm",

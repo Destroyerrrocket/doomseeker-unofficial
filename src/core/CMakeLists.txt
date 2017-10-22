@@ -41,6 +41,16 @@ if (POLICY CMP0046)
 	cmake_policy(SET CMP0046 NEW)
 endif()
 
+if (WIN32 OR APPLE)
+	set(DEFAULT_NONFREE_INSTALL "yes")
+else()
+	# On Linux distros default to 'no' to avoid accidental
+	# violation of any freedom rules.
+	set(DEFAULT_NONFREE_INSTALL "no")
+endif()
+
+option(DOOMSEEKER_INSTALL_NONFREE "Install non-free resources?" ${DEFAULT_NONFREE_INSTALL})
+
 # Get the SVN revision
 add_custom_target(revision_check ALL
 	COMMAND updaterevision . ${CMAKE_CURRENT_SOURCE_DIR}/svnrevision.h
@@ -233,6 +243,27 @@ endforeach(FILE_TO_COPY)
 set_target_properties(doomseeker PROPERTIES AUTOMOC 1)
 # Allow plugins to link with doomseeker
 set_target_properties(doomseeker PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR} ENABLE_EXPORTS 1)
+
+# Install - procedures and instructions
+function(install_all_slot_styles)
+	if (DOOMSEEKER_INSTALL_NONFREE)
+		install_slot_style("marines")
+	endif()
+endfunction()
+
+function(install_slot_style name)
+	if(UNIX AND NOT APPLE)
+		set(prefix "share/doomseeker")
+	else()
+		set(prefix ".")
+	endif()
+	foreach(slotpic bot.png open.png player.png specopen.png spectator.png)
+		install(FILES ${CMAKE_SOURCE_DIR}/media/slotstyles/${name}/${slotpic}
+			DESTINATION ${prefix}/theme/slots/${name}
+			COMPONENT doomseeker)
+	endforeach()
+endfunction()
+
 if(WIN32)
 	if(MSVC)
 		set_target_properties(doomseeker PROPERTIES
@@ -268,6 +299,8 @@ if(WIN32)
 			OUTPUT_STRIP_TRAILING_WHITESPACE)
 		install(FILES ${QT_PLUGINS_DIR}/audio/qtaudio_windows.dll DESTINATION audio COMPONENT doomseeker)
 		install(FILES ${QT_PLUGINS_DIR}/platforms/qwindows.dll DESTINATION platforms COMPONENT doomseeker)
+		# Media
+		install_all_slot_styles()
 		# ICU (the 26.6 Megabyte bastard)
 		#
 		# Installation of ICU is optional. If you don't have ICU
@@ -336,6 +369,7 @@ if(UNIX AND NOT APPLE)
 	install(FILES ${CMAKE_SOURCE_DIR}/media/icon.png DESTINATION share/icons COMPONENT doomseeker RENAME doomseeker.png)
 	install(FILES ${TRANSLATION_FILES_TO_COPY} DESTINATION share/doomseeker/translations COMPONENT doomseeker)
 	install(FILES ${CMAKE_SOURCE_DIR}/media/org.drdteam.Doomseeker.desktop DESTINATION share/applications COMPONENT doomseeker)
+	install_all_slot_styles()
 endif()
 
 if(USE_CPACK)

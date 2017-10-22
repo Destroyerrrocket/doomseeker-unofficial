@@ -41,8 +41,8 @@
 	<file alias="t.png">icons/t.png</file>
 	<file>icons/view-refresh-2.png</file>
 	<file>icons/x.png</file>
-	<file alias="slots/blocks/open">slotstyles/blocks/openslot.png</file>
-	<file alias="slots/blocks/specopen">slotstyles/blocks/openspecslot.png</file>
+	<file alias="slots/blocks/open">slotstyles/blocks/open.png</file>
+	<file alias="slots/blocks/specopen">slotstyles/blocks/specopen.png</file>
 	<file alias="slots/blocks/bot">slotstyles/blocks/bot.png</file>
 	<file alias="slots/blocks/player">slotstyles/blocks/player.png</file>
 	<file alias="slots/blocks/spectator">slotstyles/blocks/spectator.png</file>
