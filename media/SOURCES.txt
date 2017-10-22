@@ -54,7 +54,6 @@ icons/t.xcf
 
 - Copyright (C) 2014 MazterQyoun-ae
 
-icons/buddies.png (non-free, to be replaced)
 icons/chat.png
 icons/create-server.png
 icons/doomseeker_plus.png
@@ -144,7 +143,7 @@ icons/person.png (blue hue changed to red by Zalewa)
 IpToCountry.dat
 
 - Copyright unclaimed by The Doomseeker Team;
-  pictures depicting game logos
+  pictures depicting game logos.
 
 ../src/plugins/chocolate-doom/chocolatedoom.xpm
 ../src/plugins/odamex/odamex.xpm
@@ -152,6 +151,21 @@ IpToCountry.dat
 ../src/plugins/turok2ex/turok2ex.xpm
 ../src/plugins/vavoom/vavoom.xpm
 ../src/plugins/zandronum/zandronum.xpm
+
+- Copyright unclaimed by The Doomseeker Team;
+  pictures are derived from id Software's work.
+  These pictures should not be considered free
+  in the sense of freedom.
+
+-- Derivative of id Software's work by Braden "Blzut3" Obrzut
+slotstyles/marines/bot.png
+slotstyles/marines/open.png
+slotstyles/marines/player.png
+slotstyles/marines/specopen.png
+slotstyles/marines/spectator.png
+
+-- Derivative of id Software's work by MazterQyoun-ae
+media/icons/buddies.png
 
 ----------------------------------------
 Online Icon Gallery in Open Icon Library:
