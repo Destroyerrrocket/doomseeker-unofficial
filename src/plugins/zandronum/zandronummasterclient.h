@@ -18,7 +18,7 @@
 // 02110-1301  USA
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net> (skulltagmasterclient.h)
+// Copyright (C) 2009 Braden "Blzut3" Obrzut <admin@maniacsvault.net> (skulltagmasterclient.h)
 // Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #ifndef DOOMSEEKER_PLUGIN_ZANDRONUMMASTERCLIENT_H

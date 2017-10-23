@@ -18,7 +18,7 @@
 // 02110-1301  USA
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2014 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2014 Braden "Blzut3" Obrzut <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
 #ifndef __SERVERDETAILSDOCK_H__

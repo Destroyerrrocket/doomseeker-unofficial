@@ -18,7 +18,7 @@
 // 02110-1301  USA
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2009 Braden "Blzut3" Obrzut <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 #ifndef id254128BC_CE43_41C3_A9C0DD520BECAB15
 #define id254128BC_CE43_41C3_A9C0DD520BECAB15

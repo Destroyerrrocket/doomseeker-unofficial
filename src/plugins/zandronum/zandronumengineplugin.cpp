@@ -18,7 +18,7 @@
 // 02110-1301  USA
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net> (skulltagengineplugin.cpp)
+// Copyright (C) 2009 Braden "Blzut3" Obrzut <admin@maniacsvault.net> (skulltagengineplugin.cpp)
 // Copyright (C) 2012 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 

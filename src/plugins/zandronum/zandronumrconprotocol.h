@@ -18,7 +18,7 @@
 // 02110-1301  USA
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2009 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2009 Braden "Blzut3" Obrzut <admin@maniacsvault.net>
 // Copyright (C) 2014 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
 #ifndef idd10651d2_c61d_498e_8ff6_88a782a8fa1c

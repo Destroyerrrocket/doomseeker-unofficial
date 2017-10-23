@@ -18,7 +18,7 @@
 // 02110-1301  USA
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2010 "Blzut3" <admin@maniacsvault.net>
+// Copyright (C) 2010 Braden "Blzut3" Obrzut <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 #ifndef __RCON_PROTOCOL_H_
 #define __RCON_PROTOCOL_H_
