@@ -223,7 +223,7 @@ class MAIN_EXPORT DataPaths
 		/**
 		 * @brief Ordered locations were plugin libraries could be loaded from.
 		 *
-		 * Provides an oreder list of locations where PluginLoader will attempt
+		 * Provides an ordered list of locations where PluginLoader will attempt
 		 * to load EnginePlugins from.
 		 */
 		QStringList pluginSearchLocationPaths() const;

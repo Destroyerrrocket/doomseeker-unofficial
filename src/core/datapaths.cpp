@@ -34,9 +34,9 @@
 #include <QStandardPaths>
 #endif
 
-// Sanity check for INSTALL_PREFIX
-#ifndef INSTALL_PREFIX
-#error Build system should provide definition for INSTALL_PREFIX
+// Sanity check for INSTALL_PREFIX and INSTALL_LIBDIR
+#if !defined(INSTALL_PREFIX) || !defined(INSTALL_LIBDIR)
+#error Build system should provide definition for INSTALL_PREFIX and INSTALL_LIBDIR
 #endif
 
 DClass<DataPaths>

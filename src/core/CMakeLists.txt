@@ -370,6 +370,11 @@ if(UNIX AND NOT APPLE)
 	install(FILES ${TRANSLATION_FILES_TO_COPY} DESTINATION share/doomseeker/translations COMPONENT doomseeker)
 	install(FILES ${CMAKE_SOURCE_DIR}/media/org.drdteam.Doomseeker.desktop DESTINATION share/applications COMPONENT doomseeker)
 	install_all_slot_styles()
+
+	# When not installing to /usr we should use an install rpath.
+	if(NOT CMAKE_INSTALL_PREFIX STREQUAL "/usr")
+		set_target_properties(doomseeker PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+	endif()
 endif()
 
 if(USE_CPACK)
