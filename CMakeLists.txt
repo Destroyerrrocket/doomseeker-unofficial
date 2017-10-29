@@ -21,6 +21,15 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(Doomseeker)
 
+# Multiarch support
+if(UNIX AND NOT APPLE)
+	include(GNUInstallDirs)
+elseif(NOT DEFINED CMAKE_INSTALL_LIBDIR)
+	# CMAKE_ prefix used here to match the variable set by GNUInstallDirs.
+	# Value currently doesn't matter outside of Linux.
+	set(CMAKE_INSTALL_LIBDIR "lib")
+endif()
+
 # We need a newer CPack version to get desirable results.
 if(NOT CMAKE_VERSION VERSION_LESS "3.6.0")
 	set(USE_CPACK ON)
@@ -33,11 +42,14 @@ if(USE_CPACK)
 	# user option later?
 	set(CPACK_GENERATOR "DEB")
 	set(CPACK_PACKAGE_CONTACT "First Last <example@example.com>" CACHE STRING "Contact info for archive maintainer.")
+	# We encode the install prefix into the binary, so we should use the same prefix when packaging.
+	set(CPACK_PACKAGING_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
 	set(CPACK_DEB_COMPONENT_INSTALL ON)
 	set(CPACK_DEBIAN_FILE_NAME "DEB-DEFAULT")
 	set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://doomseeker.drdteam.org")
 	set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+	set(CPACK_DEBIAN_PACKAGE_CONTROL_STRICT_PERMISSION ON)
 	set(CPACK_DEBIAN_COMPRESSION_TYPE "xz")
 
 	include(CPackComponent)
@@ -49,15 +61,6 @@ if(USE_CPACK)
 			set(CPACK_COMPONENT_${COMP_UPPER}_${VARNAME} ${CPACK_COMPONENT_${COMP_UPPER}_${VARNAME}} PARENT_SCOPE)
 		endforeach()
 	endmacro()
-endif()
-
-# Multiarch support
-if(UNIX AND NOT APPLE)
-	include(GNUInstallDirs)
-elseif(NOT DEFINED CMAKE_INSTALL_LIBDIR)
-	# Do we care about this on other platforms? CMAKE_ prefix used here to
-	# match the variable set by GNUInstallDirs.
-	set(CMAKE_INSTALL_LIBDIR "lib")
 endif()
 
 option(FORCE_QT4 "Force Qt4" NO)
