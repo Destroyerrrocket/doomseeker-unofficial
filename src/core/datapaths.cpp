@@ -26,6 +26,7 @@
 #include "plugins/engineplugin.h"
 #include "strings.hpp"
 #include <QDesktopServices>
+#include <QFileInfo>
 #include <QProcessEnvironment>
 #include <cassert>
 #include <cstdlib>
@@ -38,6 +39,21 @@
 #if !defined(INSTALL_PREFIX) || !defined(INSTALL_LIBDIR)
 #error Build system should provide definition for INSTALL_PREFIX and INSTALL_LIBDIR
 #endif
+
+static QStringList uniquePaths(const QStringList &paths)
+{
+	QList<QFileInfo> uniqueMarkers;
+	QStringList result;
+	foreach (const QString &path, paths)
+	{
+		if (!uniqueMarkers.contains(path))
+		{
+			uniqueMarkers << path;
+			result << path;
+		}
+	}
+	return result;
+}
 
 DClass<DataPaths>
 {
@@ -249,6 +265,7 @@ QStringList DataPaths::pluginSearchLocationPaths() const
 #ifndef Q_OS_WIN32
 	paths.append(INSTALL_PREFIX "/" INSTALL_LIBDIR "/doomseeker/");
 #endif
+	paths = uniquePaths(paths);
 	return Strings::combineManyPaths(paths, "engines/");
 }
 
@@ -321,6 +338,7 @@ QStringList DataPaths::staticDataSearchDirs(const QString& subdir)
 #ifndef Q_OS_WIN32
 	paths.append(INSTALL_PREFIX "/share/doomseeker"); // standard arch independent linux path
 #endif
+	paths = uniquePaths(paths);
 	QString subdirFiltered = subdir.trimmed();
 	if (!subdirFiltered.isEmpty())
 	{
