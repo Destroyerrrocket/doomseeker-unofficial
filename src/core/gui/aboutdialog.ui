@@ -170,7 +170,16 @@ GeoLite2 License:
 This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
 
 GeoLite2 available at:
-https://dev.maxmind.com/geoip/geoip2/geolite2/</string>
+https://dev.maxmind.com/geoip/geoip2/geolite2/
+
+This program uses icons (or derivates of) from following sources:
+- Aha-Soft 
+- Crystal Clear by Everaldo Coelho
+- Fugue Icons (C) 2013 Yusuke Kamiyamane. All rights reserved. 
+- Nuvola 1.0 (KDE 3.x icon set)
+- Oxygen Icons 4.3.1 (KDE)
+- Tango Icon Library / Tango Desktop Project
+</string>
          </property>
         </widget>
        </item>
@@ -261,7 +270,7 @@ https://dev.maxmind.com/geoip/geoip2/geolite2/</string>
        <item>
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>- Eruanna, Hyper_Eye, Nece228</string>
+          <string>- Eruanna, Hyper_Eye, Nece228, Juuso Lapinlampi (WubTheCaptain)</string>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
@@ -271,7 +280,7 @@ https://dev.maxmind.com/geoip/geoip2/geolite2/</string>
        <item>
         <widget class="QLabel" name="label_14">
          <property name="text">
-          <string>- Doomseeker logo icons by MazterQyoun-ae and CarpeDiem</string>
+          <string>- Doomseeker logo and icons by MazterQyoun-ae and CarpeDiem</string>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
