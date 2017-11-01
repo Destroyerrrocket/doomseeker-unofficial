@@ -93,7 +93,6 @@ set(WADSEEKER_FILES
 	protocols/idgames/idgamesreply.cpp
 	protocols/idgames/idgamesresult.cpp
 	protocols/wadarchive/wadarchiveclient.cpp
-	protocols/fixednetworkaccessmanager.cpp
 	protocols/json.cpp
 	protocols/http.cpp
 	protocols/networkreply.cpp
@@ -134,7 +133,6 @@ set(HEADER_FILES
 	protocols/idgames/idgamesreply.h
 	protocols/idgames/idgamesresult.h
 	protocols/wadarchive/wadarchiveclient.h
-	protocols/fixednetworkaccessmanager.h
 	protocols/json.h
 	protocols/http.h
 	protocols/networkreply.h
@@ -163,11 +161,6 @@ set(HEADER_FILES
 	wadseekerversiondefs.h
 	wadseekerversioninfo.h
 )
-
-if(NOT Qt5Core_FOUND)
-	set(WADSEEKER_FILES ${WADSEEKER_FILES} protocols/fixedftpreply.cpp)
-	set(WADSEEKER_QT_FILES ${WADSEEKER_QT_FILES} protocols/fixedftpreply.h)
-endif()
 
 add_library(wadseeker SHARED ${WADSEEKER_FILES} ${HEADER_FILES})
 

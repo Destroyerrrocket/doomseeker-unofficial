@@ -22,7 +22,6 @@
 //------------------------------------------------------------------------------
 #include "wwwseeker.h"
 
-#include "protocols/fixednetworkaccessmanager.h"
 #include "protocols/networkreplysignalwrapper.h"
 #include "protocols/networkreply.h"
 #include "protocols/http.h"
@@ -246,10 +245,8 @@ void WWWSeeker::networkQueryError(NetworkReply* pReply, QNetworkReply::NetworkEr
 	// "Why am I getting this error? Is it a bug? Yeah, it is a bug!"
 	if (code != QNetworkReply::NoError && code != QNetworkReply::OperationCanceledError)
 	{
-		QString errorString = FixedNetworkAccessManager::networkErrorToString(code);
-
 		emit message(tr("Site \"%1\": network error occurred: %2")
-			.arg(pReply->request().url().toString(), errorString), WadseekerLib::Error);
+			.arg(pReply->request().url().toString(), pReply->errorString()), WadseekerLib::Error);
 	}
 	qDebug() << "WWWSeeker::networkQueryError() " << code;
 }

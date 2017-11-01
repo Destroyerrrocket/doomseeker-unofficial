@@ -24,10 +24,9 @@
 
 #include <QCryptographicHash>
 #include <QFile>
+#include <QNetworkAccessManager>
 #include <QTemporaryFile>
 #include <zlib.h>
-
-#include <wadseeker/protocols/fixednetworkaccessmanager.h>
 
 #include "log.h"
 #include "version.h"
@@ -36,7 +35,7 @@ IP2CUpdater::IP2CUpdater(QObject *parent)
 	: QObject(parent)
 {
 	pCurrentNetworkReply = NULL;
-	pNetworkAccessManager = new FixedNetworkAccessManager();
+	pNetworkAccessManager = new QNetworkAccessManager();
 }
 
 IP2CUpdater::~IP2CUpdater()

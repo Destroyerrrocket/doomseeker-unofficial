@@ -31,9 +31,9 @@
 #include "log.h"
 #include "strings.hpp"
 #include "version.h"
-#include <wadseeker/protocols/fixednetworkaccessmanager.h>
 #include <QByteArray>
 #include <QDebug>
+#include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QTemporaryFile>
 #include <cassert>
@@ -56,7 +56,7 @@ DClass<AutoUpdater>
 		QList<UpdatePackage> newUpdatePackages;
 		QList<UpdatePackage> packagesInDownloadQueue;
 		QTemporaryFile* pCurrentPackageFile;
-		FixedNetworkAccessManager* pNam;
+		QNetworkAccessManager* pNam;
 		QNetworkReply* pNetworkReply;
 };
 
@@ -79,7 +79,7 @@ AutoUpdater::AutoUpdater(QObject* pParent)
 	d->bStarted = false;
 	d->errorCode = EC_Ok;
 	d->pCurrentPackageFile = NULL;
-	d->pNam = new FixedNetworkAccessManager();
+	d->pNam = new QNetworkAccessManager();
 	d->pNetworkReply = NULL;
 }
 

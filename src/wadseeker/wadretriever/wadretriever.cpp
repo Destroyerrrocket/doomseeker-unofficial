@@ -43,7 +43,7 @@ WadRetriever::WadRetriever(QObject *parent)
 {
 	d.bIsAborting = false;
 	d.maxConcurrentWadDownloads = 3;
-	d.pNetworkAccessManager = new FixedNetworkAccessManager();
+	d.pNetworkAccessManager = new QNetworkAccessManager();
 }
 
 WadRetriever::~WadRetriever()
@@ -344,10 +344,8 @@ void WadRetriever::networkQueryError(NetworkReply* pReply, QNetworkReply::Networ
 	if (code != QNetworkReply::NoError && code != QNetworkReply::OperationCanceledError)
 	{
 		WadRetrieverInfo* pInfo = findRetrieverInfo(pReply);
-		QString errorString = FixedNetworkAccessManager::networkErrorToString(code);
-
 		emit message(tr("File \"%1\": network error occurred: %2")
-			.arg(pInfo->wad->name(), errorString), WadseekerLib::Error);
+			.arg(pInfo->wad->name(), pReply->errorString()), WadseekerLib::Error);
 	}
 	qDebug() << "WadRetriever::networkQueryError() " << code;
 }
@@ -549,7 +547,7 @@ void WadRetriever::resolveDownloadFinish(NetworkReply* pReply, WadRetrieverInfo*
 	}
 }
 
-void WadRetriever::setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, 
+void WadRetriever::setNetworkReply(WadRetrieverInfo& wadRetrieverInfo,
 	const QNetworkRequest &request, QNetworkReply* pReply)
 {
 	NetworkReply* pWrapperInfo = new NetworkReply(request, pReply);

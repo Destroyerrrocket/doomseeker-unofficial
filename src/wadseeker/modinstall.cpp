@@ -23,7 +23,6 @@
 #include "modinstall.h"
 
 #include "entities/modset.h"
-#include "protocols/fixednetworkaccessmanager.h"
 #include "wadretriever/wadretriever.h"
 #include "wadseekerversioninfo.h"
 #include <QDir>

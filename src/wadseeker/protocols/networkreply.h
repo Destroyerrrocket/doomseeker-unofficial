@@ -54,6 +54,7 @@ class NetworkReply
 		qint64 bytesAvailable() const;
 		void deleteMembersLater();
 		QNetworkReply::NetworkError error() const;
+		QString errorString() const;
 		QVariant header(QNetworkRequest::KnownHeaders header) const;
 		QByteArray rawHeader(const QByteArray &headerName) const;
 		QList<QByteArray> rawHeaderList() const;

@@ -27,8 +27,6 @@
 #include <QObject>
 #include <QNetworkReply>
 
-class FixedNetworkAccessManager;
-
 /**
  * @brief IP2CUpdater is responsible for downloading a new version of database
  * from the site.
@@ -129,7 +127,7 @@ class IP2CUpdater : public QObject
 		static const QUrl dbChecksumUrl();
 		static const QUrl dbDownloadUrl();
 
-		FixedNetworkAccessManager* pNetworkAccessManager;
+		QNetworkAccessManager* pNetworkAccessManager;
 		QNetworkReply* pCurrentNetworkReply;
 
 		/**

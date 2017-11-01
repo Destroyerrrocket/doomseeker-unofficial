@@ -24,11 +24,11 @@
 #define __WADRETRIEVER_H__
 
 #include <QList>
+#include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QString>
 #include <QUrl>
 
-#include "protocols/fixednetworkaccessmanager.h"
 #include "entities/waddownloadinfo.h"
 #include "wadretriever/wadinstaller.h"
 #include "wadseekermessagetype.h"
@@ -300,7 +300,7 @@ class WadRetriever : public QObject
 			public:
 				bool bIsAborting;
 				int maxConcurrentWadDownloads;
-				FixedNetworkAccessManager* pNetworkAccessManager;
+				QNetworkAccessManager* pNetworkAccessManager;
 				QString targetSavePath;
 
 				/**
@@ -373,7 +373,7 @@ class WadRetriever : public QObject
 		 */
 		void resolveDownloadFinish(NetworkReply* pReply, WadRetrieverInfo* pWadRetrieverInfo);
 
-		void setNetworkReply(WadRetrieverInfo& wadRetrieverInfo, 
+		void setNetworkReply(WadRetrieverInfo& wadRetrieverInfo,
 			const QNetworkRequest &request, QNetworkReply* pReply);
 		void startNetworkQuery(WadRetrieverInfo& wadRetrieverInfo, const QUrl& url);
 

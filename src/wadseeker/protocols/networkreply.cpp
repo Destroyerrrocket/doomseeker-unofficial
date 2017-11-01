@@ -85,6 +85,11 @@ QNetworkReply::NetworkError NetworkReply::error() const
 	return reply->error();
 }
 
+QString NetworkReply::errorString() const
+{
+	return reply->errorString();
+}
+
 QVariant NetworkReply::header(QNetworkRequest::KnownHeaders header) const
 {
 	return reply->header(header);
