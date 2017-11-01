@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>405</width>
-    <height>608</height>
+    <width>409</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -173,9 +173,9 @@ GeoLite2 available at:
 https://dev.maxmind.com/geoip/geoip2/geolite2/
 
 This program uses icons (or derivates of) from following sources:
-- Aha-Soft 
+- Aha-Soft
 - Crystal Clear by Everaldo Coelho
-- Fugue Icons (C) 2013 Yusuke Kamiyamane. All rights reserved. 
+- Fugue Icons (C) 2013 Yusuke Kamiyamane. All rights reserved.
 - Nuvola 1.0 (KDE 3.x icon set)
 - Oxygen Icons 4.3.1 (KDE)
 - Tango Icon Library / Tango Desktop Project
@@ -270,7 +270,17 @@ This program uses icons (or derivates of) from following sources:
        <item>
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>- Eruanna, Hyper_Eye, Nece228, Juuso Lapinlampi (WubTheCaptain)</string>
+          <string>- Hyper_Eye, Nece228, Juuso &quot;WubTheCaptain&quot; Lapinlampi</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_17">
+         <property name="text">
+          <string>- Doomseeker logo and main icon design by Rachael &quot;Eruanna&quot; Alexanderson</string>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
@@ -280,7 +290,7 @@ This program uses icons (or derivates of) from following sources:
        <item>
         <widget class="QLabel" name="label_14">
          <property name="text">
-          <string>- Doomseeker logo and icons by MazterQyoun-ae and CarpeDiem</string>
+          <string>- Improved Doomseeker icons by MazterQyoun-ae and CarpeDiem</string>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
