@@ -109,6 +109,8 @@ icons/shield.png
 	license: Public Domain
 	License link: http://en.wikipedia.org/wiki/Public_domain
 
+icons/buddies.png (modified by Juuso Lapinlampi <wubthecaptain@gmail.com>, 2017
+                   - shirts changed; og name: system-users.png)
 icons/exclamation.png (og name: dialog-warning.png)
 icons/exclamation-16.png (og name: dialog-warning.png)
 icons/internet-web-browser.png
@@ -163,9 +165,6 @@ slotstyles/marines/open.png
 slotstyles/marines/player.png
 slotstyles/marines/specopen.png
 slotstyles/marines/spectator.png
-
--- Derivative of id Software's work by MazterQyoun-ae
-icons/buddies.png
 
 ----------------------------------------
 Online Icon Gallery in Open Icon Library:
