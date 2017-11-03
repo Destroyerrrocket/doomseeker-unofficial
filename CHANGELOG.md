@@ -6,6 +6,75 @@ Visit this file cleanly formatted in repository:
 This file follows recommendations in accordance to:
 <http://keepachangelog.com/>
 
+## [Development][development]
+### Added
+- List the '--help' argument in the help.
+- "Remove IRC network" button was added to the IRC network selection dialog.
+- Zandronum: Support "sv_deadplayerscankeepinventory" zadmflag.
+- Attributions for icons added to the about dialog.
+- Allow to load player slots styles from "theme/slots" directories that can
+be placed in the static search paths.
+
+### Changed
+- **Relicensed Doomseeker and plugins to LGPLv2.1+.**
+- IRC network selection dialog buttons have only the icons and no text now.
+- Replaced any hardcoded HTTP addresses with HTTPS wherever applicable & possible.
+- Replaced several icons that would violate the LGPLv2.1+ licensing.
+Most notably, the "Buddies" icon that depicted 2 Doomguys was replaced
+with 2 ballheads. Sorry, I hate this too.
+- "Marines" slot style is considered non-free and conflicting with Doomseeker's
+licensing, hence it will now be distributed as slot theme using the new theming
+system. This change should be transparent to the end-user.
+- Linux: Also try to look for WADs in /usr/[local]/share/games/doom.
+- Linux: Explicit "Copy (text)" actions shall store the data both in keyboard
+and mouse selection clipboards, allowing it to be pasted with either keyboard
+or middle mouse button (addresses 3257).
+- Linux: Move plugins to /usr/lib/doomseeker (addresses 3232).
+- Windows: install with the "INSTALL" target the license file for the updater.
+- Wadseeker, API: Removed FixedNetworkAccessManager class from API.
+- Odamex: When launching game client, use Doomseeker's WAD finding mechanism
+specialized for this task instead of the generic one.
+- Zandronum: Zandronum 3 was released, so made its ruleset the default in
+Create Game box and removed its beta status.
+
+### Fixed
+- Count players and decrease refreshing servers amount just once for
+each server. This should fix incorrect numbers in the status bar.
+- Display Doomseeker icon in Demo Manager dialog.
+- Set correct title on IRC network selection dialog.
+- Adjusted size of the configuration dialog and its widgets to minimize
+the risk of its size jumping around when browsing or the text becoming
+hidden behind ellipsis.
+- Fix broken English "time has past" (addresses 3269).
+- "Refresh server before game launch" option did not work at all.
+- Manually refreshing a server for which a Wadseeker window was open would
+show "Wadseeker is running, do you wish to ignore missing files" window.
+If user clicked "cancel" or "ignore" on such dialog box, Doomseeker crashed
+(addresses 3268).
+- Prevent infinite IP2CLoader loop if IP2C fallback is broken. This could
+never happen in reality because an always valid IP2C fallback is always baked
+into the executable.
+- Linux: The name of the desktop file is now a reverse Doomseeker domain.
+- Zandronum: fix problem with widgets for a different Zandronum version being
+visible when first opening the "Create Game" box.
+- Zandronum: fix tabulation focus ordering for Zandronum's Create Server page.
+
+## [1.1-p1] - 2017-07-17
+### Added
+- Turok 2 EX plugin.
+
+### Fixed
+- Disconnect QProcess's signals from "Standard Server Console" when
+closing. This should prevent "process closed with SIGKILL (exit
+code 9)" message that could appear whenever Doomseeker popped
+up a server console window.
+- "Standard Server Console" will also try to gracefully terminating
+the process first and only issue a SIGKILL after a 1 second timeout.
+- Zandronum: use "$@" instead of $* in Linux launch scripts for
+testing builds. (also add a trailing \n to these scripts)
+- Zandronum: dmflags values from some widgets weren't applied when
+loading server config.
+
 ## [1.1] - 2017-06-05
 ### Added
 - Provide more information in game status widgets (bottom-right corner).
@@ -189,5 +258,6 @@ notice and this notice are preserved.
 
 
 [development]: https://bitbucket.org/Doomseeker/doomseeker/commits/all
+[1.1-p1]: https://bitbucket.org/Doomseeker/doomseeker/commits/tag/1.1-p1
 [1.1]: https://bitbucket.org/Doomseeker/doomseeker/commits/tag/1.1
 [1.0]: https://bitbucket.org/Doomseeker/doomseeker/commits/tag/1.0
