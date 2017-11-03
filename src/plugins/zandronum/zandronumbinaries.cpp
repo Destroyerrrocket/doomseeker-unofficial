@@ -408,7 +408,7 @@ bool ZandronumClientExeFile::spawnTestingBatchFile(const QString& versionDir, QS
 	content += "cd \"" + cdDir + "\" \n";
 	content += "export LANG=C\n";
 	#ifdef Q_OS_MAC
-	content += "\"" + binaryPath + ZANDRONUM_APP_BUNDLE_BIN "\" $*";
+	content += "\"" + binaryPath + ZANDRONUM_APP_BUNDLE_BIN "\" \"$@\"\n";
 	#else
 	content += "\"" + binaryPath + "\" \"$@\"\n"; // "$@" deals with all the parameters
 	#endif
