@@ -115,9 +115,6 @@ IRCNetworkEntity ChatNetworksCfg::network(const QString &description)
 	return IRCNetworkEntity();
 }
 
-/**
- * @brief Remove network definition from config.
- */
 void ChatNetworksCfg::removeNetwork(const IRCNetworkEntity &network)
 {
 	QList<IRCNetworkEntity> networks = this->networks();
