@@ -86,7 +86,7 @@ void IRCNetworkSelectionBox::editCurrentNetwork()
 	IRCNetworkEntity network = networkCurrent();
 	if (!network.isValid())
 	{
-		QMessageBox::critical(this, tr("Doomseeker - edit network"),
+		QMessageBox::critical(this, tr("Doomseeker - edit IRC network"),
 			tr("Cannot edit as no valid network is selected."));
 		return;
 	}
@@ -106,6 +106,7 @@ void IRCNetworkSelectionBox::fetchNetworks()
 	ChatNetworksCfg cfg;
 	QList<IRCNetworkEntity> networks = cfg.networks();
 	qSort(networks);
+	d->cboNetwork->blockSignals(true);
 	d->cboNetwork->clear();
 
 	foreach (const IRCNetworkEntity& network, networks)
@@ -120,6 +121,7 @@ void IRCNetworkSelectionBox::fetchNetworks()
 	}
 
 	updateNetworkInfo();
+	d->cboNetwork->blockSignals(false);
 }
 
 void IRCNetworkSelectionBox::initWidgets()
@@ -191,6 +193,26 @@ void IRCNetworkSelectionBox::updateCurrentNetwork(const IRCNetworkEntity &networ
 	d->cboNetwork->setItemText(d->cboNetwork->currentIndex(), buildTitle(network));
 	d->cboNetwork->setItemData(d->cboNetwork->currentIndex(), network.serializeQVariant());
 	updateNetworkInfo();
+}
+
+void IRCNetworkSelectionBox::removeCurrentNetwork()
+{
+	IRCNetworkEntity network = networkCurrent();
+	if (!network.isValid())
+	{
+		QMessageBox::critical(this, tr("Doomseeker - remove IRC network"),
+			tr("Cannot remove as no valid network is selected."));
+		return;
+	}
+	if (QMessageBox::question(this, tr("Doomseeker - remove IRC network"),
+		tr("Are you use you wish to remove network '%1'?").arg(network.description()),
+		QMessageBox::Yes | QMessageBox::No)
+			== QMessageBox::Yes)
+	{
+		ChatNetworksCfg cfg;
+		cfg.removeNetwork(network);
+		fetchNetworks();
+	}
 }
 
 bool IRCNetworkSelectionBox::replaceNetworkInConfig(const IRCNetworkEntity &oldNetwork, const IRCNetworkEntity &newNetwork)

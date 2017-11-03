@@ -86,7 +86,7 @@ bool IRCNetworkEntity::isAutojoinNetwork() const
 
 bool IRCNetworkEntity::isValid() const
 {
-	return !address().isEmpty() && port() != 0;
+	return !description().isEmpty();
 }
 
 const QString &IRCNetworkEntity::description() const

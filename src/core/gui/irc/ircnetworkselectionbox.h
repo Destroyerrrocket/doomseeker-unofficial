@@ -69,10 +69,12 @@ class IRCNetworkSelectionBox : public QDialog
 		bool validate();
 
 		DPtr<IRCNetworkSelectionBox> d;
+
 	private slots:
 		void createNewNetwork();
 		void editCurrentNetwork();
 		void networkChanged(int index);
+		void removeCurrentNetwork();
 };
 
 #endif

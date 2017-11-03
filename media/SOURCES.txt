@@ -131,6 +131,13 @@ icons/utilities-file-archiver-2.png
 
 icons/person.png (blue hue changed to red by Zalewa)
 
+- Silk icon set - Copyright (C) Mark James (famfamfam.com)
+	link: http://www.famfamfam.com/lab/icons/silk/
+	license: Attribution 3.0 Unported (CC BY 3.0)
+	license link: https://creativecommons.org/licenses/by/3.0/
+
+icons/pencil.png
+
 - Copyright (C) MaxMind
 	link: https://dev.maxmind.com/geoip/geoip2/geolite2/
 	license: Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)

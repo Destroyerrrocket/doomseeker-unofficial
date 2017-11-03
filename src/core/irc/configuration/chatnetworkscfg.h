@@ -46,6 +46,11 @@ public:
 	IRCNetworkEntity network(const QString &description);
 
 	/**
+	 * @brief Remove network definition from config.
+	 */
+	void removeNetwork(const IRCNetworkEntity &network);
+
+	/**
 	 * @brief Replace network definition in config and move around log files.
 	 *
 	 * Method may fail if chat logs fail to be moved.

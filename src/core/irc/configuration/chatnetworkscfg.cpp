@@ -115,6 +115,25 @@ IRCNetworkEntity ChatNetworksCfg::network(const QString &description)
 	return IRCNetworkEntity();
 }
 
+/**
+ * @brief Remove network definition from config.
+ */
+void ChatNetworksCfg::removeNetwork(const IRCNetworkEntity &network)
+{
+	QList<IRCNetworkEntity> networks = this->networks();
+	QMutableListIterator<IRCNetworkEntity> it(networks);
+	while (it.hasNext())
+	{
+		IRCNetworkEntity &candidate = it.next();
+		if (candidate.description() == network.description())
+		{
+			it.remove();
+			break;
+		}
+	}
+	setNetworks(networks);
+}
+
 bool ChatNetworksCfg::replaceNetwork(const QString &oldDescription, const IRCNetworkEntity &newNetwork, QWidget *errorDisplayParentWidget)
 {
 	if (!ChatLogs().renameNetwork(errorDisplayParentWidget, oldDescription, newNetwork.description()))

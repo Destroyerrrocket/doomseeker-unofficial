@@ -11,7 +11,16 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -64,6 +73,10 @@
       <widget class="QPushButton" name="btnEdit">
        <property name="text">
         <string>Edit</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../../../media/resources.qrc">
+         <normaloff>:/icons/pencil.png</normaloff>:/icons/pencil.png</iconset>
        </property>
       </widget>
      </item>

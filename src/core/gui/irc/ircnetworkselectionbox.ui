@@ -73,37 +73,72 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QComboBox" name="cboNetwork"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnNewNetwork">
+      <widget class="QComboBox" name="cboNetwork">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text">
-        <string>New</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../../../../media/resources.qrc">
-         <normaloff>:/icons/plus.png</normaloff>:/icons/plus.png</iconset>
-       </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btnEdit">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="spacing">
+        <number>0</number>
        </property>
-       <property name="text">
-        <string>Edit</string>
-       </property>
-      </widget>
+       <item>
+        <widget class="QPushButton" name="btnNewNetwork">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Add network</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../../media/resources.qrc">
+           <normaloff>:/icons/plus.png</normaloff>:/icons/plus.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Edit network</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../../media/resources.qrc">
+           <normaloff>:/icons/pencil.png</normaloff>:/icons/pencil.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnRemove">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Remove network</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../../media/resources.qrc">
+           <normaloff>:/icons/x.png</normaloff>:/icons/x.png</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -261,9 +296,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnRemove</sender>
+   <signal>clicked()</signal>
+   <receiver>IRCNetworkSelectionBox</receiver>
+   <slot>removeCurrentNetwork()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>391</x>
+     <y>111</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>208</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>editCurrentNetwork()</slot>
   <slot>createNewNetwork()</slot>
+  <slot>removeCurrentNetwork()</slot>
  </slots>
 </ui>
