@@ -59,6 +59,9 @@ never happen in reality because an always valid IP2C fallback is always baked
 into the executable.
 - It was possible to create an IRC network configuration with no address
 or port 0, but it was impossible to remove it.
+- The widget that displayed IRC network port when connecting to IRC network
+had a minimum value set to 6667. If IRC network used a port lower than 6667,
+it would not display properly.
 - Linux: The name of the desktop file is now a reverse Doomseeker domain.
 - Zandronum: fix problem with widgets for a different Zandronum version being
 visible when first opening the "Create Game" box.
