@@ -205,7 +205,7 @@ void IRCNetworkSelectionBox::removeCurrentNetwork()
 		return;
 	}
 	if (QMessageBox::question(this, tr("Doomseeker - remove IRC network"),
-		tr("Are you use you wish to remove network '%1'?").arg(network.description()),
+		tr("Are you sure you wish to remove network '%1'?").arg(network.description()),
 		QMessageBox::Yes | QMessageBox::No)
 			== QMessageBox::Yes)
 	{
