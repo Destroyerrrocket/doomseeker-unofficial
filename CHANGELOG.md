@@ -10,10 +10,10 @@ This file follows recommendations in accordance to:
 ### Added
 - List the '--help' argument in the help.
 - "Remove IRC network" button was added to the IRC network selection dialog.
-- Zandronum: Support "sv_deadplayerscankeepinventory" zadmflag.
 - Attributions for icons added to the about dialog.
 - Allow to load player slots styles from "theme/slots" directories that can
 be placed in the static search paths.
+- Zandronum: Support "sv_deadplayerscankeepinventory" zadmflag.
 
 ### Changed
 - **Relicensed Doomseeker and plugins to LGPLv2.1+.**
@@ -25,6 +25,9 @@ with 2 ballheads. Sorry, I hate this too.
 - "Marines" slot style is considered non-free and conflicting with Doomseeker's
 licensing, hence it will now be distributed as slot theme using the new theming
 system. This change should be transparent to the end-user.
+- To support slot themes, changed how slot style is saved in the configuration.
+The setting will not be preserved correctly when going back to prior versions
+of Doomseeker.
 - Linux: Also try to look for WADs in /usr/[local]/share/games/doom.
 - Linux: Explicit "Copy (text)" actions shall store the data both in keyboard
 and mouse selection clipboards, allowing it to be pasted with either keyboard
@@ -54,6 +57,8 @@ If user clicked "cancel" or "ignore" on such dialog box, Doomseeker crashed
 - Prevent infinite IP2CLoader loop if IP2C fallback is broken. This could
 never happen in reality because an always valid IP2C fallback is always baked
 into the executable.
+- It was possible to create an IRC network configuration with no address
+or port 0, but it was impossible to remove it.
 - Linux: The name of the desktop file is now a reverse Doomseeker domain.
 - Zandronum: fix problem with widgets for a different Zandronum version being
 visible when first opening the "Create Game" box.
