@@ -221,13 +221,13 @@ bool CFGIRCDefineNetworkDialog::validateDescription()
 {
 	if (d->leDescription->text().trimmed().isEmpty())
 	{
-		QMessageBox::critical(this, tr("Invalid network description"),
+		QMessageBox::critical(this, tr("Invalid IRC network description"),
 			tr("Network description cannot be empty."));
 		return false;
 	}
 	if (!isDescriptionUnique())
 	{
-		QMessageBox::critical(this, tr("Invalid network description"),
+		QMessageBox::critical(this, tr("Invalid IRC network description"),
 			tr("There already is a network with such description."));
 		return false;
 	}
@@ -236,7 +236,7 @@ bool CFGIRCDefineNetworkDialog::validateDescription()
 		QString msg = tr("Network description is invalid.\n\n"
 			"Only letters, digits, spaces and \"%1\" are allowed.")
 				.arg(ChatNetworkNamer::additionalAllowedChars());
-		QMessageBox::critical(this, tr("Invalid network description"), msg);
+		QMessageBox::critical(this, tr("Invalid IRC network description"), msg);
 		return false;
 	}
 	return true;
