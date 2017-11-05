@@ -11,7 +11,7 @@ CONTENTS:
 This plugin is designed to simulate a master server and game servers.
 It eliminates the necessity to have a live master server and at least one
 game server for development purposes. Developers can utilize this plugin when
-creating new features for Doomseeker or testing existing ones. 
+creating new features for Doomseeker or testing existing ones.
 
 FakePlugin imitates master server and game servers by actually opening
 UDP sockets in local OS. Master server and each fake game server binds its
@@ -40,4 +40,5 @@ Copyright (C) 2013 The Doomseeker Team
 
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
-notice and this notice are preserved.
+notice and this notice are preserved.  This file is offered as-is,
+without any warranty.
