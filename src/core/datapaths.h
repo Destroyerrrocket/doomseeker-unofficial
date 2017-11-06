@@ -153,6 +153,13 @@ class MAIN_EXPORT DataPaths
 		 */
 		bool createDirectories();
 
+		/**
+		 * @brief Returns a list of the default file paths for WAD files.
+		 *
+		 * @return List of directories to use by default for finding WAD files.
+		 */
+		QStringList defaultWadPaths() const;
+
 		QString demosDirectoryPath() const;
 
 		/**

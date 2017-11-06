@@ -29,6 +29,7 @@
 class FileSearchPath
 {
 	public:
+		static QList<FileSearchPath> fromStringList(const QStringList& collection);
 		static FileSearchPath fromVariant(const QVariant& var);
 		static QList<FileSearchPath> fromVariantList(const QVariantList& collection);
 		static QVariantList toVariantList(const QList<FileSearchPath>& collection);

@@ -33,6 +33,16 @@ FileSearchPath::FileSearchPath(const QString& path)
 	recursive_ = false;
 }
 
+QList<FileSearchPath> FileSearchPath::fromStringList(const QStringList& collection)
+{
+	QList<FileSearchPath> result;
+	foreach (QString path, collection)
+	{
+		result << path;
+	}
+	return result;
+}
+
 FileSearchPath FileSearchPath::fromVariant(const QVariant& var)
 {
 	FileSearchPath result;

@@ -147,6 +147,21 @@ DataPaths *DataPaths::defaultInstance()
 	return staticDefaultInstance;
 }
 
+
+QStringList DataPaths::defaultWadPaths() const
+{
+	QStringList filePaths;
+	filePaths << programsDataDirectoryPath();
+
+	// The directory which contains the Doomseeker executable may be a good
+	// default choice, but on unix systems the bin directory is not worth
+	// searching.
+	if(QDir(workingDirectory()).dirName() != "bin")
+		filePaths << workingDirectory();
+
+	return filePaths;
+}
+
 QString DataPaths::demosDirectoryPath() const
 {
 	QString demosDir = systemAppDataDirectory(d->demosDirectoryName);

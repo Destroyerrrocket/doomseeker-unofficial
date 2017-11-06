@@ -276,8 +276,7 @@ DoomseekerConfig::DoomseekerCfg::DoomseekerCfg()
 	this->slotStyle = 1;
 	this->serverListSortIndex = -1;
 	this->serverListSortDirection = Qt::DescendingOrder;
-	this->wadPaths << gDefaultDataPaths->programsDataDirectoryPath();
-	this->wadPaths << gDefaultDataPaths->workingDirectory();
+	this->wadPaths = FileSearchPath::fromStringList(gDefaultDataPaths->defaultWadPaths());
 }
 
 DoomseekerConfig::DoomseekerCfg::~DoomseekerCfg()

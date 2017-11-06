@@ -28,6 +28,8 @@ system. This change should be transparent to the end-user.
 - To support slot themes, changed how slot style is saved in the configuration.
 The setting will not be preserved correctly when going back to prior versions
 of Doomseeker.
+- If Doomseeker is installed into a directory named "bin" (typical on Linux),
+the binary directory will no longer be added to the wad file paths by default.
 - Linux: Also try to look for WADs in /usr/[local]/share/games/doom.
 - Linux: Explicit "Copy (text)" actions shall store the data both in keyboard
 and mouse selection clipboards, allowing it to be pasted with either keyboard
