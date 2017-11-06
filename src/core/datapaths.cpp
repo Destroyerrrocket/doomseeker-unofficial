@@ -155,8 +155,9 @@ QStringList DataPaths::defaultWadPaths() const
 
 	// The directory which contains the Doomseeker executable may be a good
 	// default choice, but on unix systems the bin directory is not worth
-	// searching.
-	if(QDir(workingDirectory()).dirName() != "bin")
+	// searching.  Similarly for Mac application bundle.
+	const QString progBinDirName = QDir(workingDirectory()).dirName();
+	if(progBinDirName != "bin" && progBinDirName != "MacOS")
 		filePaths << workingDirectory();
 
 	return filePaths;
