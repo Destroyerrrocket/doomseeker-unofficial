@@ -149,7 +149,7 @@ bool FilePickWidget::validate()
 			error = tr("File doesn't exist.");
 		}
 
-		if (error.isEmpty() && fileInfo.isDir())
+		if (error.isEmpty() && fileInfo.isDir() && !fileInfo.isBundle())
 		{
 			error = tr("This is a directory.");
 		}
