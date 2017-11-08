@@ -35,8 +35,8 @@ add_library(minizip
 # [BL] Doomseeker has copies of libbz2 and libz so we should use the ones we
 # built instead of the binary blobs.
 if (MSVC)
-	add_dependencies(minizip ${ZLIB_LIBRARY}_mt ${BZIP2_LIBRARY}_mt)
-	target_link_libraries(minizip z_mt bz2_mt)
+	add_dependencies(minizip ZLIB::ZLIBMT)
+	target_link_libraries(minizip ZLIB::ZLIBMT bz2_mt)
 else ()
 	if (ZLIB_INTERNAL)
 		add_dependencies(minizip ${ZLIB_LIBRARY})
@@ -52,7 +52,7 @@ endif ()
 	# we link statically to libbz2 so that an updater binary
 	# build on Debian (where the packaged libbz2 has a SONAME of "libbz2.so.1.0"
 	# works on Fedora/openSUSE (where no libbz2.so.1.0 symlink exists)
-	# 
+	#
 	# see http://stackoverflow.com/questions/1835489/linking-an-application-to-libbz2-so-1-rather-than-libbz2-so-1-0
 	#
 #	set(BZ2_LIB_NAME bz2)
