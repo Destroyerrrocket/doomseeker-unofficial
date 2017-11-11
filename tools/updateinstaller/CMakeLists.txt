@@ -14,8 +14,6 @@ include_directories(external)
 include_directories(external/TinyThread/source)
 
 if (WIN32)
-	include_directories(external/zlib/)
-	include_directories(external/bzip2)
 	include_directories(external/win32cpp/include)
 
 	# [Doomseeker]
@@ -31,7 +29,7 @@ else()
 	set(CMAKE_C_FLAGS_RELEASE "-Os")
 endif()
 
-#[BL] This stuff isn't needed sicne we take of this in the root CMakeLists.
+#[BL] This stuff isn't needed since we take care of this in the root CMakeLists.
 #if (APPLE)
 	# Build the updater as a dual 32/64bit binary.  If only one architecture
 	# is required, removing the other architecture will reduce the size
