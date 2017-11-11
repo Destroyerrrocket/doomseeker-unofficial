@@ -31,6 +31,7 @@ of Doomseeker.
 - If Doomseeker is installed into a directory named "bin" (typical on Linux)
 or "MacOS" (application bundle), the binary directory will no longer be added to
 the wad file paths by default.
+- Updated the internal zlib library to 1.2.11. This affects Windows builds.
 - Linux: Also try to look for WADs in /usr/[local]/share/games/doom.
 - Linux: Explicit "Copy (text)" actions shall store the data both in keyboard
 and mouse selection clipboards, allowing it to be pasted with either keyboard
