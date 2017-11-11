@@ -69,6 +69,8 @@ if(MSVC)
     add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 endif()
+
+# [Doomseeker]
 if( CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang" )
     set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
 endif()
