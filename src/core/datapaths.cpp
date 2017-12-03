@@ -179,15 +179,20 @@ bool DataPaths::createDirectories()
 
 	if (!d->dataDirectory.exists())
 	{
+#ifdef Q_OS_MAC
+		const QString legacyPrefDirectory = "Library/Preferences/Doomseeker";
+#elif !defined(Q_OS_WIN32)
+		const QString legacyPrefDirectory = ".doomseeker";
+#endif
 		if (!tryCreateDirectory(d->dataDirectory, "."))
 		{
 			bAllSuccessful = false;
 		}
-#if !defined(Q_OS_WIN32) && !defined(Q_OS_MAC)
-		else if (appDataDir.exists(".doomseeker"))
+#if !defined(Q_OS_WIN32)
+		else if (appDataDir.exists(legacyPrefDirectory))
 		{
 			// Migrate data from old versions of Doomseeker (specifically demos) (pre 1.2)
-			const QDir oldConfigDir(appDataDir.absolutePath() + QDir::separator() + ".doomseeker");
+			const QDir oldConfigDir(appDataDir.absolutePath() + QDir::separator() + legacyPrefDirectory);
 			gLog << QString("Migrating user data from '%1'.").arg(oldConfigDir.absolutePath());
 
 			foreach (QFileInfo fileinfo, oldConfigDir.entryInfoList(QDir::Dirs))
