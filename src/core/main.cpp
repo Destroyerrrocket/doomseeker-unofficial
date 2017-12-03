@@ -327,7 +327,7 @@ bool Main::initDataDirectories()
 
 	// I think this directory should take priority, if user, for example,
 	// wants to update the ip2country file.
-	dataDirectories << gDefaultDataPaths->programsDataSupportDirectoryPath();
+	dataDirectories << gDefaultDataPaths->localDataLocationPath();
 	dataDirectories << gDefaultDataPaths->workingDirectory();
 
 	// Continue with standard dirs:

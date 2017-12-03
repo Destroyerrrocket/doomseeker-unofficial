@@ -44,7 +44,7 @@ QString DoomseekerFilePaths::ircIni()
 
 QString DoomseekerFilePaths::ip2cDatabase()
 {
-	return joinIfNeitherEmpty(pDataPaths->programsDataSupportDirectoryPath(), IP2C_DATABASE_FILENAME);
+	return joinIfNeitherEmpty(pDataPaths->localDataLocationPath(), IP2C_DATABASE_FILENAME);
 }
 
 QString DoomseekerFilePaths::joinIfNeitherEmpty(const QString &left, const QString &right)

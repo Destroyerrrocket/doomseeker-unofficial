@@ -199,7 +199,7 @@ bool MasterClient::preparePacketCache(bool write)
 
 		if(d->cache == NULL)
 		{
-			QString cacheFile = gDefaultDataPaths->programsDataDirectoryPath() + "/"
+			QString cacheFile = gDefaultDataPaths->cacheLocationPath() + "/"
 				+ QString(plugin()->data()->name).replace(' ', "");
 			d->cache = new QFile(cacheFile);
 		}

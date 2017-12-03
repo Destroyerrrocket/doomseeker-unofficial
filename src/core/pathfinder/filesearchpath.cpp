@@ -22,6 +22,8 @@
 //------------------------------------------------------------------------------
 #include "filesearchpath.h"
 
+#include <QStringList>
+
 FileSearchPath::FileSearchPath()
 {
 	recursive_ = false;

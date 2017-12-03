@@ -57,9 +57,10 @@ class EnginePlugin;
  *
  * - programsDataDirectoryPath() is the "Roaming" directory. It should be used to
  *   store relatively small amount of data - like config files.
+ * - cacheDataLocationPath() is used to store larger, non-critical data.
  * - localDataLocationPath() is the "Local" directory. It can be used to store
  *   data that's large or only valid to the particular machine that is running
- *   Doomseeker (like cache).
+ *   Doomseeker (like demos).
  * - documentsLocationPath() is the "My Documents" directory with
  *   "doomseeker" appended to it. Store here files that should also be normally
  *   accessible to the user through directory navigation. On Windows platform
@@ -88,9 +89,6 @@ class MAIN_EXPORT DataPaths
 			Preferred
 		};
 
-		static const QString PROGRAMS_APPDATA_DIR_NAME;
-		static const QString PROGRAMS_APPDATASUPPORT_DIR_NAME;
-		static const QString DEMOS_DIR_NAME;
 		static const QString CHATLOGS_DIR_NAME;
 		static const QString TRANSLATIONS_DIR_NAME;
 		static const QString UPDATE_PACKAGES_DIR_NAME;
@@ -132,6 +130,15 @@ class MAIN_EXPORT DataPaths
 
 		DataPaths(bool bPortableModeOn = false);
 		virtual ~DataPaths();
+
+		/**
+		 * @brief Path to the cache directory with Doomseeker's own subpath
+		 * suffix.
+		 *
+		 * In portable mode is on this will be the program directory with
+		 * "storage" appended to it.
+		 */
+		QString cacheLocationPath() const;
 
 		/**
 		 * @brief Checks if all directories can be written to.
@@ -246,22 +253,8 @@ class MAIN_EXPORT DataPaths
 		 */
 		QString programsDataDirectoryPath() const;
 
-		/**
-		 * @brief Defaults to PROGRAMS_APPDATA_DIR_NAME.
-		 */
-		const QString &programDirName() const;
-
-		/**
-		 * @brief Allows switching from Preferences to Application Support on OS X.
-		 *
-		 * Same as programsDataDirectoryPath() on other systems or in portable mode.
-		 */
-		QString programsDataSupportDirectoryPath() const;
-
 		bool isPortableModeOn() const;
 
-		void setPortableModeOn(bool b);
-		void setProgramDirName(const QString& name);
 		/**
 		 * @brief Changes the location returned by workingDirectory.
 		 *
@@ -281,6 +274,8 @@ class MAIN_EXPORT DataPaths
 		 * variable. If this cannot be found then QDir::home() is used.
 		 *
 		 * On other systems QDir::home() is used directly.
+		 *
+		 * @deprecated Use more specific functions. Internal use only.
 		 *
 		 * @param append - this string will be appended to the returned path.
 		 *
