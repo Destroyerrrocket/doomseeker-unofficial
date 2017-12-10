@@ -121,6 +121,10 @@ DataPaths::DataPaths(bool bPortableModeOn)
 #endif
 #endif
 	}
+
+	gLog << QString("Cache directory: %1").arg(d->cacheDirectory.absolutePath());
+	gLog << QString("Config directory: %1").arg(d->configDirectory.absolutePath());
+	gLog << QString("Data directory: %1").arg(d->dataDirectory.absolutePath());
 }
 
 DataPaths::~DataPaths()
@@ -169,7 +173,9 @@ bool DataPaths::createDirectories()
 		{
 			// Migrate config from old versions of Doomseeker (pre 1.2)
 			const QDir oldConfigDir(appDataDir.absolutePath() + QDir::separator() + ".doomseeker");
-			gLog << QString("Migrating configuration data from '%1'.").arg(oldConfigDir.absolutePath());
+			gLog << QString("Migrating configuration data from '%1'\n\tto '%2'.")
+				.arg(oldConfigDir.absolutePath())
+				.arg(d->configDirectory.absolutePath());
 
 			foreach (QFileInfo fileinfo, oldConfigDir.entryInfoList(QStringList("*.ini"), QDir::Files))
 				QFile(fileinfo.absoluteFilePath()).copy(d->configDirectory.absoluteFilePath(fileinfo.fileName()));
@@ -193,7 +199,9 @@ bool DataPaths::createDirectories()
 		{
 			// Migrate data from old versions of Doomseeker (specifically demos) (pre 1.2)
 			const QDir oldConfigDir(appDataDir.absolutePath() + QDir::separator() + legacyPrefDirectory);
-			gLog << QString("Migrating user data from '%1'.").arg(oldConfigDir.absolutePath());
+			gLog << QString("Migrating user data from '%1'\n\tto '%2'.")
+				.arg(oldConfigDir.absolutePath())
+				.arg(d->dataDirectory.absolutePath());
 
 			foreach (QFileInfo fileinfo, oldConfigDir.entryInfoList(QDir::Dirs))
 			{

@@ -135,8 +135,8 @@ class MAIN_EXPORT DataPaths
 		 * @brief Path to the cache directory with Doomseeker's own subpath
 		 * suffix.
 		 *
-		 * In portable mode is on this will be the program directory with
-		 * "storage" appended to it.
+		 * If portable mode is on this will be the program directory with
+		 * cache dir name appended to it.
 		 */
 		QString cacheLocationPath() const;
 
@@ -180,7 +180,7 @@ class MAIN_EXPORT DataPaths
 		 * @brief Path to the "My Documents" directory with Doomseeker's
 		 * own subpath suffix.
 		 *
-		 * In portable mode is on this will be the program directory with
+		 * If portable mode is on this will be the program directory with
 		 * "storage" appended to it.
 		 *
 		 * @param subpath
