@@ -68,6 +68,7 @@
 #include "commandline.h"
 #include "connectionhandler.h"
 #include "customservers.h"
+#include "datapaths.h"
 #include "doomseekerfilepaths.h"
 #include "fileutils.h"
 #include "gamedemo.h"

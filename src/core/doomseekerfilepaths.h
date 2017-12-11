@@ -23,9 +23,10 @@
 #ifndef __DOOMSEEKERFILEPATHS_H__
 #define __DOOMSEEKERFILEPATHS_H__
 
-#include "datapaths.h"
 #include "global.h"
 #include <QString>
+
+class DataPaths;
 
 /**
  * @ingroup group_pluginapi

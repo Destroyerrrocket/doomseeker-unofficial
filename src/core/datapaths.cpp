@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "datapaths.h"
 
+#include "doomseekerfilepaths.h"
 #include "log.h"
 #include "plugins/engineplugin.h"
 #include "strings.hpp"
@@ -100,10 +101,6 @@ DataPaths::DataPaths(bool bPortableModeOn)
 	}
 	else
 	{
-#ifdef Q_OS_WIN32
-		d->cacheDirectory = d->configDirectory = d->dataDirectory =
-			systemAppDataDirectory(LEGACY_APPDATA_DIR_NAME);
-#else
 #if QT_VERSION >= 0x050000
 		d->cacheDirectory = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
 		d->configDirectory = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
@@ -118,7 +115,6 @@ DataPaths::DataPaths(bool bPortableModeOn)
 		d->configDirectory = systemAppDataDirectory(LEGACY_APPDATA_DIR_NAME);
 #endif
 
-#endif
 #endif
 	}
 
@@ -162,13 +158,17 @@ bool DataPaths::createDirectories()
 		bAllSuccessful = false;
 	}
 
-	if (!d->configDirectory.exists())
+	// The existential question here is needed for migration purposes,
+	// but on Windows the >=1.2 configDirectory can already exist because
+	// Doomseeker <1.2 already stored IRC chat logs there.
+	// It is necessary to ask about the .ini file.
+	if (!d->configDirectory.exists(DoomseekerFilePaths::INI_FILENAME))
 	{
 		if (!tryCreateDirectory(d->configDirectory, "."))
 		{
 			bAllSuccessful = false;
 		}
-#if !defined(Q_OS_WIN32) && !defined(Q_OS_MAC)
+#if !defined(Q_OS_MAC)
 		else if (appDataDir.exists(".doomseeker"))
 		{
 			// Migrate config from old versions of Doomseeker (pre 1.2)
@@ -183,18 +183,20 @@ bool DataPaths::createDirectories()
 #endif
 	}
 
-	if (!d->dataDirectory.exists())
+	// In >=1.2 and on Windows platform, dataDirectory can be the same
+	// as configDirectory. To do the migration properly, we need to
+	// ask about existence of a subdirectory inside the data directory.
+	if (!d->dataDirectory.exists(DEMOS_DIR_NAME))
 	{
 #ifdef Q_OS_MAC
 		const QString legacyPrefDirectory = "Library/Preferences/Doomseeker";
-#elif !defined(Q_OS_WIN32)
+#else
 		const QString legacyPrefDirectory = ".doomseeker";
 #endif
 		if (!tryCreateDirectory(d->dataDirectory, "."))
 		{
 			bAllSuccessful = false;
 		}
-#if !defined(Q_OS_WIN32)
 		else if (appDataDir.exists(legacyPrefDirectory))
 		{
 			// Migrate data from old versions of Doomseeker (specifically demos) (pre 1.2)
@@ -208,13 +210,18 @@ bool DataPaths::createDirectories()
 				const QString origPath = fileinfo.absoluteFilePath();
 				QFile file(origPath);
 				if (file.rename(d->dataDirectory.absoluteFilePath(fileinfo.fileName())))
+				{
+					// On Windows this will create an useless .lnk shortcut
+					// without the .lnk extension, so don't bother.
+#if !defined(Q_OS_WIN32)
 					file.link(origPath);
+#endif
+				}
 			}
 		}
-#endif
 	}
 
-	if (!tryCreateDirectory(d->dataDirectory, "demos"))
+	if (!tryCreateDirectory(d->dataDirectory, DEMOS_DIR_NAME))
 	{
 		bAllSuccessful = false;
 	}

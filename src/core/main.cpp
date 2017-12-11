@@ -44,6 +44,7 @@
 #include "application.h"
 #include "cmdargshelp.h"
 #include "commandlinetokenizer.h"
+#include "datapaths.h"
 #include "doomseekerfilepaths.h"
 #include "localization.h"
 #include "log.h"

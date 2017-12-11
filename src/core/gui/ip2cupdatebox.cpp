@@ -26,6 +26,7 @@
 #include "doomseekerfilepaths.h"
 
 #include <QDateTime>
+#include <QFileInfo>
 #include "ip2c/ip2cupdater.h"
 
 DClass<IP2CUpdateBox> : public Ui::IP2CUpdateBox

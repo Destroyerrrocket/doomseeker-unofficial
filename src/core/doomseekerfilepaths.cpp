@@ -22,6 +22,8 @@
 //------------------------------------------------------------------------------
 #include "doomseekerfilepaths.h"
 
+#include "datapaths.h"
+
 DataPaths* DoomseekerFilePaths::pDataPaths = NULL;
 
 const QString DoomseekerFilePaths::IP2C_DATABASE_FILENAME = "IpToCountry.dat";
