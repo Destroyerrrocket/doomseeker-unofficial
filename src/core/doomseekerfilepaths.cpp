@@ -26,6 +26,7 @@
 
 DataPaths* DoomseekerFilePaths::pDataPaths = NULL;
 
+const QString DoomseekerFilePaths::CACERTS_FILENAME = "cacerts.pem";
 const QString DoomseekerFilePaths::IP2C_DATABASE_FILENAME = "IpToCountry.dat";
 const QString DoomseekerFilePaths::IP2C_QT_SEARCH_PATH = "data:" + IP2C_DATABASE_FILENAME;
 const QString DoomseekerFilePaths::TEMP_SERVER_CONFIG_FILENAME = "tmpserver.cfg";
@@ -33,6 +34,16 @@ const QString DoomseekerFilePaths::INI_FILENAME = "doomseeker.ini";
 const QString DoomseekerFilePaths::IRC_INI_FILENAME = "doomseeker-irc.ini";
 const QString DoomseekerFilePaths::PASSWORD_INI_FILENAME = "doomseeker-password.ini";
 
+QString DoomseekerFilePaths::cacerts()
+{
+	QStringList paths = pDataPaths->staticDataSearchDirs(CACERTS_FILENAME);
+	foreach (const QString &path, paths)
+	{
+		if (QFile(path).exists())
+			return path;
+	}
+	return QString();
+}
 
 QString DoomseekerFilePaths::ini()
 {

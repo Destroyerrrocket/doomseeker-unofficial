@@ -67,7 +67,7 @@ class Main : public QObject
 		 */
 		int run();
 
-	protected:
+	private:
 		int connectToServerByURL();
 		void convertOldIniToQSettingsIni();
 
@@ -75,6 +75,8 @@ class Main : public QObject
 		bool createRemoteConsole();
 
 		int runTestMode();
+
+		void initCaCerts();
 
 		/**
 		 *	@b Creates required directories and sets up the application.
@@ -114,8 +116,6 @@ class Main : public QObject
 		bool startRcon;
 		int updateFailedCode;
 		QUrl connectUrl;
-
-	private:
 		bool bPortableMode;
 };
 

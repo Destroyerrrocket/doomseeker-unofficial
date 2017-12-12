@@ -13,6 +13,9 @@ This file follows recommendations in accordance to:
 - Attributions for icons added to the about dialog.
 - Allow to load player slots styles from "theme/slots" directories that can
 be placed in the static search paths.
+- Extra CA certificates for SSL will be loaded from "cacerts.pem" file
+if such file is present in one of the program's static data directories
+(so, right next to the .exe on Windows).
 - Zandronum: Support "sv_deadplayerscankeepinventory" zadmflag.
 
 ### Changed

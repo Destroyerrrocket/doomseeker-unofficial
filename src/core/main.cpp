@@ -28,6 +28,7 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QObject>
+#include <QSslConfiguration>
 #include <QThreadPool>
 #include <QTimer>
 
@@ -152,6 +153,8 @@ int Main::run()
 		QMessageBox::critical(NULL, tr("Doomseeker startup error"), errorMessage);
 		return 0;
 	}
+
+	initCaCerts();
 
 	PluginLoader::init(gDefaultDataPaths->pluginSearchLocationPaths());
 	PluginUrlHandler::registerAll();
@@ -315,6 +318,25 @@ bool Main::createRemoteConsole()
 		rc->show();
 	}
 	return true;
+}
+
+void Main::initCaCerts()
+{
+	QString certsFilePath = DoomseekerFilePaths::cacerts();
+	QFile certsFile(certsFilePath);
+	if (!certsFilePath.isEmpty() && certsFile.exists())
+	{
+		gLog << tr("Loading extra CA certificates from '%1'.").arg(certsFilePath);
+		certsFile.open(QIODevice::ReadOnly);
+		QSslConfiguration sslConf = QSslConfiguration::defaultConfiguration();
+		QList<QSslCertificate> cacerts = sslConf.caCertificates();
+		QList<QSslCertificate> extraCerts = QSslCertificate::fromDevice(&certsFile);
+		gLog << tr("Appending %n extra CA certificate(s).", NULL, extraCerts.size());
+		cacerts.append(extraCerts);
+		sslConf.setCaCertificates(cacerts);
+		QSslConfiguration::setDefaultConfiguration(sslConf);
+		certsFile.close();
+	}
 }
 
 bool Main::initDataDirectories()
