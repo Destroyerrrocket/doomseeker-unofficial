@@ -10,6 +10,7 @@
         "translations/pl_PL.qm",
         "translations/qtbase_pl.qm",
         "translations/qtmultimedia_pl.qm",
+        "cacerts.pem",
         "LICENSE.txt",
         "doomseeker-portable.bat",
         "msvcp120.dll",

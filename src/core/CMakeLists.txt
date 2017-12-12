@@ -279,7 +279,9 @@ if(WIN32)
 	# OpenSSL
 	set(OPENSSL_LIBEAY32_DLL "" CACHE FILEPATH "Path to libeay32.dll v.1.0.2.1")
 	set(OPENSSL_SSLEAY32_DLL "" CACHE FILEPATH "Path to ssleay32.dll v.1.0.2.1")
-	install(FILES ${OPENSSL_LIBEAY32_DLL} ${OPENSSL_SSLEAY32_DLL} DESTINATION . COMPONENT doomseeker)
+	install(FILES ${OPENSSL_LIBEAY32_DLL} ${OPENSSL_SSLEAY32_DLL}
+		${CMAKE_SOURCE_DIR}/media/cacerts.pem
+		DESTINATION . COMPONENT doomseeker)
 
 	# Install program DIRECTLY to directory specified by
 	# ${CMAKE_INSTALL_PREFIX}. If ${CMAKE_INSTALL_PREFIX} is set to something

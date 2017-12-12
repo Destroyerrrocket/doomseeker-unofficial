@@ -16,6 +16,8 @@ be placed in the static search paths.
 - Extra CA certificates for SSL will be loaded from "cacerts.pem" file
 if such file is present in one of the program's static data directories
 (so, right next to the .exe on Windows).
+- Windows: cacerts.pem database with "DST Root CA X3" and
+"DigiCert High Assurance EV Root CA" certificates.
 - Zandronum: Support "sv_deadplayerscankeepinventory" zadmflag.
 
 ### Changed

@@ -173,6 +173,10 @@ slotstyles/marines/player.png
 slotstyles/marines/specopen.png
 slotstyles/marines/spectator.png
 
+- Copyright unclaimed. Licensing ???
+
+cacerts.pem - file is a listing of SSL Certificate Authority certificates
+
 ----------------------------------------
 Online Icon Gallery in Open Icon Library:
 http://openiconlibrary.sourceforge.net/
