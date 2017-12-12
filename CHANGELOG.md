@@ -19,6 +19,8 @@ be placed in the static search paths.
 - **Relicensed Doomseeker and plugins to LGPLv2.1+.**
 - Reworked data paths so Doomseeker should now follow XDG on Linux (Qt5 only).
 Configs will be migrated. On Mac the demos are migrated to Application Support.
+On Windows, paths will be moved to %LOCALAPPDATA% and leading dot is removed
+from "doomseeker" directory name.
 Otherwise paths are more or less the same as before.
 - IRC network selection dialog buttons have only the icons and no text now.
 - Replaced any hardcoded HTTP addresses with HTTPS wherever applicable & possible.
