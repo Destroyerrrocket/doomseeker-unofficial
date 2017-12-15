@@ -95,7 +95,7 @@ void ZandronumEnginePlugin::setupConfig(IniSection &config)
 	config.createSetting("EnableTesting", true);
 	config.createSetting("AllowServersToDisplayMyCountry", false);
 	config.createSetting("TestingPath",
-		DataPaths::defaultInstance()->pluginDocumentsLocationPath(*this));
+		DataPaths::defaultInstance()->pluginLocalDataLocationPath(*this));
 }
 
 ConfigPage *ZandronumEnginePlugin::configuration(QWidget *parent)

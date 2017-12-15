@@ -53,6 +53,8 @@ or middle mouse button (addresses 3257).
 specialized for this task instead of the generic one.
 - Zandronum: Zandronum 3 was released, so made its ruleset the default in
 Create Game box and removed its beta status.
+- Zandronum: default testing binaries path is now in "local data"
+directory, not in "documents".
 
 ### Fixed
 - Count players and decrease refreshing servers amount just once for
