@@ -5728,8 +5728,8 @@ Jeżeli nie masz tego pliku, a należy on do gry w sprzedaży, to musisz kupić 
     <name>RconPasswordDialog</name>
     <message>
         <location filename="../../../../vs2013_5_7_0/src/core/ui_rconpassworddialog.h" line="103"/>
-        <source>Dialog</source>
-        <translation>Dialog</translation>
+        <source>Connect to Remote Console</source>
+        <translation>Połącz ze zdalną konsolą</translation>
     </message>
     <message>
         <location filename="../../../../vs2013_5_7_0/src/core/ui_rconpassworddialog.h" line="104"/>
@@ -5775,7 +5775,7 @@ Jeżeli nie masz tego pliku, a należy on do gry w sprzedaży, to musisz kupić 
     <message>
         <location filename="../gui/remoteconsole.cpp" line="115"/>
         <source> - Remote Console</source>
-        <translation>- konsola zdalna</translation>
+        <translation> - konsola zdalna</translation>
     </message>
     <message>
         <location filename="../gui/remoteconsole.cpp" line="127"/>
