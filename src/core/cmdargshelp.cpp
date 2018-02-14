@@ -46,9 +46,11 @@ QString CmdArgsHelp::argsHelp()
 		"    to the directory where its executable resides.\n"
 		"    Normally, configuration is saved to user's home directory.\n");
 	help += tr(
-		"--version-json [file]\n"
+		"--version-json [file|-]\n"
 		"    Prints version info on Doomseeker and all\n"
 		"    plugins in JSON format to specified file,\n"
-		"    then closes the program.\n");
+		"    then closes the program. If file is not\n"
+		"    specified or specified as '-', version info\n"
+		"    is printed to stdout.\n");
 	return help;
 }

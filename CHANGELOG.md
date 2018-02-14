@@ -9,6 +9,8 @@ This file follows recommendations in accordance to:
 ## [Development][development]
 ### Added
 - List the '--help' argument in the help.
+- '--version-json' argument can now write to stdout if file is not specified
+or specified as '-'.
 - "Remove IRC network" button was added to the IRC network selection dialog.
 - Attributions for icons added to the about dialog.
 - Allow to load player slots styles from "theme/slots" directories that can

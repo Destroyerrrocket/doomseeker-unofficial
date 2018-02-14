@@ -23,6 +23,7 @@
 
 #include <QApplication>
 #include <QDir>
+#include <QFile>
 #include <QHashIterator>
 #include <QLabel>
 #include <QMainWindow>
@@ -31,6 +32,8 @@
 #include <QSslConfiguration>
 #include <QThreadPool>
 #include <QTimer>
+
+#include <cstdio>
 
 #include "configuration/doomseekerconfig.h"
 #include "configuration/passwordscfg.h"
@@ -525,27 +528,35 @@ bool Main::interpretCommandLineParameters()
 		}
 		else if (strcmp(arg, "--version-json") == 0)
 		{
+			QFile outfile;
 			if (i + 1 < argumentsCount)
 			{
 				QString filename = arguments[i + 1];
-				QFile f(filename);
-				if (!f.open(QIODevice::WriteOnly))
+				if (filename != "-" && filename != "")
 				{
-					gLog << tr("Failed to open file.");
+					outfile.setFileName(filename);
+					if (!outfile.open(QIODevice::WriteOnly | QIODevice::Text))
+					{
+						gLog << tr("Failed to open file.");
+						return false;
+					}
+				}
+			}
+			if (outfile.fileName().isEmpty())
+			{
+				if (!outfile.open(stdout, QIODevice::WriteOnly))
+				{
+					gLog << tr("Failed to open stdout.");
 					return false;
 				}
-				// Plugins generate QPixmaps which need a QApplication active
-				Application::init(argumentsCount, arguments);
-				initDataDirectories();
-				PluginLoader::init(gDefaultDataPaths->pluginSearchLocationPaths());
-				gLog << tr("Dumping version info to file in JSON format.");
-				VersionDump::dumpJsonToIO(f);
-				return false;
 			}
-			else
-			{
-				gLog << tr("No file specified!");
-			}
+
+			// Plugins generate QPixmaps which need a QApplication active
+			Application::init(argumentsCount, arguments);
+			initDataDirectories();
+			PluginLoader::init(gDefaultDataPaths->pluginSearchLocationPaths());
+			gLog << tr("Dumping version info to file in JSON format.");
+			VersionDump::dumpJsonToIO(outfile);
 			return false;
 		}
 	}

@@ -1943,16 +1943,20 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../cmdargshelp.cpp" line="45"/>
-        <source>--version-json [file]
+        <source>--version-json [file|-]
     Prints version info on Doomseeker and all
     plugins in JSON format to specified file,
-    then closes the program.
+    then closes the program. If file is not
+    specified or specified as '-', version info
+    is printed to stdout.
 </source>
-        <translation>--version-json [plik]
+        <translation>--version-json [plik|-]
     Wypisuje wersje Doomseekera oraz
     wszystkich wtyczek w formacie JSON
     do podanego pliku, a następnie zamyka
-    program.
+    program. Jeżeli plik nie zostanie podany,
+    lub zostanie podany jako znak '-', wersje
+    zostaną wypisane na standardowe wyjście.
 </translation>
     </message>
 </context>
@@ -1988,7 +1992,7 @@ p, li { white-space: pre-wrap; }
         <translation>Doomseeker - dołączanie do gry</translation>
     </message>
     <message>
-        <source>Wadseeker will not work correctly: 
+        <source>Wadseeker will not work correctly:
 Target directory is either not set, is invalid or cannot be written to.
 Please review your Configuration and/or refer to online help available from the Help menu.</source>
         <translation type="obsolete">Wadseeker nie zadziała poprawnie:
@@ -4515,7 +4519,7 @@ Wadseeker nie będzie pobierał komercyjnych IWADów.
         <translation>Błąd instalacji gry</translation>
     </message>
     <message>
-        <source>Wadseeker will not work correctly: 
+        <source>Wadseeker will not work correctly:
 Target directory is either not set, is invalid or cannot be written to.
 Please review your Configuration and/or refer to online help available from the Help menu.</source>
         <translation type="obsolete">Wadseeker nie zadziała poprawnie:
@@ -4715,7 +4719,7 @@ Proszę sprawdzić konfigurację i/lub odnieść się do pomocy online dostępne
 <context>
     <name>MainWindow</name>
     <message>
-        <source>Warning: 
+        <source>Warning:
 Doomseeker failed to detect any plugins.
 While the core application will still work its functionality is going to be limited.
 One of the proper locations for plugin modules is the &quot;engines/&quot; directory.
@@ -5001,7 +5005,7 @@ Proszę sprawdź, czy w katalogu &quot;engines/&quot; znajdują się jakiekolwie
 Aby naprawić ten błąd można spróbować pobrać Doomseekera jeszcze raz ze strony podanej w menu Pomoc|O programie i przeinstalować Doomseekera.</translation>
     </message>
     <message>
-        <source>Doomseeker was unable to find any plugin libraries. 
+        <source>Doomseeker was unable to find any plugin libraries.
 Although the application will still work it will not be possible to fetch any server info or launch any game.
 
 Please check if there are any files in &quot;engines/&quot; directory.

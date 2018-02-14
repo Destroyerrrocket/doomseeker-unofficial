@@ -80,4 +80,5 @@ void VersionDump::dumpJsonToIO(QIODevice& io)
 	}
 
 	io.write(QtJson::Json::serialize(root));
+	io.write("\n");
 }
