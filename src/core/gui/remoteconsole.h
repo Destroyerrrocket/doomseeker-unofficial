@@ -38,27 +38,23 @@ class RemoteConsole : public QMainWindow
 		RemoteConsole(ServerPtr server, QWidget *parent=NULL);
 		~RemoteConsole();
 
-		/**
-		 * Returns true if the remote console has been successfully created.
-		 * Should not be false unless the first constructor is used.
-		 */
-		bool isValid() const;
-
 	public slots:
 		void disconnectFromServer();
 
 	protected:
 		void closeEvent(QCloseEvent *event);
-		void showPasswordDialog();
-		void standardInit();
-
-	protected slots:
-		void changeServerName(const QString &name);
-		void invalidPassword();
-		void updatePlayerList();
 
 	private:
 		DPtr<RemoteConsole> d;
+
+		void construct();
+		void standardInit();
+		void showPasswordDialog();
+
+	private slots:
+		void changeServerName(const QString &name);
+		void invalidPassword();
+		void updatePlayerList();
 };
 
 #endif /* __REMOTECONSOLE_HPP__ */

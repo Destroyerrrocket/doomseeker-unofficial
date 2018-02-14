@@ -186,8 +186,7 @@ int Main::run()
 
 	if (startRcon)
 	{
-		if (!createRemoteConsole())
-			return 0;
+		QTimer::singleShot(0, this, SLOT(runRemoteConsole()));
 	}
 	else if (connectUrl.isValid())
 	{
@@ -288,14 +287,13 @@ void Main::createMainWindow()
 	}
 }
 
-bool Main::createRemoteConsole()
+void Main::runRemoteConsole()
 {
 	gLog << tr("Starting RCon client.");
 	if(rconPluginName.isEmpty())
 	{
 		RemoteConsole *rc = new RemoteConsole();
-		if(rc->isValid())
-			rc->show();
+		rc->show();
 	}
 	else
 	{
@@ -304,7 +302,8 @@ bool Main::createRemoteConsole()
 		if(pIndex == -1)
 		{
 			gLog << tr("Couldn't find specified plugin: ") + rconPluginName;
-			return false;
+			gApp->exit(2);
+			return;
 		}
 
 		// Check for RCon Availability.
@@ -313,14 +312,14 @@ bool Main::createRemoteConsole()
 		if(!server->hasRcon())
 		{
 			gLog << tr("Plugin does not support RCon.");
-			return false;
+			gApp->exit(2);
+			return;
 		}
 
 		// Start it!
 		RemoteConsole *rc = new RemoteConsole(server);
 		rc->show();
 	}
-	return true;
 }
 
 void Main::initCaCerts()

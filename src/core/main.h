@@ -72,7 +72,6 @@ class Main : public QObject
 		void convertOldIniToQSettingsIni();
 
 		void createMainWindow();
-		bool createRemoteConsole();
 
 		int runTestMode();
 
@@ -117,6 +116,9 @@ class Main : public QObject
 		int updateFailedCode;
 		QUrl connectUrl;
 		bool bPortableMode;
+
+	private slots:
+		void runRemoteConsole();
 };
 
 #endif /* __MAIN_H__ */

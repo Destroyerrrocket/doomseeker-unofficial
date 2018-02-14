@@ -82,6 +82,11 @@ or port 0, but it was impossible to remove it.
 had a minimum value set to 6667. If IRC network used a port lower than 6667,
 it would not display properly.
 - Remote Console connect dialog had no title.
+- Starting Doomseeker with "--rcon" argument and then immediately closing
+the connection prompt or failing it would get Doomseeker stuck running forever.
+- Connection prompt box with "--rcon" argument would not be centered
+on the screen because its parent widget was not yet drawn when
+the prompt was first shown.
 - Linux: The name of the desktop file is now a reverse Doomseeker domain.
 - Zandronum: fix problem with widgets for a different Zandronum version being
 visible when first opening the "Create Game" box.

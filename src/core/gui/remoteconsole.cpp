@@ -47,7 +47,8 @@ DPointered(RemoteConsole)
 
 RemoteConsole::RemoteConsole(QWidget *parent) : QMainWindow(parent)
 {
-	d->protocol = NULL;
+	construct();
+	show();
 
 	// Prompt for connection info & password.
 	RconPasswordDialog *dlg = new RconPasswordDialog(this, true);
@@ -64,7 +65,7 @@ RemoteConsole::RemoteConsole(QWidget *parent) : QMainWindow(parent)
 			d->server = dlg->selectedEngine()->server(QHostAddress(address), port);
 			if(!d->server->hasRcon())
 			{
-				QMessageBox::critical(this, tr("No RCon support"), tr("The source port selected has no RCon support."));
+				QMessageBox::critical(this, tr("No RCon support"), tr("The selected source port has no RCon support."));
 				close();
 				return;
 			}
@@ -77,6 +78,12 @@ RemoteConsole::RemoteConsole(QWidget *parent) : QMainWindow(parent)
 
 				d->protocol->sendPassword(dlg->connectPassword());
 			}
+			else
+			{
+				QMessageBox::critical(this, tr("RCon failure"), tr("Failed to create RCon protocol for the server."));
+				close();
+				return;
+			}
 		}
 		else
 			break;
@@ -87,15 +94,16 @@ RemoteConsole::RemoteConsole(QWidget *parent) : QMainWindow(parent)
 RemoteConsole::RemoteConsole(ServerPtr server, QWidget *parent)
 : QMainWindow(parent)
 {
+	construct();
 	d->protocol = server->rcon();
 	d->server = server;
-	standardInit();
 
 	setWindowIcon(server->icon());
 	changeServerName(server->name());
 
 	if (d->protocol != NULL)
 	{
+		standardInit();
 		showPasswordDialog();
 	}
 	else
@@ -108,6 +116,18 @@ RemoteConsole::RemoteConsole(ServerPtr server, QWidget *parent)
 
 RemoteConsole::~RemoteConsole()
 {
+}
+
+void RemoteConsole::construct()
+{
+	d->setupUi(this);
+	d->protocol = NULL;
+	d->serverConsole = new ServerConsole();
+	d->console->layout()->addWidget(d->serverConsole);
+	connect(d->actionDisconnect, SIGNAL(triggered()), this, SLOT(disconnectFromServer()));
+
+	// delete ourself on close
+	setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void RemoteConsole::changeServerName(const QString &name)
@@ -126,11 +146,6 @@ void RemoteConsole::invalidPassword()
 {
 	QMessageBox::critical(this, tr("Invalid Password"), tr("The password you entered appears to be invalid."));
 	showPasswordDialog();
-}
-
-bool RemoteConsole::isValid() const
-{
-	return d->protocol != NULL;
 }
 
 void RemoteConsole::disconnectFromServer()
@@ -163,20 +178,7 @@ void RemoteConsole::showPasswordDialog()
 
 void RemoteConsole::standardInit()
 {
-	d->setupUi(this);
-	d->serverConsole = new ServerConsole();
-	d->console->layout()->addWidget(d->serverConsole);
-
-	// delete ourself on close
-	setAttribute(Qt::WA_DeleteOnClose);
-
-	if(d->protocol == NULL)
-		return;
-
-	// If we connected show the window
 	show();
-
-	connect(d->actionDisconnect, SIGNAL(triggered()), this, SLOT(disconnectFromServer()));
 	connect(d->serverConsole, SIGNAL(messageSent(const QString &)), d->protocol, SLOT(sendCommand(const QString &)));
 	connect(d->protocol, SIGNAL(disconnected()), this, SLOT(close()));
 	connect(d->protocol, SIGNAL(messageReceived(const QString &)), d->serverConsole, SLOT(appendMessage(const QString &)));
