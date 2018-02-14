@@ -58,14 +58,28 @@ class MAIN_EXPORT Log : public QObject
 		const QString& content() const;
 
 		/**
-		 * @brief If true all new entries will also be printed to stdout.
+		 * @brief If true all new entries will also be printed to stderr.
 		 *
 		 * Otherwise entries are stored only in the logContent member.
 		 * Default is true.
 		 */
-		bool isPrintingToStdout() const;
+		bool isPrintingToStderr() const;
+		void setPrintingToStderr(bool b);
 
+		/**
+		 * @brief If true all new entries will also be printed to stderr.
+		 *
+		 * Otherwise entries are stored only in the logContent member.
+		 * Default is true.
+		 *
+		 * @deprecated Use isPrintingToStderr().
+		 */
+		bool isPrintingToStdout() const;
+		/**
+		 * @deprecated Use setPrintingToStderr().
+		 */
 		void setPrintingToStdout(bool b);
+
 		void setTimestampsEnabled(bool b);
 
 		/**

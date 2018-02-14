@@ -31,7 +31,7 @@ DClass<Log>
 	public:
 		QString logContent;
 		QMutex mutex;
-		bool printToStdout;
+		bool printToStderr;
 		bool timestamps;
 };
 
@@ -42,7 +42,7 @@ Log gLog;
 Log::Log()
 {
 	d->timestamps = true;
-	d->printToStdout = true;
+	d->printToStderr = true;
 }
 
 Log::~Log()
@@ -65,9 +65,9 @@ void Log::addUnformattedEntry(const QString& string)
 {
 	QMutexLocker locker(&d->mutex);
 
-	if (isPrintingToStdout())
+	if (isPrintingToStderr())
 	{
-		printf("%s", string.toUtf8().constData());
+		fprintf(stderr, "%s", string.toUtf8().constData());
 	}
 
 	d->logContent += string;
@@ -89,9 +89,14 @@ const QString& Log::content() const
 	return d->logContent;
 }
 
+bool Log::isPrintingToStderr() const
+{
+	return d->printToStderr;
+}
+
 bool Log::isPrintingToStdout() const
 {
-	return d->printToStdout;
+	return isPrintingToStderr();
 }
 
 Log& Log::operator<<(const QString& string)
@@ -102,7 +107,12 @@ Log& Log::operator<<(const QString& string)
 
 void Log::setPrintingToStdout(bool b)
 {
-	d->printToStdout = b;
+	setPrintingToStderr(b);
+}
+
+void Log::setPrintingToStderr(bool b)
+{
+	d->printToStderr = b;
 }
 
 void Log::setTimestampsEnabled(bool b)
