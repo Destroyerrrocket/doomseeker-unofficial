@@ -336,6 +336,25 @@ void Main::runRemoteConsole()
 	gLog << tr("Starting RCon client.");
 	if(rconPluginName.isEmpty())
 	{
+		bool canAnyEngineRcon = false;
+		for(unsigned int i = 0;i < gPlugins->numPlugins();i++)
+		{
+			const EnginePlugin* info = gPlugins->plugin(i)->info();
+			if (info->server(QHostAddress("localhost"), 0)->hasRcon())
+			{
+				canAnyEngineRcon = true;
+				break;
+			}
+		}
+		if (!canAnyEngineRcon)
+		{
+			QString error = tr("None of the currently loaded game plugins supports RCon.");
+			gLog << error;
+			QMessageBox::critical(NULL, tr("Doomseeker RCon"), error);
+			gApp->exit(2);
+			return;
+		}
+
 		RemoteConsole *rc = new RemoteConsole();
 		rc->show();
 	}
