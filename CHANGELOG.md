@@ -21,6 +21,7 @@ if such file is present in one of the program's static data directories
 - It can now be controlled whether logs are printed to stderr
 by '--quiet' and '--verbose' command line switches. Logging
 to the "Logs" box will happen regardless of this switch.
+- RCon connection box can now toggle showing/hiding passwords.
 - Windows: cacerts.pem database with "DST Root CA X3" and
 "DigiCert High Assurance EV Root CA" certificates.
 - Zandronum: Support "sv_deadplayerscankeepinventory" zadmflag.
@@ -48,6 +49,7 @@ or "MacOS" (application bundle), the binary directory will no longer be added to
 the wad file paths by default.
 - Updated the internal zlib library to 1.2.11. This affects Windows builds.
 - Logs will now be printed to stderr instead of stdout.
+- Only show games that support Remote Console in RCon connection box.
 - Linux: Also try to look for WADs in /usr/[local]/share/games/doom.
 - Linux: Explicit "Copy (text)" actions shall store the data both in keyboard
 and mouse selection clipboards, allowing it to be pasted with either keyboard

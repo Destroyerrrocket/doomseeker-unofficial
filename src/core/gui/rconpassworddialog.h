@@ -43,6 +43,9 @@ class RconPasswordDialog : public QDialog
 
 	private:
 		DPtr<RconPasswordDialog> d;
+
+	private slots:
+		void setHidePassword(bool hide);
 };
 
 #endif

@@ -25,6 +25,7 @@
 #include "ui_rconpassworddialog.h"
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
+#include "serverapi/server.h"
 
 DClass<RconPasswordDialog> : public Ui::RconPasswordDialog
 {
@@ -36,6 +37,7 @@ RconPasswordDialog::RconPasswordDialog(QWidget *parent, bool connection)
 : QDialog(parent)
 {
 	d->setupUi(this);
+	this->connect(d->cbHidePassword, SIGNAL(toggled(bool)), SLOT(setHidePassword(bool)));
 
 	if (connection)
 	{
@@ -44,7 +46,8 @@ RconPasswordDialog::RconPasswordDialog(QWidget *parent, bool connection)
 		for(unsigned int i = 0;i < gPlugins->numPlugins();i++)
 		{
 			const EnginePlugin* info = gPlugins->plugin(i)->info();
-			d->engines->addItem(info->icon(), info->data()->name, i);
+			if (info->server(QHostAddress("localhost"), 0)->hasRcon())
+				d->engines->addItem(info->icon(), info->data()->name, i);
 		}
 	}
 	else
@@ -52,8 +55,7 @@ RconPasswordDialog::RconPasswordDialog(QWidget *parent, bool connection)
 		d->connectionBox->hide();
 	}
 
-	if(gConfig.doomseeker.bHidePasswords)
-		d->lePassword->setEchoMode(QLineEdit::Password);
+	d->cbHidePassword->setChecked(gConfig.doomseeker.bHidePasswords);
 
 	// Adjust the size and prevent resizing.
 	adjustSize();
@@ -72,7 +74,8 @@ QString RconPasswordDialog::connectPassword() const
 
 const EnginePlugin *RconPasswordDialog::selectedEngine() const
 {
-	const PluginLoader::Plugin *plugin = gPlugins->plugin(d->engines->currentIndex());
+	int pluginIndex = d->engines->itemData(d->engines->currentIndex()).toInt();
+	const PluginLoader::Plugin *plugin = gPlugins->plugin(pluginIndex);
 	if(plugin == NULL)
 		return NULL;
 
@@ -82,4 +85,12 @@ const EnginePlugin *RconPasswordDialog::selectedEngine() const
 QString RconPasswordDialog::serverAddress() const
 {
 	return d->leServerAddress->text();
+}
+
+void RconPasswordDialog::setHidePassword(bool hide)
+{
+	if (hide)
+		d->lePassword->setEchoMode(QLineEdit::Password);
+	else
+		d->lePassword->setEchoMode(QLineEdit::Normal);
 }

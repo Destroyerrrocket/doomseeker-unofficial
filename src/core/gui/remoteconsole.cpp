@@ -62,17 +62,17 @@ RemoteConsole::RemoteConsole(QWidget *parent) : QMainWindow(parent)
 			unsigned short port;
 			Strings::translateServerAddress(dlg->serverAddress(), address, port, QString("localhost:%1").arg(dlg->selectedEngine()->data()->defaultServerPort));
 
-			d->server = dlg->selectedEngine()->server(QHostAddress(address), port);
-			if(!d->server->hasRcon())
+			ServerPtr server = dlg->selectedEngine()->server(QHostAddress(address), port);
+			if(!server->hasRcon())
 			{
 				QMessageBox::critical(this, tr("No RCon support"), tr("The selected source port has no RCon support."));
-				close();
-				return;
+				continue;
 			}
-			d->protocol = d->server->rcon();
+			d->protocol = server->rcon();
 
 			if(d->protocol != NULL)
 			{
+				d->server = server;
 				setWindowIcon(d->server->icon());
 				standardInit();
 
@@ -81,8 +81,7 @@ RemoteConsole::RemoteConsole(QWidget *parent) : QMainWindow(parent)
 			else
 			{
 				QMessageBox::critical(this, tr("RCon failure"), tr("Failed to create RCon protocol for the server."));
-				close();
-				return;
+				continue;
 			}
 		}
 		else
