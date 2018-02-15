@@ -18,6 +18,9 @@ be placed in the static search paths.
 - Extra CA certificates for SSL will be loaded from "cacerts.pem" file
 if such file is present in one of the program's static data directories
 (so, right next to the .exe on Windows).
+- It can now be controlled whether logs are printed to stderr
+by '--quiet' and '--verbose' command line switches. Logging
+to the "Logs" box will happen regardless of this switch.
 - Windows: cacerts.pem database with "DST Root CA X3" and
 "DigiCert High Assurance EV Root CA" certificates.
 - Zandronum: Support "sv_deadplayerscankeepinventory" zadmflag.

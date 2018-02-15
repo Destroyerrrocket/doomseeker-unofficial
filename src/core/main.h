@@ -68,12 +68,21 @@ class Main : public QObject
 		int run();
 
 	private:
+		enum LogVerbosity
+		{
+			LV_Default,
+			LV_Verbose,
+			LV_Quiet
+		};
+
+		void applyLogVerbosity();
 		int connectToServerByURL();
 		void convertOldIniToQSettingsIni();
 
 		void createMainWindow();
 
 		int runTestMode();
+		int runVersionDump();
 
 		void initCaCerts();
 
@@ -103,12 +112,16 @@ class Main : public QObject
 		 */
 		bool interpretCommandLineParameters();
 		void setupRefreshingThread();
+		bool shouldLogToStderr() const;
 
 		char** arguments;
 		int argumentsCount;
 		bool bIsFirstRun;
 		bool bTestMode;
+		bool bVersionDump;
+		QString versionDumpFile;
 		QStringList dataDirectories;
+		LogVerbosity logVerbosity;
 		QString rconPluginName; /// If not empty assume we want to launch an rcon client.
 		QString rconAddress;
 		unsigned short rconPort;

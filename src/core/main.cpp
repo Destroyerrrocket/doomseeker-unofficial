@@ -76,6 +76,8 @@ Main::Main(int argc, char* argv[])
 	bIsFirstRun = false;
 	bTestMode = false;
 	bPortableMode = false;
+	bVersionDump = false;
+	logVerbosity = LV_Default;
 	updateFailedCode = 0;
 
 	qRegisterMetaType<ServerPtr>("ServerPtr");
@@ -134,6 +136,7 @@ int Main::run()
 	{
 		return 0;
 	}
+	applyLogVerbosity();
 
 	Application::init(argumentsCount, arguments);
 #ifdef Q_OS_MAC
@@ -160,6 +163,10 @@ int Main::run()
 	initCaCerts();
 
 	PluginLoader::init(gDefaultDataPaths->pluginSearchLocationPaths());
+	if (bVersionDump)
+	{
+		return runVersionDump();
+	}
 	PluginUrlHandler::registerAll();
 
 	if (bTestMode)
@@ -272,6 +279,43 @@ int Main::runTestMode()
 	gLog << "==== Done.          ====";
 
 	return testCore.numTestsFailed();
+}
+
+int Main::runVersionDump()
+{
+	QFile outfile;
+	QString error;
+	if (!versionDumpFile.isEmpty())
+	{
+		outfile.setFileName(versionDumpFile);
+		if (!outfile.open(QIODevice::WriteOnly | QIODevice::Text))
+		{
+			error = tr("Failed to open file '%1'.").arg(versionDumpFile);
+		}
+	}
+	else
+	{
+		// Use stdout instead.
+		if (!outfile.open(stdout, QIODevice::WriteOnly))
+		{
+			error = tr("Failed to open stdout.");
+		}
+	}
+	if (!error.isEmpty())
+	{
+		gLog.setPrintingToStderr(true);
+		gLog << error;
+		return 2;
+	}
+
+	gLog << tr("Dumping version info to file in JSON format.");
+	VersionDump::dumpJsonToIO(outfile);
+	return 0;
+}
+
+void Main::applyLogVerbosity()
+{
+	gLog.setPrintingToStderr(shouldLogToStderr());
 }
 
 void Main::createMainWindow()
@@ -521,42 +565,31 @@ bool Main::interpretCommandLineParameters()
 		{
 			bPortableMode = true;
 		}
+		else if (strcmp(arg, "--quiet") == 0)
+		{
+			logVerbosity = LV_Quiet;
+		}
 		else if (strcmp(arg, "--tests") == 0)
 		{
 			bTestMode = true;
 		}
+		else if (strcmp(arg, "--verbose") == 0)
+		{
+			logVerbosity = LV_Verbose;
+		}
 		else if (strcmp(arg, "--version-json") == 0)
 		{
-			QFile outfile;
+			bVersionDump = true;
 			if (i + 1 < argumentsCount)
 			{
-				QString filename = arguments[i + 1];
+				++i;
+				QString filename = arguments[i];
 				if (filename != "-" && filename != "")
 				{
-					outfile.setFileName(filename);
-					if (!outfile.open(QIODevice::WriteOnly | QIODevice::Text))
-					{
-						gLog << tr("Failed to open file.");
-						return false;
-					}
-				}
-			}
-			if (outfile.fileName().isEmpty())
-			{
-				if (!outfile.open(stdout, QIODevice::WriteOnly))
-				{
-					gLog << tr("Failed to open stdout.");
-					return false;
+					versionDumpFile = filename;
 				}
 			}
 
-			// Plugins generate QPixmaps which need a QApplication active
-			Application::init(argumentsCount, arguments);
-			initDataDirectories();
-			PluginLoader::init(gDefaultDataPaths->pluginSearchLocationPaths());
-			gLog << tr("Dumping version info to file in JSON format.");
-			VersionDump::dumpJsonToIO(outfile);
-			return false;
 		}
 	}
 
@@ -568,6 +601,15 @@ void Main::setupRefreshingThread()
 	gLog << tr("Starting refreshing thread.");
 	gRefresher->setDelayBetweenResends(gConfig.doomseeker.querySpeed().delayBetweenSingleServerAttempts);
 	gRefresher->start();
+}
+
+bool Main::shouldLogToStderr() const
+{
+	if (bTestMode)
+		return logVerbosity != LV_Quiet;
+	if (bVersionDump)
+		return logVerbosity == LV_Verbose;
+	return logVerbosity != LV_Quiet;
 }
 
 //==============================================================================

@@ -52,5 +52,13 @@ QString CmdArgsHelp::argsHelp()
 		"    then closes the program. If file is not\n"
 		"    specified or specified as '-', version info\n"
 		"    is printed to stdout.\n");
+	help += tr(
+		"--verbose\n"
+		"    Forces verbose logging to stderr.\n"
+		"    This is the default in most cases.\n");
+	help += tr(
+		"--quiet\n"
+		"    Forces no logging to stderr.\n"
+		"    This is the default when dumping versions.\n");
 	return help;
 }
