@@ -22,12 +22,9 @@
 //------------------------------------------------------------------------------
 #include "ircclient.h"
 #include "log.h"
-#include "lookuphost.h"
 
 IRCClient::IRCClient()
 {
-	this->bIsInHostLookupMode = false;
-
 	recvTimer.setSingleShot(true);
 	setFakeRecvLag(0);
 
@@ -42,13 +39,11 @@ IRCClient::~IRCClient()
 
 void IRCClient::connect(const QString& address, unsigned short port)
 {
-	emit infoMessage(tr("IRC: attempting host lookup: %1").arg(address));
-
-	this->bIsInHostLookupMode = true;
 	this->port = port;
 	this->hostName = address;
 
-	LookupHost::lookupHost(address, this, SLOT( hostLookupFinished(const QHostInfo&) ) );
+	emit infoMessage(tr("IRC: Connecting: %1:%2").arg(this->hostName).arg(this->port));
+	socket.connectToHost(address, port);
 }
 
 void IRCClient::connectSocketSignals(SocketSignalsAdapter* pAdapter)
@@ -57,7 +52,6 @@ void IRCClient::connectSocketSignals(SocketSignalsAdapter* pAdapter)
 	pAdapter->connect(&socket, SIGNAL( connected() ), SLOT( connected() ));
 	pAdapter->connect(&socket, SIGNAL( disconnected() ), SLOT( disconnected() ));
 	pAdapter->connect(&socket, SIGNAL( error(QAbstractSocket::SocketError) ), SLOT( errorReceived(QAbstractSocket::SocketError) ));
-	pAdapter->connect(this, SIGNAL( hostLookupError(QHostInfo::HostInfoError) ), SLOT( hostLookupError(QHostInfo::HostInfoError) ));
 	pAdapter->connect(this, SIGNAL( infoMessage(const QString&) ), SLOT( infoMessage(const QString&) ));
 }
 
@@ -69,58 +63,9 @@ void IRCClient::disconnect()
 	}
 }
 
-void IRCClient::hostLookupFinished(const QHostInfo& hostInfo)
-{
-	this->bIsInHostLookupMode = false;
-
-	if (hostInfo.error() != QHostInfo::NoError)
-	{
-		emit hostLookupError(hostInfo.error());
-	}
-	else
-	{
-		const QHostAddress* pIp = this->pickAddress(hostInfo.addresses());
-
-		if (pIp == NULL)
-		{
-			emit hostLookupError(QHostInfo::HostNotFound);
-		}
-		else
-		{
-			emit infoMessage(tr("IRC: Connecting: %1:%2 [IP: %3]").arg(this->hostName).arg(this->port).arg(pIp->toString()));
-			socket.connectToHost(*pIp, port);
-		}
-	}
-}
-
 bool IRCClient::isConnected() const
 {
-	return socket.state() == QTcpSocket::ConnectedState && !this->bIsInHostLookupMode;
-}
-
-const QHostAddress* IRCClient::pickAddress(const QList<QHostAddress>& addressesList)
-{
-	const QHostAddress* pIPv6 = NULL;;
-
-	foreach (const QHostAddress& addr, addressesList)
-	{
-		if (addr.protocol() != QAbstractSocket::IPv4Protocol)
-		{
-			if (addr.protocol() == QAbstractSocket::IPv6Protocol
-			&& pIPv6 == NULL)
-			{
-				pIPv6 = &addr;
-			}
-		}
-		else
-		{
-			return &addr;
-		}
-	}
-
-	// If we didn't return yet we must return the IPv6 addreses.
-	// If it is not null that is...
-	return pIPv6;
+	return socket.state() == QTcpSocket::ConnectedState;
 }
 
 void IRCClient::receiveSocketData()

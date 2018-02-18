@@ -93,6 +93,9 @@ the connection prompt or failing it would get Doomseeker stuck running forever.
 - Connection prompt box with "--rcon" argument would not be centered
 on the screen because its parent widget was not yet drawn when
 the prompt was first shown.
+- IRC: connect to networks by using the hostnames directly, allowing
+Qt to choose the most appropriate address. This should prefer IPv6 connectivity
+when available.
 - Linux: The name of the desktop file is now a reverse Doomseeker domain.
 - Zandronum: fix problem with widgets for a different Zandronum version being
 visible when first opening the "Create Game" box.

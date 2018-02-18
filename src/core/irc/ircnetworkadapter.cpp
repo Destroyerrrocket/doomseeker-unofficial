@@ -837,17 +837,3 @@ void IRCSocketSignalsAdapter::infoMessage(const QString& message)
 	gLog << message;
 	emit pParent->message(message);
 }
-
-void IRCSocketSignalsAdapter::hostLookupError(QHostInfo::HostInfoError errorValue)
-{
-	switch (errorValue)
-	{
-		case QHostInfo::HostNotFound:
-			emit pParent->error("Host lookup error: host not found.");
-			break;
-
-		default:
-			emit pParent->error("Unknown host lookup error.");
-			break;
-	}
-}

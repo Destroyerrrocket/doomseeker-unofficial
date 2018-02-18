@@ -49,8 +49,6 @@ class IRCClient : public QObject
 		void setFakeRecvLag(int lagMs);
 
 	signals:
-		void hostLookupError(QHostInfo::HostInfoError errorValue);
-
 		/**
 		 *	@brief These are the messages that IRCClient class sends to
 		 *	inform the upper layers of progress.
@@ -61,21 +59,12 @@ class IRCClient : public QObject
 		void ircServerResponse(const QString& message);
 
 	private:
-		bool bIsInHostLookupMode;
 		QString hostName;
 		unsigned short port;
 		QTimer recvTimer;
 		QTcpSocket socket;
 
-		/**
-		 *	@brief Will prefer IPv4 addresses.
-		 *
-		 *	@return Pointer to a element on the list.
-		 */
-		const QHostAddress* pickAddress(const QList<QHostAddress>& addressesList);
-
 	private slots:
-		void hostLookupFinished(const QHostInfo& hostInfo);
 		void receiveSocketData();
 		void receiveSocketDataDelayed();
 
