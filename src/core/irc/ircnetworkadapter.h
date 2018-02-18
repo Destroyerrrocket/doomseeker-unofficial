@@ -48,7 +48,7 @@ class IRCNetworkAdapter : public IRCAdapterBase
 	friend class IRCSocketSignalsAdapter;
 
 	public:
-		IRCNetworkAdapter(const IRCNetworkConnectionInfo &connectionInfo);
+		IRCNetworkAdapter(IRCNetworkConnectionInfo connectionInfo);
 		~IRCNetworkAdapter();
 
 		AdapterType adapterType() const { return NetworkAdapter; }

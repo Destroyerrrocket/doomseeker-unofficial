@@ -30,7 +30,7 @@
 class IRCAdapterBase;
 class IRCDockTabContents;
 class IRCNetworkAdapter;
-class IRCNetworkConnectionInfo;
+struct IRCNetworkConnectionInfo;
 class IRCSounds;
 
 /**
@@ -73,7 +73,7 @@ class IRCDock : public QDockWidget
  		* @param bFocusOnNewTab
  		*      If <code>true</code> the new tab will gain focus when opened.
  		*/
-		void connectToNewNetwork(IRCNetworkConnectionInfo& connectionInfo, bool bFocusOnNewTab);
+		void connectToNewNetwork(const IRCNetworkConnectionInfo &connectionInfo, bool bFocusOnNewTab);
 
 		/**
 		 *	@brief This will prefix message with network name if message

@@ -101,7 +101,7 @@ void IRCDock::chatWindowCloseRequestSlot(IRCDockTabContents* pCaller)
 	}
 }
 
-void IRCDock::connectToNewNetwork(IRCNetworkConnectionInfo& connectionInfo, bool bFocusOnNewTab)
+void IRCDock::connectToNewNetwork(const IRCNetworkConnectionInfo &connectionInfo, bool bFocusOnNewTab)
 {
 	IRCNetworkAdapter* pIRCNetworkAdapter = new IRCNetworkAdapter(connectionInfo);
 
@@ -142,15 +142,14 @@ void IRCDock::performNetworkAutojoins()
 	connectionInfo.alternateNick = gIRCConfig.personal.alternativeNickname;
 	connectionInfo.nick = gIRCConfig.personal.nickname;
 	connectionInfo.realName = gIRCConfig.personal.fullName;
-
-	connectionInfo.fillInMissingFields();
+	connectionInfo.userName = gIRCConfig.personal.userName;
 
 	QList<IRCNetworkEntity> autojoinNetworks = ChatNetworksCfg().autoJoinNetworks();
 	foreach (const IRCNetworkEntity& network, autojoinNetworks)
 	{
 		connectionInfo.networkEntity = network;
 
-		connectToNewNetwork(connectionInfo, false);
+		connectToNewNetwork(connectionInfo.autoFilled(), false);
 	}
 }
 
@@ -255,10 +254,9 @@ void IRCDock::toolBarAction(QAction* pAction)
 			gIRCConfig.personal.alternativeNickname = connectionInfo.alternateNick;
 			gIRCConfig.personal.nickname = connectionInfo.nick;
 			gIRCConfig.personal.fullName = connectionInfo.realName;
+			gIRCConfig.personal.userName = connectionInfo.userName;
 
-			connectionInfo.fillInMissingFields();
-
-			connectToNewNetwork(connectionInfo, true);
+			connectToNewNetwork(connectionInfo.autoFilled(), true);
 		}
 	}
 	else if (pAction == d->toolBarOpenChatWindow)

@@ -279,10 +279,11 @@ IRCConfig::PersonalCfg::PersonalCfg()
 
 void IRCConfig::PersonalCfg::load(IniSection& section)
 {
-	this->alternativeNickname = (const QString &)section["AlternativeNickname"];
-	this->fullName = (const QString &)section["FullName"];
-	this->nickname = (const QString &)section["Nickname"];
-	this->quitMessage = (const QString &)section.value("QuitMessage", "Doomseeker End of Line").toString();
+	this->alternativeNickname = static_cast<QString>(section["AlternativeNickname"]);
+	this->fullName = static_cast<QString>(section["FullName"]);
+	this->nickname = static_cast<QString>(section["Nickname"]);
+	this->quitMessage = section.value("QuitMessage", "Doomseeker End of Line").toString();
+	this->userName = static_cast<QString>(section["UserName"]);
 }
 
 void IRCConfig::PersonalCfg::save(IniSection& section)
@@ -291,6 +292,7 @@ void IRCConfig::PersonalCfg::save(IniSection& section)
 	section["FullName"] = this->fullName;
 	section["Nickname"] = this->nickname;
 	section["QuitMessage"] = this->quitMessage;
+	section["UserName"] = this->userName;
 }
 //////////////////////////////////////////////////////////////////////////////
 const QString IRCConfig::SoundsCfg::SECTION_NAME = "Sounds";

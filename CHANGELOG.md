@@ -22,6 +22,7 @@ if such file is present in one of the program's static data directories
 by '--quiet' and '--verbose' command line switches. Logging
 to the "Logs" box will happen regardless of this switch.
 - RCon connection box can now toggle showing/hiding passwords.
+- IRC: User name can now be specified (this is different than nick name).
 - Windows: cacerts.pem database with "DST Root CA X3" and
 "DigiCert High Assurance EV Root CA" certificates.
 - Zandronum: Support "sv_deadplayerscankeepinventory" zadmflag.

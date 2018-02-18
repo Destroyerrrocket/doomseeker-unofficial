@@ -32,56 +32,74 @@
  *	@brief Struct containing information about client's connection to the
  *	IRC server.
  */
-class IRCNetworkConnectionInfo
+struct IRCNetworkConnectionInfo
 {
-	public:
-		/**
- 		*	@brief Alternate nickname in case if ' nick  ' is taken when
- 		*	connecting.
- 		*/
-		QString alternateNick;
+	/**
+	 * @brief Alternate nickname in case if ' nick  ' is taken when
+	 * connecting.
+	 */
+	QString alternateNick;
 
-		/**
- 		*	@brief Information about the network to which we will connect.
- 		*/
-		IRCNetworkEntity networkEntity;
+	/**
+	 * @brief Information about the network to which we will connect.
+	 */
+	IRCNetworkEntity networkEntity;
 
-		/**
- 		*	@brief Original nickname. This variable will always store the current
- 		*	nickname of the client.
- 		*/
-		QString nick;
+	/**
+	* @brief Original nickname. This variable will always store the current
+	* nickname of the client.
+	*/
+	QString nick;
 
-		/**
- 		*	@brief User's real name. Optional.
- 		*/
-		QString realName;
+	/**
+	 * @brief User's real name. Optional.
+	 */
+	QString realName;
 
-		/**
- 		*	@brief Fills missing data with presets.
- 		*
- 		*	- If nick is empty it is changed to
- 		*	  Doomseeker_ + <4 random alphanum chars>
- 		*	- If alternateNick is empty it is changed to nick + "`"
- 		*	- If realName is empty it is changed to nick.
- 		*/
-		void fillInMissingFields()
+	/**
+	 * @brief User name sent in /user command.
+	 */
+	QString userName;
+
+	/**
+	 * @brief Fills missing data with presets.
+	 *
+	 * - If nick is empty it is changed to
+	 *   Doomseeker_ + <4 random alphanum chars>
+	 * - If alternateNick is empty it is changed to nick + "`"
+	 * - If realName is empty it is changed to nick.
+	 * - If userName is empty it is changed to nick.
+	 */
+	IRCNetworkConnectionInfo autoFilled() const
+	{
+		IRCNetworkConnectionInfo filled = *this;
+		filled.fillInMissingFields();
+		return filled;
+	}
+
+private:
+	void fillInMissingFields()
+	{
+		if (nick.trimmed().isEmpty())
 		{
-			if (nick.isEmpty())
-			{
-				nick = "Doomseeker_" + Strings::createRandomAlphaNumericString(4);
-			}
-
-			if (alternateNick.isEmpty())
-			{
-				alternateNick = nick + "`";
-			}
-
-			if (realName.isEmpty())
-			{
-				realName = nick;
-			}
+			nick = "Doomseeker_" + Strings::createRandomAlphaNumericString(4);
 		}
+
+		if (alternateNick.trimmed().isEmpty())
+		{
+			alternateNick = nick + "`";
+		}
+
+		if (realName.trimmed().isEmpty())
+		{
+			realName = nick;
+		}
+
+		if (userName.trimmed().isEmpty())
+		{
+			userName = nick;
+		}
+	}
 };
 
 #endif

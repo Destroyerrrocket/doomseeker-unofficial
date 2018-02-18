@@ -27,7 +27,7 @@
 
 #include <QDialog>
 
-class IRCNetworkConnectionInfo;
+struct IRCNetworkConnectionInfo;
 class IRCNetworkEntity;
 
 class IRCNetworkSelectionBox : public QDialog

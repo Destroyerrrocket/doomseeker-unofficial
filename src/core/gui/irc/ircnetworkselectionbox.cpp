@@ -129,6 +129,7 @@ void IRCNetworkSelectionBox::initWidgets()
 	d->leAlternateNick->setText(gIRCConfig.personal.alternativeNickname);
 	d->leNick->setText(gIRCConfig.personal.nickname);
 	d->leRealName->setText(gIRCConfig.personal.fullName);
+	d->leUserName->setText(gIRCConfig.personal.userName);
 
 	fetchNetworks();
 }
@@ -169,6 +170,7 @@ IRCNetworkConnectionInfo IRCNetworkSelectionBox::networkConnectionInfo() const
 	outInfo.alternateNick = d->leAlternateNick->text();
 	outInfo.nick = d->leNick->text();
 	outInfo.realName = d->leRealName->text();
+	outInfo.userName = d->leUserName->text();
 
 	outInfo.networkEntity = this->network();
 

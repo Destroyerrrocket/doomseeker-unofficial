@@ -37,7 +37,7 @@
 #include "log.h"
 #include <QDateTime>
 
-IRCNetworkAdapter::IRCNetworkAdapter(const IRCNetworkConnectionInfo &connectionInfo)
+IRCNetworkAdapter::IRCNetworkAdapter(IRCNetworkConnectionInfo connectionInfo)
 {
 	this->connectionInfo = connectionInfo;
 	this->bIsJoining = false;
@@ -807,7 +807,7 @@ void IRCSocketSignalsAdapter::connected()
 
 	QString messagePass = "/PASS %1";
 	QString messageNick = "/NICK %1";
-	QString messageUser = "/USER %1 %2 %3 :%4";
+	QString messageUser = "/USER %1 0 * :%2"; // RFC 2812
 
 	IRCNetworkEntity& network = connectionInfo.networkEntity;
 
@@ -817,7 +817,7 @@ void IRCSocketSignalsAdapter::connected()
 	}
 
 	pParent->sendMessage(messageNick.arg(connectionInfo.nick));
-	pParent->sendMessage(messageUser.arg(connectionInfo.nick).arg(connectionInfo.nick).arg(connectionInfo.nick).arg(connectionInfo.realName));
+	pParent->sendMessage(messageUser.arg(connectionInfo.userName).arg(connectionInfo.realName));
 }
 
 void IRCSocketSignalsAdapter::disconnected()
