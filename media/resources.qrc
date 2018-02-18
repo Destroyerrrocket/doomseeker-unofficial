@@ -119,6 +119,7 @@
 	<file alias="flags/NLD">flags/NLD.png</file> <!-- Netherlands -->
 	<file alias="flags/NOR">flags/NOR.png</file> <!-- Norway -->
 	<file alias="flags/NZL">flags/NZL.png</file> <!-- New Zealand -->
+	<file alias="flags/OMN">flags/OMN.png</file> <!-- Oman -->
 	<file alias="flags/PAK">flags/PAK.png</file> <!-- Pakistan -->
 	<file alias="flags/PAN">flags/PAN.png</file> <!-- Panama -->
 	<file alias="flags/PER">flags/PER.png</file> <!-- Peru -->
@@ -148,6 +149,7 @@
 	<file alias="flags/UZB">flags/UZB.png</file> <!-- Uzbekistan -->
 	<file alias="flags/VEN">flags/VEN.png</file> <!-- Venezuela -->
 	<file alias="flags/VNM">flags/VNM.png</file> <!-- Vietnam -->
+	<file alias="flags/YEM">flags/YEM.png</file> <!-- Yemen -->
 	<file alias="flags/ZAF">flags/ZAF.png</file> <!-- South Africa -->
 	<file alias="flags/lan-small">flags/lan-small.png</file>
 	<file alias="flags/localhost-small">flags/localhost-small.png</file>
