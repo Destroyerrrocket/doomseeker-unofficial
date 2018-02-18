@@ -208,7 +208,6 @@ set(HEADER_FILES
 	localization.h
 	localizationinfo.h
 	log.h
-	lookuphost.h
 	main.h
 	pathfinder/basefileseeker.h
 	pathfinder/caseinsensitivefsfileseeker.h
@@ -433,7 +432,6 @@ set(SOURCE_FILES
 	localization.cpp
 	localizationinfo.cpp
 	log.cpp
-	lookuphost.cpp
 	main.cpp
 	pathfinder/basefileseeker.cpp
 	pathfinder/caseinsensitivefsfileseeker.cpp

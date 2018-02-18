@@ -35,7 +35,6 @@
 #include "serverapi/gameexeretriever.h"
 #include "serverapi/message.h"
 #include "serverapi/playerslist.h"
-#include "lookuphost.h"
 #include <QElapsedTimer>
 #include <QTime>
 #include <QUdpSocket>
@@ -394,7 +393,7 @@ Server::Response Server::lastResponse() const
 
 void Server::lookupHost()
 {
-	LookupHost::lookupHost(address().toString(), this,
+	QHostInfo::lookupHost(address().toString(), this,
 		SLOT(setHostName(QHostInfo)));
 }
 
