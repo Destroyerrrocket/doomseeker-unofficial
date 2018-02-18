@@ -59,6 +59,8 @@ void Application::deinit()
 	if (staticInstance != NULL)
 	{
 		staticInstance->destroy();
+		delete staticInstance;
+		staticInstance = NULL;
 	}
 }
 
