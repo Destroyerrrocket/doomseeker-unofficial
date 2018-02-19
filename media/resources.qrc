@@ -64,6 +64,7 @@
 	<file alias="flags/CHE">flags/CHE.png</file> <!-- Switzerland -->
 	<file alias="flags/CHL">flags/CHL.png</file> <!-- Chile -->
 	<file alias="flags/CHN">flags/CHN.png</file> <!-- China -->
+	<file alias="flags/CIV">flags/CIV.png</file> <!-- Ivory Coast -->
 	<file alias="flags/COL">flags/COL.png</file> <!-- Colombia -->
 	<file alias="flags/CRI">flags/CRI.png</file> <!-- Costa Rica -->
 	<file alias="flags/CS" >flags/CS.png</file>  <!-- Serbia and Montenegro -->
