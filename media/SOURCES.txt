@@ -109,7 +109,7 @@ icons/shield.png
 	license: Public Domain
 	License link: http://en.wikipedia.org/wiki/Public_domain
 
-icons/buddies.png (modified by Juuso Lapinlampi <wubthecaptain@gmail.com>, 2017
+icons/buddies.png (modified by Juuso "Linda" Lapinlampi <wubthecaptain@gmail.com>, 2017
                    - shirts changed; og name: system-users.png)
 icons/exclamation.png (og name: dialog-warning.png)
 icons/exclamation-16.png (og name: dialog-warning.png)

@@ -271,7 +271,7 @@ This program uses icons (or derivates of) from following sources:
        <item>
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>- Hyper_Eye, Nece228, Juuso &quot;WubTheCaptain&quot; Lapinlampi</string>
+          <string>- Hyper_Eye, Nece228, Linda &quot;WubTheCaptain&quot; Lapinlampi</string>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
