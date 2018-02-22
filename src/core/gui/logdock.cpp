@@ -20,10 +20,11 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 "Zalewa" <zalewapl@gmail.com>
 //------------------------------------------------------------------------------
+
+#include "clipboard.h"
 #include "logdock.h"
 #include "log.h"
 #include "ui_logdock.h"
-#include "clipboard.h"
 
 DClass<LogDock> : public Ui::LogDock
 {
