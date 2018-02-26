@@ -31,6 +31,7 @@ elseif(NOT DEFINED CMAKE_INSTALL_LIBDIR)
 endif()
 
 # We need a newer CPack version to get desirable results.
+# Note: CMake 3.11+ recommended for best results
 if(NOT CMAKE_VERSION VERSION_LESS "3.6.0")
 	set(USE_CPACK ON)
 else()
@@ -44,6 +45,8 @@ if(USE_CPACK)
 	set(CPACK_PACKAGE_CONTACT "First Last <example@example.com>" CACHE STRING "Contact info for archive maintainer.")
 	# We encode the install prefix into the binary, so we should use the same prefix when packaging.
 	set(CPACK_PACKAGING_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+	set(CPACK_STRIP_FILES ON)
+	set(CPACK_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 
 	set(CPACK_DEB_COMPONENT_INSTALL ON)
 	set(CPACK_DEBIAN_FILE_NAME "DEB-DEFAULT")

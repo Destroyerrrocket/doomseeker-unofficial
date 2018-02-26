@@ -20,6 +20,10 @@
 #------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.12)
 
+if(POLICY CMP0071)
+	cmake_policy(SET CMP0071 NEW)
+endif()
+
 set(PLUGIN_NAME zandronum)
 set(PLUGIN_VERSION 37)
 include(../PluginHeader.cmake)
