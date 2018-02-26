@@ -202,6 +202,11 @@ install(SCRIPT InstallHeaders.cmake COMPONENT wadseeker-dev)
 
 # We need a newer CPack version to get desirable results.
 if(NOT CMAKE_VERSION VERSION_LESS "3.6.0")
+	# CPack can autogenerate this file, but since we have a postprocessing step
+	# to correct the versions per component we're better off generating it
+	# manually. This means there will be a lintian error until that step is run.
+	configure_file(deb-extra/shlibs.in ${CMAKE_CURRENT_BINARY_DIR}/shlibs)
+
 	cpack_add_component(wadseeker
 		DISPLAY_NAME libwadseeker
 		DESCRIPTION "Library for automatically locating and downloading mods for Doom."
@@ -212,7 +217,7 @@ if(NOT CMAKE_VERSION VERSION_LESS "3.6.0")
 
 	set(CPACK_DEBIAN_FILE_NAME "DEB-DEFAULT")
 	set(CPACK_DEBIAN_WADSEEKER_PACKAGE_NAME "libwadseeker1")
-	set(CPACK_DEBIAN_WADSEEKER_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/debian/triggers")
+	set(CPACK_DEBIAN_WADSEEKER_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/deb-extra/triggers;${CMAKE_CURRENT_BINARY_DIR}/shlibs")
 	set(CPACK_DEBIAN_WADSEEKER_PACKAGE_SECTION "libs")
 	set(CPACK_COMPONENT_WADSEEKER_DESCRIPTION "Library for locating and downloading Doom mods.\n Searching is done against a given list of common servers including the id\n games archive. Wadseeker is based around Qt core and does not provide a GUI\n itself.")
 	set(CPACK_DEBIAN_WADSEEKER-DEV_PACKAGE_NAME "libwadseeker-dev")
