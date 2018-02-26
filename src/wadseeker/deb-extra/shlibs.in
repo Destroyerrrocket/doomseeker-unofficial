@@ -1,0 +1,1 @@
+libwadseeker @WADSEEKER_SOVERSION@ libwadseeker1 (>= @VERSION_STRING@)
