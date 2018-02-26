@@ -394,6 +394,7 @@ if(USE_CPACK)
 	set(CPACK_DEBIAN_DOOMSEEKER_PACKAGE_SUMMARY "Server browser for Doom" PARENT_SCOPE)
 	set(CPACK_DEBIAN_DOOMSEEKER_PACKAGE_DEPENDS "libwadseeker" PARENT_SCOPE)
 	set(CPACK_PACKAGE_VERSION ${VERSION_STRING} PARENT_SCOPE)
+	set(CPACK_COMPONENT_DOOMSEEKER_DESCRIPTION "Universal cross-platform server browser designed primarily for Doom.\n This package provides the core program which should be complimented with one or\n more plugins providing support for querying their respective servers." PARENT_SCOPE)
 
 	# Not really necessary, but it cleans up extraneous stuff CPack adds to the version string depending on the CPack version.
 	file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/CPackComponent.version" "doomseeker ${VERSION_STRING}\n")

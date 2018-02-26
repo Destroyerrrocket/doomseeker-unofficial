@@ -50,5 +50,6 @@ foreach(PLUGIN ${PLUGIN_LIST})
 		parent_scope_component(${PLUGIN})
 
 		set(CPACK_DEBIAN_${PLUGIN_UPPER}_PACKAGE_DEPENDS "doomseeker" PARENT_SCOPE)
+		set(CPACK_COMPONENT_${PLUGIN_UPPER}_DESCRIPTION "Doomseeker plugin providing support for ${PLUGIN}.\n Provides Doomseeker with an implementation for ${PLUGIN}\n protocols." PARENT_SCOPE)
 	endif()
 endforeach()
