@@ -50,7 +50,8 @@ class MAIN_EXPORT IniVariable
 		IniVariable();
 
 		/**
-		 * @brief Creates a valid IniVariable object.
+		 * @brief Creates a valid IniVariable object, provided that
+		 * the section is also valid.
 		 */
 		IniVariable(const IniSection &section, const QString& key);
 
@@ -62,7 +63,7 @@ class MAIN_EXPORT IniVariable
 		const QString& key();
 
 		/**
-		 * @brief If true, IniSection object is not valid and should not be
+		 * @brief If true, IniVariable object is not valid and should not be
 		 *        used to perform any actions on the Ini file.
 		 */
 		bool isNull() const;

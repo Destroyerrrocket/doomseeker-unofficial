@@ -75,20 +75,20 @@ class MAIN_EXPORT Ini : public QObject
 		virtual ~Ini();
 
 		/**
-		 *	Value of data parameter will be ignored and no changes will be
-		 *	performed if setting already exists.
-		 *	@return Newly created or existing setting.
+		 * Value of data parameter will be ignored and no changes will be
+		 * performed if setting already exists.
+		 * @return Newly created or existing setting.
 		 */
 		IniVariable createSetting(const QString& sectionname, const QString& name, const QVariant& data);
 
 		/**
-		 *	Completely removes a given section.
+		 * Completely removes a given section.
 		 */
 		void deleteSection(const QString& sectionname);
 
 		/**
-		 *	Completely removes a given setting. This will not erase the section
-		 *	even if it's completely empty.
+		 * Completely removes a given setting. This will not erase the section
+		 * even if it's completely empty.
 		 */
 		void deleteSetting(const QString& sectionname, const QString& settingname);
 
@@ -103,10 +103,10 @@ class MAIN_EXPORT Ini : public QObject
 		void removeKey(const QString& key);
 
 		/**
-		 *	This won't create a variable if it doesn't exist and return NULL
-		 *	in such case.
-		 *	@return A reference to the internally stored IniVariable if it
-		 *	does. Be sure to check if it isNull.
+		 * This won't create a variable if it doesn't exist and return NULL
+		 * in such case.
+		 * @return A reference to the internally stored IniVariable if it
+		 * does. Be sure to check if it isNull.
 		 */
 		IniVariable retrieveSetting(const QString& sectionname, const QString& variablename);
 
@@ -124,18 +124,17 @@ class MAIN_EXPORT Ini : public QObject
 		IniSection section(const QString& name);
 
 		/**
-		 *	Retrieves references to all sections whose names fit a certain
-		 *	pattern. Please remember that internally all sections are stored
-		 *	as lower-case strings. The regex pattern will be instructed to
-		 *	ignore the case size.
+		 * Retrieves references to all sections whose names fit a certain
+		 * pattern. The regex pattern will be instructed to
+		 * ignore the case size.
 		 */
 		QVector<IniSection> sectionsArray(const QString& regexPattern);
 
 		/**
-		 *	This method will create a variable if it doesn't exist. To avoid
-		 *	this behavior see: @see retrieveSetting().
-		 *	@return Returns a pointer to a IniVariable object. Do not delete
-		 *	this object.
+		 * This method will create a variable if it doesn't exist. To avoid
+		 * this behavior see: @see retrieveSetting().
+		 * @return Returns a pointer to a IniVariable object. Do not delete
+		 * this object.
 		 */
 		IniVariable setting(const QString& sectionname, const QString& variablename);
 

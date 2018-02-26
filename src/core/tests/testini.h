@@ -24,24 +24,21 @@
 #define __TESTINI_H__
 
 #include "tests/testbase.h"
-#include <QByteArray>
+#include <QScopedPointer>
+#include <QSettings>
+#include <QTemporaryFile>
 
-class ExampleINIs
+class SettingsProvider;
+
+class TestIniFixture
 {
-	public:
-		/**
-		 *	@brief Gets an INI file that is written in a format that is 100%
-		 *	supported by the Ini class.
-		 *
-		 *	In other words: attempt to read this INI file should end with no
-		 *	errors.
-		 */
-		static QByteArray getExampleINI();
+public:
+	TestIniFixture();
 
-		/**
-		 *	@brief Ini class should detect errors in this example.
-		 */
-		static QByteArray getExampleError1();
+	QScopedPointer<SettingsProvider> settings;
+private:
+	QScopedPointer<QSettings> settingsQt;
+	QTemporaryFile settingsFile;
 };
 
 class TestReadINI : public TestUnitBase
@@ -63,20 +60,6 @@ class TestReadINIVariable : public TestUnitBase
 		bool executeTest();
 };
 
-class TestReadINIList : public TestUnitBase
-{
-	public:
-		TestReadINIList()
-		: TestUnitBase("Read INI List")
-		{
-		}
-
-		bool executeTest();
-
-	protected:
-		bool compareEntry(const QString& actual, const QString& expected);
-};
-
 class TestDeleteINIVariable : public TestUnitBase
 {
 	public:
@@ -93,17 +76,6 @@ class TestDeleteINISection : public TestUnitBase
 	public:
 		TestDeleteINISection()
 		: TestUnitBase("Delete INI Section")
-		{
-		}
-
-		bool executeTest();
-};
-
-class TestReadINIWithErrors : public TestUnitBase
-{
-	public:
-		TestReadINIWithErrors()
-		: TestUnitBase("Read INI file with errors")
 		{
 		}
 

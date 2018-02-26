@@ -39,9 +39,7 @@ void TestRuns::callTests()
 
 	// Note: All of these tests may fail if TestReadINI fails.
 	pTestCore->executeTest(new TestReadINI());
-	pTestCore->executeTest(new TestReadINIList());
 	pTestCore->executeTest(new TestReadINIVariable());
-	pTestCore->executeTest(new TestReadINIWithErrors());
 	pTestCore->executeTest(new TestDeleteINISection());
 	pTestCore->executeTest(new TestDeleteINIVariable());
 	pTestCore->executeTest(new TestStringsWrapUrls());
