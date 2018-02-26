@@ -392,7 +392,7 @@ if(USE_CPACK)
 
 	set(CPACK_DEBIAN_DOOMSEEKER_PACKAGE_NAME "doomseeker" PARENT_SCOPE)
 	set(CPACK_DEBIAN_DOOMSEEKER_PACKAGE_SUMMARY "Server browser for Doom" PARENT_SCOPE)
-	set(CPACK_DEBIAN_DOOMSEEKER_PACKAGE_DEPENDS "libwadseeker" PARENT_SCOPE)
+	#set(CPACK_DEBIAN_DOOMSEEKER_PACKAGE_DEPENDS "libwadseeker1" PARENT_SCOPE)
 	set(CPACK_PACKAGE_VERSION ${VERSION_STRING} PARENT_SCOPE)
 	set(CPACK_COMPONENT_DOOMSEEKER_DESCRIPTION "Universal cross-platform server browser designed primarily for Doom.\n This package provides the core program which should be complimented with one or\n more plugins providing support for querying their respective servers." PARENT_SCOPE)
 

@@ -51,7 +51,7 @@ if(USE_CPACK)
 	set(CPACK_DEB_COMPONENT_INSTALL ON)
 	set(CPACK_DEBIAN_FILE_NAME "DEB-DEFAULT")
 	set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://doomseeker.drdteam.org")
-	set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+	set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON CACHE BOOL "Perform automatic dependency listing when generating deb packages. Disable this to generate intermediate packages to solve chicken and egg problem.")
 	set(CPACK_DEBIAN_PACKAGE_CONTROL_STRICT_PERMISSION ON)
 	set(CPACK_DEBIAN_COMPRESSION_TYPE "xz")
 

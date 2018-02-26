@@ -22,3 +22,9 @@
 #------------------------------------------------------------------------------
 
 set(VERSION_STRING "1.2~beta-1")
+
+# Version given to CMake's VERSION property (should be straight dotted decimal)
+set(WADSEEKER_LIBVERSION "1.2")
+
+# Version given to SOVERSION which strictly refers to ABI version
+set(WADSEEKER_SOVERSION "1")
