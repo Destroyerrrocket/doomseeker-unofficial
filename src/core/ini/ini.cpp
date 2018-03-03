@@ -59,7 +59,11 @@ IniVariable Ini::createSetting(const QString& sectionName, const QString& name, 
 
 void Ini::deleteSection(const QString& sectionName)
 {
-	removeKey(sectionName);
+	foreach (const QString &key, d->provider->allKeys())
+	{
+		if (key.startsWith(sectionName + "/", Qt::CaseInsensitive))
+			removeKey(key);
+	}
 }
 
 void Ini::deleteSetting(const QString& sectionName, const QString& settingName)

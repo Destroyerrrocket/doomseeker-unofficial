@@ -38,8 +38,24 @@
 
 DClass<SettingsProviderQt>
 {
-	public:
-		QSettings* target;
+public:
+	QSettings* target;
+
+	/**
+	 * We want case-insensitivity, but QSettings
+	 * is not always case-insensitive, so let's
+	 * try to retrieve the exact key name.
+	 */
+	QString exactKey(const QString &key) const
+	{
+		assert(target != NULL);
+		foreach (const QString &candidate, target->allKeys())
+		{
+			if (candidate.compare(key, Qt::CaseInsensitive) == 0)
+				return candidate;
+		}
+		return key;
+	}
 };
 
 DPointered(SettingsProviderQt)
@@ -67,22 +83,22 @@ QStringList SettingsProviderQt::allSections() const
 
 bool SettingsProviderQt::hasKey(const QString& key) const
 {
-	return d->target->contains(key);
+	return d->target->contains(d->exactKey(key));
 }
 
 void SettingsProviderQt::remove(const QString& key)
 {
-	d->target->remove(key);
+	d->target->remove(d->exactKey(key));
 }
 
 void SettingsProviderQt::setValue(const QString& key, const QVariant& value)
 {
 	assert(d->target != NULL);
-	d->target->setValue(key, value);
+	d->target->setValue(d->exactKey(key), value);
 }
 
 QVariant SettingsProviderQt::value(const QString& key, QVariant defValue) const
 {
 	assert(d->target != NULL);
-	return d->target->value(key, defValue);
+	return d->target->value(d->exactKey(key), defValue);
 }

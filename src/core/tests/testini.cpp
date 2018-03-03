@@ -35,8 +35,6 @@ const QByteArray EXAMPLE_INI_FILE = \
 Key1 = 10 \n\
 Key2 = Value \n\
 Key3 = \"A long text value\" \n\
-CommentedKey = 1\n\
-\n\
 ";
 
 TestIniFixture::TestIniFixture()
@@ -62,7 +60,7 @@ bool TestReadINI::executeTest()
 	Ini ini(fixture.settings.data());
 
 	// This should disregard characters case.
-	IniSection& section = ini.section("section.sectionone");
+	IniSection section = ini.section("section.sectionone");
 	if (section.isNull())
 	{
 		testLog << "Section.SectionOne was not read correctly from the INI file.";
@@ -79,7 +77,7 @@ bool TestReadINIVariable::executeTest()
 	TestIniFixture fixture;
 	Ini ini(fixture.settings.data());
 
-	IniVariable &variable = ini.retrieveSetting("section.sectionone", "key1");
+	IniVariable variable = ini.retrieveSetting("section.sectionone", "key1");
 
 	if (variable.isNull())
 	{
@@ -120,7 +118,7 @@ bool TestDeleteINIVariable::executeTest()
 	// Another way of removing a variable is to delete it directly from the
 	// Ini file through Ini::deleteSetting(). Here we remove it from the
 	// section. This works the same and is provided for convenience.
-	IniSection& section = ini.section("section.sectionone");
+	IniSection section = ini.section("section.sectionone");
 	section.deleteSetting("key1");
 
 	if (ini.hasSetting("section.sectionone", "key1"))
