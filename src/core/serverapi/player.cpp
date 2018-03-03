@@ -98,10 +98,13 @@ QString Player::nameColorTagsStripped() const
 	{
 		if (d->name[i] < 32 || d->name[i] > 126)
 		{
-			// Lets only remove the following character on \c.
+			// Strip on \c.
 			// Removing the control characters is still a good idea though.
 			if (d->name[i] == ESCAPE_COLOR_CHAR)
 			{
+				// Find out what exactly needs to be removed. Either
+				// it will be just one character, a bracket-enclosed
+				// range or nothing if sequence is invalid.
 				int colorCodeIdx = i + 1;
 				bool range = false;
 				for (; colorCodeIdx < d->name.length(); ++colorCodeIdx)
