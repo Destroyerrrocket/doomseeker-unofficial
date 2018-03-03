@@ -267,6 +267,7 @@ set(HEADER_FILES
 	tests/testdatapaths.h
 	tests/testini.h
 	tests/testircisupportparser.h
+	tests/testplayer.h
 	tests/testruns.h
 	tests/teststrings.h
 	tests/testutf8splitter.h
@@ -485,6 +486,7 @@ set(SOURCE_FILES
 	tests/testdatapaths.cpp
 	tests/testini.cpp
 	tests/testircisupportparser.cpp
+	tests/testplayer.cpp
 	tests/testruns.cpp
 	tests/teststrings.cpp
 	tests/testutf8splitter.cpp

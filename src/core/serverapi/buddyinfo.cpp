@@ -36,7 +36,7 @@ QString BuddyInfo::createConfigEntry(const QVector<BuddyInfo>& buddies)
 
 	return settingValue;
 }
-#include <QDebug>
+
 void BuddyInfo::readConfigEntry(const QString& configEntry, QVector<BuddyInfo>& outVector)
 {
 	outVector.clear();

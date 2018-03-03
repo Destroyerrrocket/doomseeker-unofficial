@@ -24,6 +24,7 @@
 #include "tests/testdatapaths.h"
 #include "tests/testini.h"
 #include "tests/testircisupportparser.h"
+#include "tests/testplayer.h"
 #include "tests/teststrings.h"
 #include "tests/testutf8splitter.h"
 
@@ -31,12 +32,14 @@ TestCore* TestRuns::pTestCore = NULL;
 
 void TestRuns::callTests()
 {
+	// DataPaths
 	pTestCore->executeTest(new TestDataPathsAppDataDirectoryAccess(false));
 	pTestCore->executeTest(new TestDataPathsAppDataDirectoryAccess(true));
 
 	pTestCore->executeTest(new TestDataPathsAppDataDirectoryWrite(false));
 	pTestCore->executeTest(new TestDataPathsAppDataDirectoryWrite(true));
 
+	// INI
 	// Note: All of these tests may fail if TestReadINI fails.
 	pTestCore->executeTest(new TestReadINI());
 	pTestCore->executeTest(new TestReadINIVariable());
@@ -47,5 +50,7 @@ void TestRuns::callTests()
 	pTestCore->executeTest(new TestIRCISupportPrefix());
 	pTestCore->executeTest(new TestIRCISupportNoPrefix());
 
+	// Misc.
 	pTestCore->executeTest(new TestUtf8Splitter());
+	pTestCore->executeTest(new TestPlayerNameColorStrip());
 }

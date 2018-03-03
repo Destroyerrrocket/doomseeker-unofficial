@@ -100,8 +100,23 @@ QString Player::nameColorTagsStripped() const
 		{
 			// Lets only remove the following character on \c.
 			// Removing the control characters is still a good idea though.
-			if(d->name[i] == ESCAPE_COLOR_CHAR)
-				++i;
+			if (d->name[i] == ESCAPE_COLOR_CHAR)
+			{
+				int colorCodeIdx = i + 1;
+				bool range = false;
+				for (; colorCodeIdx < d->name.length(); ++colorCodeIdx)
+				{
+					QChar symbol = d->name[colorCodeIdx];
+					if (symbol == '[')
+						range = true;
+					else if ((range && symbol == ']') || !range)
+						break;
+				}
+				if (range && colorCodeIdx >= d->name.length())
+					++i;  // We didn't find range end.
+				else
+					i = colorCodeIdx;
+			}
 			continue;
 		}
 

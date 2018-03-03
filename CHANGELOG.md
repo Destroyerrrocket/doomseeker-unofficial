@@ -93,6 +93,8 @@ the connection prompt or failing it would get Doomseeker stuck running forever.
 - Connection prompt box with "--rcon" argument would not be centered
 on the screen because its parent widget was not yet drawn when
 the prompt was first shown.
+- Players with TEXTCOLO color names (custom colors in brackets) would not
+properly show up on the buddy list (addresses 3193).
 - IRC: connect to networks by using the hostnames directly, allowing
 Qt to choose the most appropriate address. This should prefer IPv6 connectivity
 when available.
