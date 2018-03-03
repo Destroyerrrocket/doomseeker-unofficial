@@ -22,6 +22,7 @@
 //------------------------------------------------------------------------------
 #include "datapaths.h"
 
+#include "application.h"
 #include "doomseekerfilepaths.h"
 #include "log.h"
 #include "plugins/engineplugin.h"
@@ -103,7 +104,15 @@ DataPaths::DataPaths(bool bPortableModeOn)
 	{
 #if QT_VERSION >= 0x050000
 		d->cacheDirectory = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+		#if QT_VERSION >= 0x050500
+		// QStandardPaths::AppConfigLocation was added in Qt 5.5.
 		d->configDirectory = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+		#else
+		// In older 5.x versions we need to construct the config path ourselves.
+		d->configDirectory = Strings::combinePaths(
+			QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation),
+			Application::NAME);
+		#endif
 		d->dataDirectory = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
 #else
 		d->cacheDirectory = QDesktopServices::storageLocation(QDesktopServices::CacheLocation);

@@ -45,6 +45,11 @@ class MAIN_EXPORT Application : public QApplication
 {
 	public:
 		/**
+		 * @brief Program name - doomseeker.
+		 */
+		static const QString NAME;
+
+		/**
 		 * @brief Deinitializes the program; executed when program is shutting
 		 *        down.
 		 *

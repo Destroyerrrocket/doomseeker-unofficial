@@ -25,6 +25,8 @@
 #include "gui/mainwindow.h"
 #include <cassert>
 
+const QString Application::NAME = "doomseeker";
+
 DClass<Application>
 {
 	public:
@@ -41,7 +43,7 @@ Application::Application(int &argc, char **argv)
 {
 	d->mainWindow = NULL;
 	d->running = true;
-	setApplicationName("doomseeker");
+	setApplicationName(NAME);
 
 #if QT_VERSION >= 0x050000
 	// http://blog.qt.io/blog/2013/04/25/retina-display-support-for-mac-os-ios-and-x11/
