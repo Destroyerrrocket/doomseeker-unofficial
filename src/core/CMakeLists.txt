@@ -54,9 +54,9 @@ endif()
 
 option(DOOMSEEKER_INSTALL_NONFREE "Install non-free resources?" ${DEFAULT_NONFREE_INSTALL})
 
-# Get the SVN revision
+# Get the revision from vcs
 add_custom_target(revision_check ALL
-	COMMAND updaterevision . ${CMAKE_CURRENT_SOURCE_DIR}/svnrevision.h
+	COMMAND updaterevision ${CMAKE_CURRENT_SOURCE_DIR}/gitinfo.h
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	DEPENDS updaterevision
 )
@@ -215,7 +215,7 @@ endif()
 
 target_compile_definitions(doomseeker PRIVATE "-DINSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"" "-DINSTALL_LIBDIR=\"${CMAKE_INSTALL_LIBDIR}\"")
 
-# Make sure the svnrevision.h file is created before we attempt to compile
+# Make sure the vcs version file is created before we attempt to compile
 # Doomseeker.
 add_dependencies(doomseeker revision_check)
 

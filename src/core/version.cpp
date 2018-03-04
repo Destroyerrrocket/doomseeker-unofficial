@@ -53,12 +53,12 @@ QString Version::qtPackageVersion()
 
 QString Version::revision()
 {
-	return SVN_REVISION_STRING;
+	return HG_TIME;
 }
 
 unsigned long long Version::revisionNumber()
 {
-	return SVN_REVISION_NUMBER;
+	return HG_REVISION_NUMBER;
 }
 
 QString Version::userAgent()

@@ -74,6 +74,7 @@ set(HEADER_FILES
 	filefilter.h
 	fileutils.h
 	gamedemo.h
+	gitinfo.h
 	global.h
 	gui/aboutdialog.h
 	gui/commongui.h
@@ -261,7 +262,6 @@ set(HEADER_FILES
 	socketsignalsadapter.h
 	speedcalculator.h
 	strings.hpp
-	svnrevision.h
 	tests/testbase.h
 	tests/testcore.h
 	tests/testdatapaths.h

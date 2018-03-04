@@ -35,7 +35,7 @@
 // - version.cpp
 // - windows.rc
 
-#include "svnrevision.h"
+#include "gitinfo.h"
 
 // Info used by version.cpp
 #define VERSION_STRING "@VERSION_STRING@"
