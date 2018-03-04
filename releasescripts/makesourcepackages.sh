@@ -22,42 +22,82 @@
 # Copyright (C) 2010 Braden "Blzut3" Obrzut <admin@maniacsvault.net>
 #------------------------------------------------------------------------------
 
-# Get the version number
-version_info=`grep --only-matching -E '[0-9.]{3,}|Beta|Alpha' ../src/core/version.cpp`
-ws_version=`grep -E 'return "[0-9.]+"' ../src/wadseeker/wadseekerversioninfo.cpp | grep --only-matching -E '[0-9.]{3,}|Beta|Alpha'`
-version="0.0"
-tag=""
-for i in $version_info
-do
-	if [ $i == "Beta" ]
-	then
-		tag="b"
-	elif [ $i == "Alpha" ]
-	then
-		tag="a"
-	else
-		version=$i
-	fi
-done
+set -o pipefail
 
-echo "Version: $version"
-echo "Tag: $tag"
-echo "Wadseeker Version: $ws_version"
-echo
-
-# Generate packages
-ds_package=doomseeker-${version}${tag}_src
-ws_package=libwadseeker-${ws_version}_src
-
-# makePackage <packagename> <srcDir>
-function makePackage()
+# Process a cmake file and print the value of a given variable
+function cmake_extract_var
 {
-	echo "Generating $1.tar.bz2"
-	ln -s $2 $1
-	tar cf $1.tar $1/*  --exclude=.svn --exclude=build --exclude=releasescripts --exclude=*~
-	bzip2 -9 $1.tar
-	rm $1
+	declare CMVarsFile=$1
+	shift
+	declare Variable=$1
+	shift
+
+	# CMake's message command writes to stderr
+	cmake -P /dev/stdin <<-EOF 2>&1
+		include($CMVarsFile)
+		message(\${$Variable})
+	EOF
 }
 
-makePackage $ds_package ..
-makePackage $ws_package ../src/wadseeker
+# Build revision_check to pack in revision version information
+function create_vcs_info
+{
+	declare SrcDir=$(realpath "$1")
+	shift
+
+	if ! mkdir build; then
+		echo 'Failed to create temporary build directory.' >&2
+		exit 1
+	fi
+
+	(
+		cd build &&
+			cmake "$SrcDir" &&
+			cmake --build . -- revision_check
+	)
+	declare Ret=$?
+
+	rm -rf build
+	return "$Ret"
+}
+
+declare doomseekerVersion=$(cmake_extract_var ../src/core/versiondefs.cmake VERSION_STRING)
+declare wadseekerVersion=$(cmake_extract_var ../src/wadseeker/wadseekerversiondefs.cmake VERSION_STRING)
+
+# Strip off beta tag
+doomseekerVersion=${doomseekerVersion%~*}
+wadseekerVersion=${wadseekerVersion%~*}
+
+readonly doomseekerArchiveName="doomseeker-$doomseekerVersion"
+readonly wadseekerArchiveName="libwadseeker-$wadseekerVersion"
+
+echo "Doomseeker version: $doomseekerVersion"
+echo "wadseeker version: $wadseekerVersion"
+
+if ! hg archive "$doomseekerArchiveName"; then
+	echo 'Failed to call hg archive! Is this a mercurial clone?' >&2
+	exit 1
+fi
+
+if ! create_vcs_info "$doomseekerArchiveName"; then
+	echo 'Failed to create vcs revision info file for archive.' >&2
+	rm -rf "$doomseekerArchiveName"
+	exit 1
+fi
+
+declare Error=0
+echo 'Creating Doomseeker archive...'
+if ! tar -c "$doomseekerArchiveName" --owner=doomseeker --group=doomseeker | xz -9 > "$doomseekerArchiveName.tar.xz"; then
+	echo 'Failed to create Doomseeker archive!' >&2
+	Error=1
+else
+	echo 'Creating Wadseeker archive...'
+	if ! tar -cC "$doomseekerArchiveName/src" wadseeker --transform "s,^wadseeker,$wadseekerArchiveName," --owner=doomseeker --group=doomseeker | xz -9 > "$wadseekerArchiveName.tar.xz"; then
+		echo 'Failed to create Wadseeker archive!' >&2
+		Error=1
+	fi
+fi
+
+rm -rf "$doomseekerArchiveName"
+
+exit "$Error"
