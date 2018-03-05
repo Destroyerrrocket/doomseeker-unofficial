@@ -27,7 +27,7 @@ DClass<Player>
 {
 	public:
 		QString name;
-		short score;
+		long score;
 		unsigned short ping;
 		bool spectator;
 		bool bot;
