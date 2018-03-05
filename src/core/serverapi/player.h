@@ -48,7 +48,7 @@ class MAIN_EXPORT Player
 		};
 
 		Player();
-		Player(const QString &name, unsigned long score, unsigned long ping,
+		Player(const QString &name, long score, unsigned long ping,
 			PlayerTeam team=TEAM_NONE, bool spectator=false, bool bot=false);
 		Player(const Player& other);
 		Player& operator=(const Player& other);

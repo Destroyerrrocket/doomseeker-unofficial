@@ -456,7 +456,7 @@ Server::Response ZandronumServer::readRequest(const QByteArray &data)
 				QString name = in.readRawUntilByte('\0');
 
 				RETURN_BAD_IF_NOT_ENOUGH_DATA(2 + 2 + 1 + 1);
-				int score = in.readQUInt16();
+				int score = in.readQInt16();
 				int ping = in.readQUInt16();
 				bool spectating = in.readQUInt8() != 0;
 				bool bot = in.readQUInt8() != 0;

@@ -268,7 +268,7 @@ Server::Response OdamexServer::readRequest(const QByteArray &data)
 		unsigned short ping = in.readQUInt16();
 		in.skipRawData(2);
 		bool spectator = in.readQUInt8();
-		unsigned short score = in.readQUInt16();
+		int score = in.readQInt16();
 		in.skipRawData(4);
 
 		Player::PlayerTeam team = gameMode().isTeamGame() ? static_cast<Player::PlayerTeam> (teamIndex) : Player::TEAM_NONE;

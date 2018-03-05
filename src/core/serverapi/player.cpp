@@ -45,7 +45,7 @@ Player::Player()
 	d->team = TEAM_NONE;
 }
 
-Player::Player(const QString &name, unsigned long score, unsigned long ping,
+Player::Player(const QString &name, long score, unsigned long ping,
 	PlayerTeam team, bool spectator, bool bot)
 {
 	d->name = name;
