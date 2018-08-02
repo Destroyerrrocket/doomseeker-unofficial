@@ -31,6 +31,7 @@
 
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QTabBar>
 #include <QToolBar>
 
 DClass<IRCDock> : public Ui::IRCDock

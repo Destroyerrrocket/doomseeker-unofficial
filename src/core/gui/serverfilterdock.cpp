@@ -26,6 +26,8 @@
 #include "configuration/doomseekerconfig.h"
 #include "gui/entity/serverlistfilterinfo.h"
 
+#include <QAction>
+
 DClass<ServerFilterDock> : public Ui::ServerFilterDock
 {
 public:

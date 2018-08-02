@@ -26,6 +26,8 @@
 #include "log.h"
 #include "ui_logdock.h"
 
+#include <QAction>
+
 DClass<LogDock> : public Ui::LogDock
 {
 };

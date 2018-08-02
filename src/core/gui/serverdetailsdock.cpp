@@ -21,6 +21,7 @@
 // Copyright (C) 2014 Braden "Blzut3" Obrzut <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
 
+#include <QAction>
 #include <QBoxLayout>
 
 #include "serverdetailsdock.h"
