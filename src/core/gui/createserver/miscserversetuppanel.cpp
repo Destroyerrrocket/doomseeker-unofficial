@@ -118,3 +118,11 @@ void MiscServerSetupPanel::setupForEngine(const EnginePlugin *engine)
 	d->leURL->setVisible(visible);
 	d->anythingAvailable = visible || d->anythingAvailable;
 }
+
+void MiscServerSetupPanel::on_HidePasswords_toggled(bool buttonToggled)
+{
+	QLineEdit::EchoMode echoMode = buttonToggled ? QLineEdit::Password : QLineEdit::Normal;
+	d->leConnectPassword->setEchoMode(echoMode);
+	d->leJoinPassword->setEchoMode(echoMode);
+	d->leRConPassword->setEchoMode(echoMode);
+}
