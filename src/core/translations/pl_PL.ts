@@ -1947,7 +1947,7 @@ p, li { white-space: pre-wrap; }
     Prints version info on Doomseeker and all
     plugins in JSON format to specified file,
     then closes the program. If file is not
-    specified or specified as '-', version info
+    specified or specified as &apos;-&apos;, version info
     is printed to stdout.
 </source>
         <translation>--version-json [plik|-]
@@ -1955,7 +1955,7 @@ p, li { white-space: pre-wrap; }
     wszystkich wtyczek w formacie JSON
     do podanego pliku, a następnie zamyka
     program. Jeżeli plik nie zostanie podany,
-    lub zostanie podany jako znak '-', wersje
+    lub zostanie podany jako znak &apos;-&apos;, wersje
     zostaną wypisane na standardowe wyjście.
 </translation>
     </message>
@@ -4999,18 +4999,6 @@ Although the application will still work it will not be possible to fetch any se
 Please check if there are any files in &quot;engines/&quot; directory.
 To fix this problem you may try downloading Doomseeker again from the site specified in the Help|About box and reinstalling Doomseeker.</source>
         <translation>Doomseeker nie mógł odnaleźć żadnych wtyczek.
-Pomimo tego, że program będzie działać, nie będzie możliwe pobieranie żadnych serwerów ani wystartowanie gry.
-
-Proszę sprawdź, czy w katalogu &quot;engines/&quot; znajdują się jakiekolwiek pliki.
-Aby naprawić ten błąd można spróbować pobrać Doomseekera jeszcze raz ze strony podanej w menu Pomoc|O programie i przeinstalować Doomseekera.</translation>
-    </message>
-    <message>
-        <source>Doomseeker was unable to find any plugin libraries.
-Although the application will still work it will not be possible to fetch any server info or launch any game.
-
-Please check if there are any files in &quot;engines/&quot; directory.
-To fix this problem you may try downloading Doomseeker again from the site specified in the Help|About box and reinstalling Doomseeker.</source>
-        <translation type="obsolete">Doomseeker nie mógł odnaleźć żadnych wtyczek.
 Pomimo tego, że program będzie działać, nie będzie możliwe pobieranie żadnych serwerów ani wystartowanie gry.
 
 Proszę sprawdź, czy w katalogu &quot;engines/&quot; znajdują się jakiekolwiek pliki.
