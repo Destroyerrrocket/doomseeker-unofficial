@@ -540,28 +540,57 @@ int Main::installPendingUpdates()
 
 bool Main::interpretCommandLineParameters()
 {
-	for(int i = 0; i < argumentsCount; ++i)
+	//first argument is the command to run the program, example: ./doomseeker. better use 1 instead of 0
+	for(int i = 1; i < argumentsCount; ++i)
 	{
 		const char* arg = arguments[i];
 
-		if(strcmp(arg, "--connect") == 0 && i+1 < argumentsCount)
+		if(strcmp(arg, "--connect") == 0)
 		{
-			connectUrl = QUrl(arguments[++i]);
+			if (i+1 < argumentsCount)
+			{
+				++i;
+				connectUrl = QUrl(arguments[i]);
+			}
+			else
+			{
+				//basically prevent the program from running if there are no arguments given.
+				gLog.setTimestampsEnabled(false);
+				gLog << tr("doomseeker: expected one argument in option %1").arg(arg);
+				logHelpOnBadRun();
+				return false;
+			}
 		}
-		else if(strcmp(arg, "--datadir") == 0 && i+1 < argumentsCount)
+		else if(strcmp(arg, "--datadir") == 0)
 		{
-			++i;
-			dataDirectories.prepend(arguments[i]);
-			argDataDir = arguments[i];
+			if (i+1 < argumentsCount)
+			{
+				++i;
+				dataDirectories.prepend(arguments[i]);
+				argDataDir = arguments[i];
+			}
+			else
+			{
+				gLog.setTimestampsEnabled(false);
+				gLog << tr("doomseeker: expected one argument in option %1").arg(arg);
+				logHelpOnBadRun();
+				return false;
+			}
 		}
 		else if(strcmp(arg, "--rcon") == 0)
 		{
 			startRcon = true;
 			if(i+2 < argumentsCount)
 			{
-				rconPluginName = arguments[i+1];
-				Strings::translateServerAddress(arguments[i+2], rconAddress, rconPort, "localhost:10666");
-				i += 2;
+				rconPluginName = arguments[++i];
+				Strings::translateServerAddress(arguments[++i], rconAddress, rconPort, "localhost:10666");
+			}
+			else
+			{
+				gLog.setTimestampsEnabled(false);
+				gLog << tr("doomseeker: expected two arguments in option %1").arg(arg);
+				logHelpOnBadRun();
+				return false;
 			}
 		}
 		else if(strcmp(arg, "--help") == 0)
@@ -607,9 +636,22 @@ bool Main::interpretCommandLineParameters()
 			}
 
 		}
+		else
+		{
+			gLog.setTimestampsEnabled(false);
+			gLog << tr("doomseeker: unrecognized option '%1'").arg(arg);
+			logHelpOnBadRun();
+			return false;
+		}
 	}
 
 	return true;
+}
+
+void Main::logHelpOnBadRun()
+{
+    gLog << tr("Available command line parameters:\n");
+    gLog << CmdArgsHelp::argsHelp();
 }
 
 void Main::setupRefreshingThread()
