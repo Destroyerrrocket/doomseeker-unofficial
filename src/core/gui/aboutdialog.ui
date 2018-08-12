@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>409</width>
+    <width>411</width>
     <height>600</height>
    </rect>
   </property>
@@ -271,7 +271,7 @@ This program uses icons (or derivates of) from following sources:
        <item>
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>- Hyper_Eye, Nece228, Linda &quot;WubTheCaptain&quot; Lapinlampi</string>
+          <string>- Hyper_Eye, Nece228, Linda &quot;WubTheCaptain&quot; Lapinlampi, Pol Marcet Sardà</string>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
