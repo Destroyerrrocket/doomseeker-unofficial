@@ -173,7 +173,7 @@ int Main::run()
 			QMessageBox::critical(NULL, tr("Doomseeker startup error"), errorMessage);
 			return 0;
 		}
-		// Other unexpected cases (These lines of code should never be reached.)
+		// Other unexpected cases (These lines of code should never be reached. Left for test in Windows)
 		else
 		{
 			QString errorMessage = tr("Doomseeker will not run because some directories cannot be used properly");
