@@ -149,14 +149,37 @@ int Main::run()
 	if (!initDataDirectories())
 	{
 		// Inform the user which directories cannot be created and QUIT.
-		QStringList failedDirsList = gDefaultDataPaths->directoriesExist();
-		QString failedDirsString = failedDirsList.join("\n");
+		QStringList failedDirsToCreateList = gDefaultDataPaths->directoriesExist();
+		// Also, in case the permissions are incorrect inform more properly the user.
+		QStringList failedDirsPermissionsList = gDefaultDataPaths->directoriesWithoutPermissions();
 
-		QString errorMessage = tr("Doomseeker will not run because following directories cannot be created:");
-		errorMessage += "\n" + failedDirsString;
-
-		QMessageBox::critical(NULL, tr("Doomseeker startup error"), errorMessage);
-		return 0;
+		// We will transform the list to text. In case a list is empty, we should give a more acurate error message
+		// of what is going wrong.
+		QString failedDirsToCreateString = failedDirsToCreateList.join("\n");
+		QString failedDirsPermissionsString = failedDirsPermissionsList.join("\n");
+		// Case where dir cannot be crated
+		if (failedDirsToCreateString != "")
+		{
+			QString errorMessage = tr("Doomseeker will not run because following directories cannot be created:");
+			errorMessage += "\n" + failedDirsToCreateString;
+			QMessageBox::critical(NULL, tr("Doomseeker startup error"), errorMessage);
+			return 0;
+		}
+		// Case where dir has unproper permissions
+		else if (failedDirsPermissionsString != "")
+		{
+			QString errorMessage = tr("Doomseeker will not run because following directories have incorrect permissions:");
+			errorMessage += "\n" + failedDirsPermissionsString;
+			QMessageBox::critical(NULL, tr("Doomseeker startup error"), errorMessage);
+			return 0;
+		}
+		// Other unexpected cases (These lines of code should never be reached.)
+		else
+		{
+			QString errorMessage = tr("Doomseeker will not run because some directories cannot be used properly");
+			QMessageBox::critical(NULL, tr("Doomseeker startup error"), errorMessage);
+			return 0;
+		}
 	}
 
 	initCaCerts();
