@@ -91,7 +91,7 @@
       </widget>
      </item>
      <item row="5" column="1">
-      <widget class="QCheckBox" name="HidePasswords">
+      <widget class="QCheckBox" name="cbHidePasswords">
        <property name="layoutDirection">
         <enum>Qt::RightToLeft</enum>
        </property>
@@ -123,8 +123,29 @@
   <tabstop>leConnectPassword</tabstop>
   <tabstop>leJoinPassword</tabstop>
   <tabstop>leRConPassword</tabstop>
+  <tabstop>cbHidePasswords</tabstop>
   <tabstop>pteMOTD</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>cbHidePasswords</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MiscServerSetupPanel</receiver>
+   <slot>setHidePasswords(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>188</x>
+     <y>139</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>139</x>
+     <y>156</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>setHidePasswords(bool)</slot>
+ </slots>
 </ui>

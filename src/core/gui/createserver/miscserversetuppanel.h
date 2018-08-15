@@ -49,7 +49,7 @@ private:
 	DPtr<MiscServerSetupPanel> d;
 
 private slots:
-	void on_HidePasswords_toggled(bool buttonToggled);
+	void setHidePasswords(bool hide);
 };
 
 #endif
