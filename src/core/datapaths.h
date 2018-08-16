@@ -177,6 +177,13 @@ class MAIN_EXPORT DataPaths
 		QStringList directoriesExist() const;
 
 		/**
+		 * @brief Checks if all necessary directories have the proper permissions.
+		 *
+		 * @return List of directiories that DO NOT have the proper permissions.
+		 */
+		QStringList directoriesWithoutPermissions() const;
+
+		/**
 		 * @brief Path to the "My Documents" directory with Doomseeker's
 		 * own subpath suffix.
 		 *
@@ -305,6 +312,11 @@ class MAIN_EXPORT DataPaths
 		 * to.
 		 */
 		static bool validateDir(const QString& path);
+
+		/**
+		 * @return True if path has write, read and execute permissions.
+		 */
+		static bool validatePermissions(const QString& path);
 
 		/**
 		 * @brief If directory already exists true is returned.

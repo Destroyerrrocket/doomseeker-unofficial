@@ -282,6 +282,24 @@ QStringList DataPaths::directoriesExist() const
 	return failedList;
 }
 
+QStringList DataPaths::directoriesWithoutPermissions() const
+{
+	QStringList failedList;
+	QList<QDir> checkList;
+
+	checkList << d->cacheDirectory << d->configDirectory << d->dataDirectory;
+
+	foreach(const QDir &dataDirectory, checkList)
+	{
+		if (!validatePermissions(dataDirectory.absolutePath()))
+		{
+			failedList.append(dataDirectory.absolutePath());
+		}
+	}
+
+	return failedList;
+}
+
 QString DataPaths::documentsLocationPath(const QString &subpath) const
 {
 	QString rootPath;
@@ -478,6 +496,17 @@ bool DataPaths::validateDir(const QString& path)
 	bool bCondition1 = !path.isEmpty();
 	bool bCondition2 = fileInfo.exists();
 	bool bCondition3 = fileInfo.isDir();
+
+	return bCondition1 && bCondition2 && bCondition3;
+}
+
+bool DataPaths::validatePermissions(const QString& path)
+{
+	QFileInfo fileInfo(path);
+
+	bool bCondition1 = fileInfo.isExecutable();
+	bool bCondition2 = fileInfo.isWritable();
+	bool bCondition3 = fileInfo.isReadable();
 
 	return bCondition1 && bCondition2 && bCondition3;
 }
