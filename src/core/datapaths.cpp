@@ -44,6 +44,12 @@
 #error Build system should provide definition for INSTALL_PREFIX and INSTALL_LIBDIR
 #endif
 
+// On NTFS file systems, ownership and permissions checking is disabled by
+// default for performance reasons. The following int toggles it by
+// incrementation and decrementation of its value.
+// See: http://doc.qt.io/qt-5/qfileinfo.html#ntfs-permissions
+extern Q_CORE_EXPORT int qt_ntfs_permission_lookup;
+
 static QStringList uniquePaths(const QStringList &paths)
 {
 	QList<QFileInfo> uniqueMarkers;
@@ -267,12 +273,18 @@ QString DataPaths::demosDirectoryPath() const
 QStringList DataPaths::directoriesExist() const
 {
 	QStringList failedList;
+	QStringList checkedList;
 	QList<QDir> checkList;
 
 	checkList << d->cacheDirectory << d->configDirectory << d->dataDirectory;
 
 	foreach(const QDir &dataDirectory, checkList)
 	{
+		if (checkedList.contains(dataDirectory.absolutePath()))
+		{
+			continue;
+		}
+		checkedList << dataDirectory.absolutePath();
 		if (!dataDirectory.exists())
 		{
 			failedList.append(dataDirectory.absolutePath());
@@ -285,12 +297,18 @@ QStringList DataPaths::directoriesExist() const
 QStringList DataPaths::directoriesWithoutPermissions() const
 {
 	QStringList failedList;
+	QStringList checkedList;
 	QList<QDir> checkList;
 
 	checkList << d->cacheDirectory << d->configDirectory << d->dataDirectory;
 
 	foreach(const QDir &dataDirectory, checkList)
 	{
+		if (checkedList.contains(dataDirectory.absolutePath()))
+		{
+			continue;
+		}
+		checkedList << dataDirectory.absolutePath();
 		if (!validatePermissions(dataDirectory.absolutePath()))
 		{
 			failedList.append(dataDirectory.absolutePath());
@@ -502,11 +520,13 @@ bool DataPaths::validateDir(const QString& path)
 
 bool DataPaths::validatePermissions(const QString& path)
 {
+	++qt_ntfs_permission_lookup;
 	QFileInfo fileInfo(path);
 
 	bool bCondition1 = fileInfo.isExecutable();
 	bool bCondition2 = fileInfo.isWritable();
 	bool bCondition3 = fileInfo.isReadable();
+	--qt_ntfs_permission_lookup;
 
 	return bCondition1 && bCondition2 && bCondition3;
 }
