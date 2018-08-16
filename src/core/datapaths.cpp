@@ -51,7 +51,7 @@
 #ifdef Q_OS_WIN32
 extern Q_CORE_EXPORT int qt_ntfs_permission_lookup;
 #else
-//We'll need to declare an int with the same name to compile successfully in other platforms.
+// We'll need to declare an int with the same name to compile successfully in other platforms.
 int qt_ntfs_permission_lookup;
 #endif
 
