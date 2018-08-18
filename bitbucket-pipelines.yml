@@ -1,0 +1,16 @@
+image: doomseeker/doomseeker-build:latest
+
+pipelines:
+  default:
+    - step:
+        caches:
+          - build-dir
+        script:
+          - mkdir -p build
+          - cd build
+          - cmake ..
+          - make -j$(nproc)
+          - make install
+definitions:
+  caches:
+    build-dir: build
