@@ -168,27 +168,38 @@ void ServerListView::setupTableProperties()
 
 void ServerListView::setupTableColumnWidths()
 {
-	QString &headerState = gConfig.doomseeker.serverListColumnState;
-	if(headerState.isEmpty())
+	const ServerListColumn* columns = ServerListColumns::columns;
+
+	// Initialize the defaults.
+	for (int colIdx = 0; colIdx < ServerListColumnId::NUM_SERVERLIST_COLUMNS; ++colIdx)
 	{
-		for (int i = 0; i < ServerListColumnId::NUM_SERVERLIST_COLUMNS; ++i)
+		setColumnWidth(colIdx, columns[colIdx].width);
+		setColumnHidden(colIdx, columns[colIdx].bHidden);
+	}
+
+	// Reload state from config, potentially overriding the defaults.
+	QString &headerState = gConfig.doomseeker.serverListColumnState;
+	if (!headerState.isEmpty())
+	{
+		horizontalHeader()->restoreState(QByteArray::fromBase64(headerState.toUtf8()));
+	}
+
+	// Enforce certain settings on columns, regardless of the state loaded from the config.
+	for (int colIdx = 0; colIdx < ServerListColumnId::NUM_SERVERLIST_COLUMNS; ++colIdx)
+	{
+		if (columns[colIdx].bHidden)
+			setColumnHidden(colIdx, true);
+		if (!columns[colIdx].bResizable)
 		{
-			ServerListColumn* columns = ServerListColumns::columns;
-			setColumnWidth(i, columns[i].width);
-			setColumnHidden(i, columns[i].bHidden);
-			if(!columns[i].bResizable)
-			{
 #if QT_VERSION >= 0x050000
-				horizontalHeader()->setSectionResizeMode(i, QHeaderView::Fixed);
+			horizontalHeader()->setSectionResizeMode(colIdx, QHeaderView::Fixed);
 #else
-				horizontalHeader()->setResizeMode(i, QHeaderView::Fixed);
+			horizontalHeader()->setResizeMode(colIdx, QHeaderView::Fixed);
 #endif
-			}
 		}
 	}
-	else
-		horizontalHeader()->restoreState(QByteArray::fromBase64(headerState.toUtf8()));
 
+	// General settings.
 #if QT_VERSION >= 0x050000
 	horizontalHeader()->setSectionsMovable(true);
 #else

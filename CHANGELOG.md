@@ -102,6 +102,8 @@ properly show up on the buddy list (addresses 3193).
 Moreover, it was also wrongly assumed that the player score cannot be negative.
 - Show more precise error messages when there are issues with one of the
 Doomseeker's data directories other than "failure to create" (addresses 3396).
+- Fixed problem with exposing hidden columns or other unintended behavior in
+servers table when restoring state from a saved config. (addresses 3411)
 - IRC: connect to networks by using the hostnames directly, allowing
 Qt to choose the most appropriate address. This should prefer IPv6 connectivity
 when available.
