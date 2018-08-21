@@ -24,10 +24,15 @@ project(Doomseeker)
 # Multiarch support
 if(UNIX AND NOT APPLE)
 	include(GNUInstallDirs)
-elseif(NOT DEFINED CMAKE_INSTALL_LIBDIR)
+else()
 	# CMAKE_ prefix used here to match the variable set by GNUInstallDirs.
-	# Value currently doesn't matter outside of Linux.
-	set(CMAKE_INSTALL_LIBDIR "lib")
+	# Values currently don't matter outside of Linux.
+	if(NOT DEFINED CMAKE_INSTALL_LIBDIR)
+		set(CMAKE_INSTALL_LIBDIR "lib")
+	endif()
+	if(NOT DEFINED CMAKE_INSTALL_DATAROOTDIR)
+		set(CMAKE_INSTALL_DATAROOTDIR "share")
+	endif()
 endif()
 
 # We need a newer CPack version to get desirable results.

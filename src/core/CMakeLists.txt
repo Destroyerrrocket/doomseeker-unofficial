@@ -374,6 +374,7 @@ if(UNIX AND NOT APPLE)
 	install(FILES ${CMAKE_SOURCE_DIR}/media/icon.png DESTINATION share/icons COMPONENT doomseeker RENAME doomseeker.png)
 	install(FILES ${TRANSLATION_FILES_TO_COPY} DESTINATION share/doomseeker/translations COMPONENT doomseeker)
 	install(FILES ${CMAKE_SOURCE_DIR}/media/org.drdteam.Doomseeker.desktop DESTINATION share/applications COMPONENT doomseeker)
+	install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.json DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/doc/doomseeker COMPONENT doomseeker)
 	install_all_slot_styles()
 
 	# When not installing to /usr we should use an install rpath.

@@ -194,8 +194,20 @@ endif()
 if(NOT WIN32 AND NOT XCODE_VERSION)
 	install(TARGETS wadseeker LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT wadseeker NAMELINK_SKIP)
 	install(TARGETS wadseeker LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT wadseeker-dev NAMELINK_ONLY)
+	install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.json DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/doc/wadseeker COMPONENT wadseeker)
 elseif(WIN32)
 	install(TARGETS wadseeker RUNTIME DESTINATION . COMPONENT wadseeker)
+
+	# License files.
+	set(LICENSE_FILES
+		LICENSE
+		LICENSE.json
+	)
+	foreach (LICFILE ${LICENSE_FILES})
+		install(FILES "${CMAKE_SOURCE_DIR}/${LICFILE}" DESTINATION .
+			COMPONENT wadseeker
+			RENAME "${LICFILE}.txt")
+	endforeach(LICFILE)
 endif()
 
 install(SCRIPT InstallHeaders.cmake COMPONENT wadseeker-dev)
