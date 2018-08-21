@@ -174,7 +174,6 @@ void ServerListView::setupTableColumnWidths()
 	for (int colIdx = 0; colIdx < ServerListColumnId::NUM_SERVERLIST_COLUMNS; ++colIdx)
 	{
 		setColumnWidth(colIdx, columns[colIdx].width);
-		setColumnHidden(colIdx, columns[colIdx].bHidden);
 	}
 
 	// Reload state from config, potentially overriding the defaults.
@@ -187,16 +186,14 @@ void ServerListView::setupTableColumnWidths()
 	// Enforce certain settings on columns, regardless of the state loaded from the config.
 	for (int colIdx = 0; colIdx < ServerListColumnId::NUM_SERVERLIST_COLUMNS; ++colIdx)
 	{
-		if (columns[colIdx].bHidden)
-			setColumnHidden(colIdx, true);
-		if (!columns[colIdx].bResizable)
-		{
+		setColumnHidden(colIdx, columns[colIdx].bHidden);
+		QHeaderView::ResizeMode resizeMode = columns[colIdx].bResizable ?
+			QHeaderView::Interactive : QHeaderView::Fixed;
 #if QT_VERSION >= 0x050000
-			horizontalHeader()->setSectionResizeMode(colIdx, QHeaderView::Fixed);
+		horizontalHeader()->setSectionResizeMode(colIdx, resizeMode);
 #else
-			horizontalHeader()->setResizeMode(colIdx, QHeaderView::Fixed);
+		horizontalHeader()->setResizeMode(colIdx, resizeMode);
 #endif
-		}
 	}
 
 	// General settings.
