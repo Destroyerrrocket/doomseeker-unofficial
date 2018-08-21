@@ -22,6 +22,7 @@ if such file is present in one of the program's static data directories
 by '--quiet' and '--verbose' command line switches. Logging
 to the "Logs" box will happen regardless of this switch.
 - RCon connection box can now toggle showing/hiding passwords.
+- "Hide passwords" checkbox added to "Create Game" misc. tab.
 - IRC: User name can now be specified (this is different than nick name).
 - Windows: cacerts.pem database with "DST Root CA X3" and
 "DigiCert High Assurance EV Root CA" certificates.
@@ -51,6 +52,8 @@ the wad file paths by default.
 - Updated the internal zlib library to 1.2.11. This affects Windows builds.
 - Logs will now be printed to stderr instead of stdout.
 - Only show games that support Remote Console in RCon connection box.
+- Starting Doomseeker with incorrect command line arguments will now
+print help and quit immediately (addresses 3294).
 - Linux: Also try to look for WADs in /usr/[local]/share/games/doom.
 - Linux: Explicit "Copy (text)" actions shall store the data both in keyboard
 and mouse selection clipboards, allowing it to be pasted with either keyboard
@@ -95,6 +98,10 @@ on the screen because its parent widget was not yet drawn when
 the prompt was first shown.
 - Players with TEXTCOLO color names (custom colors in brackets) would not
 properly show up on the buddy list (addresses 3193).
+- Player score would be displayed incorrectly if it exceeded 32768.
+Moreover, it was also wrongly assumed that the player score cannot be negative.
+- Show more precise error messages when there are issues with one of the
+Doomseeker's data directories other than "failure to create" (addresses 3396).
 - IRC: connect to networks by using the hostnames directly, allowing
 Qt to choose the most appropriate address. This should prefer IPv6 connectivity
 when available.
