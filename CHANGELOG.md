@@ -22,7 +22,7 @@ if such file is present in one of the program's static data directories
 by '--quiet' and '--verbose' command line switches. Logging
 to the "Logs" box will happen regardless of this switch.
 - RCon connection box can now toggle showing/hiding passwords.
-- "Hide passwords" checkbox added to "Create Game" misc. tab.
+- Create Game misc. tab can now toggle showing/hiding passwords.
 - Button to show JSON library license added to the About dialog (addresses 3451).
 - IRC: User name can now be specified (this is different than nick name).
 - Windows: cacerts.pem database with "DST Root CA X3" and
