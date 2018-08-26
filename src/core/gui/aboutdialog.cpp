@@ -20,14 +20,17 @@
 //------------------------------------------------------------------------------
 // Copyright (C) 2009 Braden "Blzut3" Obrzut <admin@maniacsvault.net>
 //------------------------------------------------------------------------------
-
 #include "aboutdialog.h"
+
+#include "gui/copytextdlg.h"
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
 #include "ui_aboutdialog.h"
 #include "wadseeker/wadseekerversioninfo.h"
 #include "version.h"
 #include <QPixmap>
+#include <QResource>
+#include <QString>
 
 DClass<AboutDialog> : public Ui::AboutDialog
 {
@@ -61,6 +64,7 @@ AboutDialog::AboutDialog(QWidget* parent) : QDialog(parent)
 	connect(d->pluginBox, SIGNAL( currentIndexChanged(int) ), SLOT( changePlugin(int) ));
 	changePlugin(0);
 
+	d->jsonLayout->setAlignment(d->btnJsonLicense, Qt::AlignTop);
 	adjustSize();
 }
 
@@ -77,4 +81,15 @@ void AboutDialog::changePlugin(int pluginIndex)
 
 	d->pluginAuthor->setText(plug->data()->author);
 	d->pluginVersion->setText(QString("Version: %1.%2").arg(plug->data()->abiVersion).arg(plug->data()->version));
+}
+
+void AboutDialog::showJsonLicense()
+{
+	QResource license = QResource("LICENSE.json");
+	QString licenseText = QString::fromUtf8(
+		reinterpret_cast<const char*>(license.data()),
+		license.size());
+	CopyTextDlg dialog = CopyTextDlg(licenseText, tr("JSON library license"), this);
+	dialog.resize(550, dialog.height());
+	dialog.exec();
 }

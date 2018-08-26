@@ -40,6 +40,7 @@
 	<file>icons/utilities-file-archiver-2.png</file>
 	<file alias="shield.png">icons/shield.png</file>
 	<file alias="t.png">icons/t.png</file>
+	<file>icons/text-x-generic.png</file>
 	<file>icons/view-refresh-2.png</file>
 	<file>icons/x.png</file>
 	<file alias="slots/blocks/open">slotstyles/blocks/open.png</file>
@@ -158,5 +159,6 @@
 	<file alias="flags/unknown-small">flags/unknown-small.png</file>
 
 	<file>IpToCountry.dat</file>
+	<file alias="LICENSE.json">../LICENSE.json</file>
 </qresource>
 </RCC>

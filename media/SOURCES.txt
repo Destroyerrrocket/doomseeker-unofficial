@@ -12,19 +12,23 @@ icon.png
 icon_small.png
 icon_windows.ico
 
+
 - Copyright(C) 2009 Hyper_Eye from Odamex
                2014 MazterQyoun-ae
 
 icon-osx.icns
 
+
 - Copyright(C) 2009 Hyper_Eye from Odamex
 
 Doomseeker-DMG-Background.png
+
 
 - Copyright(C) 2009, 2013 Braden "Blzut3" Obrzut <admin@maniacsvault.net>
 
 locked.png
 icons/padlock.png
+
 
 - Copyright(C) 2009 Rachael "Eruanna" Alexanderson
 
@@ -32,15 +36,18 @@ icon-8bit.png
 logo.png
 logo-src.psd
 
+
 - Copyright(C) 2011 Nece228
 
 flags/flag_template.xcf
+
 
 - Commissioned 2009 by Zalewa, author Leszek
 
 flags/lan-small.png
 flags/localhost-small.png
 flags/unknown-small.png
+
 
 - Copyright (C) 2009, 2014, 2016, 2017 Zalewa <zalewapl@gmail.com>
 
@@ -51,6 +58,7 @@ icons/descending.png
 icons/magnifier.png
 icons/t.png
 icons/t.xcf
+
 
 - Copyright (C) 2014 MazterQyoun-ae
 
@@ -69,6 +77,7 @@ icons/refresh.png
 icons/server_details.png
 icons/x.png
 
+
 - Crystal Clear (crystal_clear) by Everaldo Coelho
 	link: http://commons.wikimedia.org/wiki/Crystal_Clear
 	license: LGPL-2.1
@@ -76,6 +85,7 @@ icons/x.png
 
 icons/arrow-down-double.png (blue hue changed to red by Zalewa)
 icons/view-refresh-2.png
+
 
 - Oxygen Icons 4.3.1 (KDE) (oxygen)
 	link: http://www.oxygen-icons.org/
@@ -88,6 +98,7 @@ icons/diskette.png
 icons/irc_channel.png (hue altered by Zalewa)
 icons/network-connect-3.png
 icons/preferences-system-4.png
+
 
 - Fugue Icons
 
@@ -104,6 +115,7 @@ icons/preferences-system-4.png
 
 icons/shield.png
 
+
 - Tango Icon Library 0.8.90 (tango)
 	link: http://tango.freedesktop.org/Tango_Icon_Library
 	license: Public Domain
@@ -114,6 +126,8 @@ icons/buddies.png (modified by Juuso "Linda" Lapinlampi <wubthecaptain@gmail.com
 icons/exclamation.png (og name: dialog-warning.png)
 icons/exclamation-16.png (og name: dialog-warning.png)
 icons/internet-web-browser.png
+icons/text-x-generic.png
+
 
 - Nuvola 1.0 (KDE 3.x icon set) (nuvola)
 	link: http://www.icon-king.com/projects/nuvola/
@@ -123,6 +137,7 @@ icons/internet-web-browser.png
 icons/joystick.png (originally: games-arcade.png)
 icons/utilities-file-archiver-2.png
 
+
 - Copyright (C) Aha-Soft
 	link: http://www.aha-soft.com/
 	alt. link: https://www.iconfinder.com/icons/132366/person_icon#size=24
@@ -131,12 +146,14 @@ icons/utilities-file-archiver-2.png
 
 icons/person.png (blue hue changed to red by Zalewa)
 
+
 - Silk icon set - Copyright (C) Mark James (famfamfam.com)
 	link: http://www.famfamfam.com/lab/icons/silk/
 	license: Attribution 3.0 Unported (CC BY 3.0)
 	license link: https://creativecommons.org/licenses/by/3.0/
 
 icons/pencil.png
+
 
 - Copyright (C) MaxMind
 	link: https://dev.maxmind.com/geoip/geoip2/geolite2/
@@ -151,6 +168,7 @@ icons/pencil.png
 
 IpToCountry.dat
 
+
 - Copyright unclaimed by The Doomseeker Team;
   pictures depicting game logos.
 
@@ -160,6 +178,7 @@ IpToCountry.dat
 ../src/plugins/turok2ex/turok2ex.xpm
 ../src/plugins/vavoom/vavoom.xpm
 ../src/plugins/zandronum/zandronum.xpm
+
 
 - Copyright unclaimed by The Doomseeker Team;
   pictures are derived from id Software's work.
@@ -173,9 +192,11 @@ slotstyles/marines/player.png
 slotstyles/marines/specopen.png
 slotstyles/marines/spectator.png
 
+
 - Copyright unclaimed. Licensing ???
 
 cacerts.pem - file is a listing of SSL Certificate Authority certificates
+
 
 ----------------------------------------
 Online Icon Gallery in Open Icon Library:

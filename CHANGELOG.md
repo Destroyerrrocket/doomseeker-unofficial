@@ -23,6 +23,7 @@ by '--quiet' and '--verbose' command line switches. Logging
 to the "Logs" box will happen regardless of this switch.
 - RCon connection box can now toggle showing/hiding passwords.
 - "Hide passwords" checkbox added to "Create Game" misc. tab.
+- Button to show JSON library license added to the About dialog (addresses 3451).
 - IRC: User name can now be specified (this is different than nick name).
 - Windows: cacerts.pem database with "DST Root CA X3" and
 "DigiCert High Assurance EV Root CA" certificates.
@@ -104,6 +105,7 @@ Moreover, it was also wrongly assumed that the player score cannot be negative.
 Doomseeker's data directories other than "failure to create" (addresses 3396).
 - Fixed problem with exposing hidden columns or other unintended behavior in
 servers table when restoring state from a saved config. (addresses 3411)
+- Ensure contents of copy text dialog are displayed from the top.
 - IRC: connect to networks by using the hostnames directly, allowing
 Qt to choose the most appropriate address. This should prefer IPv6 connectivity
 when available.

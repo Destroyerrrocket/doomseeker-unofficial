@@ -41,6 +41,9 @@ class AboutDialog : public QDialog
 
 	private:
 		DPtr<AboutDialog> d;
+
+	private slots:
+		void showJsonLicense();
 };
 
 #endif /* DOOMSEEKER_GUI_ABOUTDIALOG_H */

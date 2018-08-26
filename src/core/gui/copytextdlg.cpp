@@ -41,6 +41,10 @@ CopyTextDlg::CopyTextDlg(const QString& content, const QString& description, QWi
 	}
 
 	d->teContent->document()->setPlainText(content);
+
+	// Ensure that the text is displayed from the top.
+	d->teContent->moveCursor(QTextCursor::Start);
+	d->teContent->ensureCursorVisible();
 }
 
 CopyTextDlg::~CopyTextDlg()
