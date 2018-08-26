@@ -19,6 +19,11 @@ Microsoft Visual Studio 2017.
 First step:
 Get Microsoft Visual Studio Community 2017. It's free for commercial
 and non-commercial use.
+
+However, since we will be using v120_xp toolset to compile, we also need to
+install Microsoft Visual Studio 2013. Installer for MS Visual Studio 2017
+only allows to install v140_xp toolset and that's not good enough for us.
+
 ================================================================================
 3. Qt.
 
