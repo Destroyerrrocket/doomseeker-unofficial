@@ -85,11 +85,11 @@ void AboutDialog::changePlugin(int pluginIndex)
 
 void AboutDialog::showJsonLicense()
 {
-	QResource license = QResource("LICENSE.json");
+	QResource license("LICENSE.json");
 	QString licenseText = QString::fromUtf8(
 		reinterpret_cast<const char*>(license.data()),
 		license.size());
-	CopyTextDlg dialog = CopyTextDlg(licenseText, tr("JSON library license"), this);
+	CopyTextDlg dialog(licenseText, tr("JSON library license"), this);
 	dialog.resize(550, dialog.height());
 	dialog.exec();
 }
