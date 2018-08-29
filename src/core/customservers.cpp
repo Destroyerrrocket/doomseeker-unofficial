@@ -36,22 +36,22 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 	int openingBracketIndex = 0;
 	int closingBracketIndex = 0;
 	bool bSeekClosingBracket = false;
-	for (int i = 0; i < str.length(); ++i)
+	for (int charIdx = 0; charIdx < str.length(); ++charIdx)
 	{
-		if (!bSeekClosingBracket && str[i] == '(')
+		if (!bSeekClosingBracket && str[charIdx] == '(')
 		{
-			openingBracketIndex = i;
+			openingBracketIndex = charIdx;
 			bSeekClosingBracket = true;
 		}
-		else if (bSeekClosingBracket && str[i] == ')')
+		else if (bSeekClosingBracket && str[charIdx] == ')')
 		{
-			closingBracketIndex = i;
+			closingBracketIndex = charIdx;
 			bSeekClosingBracket = false;
 
 			QString entry = str.mid(openingBracketIndex + 1, closingBracketIndex - (openingBracketIndex + 1));
 			QStringList entryList = entry.split(";");
 
-			if (entryList.size() == 3)
+			if (entryList.size() >= 3 && entryList.size() <= 4)
 			{
 				CustomServerInfo customServerInfo;
 				customServerInfo.engine = QUrl::fromPercentEncoding(entryList[0].toUtf8());
@@ -60,6 +60,11 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 				customServerInfo.engineIndex = engineIndex;
 
 				customServerInfo.host = QUrl::fromPercentEncoding(entryList[1].toUtf8());
+				customServerInfo.enabled = true;
+				if (entryList.size() == 4)
+				{
+					customServerInfo.enabled = entryList[3].toInt() != 0;
+				}
 
 				bool ok = false;
 				int port = QString(entryList[2]).toInt(&ok);
@@ -95,6 +100,8 @@ QList<ServerPtr> CustomServers::setServers(const QList<CustomServerInfo>& server
 	QList<ServerPtr> servers;
 	foreach (const CustomServerInfo& customServerInfo, serverDefs)
 	{
+		if (!customServerInfo.enabled)
+			continue;
 		if (customServerInfo.engineIndex < 0)
 		{
 			// Unknown engine.

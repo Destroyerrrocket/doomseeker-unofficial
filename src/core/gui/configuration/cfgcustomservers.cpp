@@ -35,6 +35,8 @@ const // clear warnings
 
 DClass<CFGCustomServers> : public Ui::CFGCustomServers
 {
+public:
+	QStandardItemModel* model;
 };
 
 DPointered(CFGCustomServers)
@@ -62,10 +64,11 @@ void CFGCustomServers::add()
 
 	QString engineName = d->cboEngines->itemText(d->cboEngines->currentIndex());
 
-	add(engineName, "", plugin->data()->defaultServerPort);
+	add(engineName, "", plugin->data()->defaultServerPort, true);
 }
 
-void CFGCustomServers::add(const QString& engineName, const QString& host, unsigned short port)
+void CFGCustomServers::add(const QString& engineName, const QString& host,
+	unsigned short port, bool enabled)
 {
 	QList<QStandardItem* > record;
 
@@ -78,7 +81,13 @@ void CFGCustomServers::add(const QString& engineName, const QString& host, unsig
 	record.append(new QStandardItem(host));
 	record.append(new QStandardItem(portString));
 
-	model->appendRow(record);
+	QStandardItem *enabledItem = new QStandardItem();
+	enabledItem->setCheckState(enabled ? Qt::Checked : Qt::Unchecked);
+	enabledItem->setCheckable(true);
+	enabledItem->setToolTip(tr("Toggle enabled state"));
+	record.append(enabledItem);
+
+	d->model->appendRow(record);
 	d->tvServers->resizeRowsToContents();
 }
 
@@ -105,7 +114,7 @@ void CFGCustomServers::dataChanged(const QModelIndex& topLeft, const QModelIndex
 	int leftmostColumn = topLeft.column();
 	int rightmostColumn = bottomRight.column();
 
-	if ( isPortColumnWithingRange(leftmostColumn, rightmostColumn) )
+	if ( isPortColumnWithinRange(leftmostColumn, rightmostColumn) )
 	{
 		switch ( checkAndFixPorts(topLeft.row(), bottomRight.row()) )
 		{
@@ -126,13 +135,13 @@ void CFGCustomServers::dataChanged(const QModelIndex& topLeft, const QModelIndex
 
 const EnginePlugin* CFGCustomServers::getPluginInfoForRow(int rowIndex)
 {
-	QStandardItem* itemEngine = model->item(rowIndex, EngineColumnIndex);
+	QStandardItem* itemEngine = d->model->item(rowIndex, EngineColumnIndex);
 	QString engineName = itemEngine->data().toString();
 	int pluginIndex = gPlugins->pluginIndexFromName(engineName);
 	return gPlugins->info(pluginIndex);
 }
 
-bool CFGCustomServers::isPortColumnWithingRange(int leftmostColumnIndex, int rightmostColumnIndex)
+bool CFGCustomServers::isPortColumnWithinRange(int leftmostColumnIndex, int rightmostColumnIndex)
 {
 	return leftmostColumnIndex <= PortColumnIndex && rightmostColumnIndex >= PortColumnIndex;
 }
@@ -142,7 +151,7 @@ bool CFGCustomServers::isPortCorrect(int rowIndex)
 	const int MIN_PORT = 1;
 	const int MAX_PORT = 65535;
 
-	QStandardItem* item = model->item(rowIndex, PortColumnIndex);
+	QStandardItem* item = d->model->item(rowIndex, PortColumnIndex);
 	bool ok;
 	int port = item->text().toInt(&ok);
 
@@ -167,26 +176,32 @@ void CFGCustomServers::prepareEnginesComboBox()
 
 void CFGCustomServers::prepareTable()
 {
-	model = new QStandardItemModel(this);
+	d->model = new QStandardItemModel(this);
 
-	connect(model, SIGNAL( dataChanged(const QModelIndex&, const QModelIndex&) ), this, SLOT( dataChanged(const QModelIndex&, const QModelIndex&) ) );
+	connect(d->model, SIGNAL( dataChanged(const QModelIndex&, const QModelIndex&) ), this, SLOT( dataChanged(const QModelIndex&, const QModelIndex&) ) );
 
 	QStringList labels;
-	labels << "" << tr("Host") << tr("Port");
-	model->setHorizontalHeaderLabels(labels);
+	labels << "" << tr("Host") << tr("Port") << "";
+	d->model->setHorizontalHeaderLabels(labels);
 
-	d->tvServers->setModel(model);
+	d->tvServers->setModel(d->model);
 
-	d->tvServers->setColumnWidth(0, 23);
-	d->tvServers->setColumnWidth(1, 180);
-	d->tvServers->setColumnWidth(2, 60);
+	d->tvServers->setColumnWidth(EngineColumnIndex, 23);
+	d->tvServers->setColumnWidth(AddressColumnIndex, 180);
+	d->tvServers->setColumnWidth(PortColumnIndex, 60);
+	d->tvServers->setColumnWidth(EnabledIndex, 30);
 
-	d->tvServers->horizontalHeader()->setHighlightSections(false);
+	QList<ColumnIndices> fixedSizeColumns;
+	fixedSizeColumns << EngineColumnIndex << EnabledIndex;
+	foreach (ColumnIndices columnIdx, fixedSizeColumns)
+	{
 #if QT_VERSION >= 0x050000
-	d->tvServers->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
+		d->tvServers->horizontalHeader()->setSectionResizeMode(columnIdx, QHeaderView::Fixed);
 #else
-	d->tvServers->horizontalHeader()->setResizeMode(0, QHeaderView::Fixed);
+		d->tvServers->horizontalHeader()->setResizeMode(columnIdx, QHeaderView::Fixed);
 #endif
+	}
+	d->tvServers->horizontalHeader()->setHighlightSections(false);
 
 	d->tvServers->verticalHeader()->hide();
 }
@@ -199,7 +214,7 @@ void CFGCustomServers::readSettings()
 	QList<CustomServerInfo>::iterator it;
 	for (it = customServersList.begin(); it != customServersList.end(); ++it)
 	{
-		add(it->engine, it->host, it->port);
+		add(it->engine, it->host, it->port, it->enabled);
 	}
 }
 
@@ -212,13 +227,13 @@ void CFGCustomServers::remove()
 	QList<QStandardItem*> itemList;
 	for (int i = 0; i < indexList.count(); ++i)
 	{
-		itemList << model->item(indexList[i].row(), 0);
+		itemList << d->model->item(indexList[i].row(), 0);
 	}
 
 	for (int i = 0; i < itemList.count(); ++i)
 	{
-		QModelIndex index = model->indexFromItem(itemList[i]);
-		model->removeRow(index.row());
+		QModelIndex index = d->model->indexFromItem(itemList[i]);
+		d->model->removeRow(index.row());
 	}
 }
 
@@ -235,7 +250,7 @@ void CFGCustomServers::setEngine()
 	QModelIndexList::iterator it;
 	for (it = indexList.begin(); it != indexList.end(); ++it)
 	{
-		QStandardItem* item = model->itemFromIndex(*it);
+		QStandardItem* item = d->model->itemFromIndex(*it);
 		QString engineName = d->cboEngines->itemText(d->cboEngines->currentIndex());
 		setEngineOnItem(item, engineName);
 	}
@@ -266,27 +281,30 @@ void CFGCustomServers::setPortToDefault(int rowIndex)
 	const EnginePlugin* pluginInfo = getPluginInfoForRow(rowIndex);
 	QString defaultPort = QString::number(pluginInfo->data()->defaultServerPort);
 
-	QStandardItem* itemPort = model->item(rowIndex, PortColumnIndex);
+	QStandardItem* itemPort = d->model->item(rowIndex, PortColumnIndex);
 	itemPort->setText(defaultPort);
 }
 
 QVector<CustomServerInfo> CFGCustomServers::tableGetServers()
 {
 	QVector<CustomServerInfo> servers;
-	for (int i = 0; i < model->rowCount(); ++i)
+	for (int i = 0; i < d->model->rowCount(); ++i)
 	{
 		CustomServerInfo customServer;
 
-		QStandardItem* item = model->item(i, EngineColumnIndex);
+		QStandardItem* item = d->model->item(i, EngineColumnIndex);
 		customServer.engine = item->data().toString();
 
 		customServer.engineIndex = gPlugins->pluginIndexFromName(customServer.engine);
 
-		item = model->item(i, AddressColumnIndex);
+		item = d->model->item(i, AddressColumnIndex);
 		customServer.host = item->text();
 
-		item = model->item(i, PortColumnIndex);
+		item = d->model->item(i, PortColumnIndex);
 		customServer.port = item->text().toUShort();
+
+		item = d->model->item(i, EnabledIndex);
+		customServer.enabled = (item->checkState() == Qt::Checked);
 
 		servers << customServer;
 	}

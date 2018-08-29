@@ -460,9 +460,10 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 		QString engineName = QUrl::toPercentEncoding(customServer.engine, "", "()");
 		QString address = QUrl::toPercentEncoding(customServer.host, "", "()");
 
-		QString customServerString = QString("(%1;%2;%3)")
+		QString customServerString = QString("(%1;%2;%3;%4)")
 			.arg(engineName).arg(address)
-			.arg(customServer.port);
+			.arg(customServer.port)
+			.arg(customServer.enabled ? 1 : 0);
 
 		allCustomServers << customServerString;
 	}

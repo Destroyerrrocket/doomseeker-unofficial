@@ -43,9 +43,12 @@ class CFGCustomServers : public ConfigPage
 
 		QIcon icon() const { return QIcon(":/flags/localhost-small"); }
 		QString name() const { return tr("Custom Servers"); }
-		void readSettings();
 
 	protected:
+		void readSettings();
+		void saveSettings();
+
+	private:
 		enum CheckAndFixPorts
 		{
 			AllOk,
@@ -56,10 +59,14 @@ class CFGCustomServers : public ConfigPage
 		{
 			EngineColumnIndex = 0,
 			AddressColumnIndex = 1,
-			PortColumnIndex = 2
+			PortColumnIndex = 2,
+			EnabledIndex = 3
 		};
 
-		QStandardItemModel* model;
+		DPtr<CFGCustomServers> d;
+
+		void add(const QString& engineName, const QString& host,
+			unsigned short port, bool enabled);
 
 		/**
 		 *	@brief Moves through rows and checks if network port information
@@ -70,27 +77,22 @@ class CFGCustomServers : public ConfigPage
 		 */
 		CheckAndFixPorts checkAndFixPorts(int firstRow, int lastRow);
 		const EnginePlugin* getPluginInfoForRow(int rowIndex);
-		bool isPortColumnWithingRange(int leftmostColumnIndex, int rightmostColumnIndex);
+		bool isPortColumnWithinRange(int leftmostColumnIndex, int rightmostColumnIndex);
 		bool isPortCorrect(int rowIndex);
 
 		void prepareEnginesComboBox();
 		void prepareTable();
-		void saveSettings();
 		void setEngineOnItem(QStandardItem*, const QString& engineName);
 		void setPortToDefault(int rowIndex);
 
 
 		QVector<CustomServerInfo> tableGetServers();
 
-	protected slots:
+	private slots:
 		void add();
-		void add(const QString& engineName, const QString& host, unsigned short port);
 		void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 		void remove();
 		void setEngine();
-
-	private:
-		DPtr<CFGCustomServers> d;
 };
 
 #endif

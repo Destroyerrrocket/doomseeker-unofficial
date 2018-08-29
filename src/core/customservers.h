@@ -29,8 +29,8 @@
 class IniSection;
 
 /**
- *  If server for unknown engine is found, the engineIndex should be set
- *  to a negative value.
+ * If server for unknown engine is found, the engineIndex should be set
+ * to a negative value.
  */
 class CustomServerInfo
 {
@@ -39,11 +39,12 @@ class CustomServerInfo
 		QString host;
 		unsigned short port;
 		int engineIndex;
+		bool enabled;
 };
 
 /**
- *	A 'fake' master server that is used to handle
- *	custom servers from various engines.
+ * A 'fake' master server that is used to handle
+ * custom servers from various engines.
  */
 class CustomServers : public MasterClient
 {
@@ -53,13 +54,13 @@ class CustomServers : public MasterClient
 		CustomServers() : MasterClient() {}
 
 		/**
-		 *	Reads data in format `(<engine_name>;<host_name>;<port>);(...)...`
-		 *	and splits it to a list of CustomServerInfo objects. If a server
-		 *  for unknown engine is found it will be appended anyway
-		 *  but the CustomServerInfo::engineIndex will be set to a
-		 *  negative value.
-		 *	@param str - concatenated string in required format
-		 *	@return list of custom servers
+		 * Reads data in format `(<engine_name>;<host_name>;<port>);(...)...`
+		 * and splits it to a list of CustomServerInfo objects. If a server
+		 * for unknown engine is found it will be appended anyway
+		 * but the CustomServerInfo::engineIndex will be set to a
+		 * negative value.
+		 * @param str - concatenated string in required format
+		 * @return list of custom servers
 		 */
 		static void decodeConfigEntries(const QString& str, QList<CustomServerInfo>& outCustomServerInfoList);
 
@@ -72,8 +73,8 @@ class CustomServers : public MasterClient
 		QList<ServerPtr> readConfig();
 
 		/**
-		 *	Since this is not required here (there's no real
-		 *	master to refresh) this does nothing.
+		 * Since this is not required here (there's no real
+		 * master to refresh) this does nothing.
 		 */
 		void refreshStarts() {}
 
