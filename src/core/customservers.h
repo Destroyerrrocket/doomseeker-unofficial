@@ -40,6 +40,11 @@ class CustomServerInfo
 		unsigned short port;
 		int engineIndex;
 		bool enabled;
+
+		/**
+		 * Returns true if the other server has same plugin, host and port.
+		 */
+		bool isSameServer(const CustomServerInfo &other) const;
 };
 
 /**

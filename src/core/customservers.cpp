@@ -29,6 +29,16 @@
 #include <QHostInfo>
 #include <QUrl>
 
+
+bool CustomServerInfo::isSameServer(const CustomServerInfo &other) const
+{
+	return engine == other.engine
+		&& port == other.port
+		&& host == other.host;
+}
+
+////////////////////////////////////////
+
 void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerInfo>& outCustomServerInfoList)
 {
 	outCustomServerInfoList.clear();
@@ -51,7 +61,7 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 			QString entry = str.mid(openingBracketIndex + 1, closingBracketIndex - (openingBracketIndex + 1));
 			QStringList entryList = entry.split(";");
 
-			if (entryList.size() >= 3 && entryList.size() <= 4)
+			if (entryList.size() >= 3)
 			{
 				CustomServerInfo customServerInfo;
 				customServerInfo.engine = QUrl::fromPercentEncoding(entryList[0].toUtf8());
@@ -61,7 +71,7 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 
 				customServerInfo.host = QUrl::fromPercentEncoding(entryList[1].toUtf8());
 				customServerInfo.enabled = true;
-				if (entryList.size() == 4)
+				if (entryList.size() >= 4)
 				{
 					customServerInfo.enabled = entryList[3].toInt() != 0;
 				}

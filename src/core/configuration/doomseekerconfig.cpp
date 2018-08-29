@@ -386,8 +386,29 @@ void DoomseekerConfig::DoomseekerCfg::load(IniSection& section)
 	// Complex data variables.
 
 	// Custom servers
+	// CustomServers2 is for Doomseeker >= 1.2.
+	// Deserialization of this setting is not backwards-compatible,
+	// hence we need an extra compatibility layer. The amount of
+	// information that the user could potentially lose if I had
+	// been too lazy to code this would be insufferable.
 	QList<CustomServerInfo> customServersList;
-	CustomServers::decodeConfigEntries(section["CustomServers"], customServersList);
+	CustomServers::decodeConfigEntries(section["CustomServers2"], customServersList);
+	QList<CustomServerInfo> backwardCompatibleServers;
+	CustomServers::decodeConfigEntries(section["CustomServers"], backwardCompatibleServers);
+	foreach (const CustomServerInfo &backwardCompatibleServer, backwardCompatibleServers)
+	{
+		bool known = false;
+		foreach (const CustomServerInfo &knownServer, customServersList)
+		{
+			if (knownServer.isSameServer(backwardCompatibleServer))
+			{
+				known = true;
+				break;
+			}
+		}
+		if (!known)
+			customServersList << backwardCompatibleServer;
+	}
 	this->customServers = customServersList.toVector();
 
 	// WAD paths
@@ -454,20 +475,25 @@ void DoomseekerConfig::DoomseekerCfg::save(IniSection& section)
 	// Complex data variables.
 
 	// Custom servers
-	QStringList allCustomServers;
+	QStringList allCustomServers; // backward compatibility for Doomseeker <1.2
+	QStringList allCustomServers2; // Doomseeker >=1.2
 	foreach (const CustomServerInfo& customServer, this->customServers)
 	{
 		QString engineName = QUrl::toPercentEncoding(customServer.engine, "", "()");
 		QString address = QUrl::toPercentEncoding(customServer.host, "", "()");
 
-		QString customServerString = QString("(%1;%2;%3;%4)")
+		QString customServerStringPrefix = QString("(%1;%2;%3")
 			.arg(engineName).arg(address)
-			.arg(customServer.port)
+			.arg(customServer.port);
+		QString customServerString2 = QString("%1;%2)")
+			.arg(customServerStringPrefix)
 			.arg(customServer.enabled ? 1 : 0);
 
-		allCustomServers << customServerString;
+		allCustomServers << customServerStringPrefix + ")";
+		allCustomServers2 << customServerString2;
 	}
 	section["CustomServers"] = allCustomServers.join(";");
+	section["CustomServers2"] = allCustomServers2.join(";");
 
 	// Wad paths
 	section["WadPaths"].setValue(FileSearchPath::toVariantList(this->wadPaths));

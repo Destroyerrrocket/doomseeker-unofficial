@@ -65,9 +65,6 @@ class CFGCustomServers : public ConfigPage
 
 		DPtr<CFGCustomServers> d;
 
-		void add(const QString& engineName, const QString& host,
-			unsigned short port, bool enabled);
-
 		/**
 		 *	@brief Moves through rows and checks if network port information
 		 *	is correct.
@@ -90,6 +87,8 @@ class CFGCustomServers : public ConfigPage
 
 	private slots:
 		void add();
+		void add(const QString& engineName, const QString& host,
+			unsigned short port, bool enabled);
 		void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 		void remove();
 		void setEngine();
