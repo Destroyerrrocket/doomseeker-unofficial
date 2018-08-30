@@ -98,6 +98,7 @@ void ServerListCountTracker::registerServer(ServerPtr server)
 		}
 		else
 		{
+			d->countedServers.insert(server);
 			d->count.countPlayers(server);
 		}
 		emit updated();

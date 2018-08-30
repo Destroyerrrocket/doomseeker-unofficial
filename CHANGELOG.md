@@ -106,6 +106,10 @@ Doomseeker's data directories other than "failure to create" (addresses 3396).
 - Fixed problem with exposing hidden columns or other unintended behavior in
 servers table when restoring state from a saved config. (addresses 3411)
 - Ensure contents of copy text dialog are displayed from the top.
+- Server counting widgets would not mark servers that come in with
+already known data as "counted", which resulted in counting them twice
+upon removal, which throwed the refresh counter off. This problem was
+triggered by "Custom/Pinned Servers".
 - IRC: connect to networks by using the hostnames directly, allowing
 Qt to choose the most appropriate address. This should prefer IPv6 connectivity
 when available.

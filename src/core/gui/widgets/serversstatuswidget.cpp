@@ -109,16 +109,6 @@ void ServersStatusWidget::paintEvent(QPaintEvent *event)
 	QLabel::paintEvent(event);
 }
 
-void ServersStatusWidget::registerServerIfSamePlugin(ServerPtr server)
-{
-	countTracker->registerServer(server);
-}
-
-void ServersStatusWidget::deregisterServerIfSamePlugin(const ServerPtr &server)
-{
-	countTracker->deregisterServer(server);
-}
-
 QString ServersStatusWidget::refreshedPercentAsText() const
 {
 	const ServerListCount &count = countTracker->count();
@@ -144,7 +134,7 @@ void ServersStatusWidget::updateDisplay()
 	{
 		const ServerListCount &count = countTracker->count();
 		QString text = tr("%1 (%2+%3) / %4").arg(count.numPlayers).arg(count.numHumanPlayers)
-			.arg(count.numBots) .arg(count.numServers);
+			.arg(count.numBots).arg(count.numServers);
 		if (count.numRefreshing > 0)
 		{
 			text += tr(" %1").arg(refreshedPercentAsText());

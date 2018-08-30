@@ -70,10 +70,6 @@ class ServersStatusWidget : public QLabel
 		ServerListCountTracker *countTracker;
 		const EnginePlugin *plugin;
 		const ServerList *serverList;
-
-	private slots:
-		void deregisterServerIfSamePlugin(const ServerPtr &server);
-		void registerServerIfSamePlugin(ServerPtr server);
 };
 
 #endif /* __SERVERSSTATUSWIDGET_H__ */
