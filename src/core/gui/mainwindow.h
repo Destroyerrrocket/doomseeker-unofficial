@@ -162,7 +162,7 @@ class MainWindow : public QMainWindow
 		QueryMenuAction* queryMenuActionForPlugin(const EnginePlugin *plugin);
 
 		void refreshCustomServers();
-		void refreshLanServers();
+		void refreshServersOnList();
 		void showEvent(QShowEvent *event);
 		void setupIcons();
 		void setupToolBar();

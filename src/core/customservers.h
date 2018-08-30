@@ -41,6 +41,8 @@ class CustomServerInfo
 		int engineIndex;
 		bool enabled;
 
+		static CustomServerInfo fromServer(const Server *server);
+
 		/**
 		 * Returns true if the other server has same plugin, host and port.
 		 */
@@ -68,6 +70,14 @@ class CustomServers : public MasterClient
 		 * @return list of custom servers
 		 */
 		static void decodeConfigEntries(const QString& str, QList<CustomServerInfo>& outCustomServerInfoList);
+
+		/**
+		 * Returns true if server with the same plugin, host and port is known.
+		 */
+		bool hasSameServer(const Server *otherServer) const;
+
+		static bool isServerPinned(const CustomServerInfo &serverInfo);
+		static void setServerPinned(const CustomServerInfo &serverInfo, bool pinned);
 
 		const EnginePlugin *plugin() const { return NULL; }
 

@@ -28,7 +28,19 @@
 #include "log.h"
 #include <QHostInfo>
 #include <QUrl>
+#include <cassert>
 
+CustomServerInfo CustomServerInfo::fromServer(const Server *server)
+{
+	assert(server != NULL);
+	CustomServerInfo obj;
+	obj.engine = server->plugin()->data()->name;
+	obj.engineIndex = gPlugins->pluginIndexFromName(obj.engine);
+	obj.host = server->address().toString();
+	obj.port = server->port();
+	obj.enabled = true;
+	return obj;
+}
 
 bool CustomServerInfo::isSameServer(const CustomServerInfo &other) const
 {
@@ -98,9 +110,52 @@ void CustomServers::decodeConfigEntries(const QString& str, QList<CustomServerIn
 	} // end of for
 }
 
+bool CustomServers::isServerPinned(const CustomServerInfo &serverInfo)
+{
+	foreach (const CustomServerInfo &knownPinned, gConfig.doomseeker.customServers)
+	{
+		if (knownPinned.isSameServer(serverInfo))
+		{
+			return knownPinned.enabled;
+		}
+	}
+	return false;
+}
+
+bool CustomServers::hasSameServer(const Server *otherServer) const
+{
+	CustomServerInfo otherServerInfo = CustomServerInfo::fromServer(otherServer);
+	foreach (ServerCPtr knownServer, servers())
+	{
+		if (CustomServerInfo::fromServer(knownServer.data()).isSameServer(otherServerInfo))
+			return true;
+	}
+	return false;
+}
+
 QList<ServerPtr> CustomServers::readConfig()
 {
 	return setServers(gConfig.doomseeker.customServers.toList());
+}
+
+void CustomServers::setServerPinned(const CustomServerInfo &serverInfo, bool pinned)
+{
+	// Check if the server has already been memorized.
+	for (int serverIdx = 0; serverIdx < gConfig.doomseeker.customServers.size(); ++serverIdx)
+	{
+		CustomServerInfo &knownPinned = gConfig.doomseeker.customServers[serverIdx];
+		if (knownPinned.isSameServer(serverInfo))
+		{
+			knownPinned.enabled = pinned;
+			return;
+		}
+	}
+	// Server is not yet on the memorized servers list.
+	// If we're about to pin it, just add it to the list.
+	if (pinned)
+	{
+		gConfig.doomseeker.customServers << serverInfo;
+	}
 }
 
 QList<ServerPtr> CustomServers::setServers(const QList<CustomServerInfo>& serverDefs)

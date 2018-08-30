@@ -61,14 +61,27 @@ int ServerListModel::addServer(ServerPtr server)
 	return rowHandler.updateServer();
 }
 
-int ServerListModel::findServerOnTheList(const Server* server)
+ServerPtr ServerListModel::findSameServer(const Server *server)
+{
+	CustomServerInfo serverInfo = CustomServerInfo::fromServer(server);
+	for (int i = 0; i < rowCount(); ++i)
+	{
+		ServerPtr serverOnList = serverFromList(i);
+		CustomServerInfo serverOnListInfo = CustomServerInfo::fromServer(serverOnList.data());
+		if (serverOnListInfo.isSameServer(serverInfo))
+			return serverOnList;
+	}
+	return ServerPtr();
+}
+
+int ServerListModel::findServerOnTheList(const Server *server)
 {
 	if (server != NULL)
 	{
 		for (int i = 0; i < rowCount(); ++i)
 		{
-			ServerCPtr savedServ = serverFromList(i);
-			if (server == savedServ)
+			ServerCPtr serverOnList = serverFromList(i);
+			if (server == serverOnList)
 			{
 				return i;
 			}
@@ -82,6 +95,13 @@ void ServerListModel::redraw(int row)
 	ServerPtr server = serverFromList(row);
 	ServerListRowHandler rowHandler(this, row, server);
 	rowHandler.redraw();
+}
+
+void ServerListModel::redraw(Server *server)
+{
+	int row = findServerOnTheList(server);
+	if (row >= 0)
+		redraw(row);
 }
 
 void ServerListModel::redrawAll()

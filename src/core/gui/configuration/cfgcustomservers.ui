@@ -11,7 +11,16 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -61,12 +70,54 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item>
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnEnableSelected">
+         <property name="toolTip">
+          <string>Enable selected</string>
+         </property>
+         <property name="text">
+          <string>Enable</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../../media/resources.qrc">
+           <normaloff>:/icons/ok.png</normaloff>:/icons/ok.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnDisableSelected">
+         <property name="toolTip">
+          <string>Disable selected</string>
+         </property>
+         <property name="text">
+          <string>Disable</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../../media/resources.qrc">
+           <normaloff>:/icons/minus.png</normaloff>:/icons/minus.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="btnSetEngine">
          <property name="toolTip">
           <string>Changes engine on selected servers.</string>
          </property>
          <property name="text">
-          <string>Set Engine</string>
+          <string>Set Game</string>
          </property>
         </widget>
        </item>

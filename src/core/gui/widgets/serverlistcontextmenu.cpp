@@ -25,6 +25,7 @@
 #include "gui/entity/serverlistfilterinfo.h"
 #include "gui/widgets/serverfilterbuildermenu.h"
 #include "gui/serverlist.h"
+#include "core/customservers.h"
 #include "serverapi/server.h"
 #include "clipboard.h"
 #include "strings.hpp"
@@ -49,22 +50,46 @@ public:
 	QAction *showJoinCommandLine;
 	QAction *sortAdditionallyAscending;
 	QAction *sortAdditionallyDescending;
+	QAction *toggleServerPinned;
 	QMenu *menu;
 	ServerFilterBuilderMenu *filterBuilder;
-	ServerPtr pServer;
+	ServerPtr serverAtIndex;
 	QModelIndex modelIndex;
 	ServerListFilterInfo serverFilter;
+	QList<ServerPtr> servers;
 	ServerList *parent;
+
+	bool isServerPinned() const
+	{
+		return CustomServers::isServerPinned(
+			CustomServerInfo::fromServer(serverAtIndex.data()));
+	}
+
+	void togglePinAllServers()
+	{
+		bool toggleTo = !isServerPinned();
+		foreach (const ServerPtr &server, servers)
+		{
+			CustomServers::setServerPinned(
+				CustomServerInfo::fromServer(server.data()),
+				toggleTo);
+			server->setCustom(toggleTo);
+		}
+	}
 };
 
 DPointered(ServerListContextMenu)
 
-ServerListContextMenu::ServerListContextMenu(ServerPtr server, const ServerListFilterInfo& filter,
-	const QModelIndex &modelIndex, ServerList *parent)
+ServerListContextMenu::ServerListContextMenu(ServerPtr serverAtIndex,
+	const ServerListFilterInfo& filter,
+	const QModelIndex &modelIndex,
+	const QList<ServerPtr> &servers,
+	ServerList *parent)
 : QObject(parent)
 {
-	d->pServer = server;
+	d->serverAtIndex = serverAtIndex;
 	d->parent = parent;
+	d->servers = servers;
 	d->serverFilter = filter;
 	d->modelIndex = modelIndex;
 	initializeMembers();
@@ -81,12 +106,12 @@ QMenu* ServerListContextMenu::createCopyMenu(QWidget* parent)
 	QMenu *copyMenu = new QMenu(tr("Copy"), parent);
 	d->copyAddress = copyMenu->addAction(tr("Copy Address"));
 
-	if (!d->pServer->email().isEmpty())
+	if (!d->serverAtIndex->email().isEmpty())
 	{
 		d->copyEmail = copyMenu->addAction(tr("Copy E-Mail"));
 	}
 
-	if (!d->pServer->webSite().isEmpty())
+	if (!d->serverAtIndex->webSite().isEmpty())
 	{
 		d->copyUrl = copyMenu->addAction(tr("Copy URL"));
 	}
@@ -108,7 +133,7 @@ void ServerListContextMenu::createMembers()
 	d->findMissingWads = d->menu->addAction(tr("Find missing WADs"));
 
 	// Website.
-	const QString& webSite = d->pServer->webSite();
+	const QString& webSite = d->serverAtIndex->webSite();
 	bool bShouldAllowOpenUrl = !webSite.isEmpty() && Strings::isUrlSafe(webSite);
 
 	if (bShouldAllowOpenUrl)
@@ -116,19 +141,23 @@ void ServerListContextMenu::createMembers()
 		d->openUrlInDefaultBrowser = d->menu->addAction(tr("Open URL in browser"));
 	}
 
+	// Pinning ("marking as favourite").
+	QString pinnedLabel = !d->isServerPinned() ? tr("Pin") : tr ("Unpin");
+	d->toggleServerPinned = d->menu->addAction(pinnedLabel);
+
 	// Copy menu.
 	QMenu* copyMenu = createCopyMenu(d->menu);
 	d->menu->addMenu(copyMenu);
 
 	// Filter builder.
-	d->filterBuilder = new ServerFilterBuilderMenu(*d->pServer, d->serverFilter, d->menu);
-	if (d->pServer->isKnown() && !d->filterBuilder->isEmpty())
+	d->filterBuilder = new ServerFilterBuilderMenu(*d->serverAtIndex, d->serverFilter, d->menu);
+	if (d->serverAtIndex->isKnown() && !d->filterBuilder->isEmpty())
 	{
 		d->menu->addMenu(d->filterBuilder);
 	}
 
 	d->rcon = NULL;
-	if(d->pServer->hasRcon())
+	if(d->serverAtIndex->hasRcon())
 	{
 		d->menu->addSeparator();
 		d->rcon = d->menu->addAction(tr("Remote Console"));
@@ -170,6 +199,7 @@ void ServerListContextMenu::initializeMembers()
 	d->rcon = NULL;
 	d->refresh = NULL;
 	d->showJoinCommandLine = NULL;
+	d->toggleServerPinned = NULL;
 }
 
 const QModelIndex &ServerListContextMenu::modelIndex() const
@@ -184,7 +214,12 @@ void ServerListContextMenu::popup(const QPoint& point)
 
 ServerPtr ServerListContextMenu::server() const
 {
-	return d->pServer;
+	return d->serverAtIndex;
+}
+
+const QList<ServerPtr> &ServerListContextMenu::servers() const
+{
+	return d->servers;
 }
 
 const ServerListFilterInfo& ServerListContextMenu::serverFilter() const
@@ -219,23 +254,23 @@ ServerListContextMenu::Result ServerListContextMenu::translateQMenuResult(QActio
 	}
 	else if(resultAction == d->copyAddress)
 	{
-		QString addr = QString("%1:%2").arg(d->pServer->address().toString()).arg(d->pServer->port());
+		QString addr = QString("%1:%2").arg(d->serverAtIndex->address().toString()).arg(d->serverAtIndex->port());
 		Clipboard::setText(addr);
 		return DataCopied;
 	}
 	else if (resultAction == d->copyEmail)
 	{
-		Clipboard::setText(d->pServer->email());
+		Clipboard::setText(d->serverAtIndex->email());
 		return DataCopied;
 	}
 	else if(resultAction == d->copyName)
 	{
-		Clipboard::setText(d->pServer->name());
+		Clipboard::setText(d->serverAtIndex->name());
 		return DataCopied;
 	}
 	else if (resultAction == d->copyUrl)
 	{
-		Clipboard::setText(d->pServer->webSite());
+		Clipboard::setText(d->serverAtIndex->webSite());
 		return DataCopied;
 	}
 	else if(resultAction == d->findMissingWads)
@@ -261,6 +296,11 @@ ServerListContextMenu::Result ServerListContextMenu::translateQMenuResult(QActio
 	else if(resultAction == d->removeAdditionalSortingForColumn)
 	{
 		return RemoveAdditionalSortingForColumn;
+	}
+	else if(resultAction == d->toggleServerPinned)
+	{
+		d->togglePinAllServers();
+		return TogglePinServers;
 	}
 
 	return NothingHappened;

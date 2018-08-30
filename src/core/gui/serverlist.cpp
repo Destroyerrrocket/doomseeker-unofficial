@@ -207,6 +207,13 @@ void ServerList::contextMenuTriggered(QAction* action)
 			clearAdditionalSorting();
 			break;
 
+		case ServerListContextMenu::TogglePinServers:
+			foreach (const ServerPtr &server, contextMenu->servers())
+			{
+				model->redraw(server.data());
+			}
+			break;
+
 		default:
 			QMessageBox::warning(mainWindow, tr("Doomseeker - context menu warning"),
 				tr("Unhandled behavior in ServerList::contextMenuTriggered()"));
@@ -368,18 +375,21 @@ void ServerList::redraw()
 
 void ServerList::refreshSelected()
 {
-	QItemSelectionModel* selectionModel = table->selectionModel();
-	QModelIndexList indexList = selectionModel->selectedRows();
-
-	for(int i = 0; i < indexList.count(); ++i)
+	foreach (const ServerPtr &server, selectedServers())
 	{
-		QModelIndex realIndex = proxyModel->mapToSource(indexList[i]);
-		gRefresher->registerServer(model->serverFromList(realIndex).data());
+		gRefresher->registerServer(server.data());
 	}
 }
 
 void ServerList::registerServer(ServerPtr server)
 {
+	ServerPtr serverOnList = model->findSameServer(server.data());
+	if (serverOnList != NULL)
+	{
+		serverOnList->setCustom(server->isCustom() || serverOnList->isCustom());
+		model->redraw(serverOnList.data());
+		return;
+	}
 	this->connect(server.data(), SIGNAL(updated(ServerPtr, int)),
 		SLOT(onServerUpdated(ServerPtr)));
 	this->connect(server.data(), SIGNAL(begunRefreshing(ServerPtr)),
@@ -512,7 +522,7 @@ void ServerList::tableRightClicked(const QModelIndex& index, const QPoint& curso
 	ServerPtr server = serverFromIndex(index);
 
 	ServerListContextMenu *contextMenu = new ServerListContextMenu(server,
-		proxyModel->filterInfo(), index, this);
+		proxyModel->filterInfo(), index, selectedServers(), this);
 	this->connect(contextMenu, SIGNAL(aboutToHide()), SLOT(contextMenuAboutToHide()));
 	this->connect(contextMenu, SIGNAL(triggered(QAction*)), SLOT(contextMenuTriggered(QAction*)));
 

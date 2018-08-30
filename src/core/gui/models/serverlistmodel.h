@@ -75,24 +75,38 @@ class ServerListModel : public QStandardItemModel
 		QList<ServerPtr> customServers() const;
 
 		/**
-		 *	@brief Finds index of the row where server is contained.
-		 *
-		 *	@return -1 in case of a failure or index of the row otherwise.
+		 * Finds "the same" server (plugin, host, port) that
+		 * isn't necessarilly the same object.
 		 */
-		int findServerOnTheList(const Server* server);
+		ServerPtr findSameServer(const Server *server);
+
+		/**
+		 * @brief Finds index of the row where server is contained.
+		 *
+		 * @return -1 in case of a failure or index of the row otherwise.
+		 */
+		int findServerOnTheList(const Server *server);
 
 		ServerList* handler() { return parentHandler; }
+
 
 		QList<ServerPtr> nonSpecialServers() const;
 		QList<ServerPtr> servers() const;
 		QList<ServerPtr> serversForPlugin(const EnginePlugin *plugin) const;
 
 		/**
-		 *	Enforces update of a given row. No modificiation is done
-		 *	to the server info itself. Can be used to redraw things like
-		 *	background.
+		 * Enforces update of a given row. No modificiation is done
+		 * to the server info itself. Can be used to redraw things like
+		 * background.
 		 */
 		void redraw(int row);
+
+		/**
+		 * Redraws row for the specified server. Does nothing if
+		 * server is not found in the model.
+		 */
+		void redraw(Server *server);
+
 		void redrawAll();
 
 		void removeServer(const ServerPtr &server);

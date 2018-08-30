@@ -728,8 +728,6 @@ void MainWindow::getServers()
 	// Check if this operation has any sense.
 	if (!isAnythingToRefresh())
 	{
-		gLog << tr("Senseless refresh operation attempted.");
-
 		QString message = tr("Doomseeker is unable to proceed with the refresh"
 			" operation because the following problem has occured:\n\n");
 
@@ -747,21 +745,24 @@ void MainWindow::getServers()
 		}
 
 		gLog << message;
-		QMessageBox::warning(this, tr("Doomseeker - senseless operation"), message);
+		QMessageBox::warning(this, tr("Doomseeker - refresh problem"), message);
 		return;
 	}
 
 	d->bTotalRefreshInProcess = true;
 	d->autoRefreshTimer.stop();
-	gLog << tr("Total refresh process initialized!");
-	d->serverList->removeNonSpecialServers();
-	refreshCustomServers();
-	refreshLanServers();
+	gLog << tr("Total refresh initialized!");
 
-	if (!isAnyMasterEnabled())
+	// Remove all non special servers. Master servers will
+	// "re-provide" them if they are still alive. Whatever
+	// remains on the list should be refreshed now.
+	d->serverList->removeNonSpecialServers();
+	refreshServersOnList();
+
+	if (!isAnyMasterEnabled() && !d->serverList->hasAtLeastOneServer())
 	{
 		gLog << tr("Warning: No master servers were enabled for this refresh. "
-			"Check your Query menu or \"engines/\" directory. Custom servers will still refresh.");
+			"Check your Query menu or \"engines/\" directory.");
 	}
 
 	d->masterManager->clearServers();
@@ -1238,7 +1239,7 @@ void MainWindow::postInitAppStartup()
 		}
 
 		// If we already successfully called the getServers() method
-		// there is no need to call refreshCustomsServers().
+		// there is no need to call refreshCustomServers().
 		if (!bGettingServers && hasCustomServers())
 		{
 			// Custom servers should be refreshed no matter what.
@@ -1285,18 +1286,16 @@ void MainWindow::quitProgram()
 
 void MainWindow::refreshCustomServers()
 {
-	CustomServers* customServers = d->masterManager->customServs();
-
-	for(int i = 0;i < customServers->numServers();i++)
+	foreach (const ServerPtr &server, d->serverList->servers())
 	{
-		ServerPtr server = (*customServers)[i];
-		gRefresher->registerServer(server.data());
+		if (server->isCustom())
+			gRefresher->registerServer(server.data());
 	}
 }
 
-void MainWindow::refreshLanServers()
+void MainWindow::refreshServersOnList()
 {
-	foreach (ServerPtr server, d->broadcastManager->servers())
+	foreach (const ServerPtr &server, d->serverList->servers())
 	{
 		gRefresher->registerServer(server.data());
 	}

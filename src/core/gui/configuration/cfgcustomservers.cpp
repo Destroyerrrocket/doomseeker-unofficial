@@ -47,6 +47,8 @@ CFGCustomServers::CFGCustomServers(QWidget *parent)
 	d->setupUi(this);
 
 	connect(d->btnAdd, SIGNAL( clicked() ), this, SLOT( add() ));
+	connect(d->btnDisableSelected, SIGNAL( clicked() ), this, SLOT( disableSelected() ));
+	connect(d->btnEnableSelected, SIGNAL( clicked() ), this, SLOT( enableSelected() ));
 	connect(d->btnRemove, SIGNAL( clicked() ), this, SLOT( remove() ));
 	connect(d->btnSetEngine, SIGNAL( clicked() ), this, SLOT( setEngine() ));
 
@@ -109,7 +111,7 @@ CFGCustomServers::CheckAndFixPorts CFGCustomServers::checkAndFixPorts(int firstR
 
 void CFGCustomServers::dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
 {
-	const QString MESSAGE_TITLE = tr("Doomseeker - custom servers");
+	const QString MESSAGE_TITLE = tr("Doomseeker - pinned servers");
 
 	int leftmostColumn = topLeft.column();
 	int rightmostColumn = bottomRight.column();
@@ -130,6 +132,29 @@ void CFGCustomServers::dataChanged(const QModelIndex& topLeft, const QModelIndex
 				QMessageBox::warning(this, MESSAGE_TITLE, tr("Unimplemented behavior!"));
 				break;
 		}
+	}
+}
+
+void CFGCustomServers::disableSelected()
+{
+	setEnabledOnSelected(false);
+}
+
+void CFGCustomServers::enableSelected()
+{
+	setEnabledOnSelected(true);
+}
+
+void CFGCustomServers::setEnabledOnSelected(bool enabled)
+{
+	QItemSelectionModel* sel = d->tvServers->selectionModel();
+	QModelIndexList indexList = sel->selectedRows();
+
+	QModelIndexList::iterator it;
+	for (it = indexList.begin(); it != indexList.end(); ++it)
+	{
+		QStandardItem* item = d->model->itemFromIndex(it->sibling(it->row(), EnabledIndex));
+		item->setCheckState(enabled ? Qt::Checked : Qt::Unchecked);
 	}
 }
 

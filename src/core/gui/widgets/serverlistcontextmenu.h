@@ -24,6 +24,7 @@
 #define __SERVER_LIST_CONTEXT_MENU_H_
 
 #include <QObject>
+#include <QList>
 #include "serverapi/serverptr.h"
 #include "dptr.h"
 
@@ -45,6 +46,7 @@ class ServerListContextMenu : public QObject
 		{
 			/// This is returned when something was copied to clipboard.
 			DataCopied,
+
 			Join,
 			OpenRemoteConsole,
 			OpenURL,
@@ -55,18 +57,23 @@ class ServerListContextMenu : public QObject
 			ClearAdditionalSorting,
 			RemoveAdditionalSortingForColumn,
 			FindMissingWADs,
+			TogglePinServers,
 
 			/// This is returned upon cancel.
 			NothingHappened
 		};
 
-		ServerListContextMenu(ServerPtr server, const ServerListFilterInfo& filter,
-			const QModelIndex &modelIndex, ServerList *parent);
+		ServerListContextMenu(ServerPtr serverAtIndex,
+			const ServerListFilterInfo& filter,
+			const QModelIndex &modelIndex,
+			const QList<ServerPtr> &servers,
+			ServerList *parent);
 		~ServerListContextMenu();
 
 		const QModelIndex &modelIndex() const;
 		void popup(const QPoint& point);
 		ServerPtr server() const;
+		const QList<ServerPtr> &servers() const;
 		const ServerListFilterInfo& serverFilter() const;
 		Result translateQMenuResult(QAction* resultAction);
 

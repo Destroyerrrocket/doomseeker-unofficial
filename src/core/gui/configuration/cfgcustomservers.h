@@ -42,7 +42,7 @@ class CFGCustomServers : public ConfigPage
 		~CFGCustomServers();
 
 		QIcon icon() const { return QIcon(":/flags/localhost-small"); }
-		QString name() const { return tr("Custom Servers"); }
+		QString name() const { return tr("Pinned Servers"); }
 
 	protected:
 		void readSettings();
@@ -79,9 +79,9 @@ class CFGCustomServers : public ConfigPage
 
 		void prepareEnginesComboBox();
 		void prepareTable();
+		void setEnabledOnSelected(bool enabled);
 		void setEngineOnItem(QStandardItem*, const QString& engineName);
 		void setPortToDefault(int rowIndex);
-
 
 		QVector<CustomServerInfo> tableGetServers();
 
@@ -90,6 +90,8 @@ class CFGCustomServers : public ConfigPage
 		void add(const QString& engineName, const QString& host,
 			unsigned short port, bool enabled);
 		void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
+		void disableSelected();
+		void enableSelected();
 		void remove();
 		void setEngine();
 };

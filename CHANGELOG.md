@@ -24,6 +24,12 @@ to the "Logs" box will happen regardless of this switch.
 - RCon connection box can now toggle showing/hiding passwords.
 - Create Game misc. tab can now toggle showing/hiding passwords.
 - Button to show JSON library license added to the About dialog (addresses 3451).
+- Servers can now be dynamically pinned or unpinned using the server
+list's context menu. This adds them to the "Custom/Pinned Servers"
+list and essentially servers the purpose of marking servers
+as favourite (addresses 3388).
+- "Custom/Pinned" servers can be disabled without removing
+them from configuration.
 - IRC: User name can now be specified (this is different than nick name).
 - Windows: cacerts.pem database with "DST Root CA X3" and
 "DigiCert High Assurance EV Root CA" certificates.
@@ -55,6 +61,14 @@ the wad file paths by default.
 - Only show games that support Remote Console in RCon connection box.
 - Starting Doomseeker with incorrect command line arguments will now
 print help and quit immediately (addresses 3294).
+- Reword a bit the log and error messages associated with total server
+refresh - don't say that "the operation is senseless" and don't notify
+about problem with deselected masters when there are some permanent
+(pinned) servers on the list.
+- "Custom Servers" are now known as "Pinned Servers" (addresses 3388).
+- Custom Servers config box: "Set Engine" button now says "Set Game".
+- When server is already "pinned", prevent it from appearing twice
+on the list if master server also reports it.
 - Linux: Also try to look for WADs in /usr/[local]/share/games/doom.
 - Linux: Explicit "Copy (text)" actions shall store the data both in keyboard
 and mouse selection clipboards, allowing it to be pasted with either keyboard
