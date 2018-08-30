@@ -480,16 +480,20 @@ void Main::initLocalizationsDefinitions()
 	localizations = Localization::loadLocalizationsList(
 		DataPaths::staticDataSearchDirs(DataPaths::TRANSLATIONS_DIR_NAME));
 
-	QString localization = gConfig.doomseeker.localization;
-	gLog << tr("Loading translation \"%1\".").arg(localization);
-	bool bSuccess = Localization::loadTranslation(localization);
-	if (bSuccess)
+	LocalizationInfo bestMatchedLocalization = LocalizationInfo::findBestMatch(
+		localizations, gConfig.doomseeker.localization);
+	if (bestMatchedLocalization.isValid() && bestMatchedLocalization != LocalizationInfo::DEFAULT)
 	{
-		gLog << tr("Translation loaded.");
-	}
-	else
-	{
-		gLog << tr("Failed to load translation.");
+		gLog << tr("Loading translation \"%1\".").arg(bestMatchedLocalization.localeName);
+		bool bSuccess = Localization::loadTranslation(bestMatchedLocalization.localeName);
+		if (bSuccess)
+		{
+			gLog << tr("Translation loaded.");
+		}
+		else
+		{
+			gLog << tr("Failed to load translation.");
+		}
 	}
 }
 

@@ -37,5 +37,4 @@ PROTOCOL_VERSION=1
 #     the language it translates to.
 
 # country ip2c name;language_country;nice name
-GBR;en_EN;English
 POL;pl_PL;Polski

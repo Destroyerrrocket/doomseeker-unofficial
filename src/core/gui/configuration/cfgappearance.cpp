@@ -50,8 +50,7 @@ CFGAppearance::~CFGAppearance()
 
 void CFGAppearance::initLanguagesList()
 {
-	const QList<LocalizationInfo>& localizations = Main::localizations;
-	foreach (const LocalizationInfo& obj, localizations)
+	foreach (const LocalizationInfo& obj, Main::localizations)
 	{
 		const QString& flagName = obj.countryCodeName;
 		const QString& translationName = obj.localeName;
@@ -117,7 +116,11 @@ void CFGAppearance::readSettings()
 	d->cbBotsNotPlayers->setChecked(gConfig.doomseeker.bBotsAreNotPlayers);
 
 	// Set language.
-	int idxLanguage = d->cboLanguage->findData(gConfig.doomseeker.localization);
+	LocalizationInfo bestMatchedLocalization = LocalizationInfo::findBestMatch(
+		Main::localizations, gConfig.doomseeker.localization);
+	int idxLanguage = -1;
+	if (bestMatchedLocalization.isValid())
+		idxLanguage = d->cboLanguage->findData(bestMatchedLocalization.localeName);
 	if (idxLanguage >= 0)
 	{
 		d->cboLanguage->setCurrentIndex(idxLanguage);
@@ -153,8 +156,17 @@ void CFGAppearance::saveSettings()
 		// Translation may be strenuous so do it only if the selected
 		// value actually changed.
 		gConfig.doomseeker.localization = localization;
-		gLog << tr("Loading translation \"%1\"").arg(localization);
-		Localization::loadTranslation(localization);
+		if (QLocale(localization) == QLocale(LocalizationInfo::DEFAULT.localeName))
+		{
+			// No tr() on purpose.
+			gLog << "Return to default translation requires restart of the program";
+		}
+		else
+		{
+			gLog << tr("Loading translation \"%1\"").arg(localization);
+			Localization::loadTranslation(localization);
+			gLog << tr("Program needs to be restarted to fully apply the translation");
+		}
 	}
 
 	emit appearanceChanged();

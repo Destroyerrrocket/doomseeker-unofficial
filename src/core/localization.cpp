@@ -44,7 +44,7 @@ QList<QTranslator*> Localization::currentlyLoadedTranslations;
 class Localization::LocalizationLoader
 {
 	public:
-		LocalizationLoader() {};
+		LocalizationLoader();
 
 		QList<LocalizationInfo> loadLocalizationsList(const QStringList& definitionsFileSearchDirs);
 
@@ -164,6 +164,11 @@ QTranslator* Localization::loadTranslationFile(const QString& translationName, c
 	return pTranslator;
 }
 //////////////////////////////////////////////////////////////////////////////
+Localization::LocalizationLoader::LocalizationLoader()
+{
+	localizations << LocalizationInfo::DEFAULT;
+}
+
 QList<LocalizationInfo> Localization::LocalizationLoader::loadLocalizationsList(const QStringList& definitionsFileSearchDirs)
 {
 	foreach (const QString& dirPath, definitionsFileSearchDirs)

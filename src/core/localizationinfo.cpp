@@ -20,14 +20,60 @@
 //-----------------------------------------------------------------------------
 #include "localizationinfo.h"
 
+#include <QLocale>
+
+const LocalizationInfo LocalizationInfo::DEFAULT = {
+	"GBR", "en", "English"
+};
+
+LocalizationInfo LocalizationInfo::findBestMatch(
+	const QList<LocalizationInfo> &candidates,
+	const QString &localeName)
+{
+	LocalizationInfo matchLanguage;
+	foreach (const LocalizationInfo &candidate, candidates)
+	{
+		LocaleMatch matchScore = matchLocale(candidate.localeName, localeName);
+		switch (matchScore)
+		{
+		case LocaleMatchCompletely:
+			return candidate;
+		case LocaleMatchLanguage:
+			matchLanguage = candidate;
+			break;
+		default:
+			// do nothing
+			break;
+		}
+	}
+	return matchLanguage;
+}
+
+bool LocalizationInfo::isValid() const
+{
+	return !localeName.isEmpty();
+}
+
 bool LocalizationInfo::operator==(const LocalizationInfo& o2) const
 {
 	return countryCodeName == o2.countryCodeName
-		&& localeName == o2.localeName
+		&& QLocale(localeName) == QLocale(o2.localeName)
 		&& niceName == o2.niceName;
 }
 
 QString LocalizationInfo::toString() const
 {
 	return QString("%1;%2;%3").arg(countryCodeName, localeName, niceName);
+}
+
+////////////////////////////////////////
+
+LocaleMatch matchLocale(const QString &localeName1, const QString &localeName2)
+{
+	if (localeName1.compare(localeName2, Qt::CaseInsensitive) == 0)
+		return LocaleMatchCompletely;
+	else if (localeName1.split("_")[0].compare(localeName2.split("_")[0], Qt::CaseInsensitive) == 0)
+		return LocaleMatchLanguage;
+	else
+		return LocaleNoMatch;
 }

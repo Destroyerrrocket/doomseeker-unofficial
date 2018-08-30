@@ -31,6 +31,13 @@ class LocalizationInfo
 {
 	public:
 		/**
+		 * The default localization - English - is hardcoded into
+		 * the program and we don't need to have it in any .def file.
+		 */
+		static const LocalizationInfo DEFAULT;
+		static LocalizationInfo findBestMatch(const QList<LocalizationInfo> &candidates, const QString &localeName);
+
+		/**
 		 * @brief The same as code used for country flags in IP2C.
 		 */
 		QString countryCodeName;
@@ -46,8 +53,32 @@ class LocalizationInfo
 
 		void fromString(const QString& str);
 		QString toString() const;
+		bool isValid() const;
 
 		bool operator==(const LocalizationInfo& o2) const;
+		bool operator!=(const LocalizationInfo& o2) const
+		{
+			return !(*this == o2);
+		}
 };
+
+enum LocaleMatch
+{
+	LocaleMatchCompletely,
+	LocaleMatchLanguage,
+	LocaleNoMatch
+};
+
+/**
+ * Compares two locale strings and returns match score for them.
+ *
+ * Comparisons are case-insensitive.
+ *
+ * @return Match score:
+ *     # LocaleNoMatch - if locales mismatch completely
+ *     # LocaleMatchLanguage - if 'language' matches
+ *     # LocaleMatchComplete - if 'language_country' matches
+ */
+LocaleMatch matchLocale(const QString &localeName1, const QString &localeName2);
 
 #endif
