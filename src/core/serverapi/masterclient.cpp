@@ -114,11 +114,7 @@ void MasterClient::emitBannedMessage()
 
 void MasterClient::emptyServerList()
 {
-	foreach (ServerPtr server, d->servers)
-	{
-		server->disconnect();
-	}
-	d->servers.clear();
+	clearServers();
 }
 
 QString MasterClient::engineName() const

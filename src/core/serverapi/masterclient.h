@@ -67,6 +67,9 @@ class MAIN_EXPORT MasterClient : public QObject
 		MasterClient();
 		virtual ~MasterClient();
 
+		/**
+		 * Clears the server list.
+		 */
 		void clearServers();
 
 		/**
@@ -199,7 +202,7 @@ class MAIN_EXPORT MasterClient : public QObject
 		virtual QByteArray createServerListRequest()=0;
 
 		/**
-		 * Clears the server list.
+		 * Clears the server list; alias to clearServers().
 		 */
 		void emptyServerList();
 
