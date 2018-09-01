@@ -25,6 +25,7 @@
 #include "gui/models/serverlistrowhandler.h"
 #include "gui/helpers/playersdiagram.h"
 #include "gui/widgets/serverlistview.h"
+#include "gui/mainwindow.h"
 #include "gui/serverlist.h"
 #include "configuration/doomseekerconfig.h"
 #include "serverapi/server.h"
@@ -53,7 +54,7 @@ int ServerListModel::addServer(ServerPtr server)
 
 	QModelIndex index = indexFromItem(columns[0]);
 	ServerListRowHandler rowHandler(this, index.row(), server);
-	if (parentHandler->getMainWindow()->isActiveWindow())
+	if (parentHandler->getMainWindow()->isEffectivelyActiveWindow())
 	{
 		rowHandler.setCountryFlag();
 	}

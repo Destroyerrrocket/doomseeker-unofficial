@@ -36,12 +36,16 @@ class DoomseekerConfigurationDialog : public ConfigurationDialog
 
 		QStandardItem* addConfigPage(QStandardItem* rootItem, ConfigPage* configPage, int position = -1);
 		bool addEngineConfiguration(ConfigPage* configPage);
-		bool appearanceChanged() const { return bAppearanceChanged; }
 		bool customServersChanged() const { return bCustomServersChanged; }
 		void initOptionsList();
 		void showPluginConfiguration(const EnginePlugin *plugin);
+		bool wasAppearanceChanged() const { return bAppearanceChanged; }
 
 		static void openConfiguration(const EnginePlugin *showPlugin=NULL);
+		static bool isOpen();
+
+	signals:
+		void appearanceChanged();
 
 	private:
 		bool bAppearanceChanged;

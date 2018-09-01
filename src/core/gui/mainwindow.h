@@ -60,6 +60,8 @@ class MainWindow : public QMainWindow
 		 */
 		void initAutoRefreshTimer();
 
+		bool isEffectivelyActiveWindow() const;
+
 		void notifyFirstRun();
 
 		/**
@@ -97,6 +99,7 @@ class MainWindow : public QMainWindow
 	public slots:
 		void runGame(const ServerPtr&);
 		void showInstallFreedoomDialog();
+		void updateDynamicAppearance();
 
 	protected:
 		friend class DoomseekerConfigurationDialog;

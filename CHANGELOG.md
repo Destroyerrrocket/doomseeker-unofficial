@@ -69,6 +69,9 @@ about problem with deselected masters when there are some permanent
 - Custom Servers config box: "Set Engine" button now says "Set Game".
 - When server is already "pinned", prevent it from appearing twice
 on the list if master server also reports it.
+- Several appearance settings, such as server table colors, player slots
+style and grid will now be dynamically applied as the user changes them
+in the configuration box. This allows for quick preview (addresses 3306).
 - Linux: Also try to look for WADs in /usr/[local]/share/games/doom.
 - Linux: Explicit "Copy (text)" actions shall store the data both in keyboard
 and mouse selection clipboards, allowing it to be pasted with either keyboard

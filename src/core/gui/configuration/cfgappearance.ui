@@ -269,8 +269,111 @@
    <class>ColorButton</class>
    <extends>QPushButton</extends>
    <header>gui/widgets/colorbutton.h</header>
+   <slots>
+    <signal>colorUpdated(QColor,QColor)</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>slotStyle</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>CFGAppearance</receiver>
+   <slot>dynamicAppearanceChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>284</x>
+     <y>37</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>439</x>
+     <y>99</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbDrawGridInServerTable</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CFGAppearance</receiver>
+   <slot>dynamicAppearanceChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>146</x>
+     <y>222</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>439</x>
+     <y>226</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnCustomServersColor</sender>
+   <signal>colorUpdated(QColor,QColor)</signal>
+   <receiver>CFGAppearance</receiver>
+   <slot>dynamicAppearanceChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>152</x>
+     <y>64</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>437</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnLanServersColor</sender>
+   <signal>colorUpdated(QColor,QColor)</signal>
+   <receiver>CFGAppearance</receiver>
+   <slot>dynamicAppearanceChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>156</x>
+     <y>90</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>439</x>
+     <y>87</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnBuddyServersColor</sender>
+   <signal>colorUpdated(QColor,QColor)</signal>
+   <receiver>CFGAppearance</receiver>
+   <slot>dynamicAppearanceChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>176</x>
+     <y>124</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>439</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbMarkServersWithBuddies</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CFGAppearance</receiver>
+   <slot>dynamicAppearanceChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>121</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>439</x>
+     <y>128</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>dynamicAppearanceChange()</slot>
+ </slots>
 </ui>

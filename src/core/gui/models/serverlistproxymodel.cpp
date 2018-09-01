@@ -25,6 +25,7 @@
 #include "gui/entity/serverlistfilterinfo.h"
 #include "gui/models/serverlistcolumn.h"
 #include "gui/models/serverlistmodel.h"
+#include "gui/mainwindow.h"
 #include "gui/serverlist.h"
 #include "serverapi/playerslist.h"
 #include "serverapi/server.h"
@@ -291,7 +292,7 @@ bool ServerListProxyModel::isSortingAdditionallyByColumn(int column) const
 
 bool ServerListProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
 {
-	if (!d->parentHandler->getMainWindow()->isActiveWindow())
+	if (!d->parentHandler->getMainWindow()->isEffectivelyActiveWindow())
 	{
 		return false;
 	}

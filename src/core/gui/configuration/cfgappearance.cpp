@@ -34,6 +34,29 @@
 
 DClass<CFGAppearance> : public Ui::CFGAppearance
 {
+public:
+	struct SavedState
+	{
+		bool bDrawGridInServerTable;
+		bool bMarkServersWithBuddies;
+		QString buddyServersColor;
+		QString customServersColor;
+		QString lanServersColor;
+		QString slotStyle;
+	};
+
+	bool readingSettings;
+	SavedState savedState;
+
+	void resetSavedState()
+	{
+		savedState.bDrawGridInServerTable = gConfig.doomseeker.bDrawGridInServerTable;
+		savedState.bMarkServersWithBuddies = gConfig.doomseeker.bMarkServersWithBuddies;
+		savedState.buddyServersColor = gConfig.doomseeker.buddyServersColor;
+		savedState.customServersColor = gConfig.doomseeker.customServersColor;
+		savedState.lanServersColor = gConfig.doomseeker.lanServersColor;
+		savedState.slotStyle = gConfig.doomseeker.slotStyle;
+	}
 };
 
 DPointered(CFGAppearance)
@@ -41,11 +64,22 @@ DPointered(CFGAppearance)
 CFGAppearance::CFGAppearance(QWidget *parent)
 : ConfigPage(parent)
 {
+	set_reject(&CFGAppearance::reject_);
 	d->setupUi(this);
+	d->readingSettings = false;
 }
 
 CFGAppearance::~CFGAppearance()
 {
+}
+
+void CFGAppearance::dynamicAppearanceChange()
+{
+	if (!d->readingSettings)
+	{
+		saveDynamicSettings();
+		emit appearanceChanged();
+	}
 }
 
 void CFGAppearance::initLanguagesList()
@@ -75,8 +109,26 @@ void CFGAppearance::initSlotStyles(const QString &selected)
 	}
 }
 
+void CFGAppearance::reject_()
+{
+	// Restore dynamically changed settings upon config rejection.
+	gConfig.doomseeker.bDrawGridInServerTable = d->savedState.bDrawGridInServerTable;
+	gConfig.doomseeker.bMarkServersWithBuddies = d->savedState.bMarkServersWithBuddies;
+	gConfig.doomseeker.buddyServersColor = d->savedState.buddyServersColor;
+	gConfig.doomseeker.customServersColor = d->savedState.customServersColor;
+	gConfig.doomseeker.lanServersColor = d->savedState.lanServersColor;
+	gConfig.doomseeker.slotStyle = d->savedState.slotStyle;
+}
+
 void CFGAppearance::readSettings()
 {
+	d->readingSettings = true;
+
+	// Memorize settings that can be dynamically applied so that
+	// we can restore them when config is rejected.
+	d->resetSavedState();
+
+	// Load settings into widgets.
 	if (d->cboLanguage->count() == 0)
 	{
 		initLanguagesList();
@@ -134,19 +186,17 @@ void CFGAppearance::readSettings()
 		d->cboLanguage->addItem(icon, str, name);
 		d->cboLanguage->setCurrentIndex(d->cboLanguage->count() - 1);
 	}
+
+	d->readingSettings = false;
 }
 
 void CFGAppearance::saveSettings()
 {
-	gConfig.doomseeker.slotStyle = d->slotStyle->itemData(d->slotStyle->currentIndex()).toString();
-	gConfig.doomseeker.bMarkServersWithBuddies = d->cbMarkServersWithBuddies->isChecked();
-	gConfig.doomseeker.buddyServersColor = d->btnBuddyServersColor->colorHtml();
-	gConfig.doomseeker.customServersColor = d->btnCustomServersColor->colorHtml();
-	gConfig.doomseeker.lanServersColor = d->btnLanServersColor->colorHtml();
+	saveDynamicSettings();
+
 	gConfig.doomseeker.bUseTrayIcon = d->gboUseTrayIcon->isChecked();
 	gConfig.doomseeker.bCloseToTrayIcon = d->cbCloseToTrayIcon->isChecked();
 	gConfig.doomseeker.bColorizeServerConsole = d->cbColorizeConsole->isChecked();
-	gConfig.doomseeker.bDrawGridInServerTable = d->cbDrawGridInServerTable->isChecked();
 	gConfig.doomseeker.bBotsAreNotPlayers = d->cbBotsNotPlayers->isChecked();
 	gConfig.doomseeker.bHidePasswords = d->cbHidePasswords->isChecked();
 	gConfig.doomseeker.bLookupHosts = d->cbLookupHosts->isChecked();
@@ -169,5 +219,16 @@ void CFGAppearance::saveSettings()
 		}
 	}
 
+	d->resetSavedState();
 	emit appearanceChanged();
+}
+
+void CFGAppearance::saveDynamicSettings()
+{
+	gConfig.doomseeker.bDrawGridInServerTable = d->cbDrawGridInServerTable->isChecked();
+	gConfig.doomseeker.bMarkServersWithBuddies = d->cbMarkServersWithBuddies->isChecked();
+	gConfig.doomseeker.buddyServersColor = d->btnBuddyServersColor->colorHtml();
+	gConfig.doomseeker.customServersColor = d->btnCustomServersColor->colorHtml();
+	gConfig.doomseeker.lanServersColor = d->btnLanServersColor->colorHtml();
+	gConfig.doomseeker.slotStyle = d->slotStyle->itemData(d->slotStyle->currentIndex()).toString();
 }

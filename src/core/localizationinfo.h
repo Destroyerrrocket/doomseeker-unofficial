@@ -77,7 +77,7 @@ enum LocaleMatch
  * @return Match score:
  *     # LocaleNoMatch - if locales mismatch completely
  *     # LocaleMatchLanguage - if 'language' matches
- *     # LocaleMatchComplete - if 'language_country' matches
+ *     # LocaleMatchCompletely - if 'language_country' matches
  */
 LocaleMatch matchLocale(const QString &localeName1, const QString &localeName2);
 

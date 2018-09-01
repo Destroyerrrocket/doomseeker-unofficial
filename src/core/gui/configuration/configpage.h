@@ -26,6 +26,7 @@
 
 #include "global.h"
 #include "dptr.h"
+#include "serverapi/polymorphism.h"
 #include <QWidget>
 
 /**
@@ -93,6 +94,13 @@ class MAIN_EXPORT ConfigPage : public QWidget
 		 * @brief Read configuration from persistence to page contents.
 		 */
 		void read();
+		/**
+		 * @b [Virtual] Called when the config box is discarded
+		 * without accepting the settings.
+		 *
+		 * The default implementation does nothing.
+		 */
+		void reject();
 		/**
 		 * @brief Save configuration from page contents to persistence.
 		 *
@@ -162,6 +170,9 @@ class MAIN_EXPORT ConfigPage : public QWidget
 		 * @brief Reimplement this to write settings to config from widgets.
 		 */
 		virtual void saveSettings()=0;
+
+		POLYMORPHIC_SETTER_DECLARE(void, ConfigPage, reject, ());
+		void reject_default();
 
 	private:
 		DPtr<ConfigPage> d;

@@ -32,6 +32,7 @@
 class EnginePlugin;
 class PWad;
 class IniSection;
+class MainWindow;
 class Server;
 class ServerListFilterInfo;
 class ServerListModel;
@@ -49,12 +50,13 @@ class ServerList : public QObject
 	Q_OBJECT
 
 	public:
-		ServerList(ServerListView* serverTable, QWidget* pMainWindow);
+		ServerList(ServerListView* serverTable, MainWindow* pMainWindow);
 		~ServerList();
 
 		void cleanUpForce();
+		void cleanUpRightNow();
 
-		QWidget* getMainWindow() { return mainWindow; }
+		MainWindow* getMainWindow() { return mainWindow; }
 		bool hasAtLeastOneServer() const;
 
 		bool isAnyColumnSortedAdditionally() const;
@@ -117,7 +119,7 @@ class ServerList : public QObject
 
 	private:
 		QTimer cleanerTimer;
-		QWidget* mainWindow;
+		MainWindow* mainWindow;
 		ServerListModel* model;
 		bool needsCleaning;
 		ServerListProxyModel *proxyModel;

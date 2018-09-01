@@ -132,6 +132,7 @@ DClass<MainWindow> : public Ui::MainWindowWnd
 {
 public:
 	PrivData() : bTotalRefreshInProcess(false), buddiesList(NULL),
+	bAppearanceDynamicallyUpdated(false),
 	bWasMaximized(false), bWantToQuit(false), logDock(NULL),
 	masterManager(NULL), trayIcon(NULL), trayIconMenu(NULL)
 	{
@@ -146,6 +147,8 @@ public:
 	QLabel* autoUpdaterLabel;
 	QProgressBar* autoUpdaterFileProgressBar;
 	QProgressBar* autoUpdaterOverallProgressBar;
+
+	bool bAppearanceDynamicallyUpdated;
 
 	/**
 	 * Set to true by btnGetServers_click() process and to false
@@ -676,10 +679,9 @@ void MainWindow::finishConfiguration(DoomseekerConfigurationDialog &configDialog
 	gRefresher->setDelayBetweenResends(gConfig.doomseeker.querySpeed().delayBetweenSingleServerAttempts);
 
 	// If appearance changed - update the widgets.
-	if (configDialog.appearanceChanged())
+	if (configDialog.wasAppearanceChanged())
 	{
-		d->tableServers->setShowGrid(gConfig.doomseeker.bDrawGridInServerTable);
-		d->serverList->redraw();
+		updateDynamicAppearance();
 		initTrayIcon();
 	}
 
@@ -1021,6 +1023,11 @@ bool MainWindow::isAnyMasterEnabled() const
 	return false;
 }
 
+bool MainWindow::isEffectivelyActiveWindow() const
+{
+	return this->isActiveWindow() || DoomseekerConfigurationDialog::isOpen();
+}
+
 void MainWindow::masterManagerMessages(MasterClient* pSender, const QString& title, const QString& content, bool isError)
 {
 	QString message = tr("Master server for %1: %2").arg(pSender->plugin()->data()->name).arg(content);
@@ -1311,7 +1318,7 @@ void MainWindow::refreshThreadEndsWork()
 {
 	d->toolBarGetServers->setEnabled(true);
 
-	d->serverList->cleanUpForce();
+	d->serverList->cleanUpRightNow();
 	statusBar()->showMessage(tr("Done"));
 	updateTrayIconTooltipAndLogTotalRefresh();
 	d->taskbarProgress->hide();
@@ -1581,6 +1588,14 @@ void MainWindow::trayIcon_activated(QSystemTrayIcon::ActivationReason reason)
 			showMinimized();
 		}
 	}
+}
+
+void MainWindow::updateDynamicAppearance()
+{
+	d->tableServers->setShowGrid(gConfig.doomseeker.bDrawGridInServerTable);
+	d->serverList->redraw();
+	d->serverList->cleanUpForce();
+	d->bAppearanceDynamicallyUpdated = true;
 }
 
 // NOTE: Probably would be better if the master manager wasn't tied to the

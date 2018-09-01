@@ -23,6 +23,7 @@
 #include "serverlist.h"
 
 #include "configuration/doomseekerconfig.h"
+#include "gui/mainwindow.h"
 #include "gui/remoteconsole.h"
 #include "gui/models/serverlistcolumn.h"
 #include "gui/models/serverlistmodel.h"
@@ -39,15 +40,12 @@
 
 using namespace ServerListColumnId;
 
-ServerList::ServerList(ServerListView* serverTable, QWidget* pMainWindow)
-: mainWindow(pMainWindow), model(NULL),
+ServerList::ServerList(ServerListView* serverTable, MainWindow* pMainWindow)
+: mainWindow(pMainWindow), model(NULL), needsCleaning(false),
   proxyModel(NULL), sortOrder(Qt::AscendingOrder),
   sortIndex(-1), table(serverTable)
 {
 	prepareServerTable();
-
-	needsCleaning = false;
-
 	initCleanerTimer();
 }
 
@@ -78,24 +76,34 @@ bool ServerList::areColumnsWidthsSettingsChanged()
 
 void ServerList::cleanUp()
 {
-	if (needsCleaning && mainWindow->isActiveWindow())
+	if (needsCleaning)
 	{
-		if (sortIndex >= 0)
-		{
-			ServerListProxyModel* pModel = static_cast<ServerListProxyModel*>(table->model());
-			pModel->invalidate();
-			pModel->sortServers(sortIndex, sortOrder);
-		}
+		cleanUpRightNow();
+	}
+}
 
-		setCountryFlagsIfNotPresent();
-		needsCleaning = false;
+void ServerList::cleanUpRightNow()
+{
+	if (mainWindow->isEffectivelyActiveWindow())
+	{
+		cleanUpForce();
 	}
 }
 
 void ServerList::cleanUpForce()
 {
-	needsCleaning = true;
-	cleanUp();
+	if (table == NULL || table->model() == NULL)
+		return;
+
+	if (sortIndex >= 0)
+	{
+		ServerListProxyModel* pModel = static_cast<ServerListProxyModel*>(table->model());
+		pModel->invalidate();
+		pModel->sortServers(sortIndex, sortOrder);
+	}
+
+	setCountryFlagsIfNotPresent();
+	needsCleaning = false;
 }
 
 void ServerList::clearAdditionalSorting()
@@ -115,7 +123,7 @@ void ServerList::columnHeaderClicked(int index)
 	}
 	sortIndex = index;
 
-	cleanUpForce();
+	cleanUpRightNow();
 
 	QHeaderView* header = table->horizontalHeader();
 	header->setSortIndicator(sortIndex, sortOrder);

@@ -78,6 +78,9 @@ class ConfigurationDialog : public QDialog
 		 */
 		QStandardItem* addLabel(QStandardItem* rootItem, const QString& label, int position = -1);
 
+	public slots:
+		virtual void reject();
+
 	protected:
 		virtual void doSaveSettings() {};
 		virtual void keyPressEvent(QKeyEvent* e);

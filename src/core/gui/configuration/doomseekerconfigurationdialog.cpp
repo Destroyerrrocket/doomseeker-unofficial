@@ -76,6 +76,7 @@ bool DoomseekerConfigurationDialog::addEngineConfiguration(ConfigPage* configPag
 void DoomseekerConfigurationDialog::appearanceChangedSlot()
 {
 	this->bAppearanceChanged = true;
+	emit appearanceChanged();
 }
 
 void DoomseekerConfigurationDialog::appendFilePathsConfigurationBoxes()
@@ -146,11 +147,25 @@ void DoomseekerConfigurationDialog::initOptionsList()
 	optionsTree()->expandAll();
 }
 
+bool DoomseekerConfigurationDialog::isOpen()
+{
+	if (gApp->mainWindow() == NULL)
+		return false;
+	foreach(QObject *obj, gApp->mainWindow()->children())
+	{
+		if (qobject_cast<DoomseekerConfigurationDialog*>(obj) != NULL)
+			return true;
+	}
+	return false;
+}
+
 void DoomseekerConfigurationDialog::openConfiguration(const EnginePlugin *openPlugin)
 {
 	MainWindow *mw = gApp->mainWindow();
 
 	DoomseekerConfigurationDialog configDialog(mw);
+	mw->connect(&configDialog, SIGNAL(appearanceChanged()), SLOT(updateDynamicAppearance()));
+
 	configDialog.initOptionsList();
 
 	for(unsigned i = 0; i < gPlugins->numPlugins(); ++i)

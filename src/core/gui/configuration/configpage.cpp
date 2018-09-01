@@ -27,13 +27,18 @@ DClass<ConfigPage>
 	public:
 		bool bAllowSave;
 		bool bSettingsAlreadyRead;
+
+		void (ConfigPage::*reject)();
 };
 
 DPointered(ConfigPage)
 
+POLYMORPHIC_DEFINE(void, ConfigPage, reject, (), ());
+
 ConfigPage::ConfigPage(QWidget* parent)
 : QWidget(parent)
 {
+	set_reject(&ConfigPage::reject_default);
 	d->bAllowSave = false;
 	d->bSettingsAlreadyRead = false;
 	hide();
@@ -51,6 +56,11 @@ bool ConfigPage::allowSave()
 bool ConfigPage::areSettingsAlreadyRead()
 {
 	return d->bSettingsAlreadyRead;
+}
+
+void ConfigPage::reject_default()
+{
+	// no-op
 }
 
 void ConfigPage::read()

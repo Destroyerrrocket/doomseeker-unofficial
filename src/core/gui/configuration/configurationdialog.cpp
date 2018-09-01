@@ -315,6 +315,15 @@ void ConfigurationDialog::onPageValidationRequested()
 	validatePage(page);
 }
 
+void ConfigurationDialog::reject()
+{
+	foreach(ConfigPage *page, d->configPages)
+	{
+		page->reject();
+	}
+	QDialog::reject();
+}
+
 void ConfigurationDialog::switchToItem(const QModelIndex& current, const QModelIndex &previous)
 {
 	if (current.isValid() && current != previous)

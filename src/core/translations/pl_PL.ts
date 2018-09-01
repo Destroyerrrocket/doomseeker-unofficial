@@ -790,7 +790,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/configuration/cfgcustomservers.h" line="45"/>
         <source>Pinned Servers</source>
-        <translation>Przypięte Serwery</translation>
+        <translation>Przypięte serwery</translation>
     </message>
 </context>
 <context>

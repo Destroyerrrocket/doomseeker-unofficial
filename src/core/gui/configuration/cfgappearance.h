@@ -47,8 +47,13 @@ class CFGAppearance : public ConfigPage
 	private:
 		void initLanguagesList();
 		void initSlotStyles(const QString &selected);
+		void reject_();
+		void saveDynamicSettings();
 
 		DPtr<CFGAppearance> d;
+
+	private slots:
+		void dynamicAppearanceChange();
 };
 
 #endif /* __CFG_APPEARANCE_H__ */
