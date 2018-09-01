@@ -132,7 +132,6 @@ DClass<MainWindow> : public Ui::MainWindowWnd
 {
 public:
 	PrivData() : bTotalRefreshInProcess(false), buddiesList(NULL),
-	bAppearanceDynamicallyUpdated(false),
 	bWasMaximized(false), bWantToQuit(false), logDock(NULL),
 	masterManager(NULL), trayIcon(NULL), trayIconMenu(NULL)
 	{
@@ -147,8 +146,6 @@ public:
 	QLabel* autoUpdaterLabel;
 	QProgressBar* autoUpdaterFileProgressBar;
 	QProgressBar* autoUpdaterOverallProgressBar;
-
-	bool bAppearanceDynamicallyUpdated;
 
 	/**
 	 * Set to true by btnGetServers_click() process and to false
@@ -1595,7 +1592,6 @@ void MainWindow::updateDynamicAppearance()
 	d->tableServers->setShowGrid(gConfig.doomseeker.bDrawGridInServerTable);
 	d->serverList->redraw();
 	d->serverList->cleanUpForce();
-	d->bAppearanceDynamicallyUpdated = true;
 }
 
 // NOTE: Probably would be better if the master manager wasn't tied to the
