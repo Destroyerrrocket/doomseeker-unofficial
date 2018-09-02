@@ -112,7 +112,7 @@ FileAlias FileAlias::freeDoom1Aliases()
 	QStringList aliases;
 	aliases << "freedomu.wad" << "freedoom1.wad";
 	result.setAliases(aliases);
-	result.setMatchType(MatchType::LeftToRight);
+	result.setMatchType(LeftToRight);
 	return result;
 }
 
@@ -128,7 +128,7 @@ QList<FileAlias> FileAlias::freeDoom2Aliases()
 	{
 		FileAlias alias;
 		alias.setName(base);
-		alias.setMatchType(MatchType::LeftToRight);
+		alias.setMatchType(LeftToRight);
 		QStringList aliases;
 		aliases << "freedoom.wad" << "freedoom2.wad";
 		alias.setAliases(aliases);
