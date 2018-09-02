@@ -111,14 +111,7 @@ QStringList WadPathFinder::aliases(const QString &name) const
 {
 	if (!d->aliasesAllowed)
 		return QStringList();
-	foreach (const FileAlias &candidate, d->aliases)
-	{
-		if (candidate.name().compare(name, Qt::CaseInsensitive) == 0)
-		{
-			return candidate.aliases();
-		}
-	}
-	return QStringList();
+	return FileAliasList::aliases(d->aliases, name);
 }
 
 WadFindResult WadPathFinder::find(const QString &name)

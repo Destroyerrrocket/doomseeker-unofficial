@@ -22,12 +22,16 @@
 //------------------------------------------------------------------------------
 #include "filealias.h"
 
+#include <cassert>
+
 FileAlias::FileAlias()
 {
+	d.matchType = FileAlias::LeftToRight;
 }
 
 FileAlias::FileAlias(const QString &name)
 {
+	d.matchType = FileAlias::LeftToRight;
 	d.name = name;
 }
 
@@ -62,6 +66,7 @@ FileAlias FileAlias::deserializeQVariant(const QVariant &var)
 	QVariantMap m = var.toMap();
 	FileAlias result;
 	result.setAliases(m["aliases"].toStringList());
+	result.setMatchType(deserializeMatchType(m["matchType"]));
 	result.setName(m["name"].toString());
 	return result;
 }
@@ -70,8 +75,34 @@ QVariant FileAlias::serializeQVariant() const
 {
 	QVariantMap m;
 	m["aliases"] = aliases();
+	m["matchType"] = serializeMatchType(matchType());
 	m["name"] = name();
 	return m;
+}
+
+FileAlias::MatchType FileAlias::deserializeMatchType(const QVariant &variant)
+{
+	QString val = variant.toString();
+	if (val == "LeftToRight")
+		return LeftToRight;
+	else if (val == "AllEqual")
+		return AllEqual;
+	// Default return value.
+	return LeftToRight;
+}
+
+QVariant FileAlias::serializeMatchType(MatchType matchType)
+{
+	switch (matchType)
+	{
+	default:
+		assert(false && "don't know how to serialize this FileAlias::MatchType");
+		// intentional fall-through
+	case LeftToRight:
+		return "LeftToRight";
+	case AllEqual:
+		return "AllEqual";
+	}
 }
 
 FileAlias FileAlias::freeDoom1Aliases()
@@ -81,6 +112,7 @@ FileAlias FileAlias::freeDoom1Aliases()
 	QStringList aliases;
 	aliases << "freedomu.wad" << "freedoom1.wad";
 	result.setAliases(aliases);
+	result.setMatchType(MatchType::LeftToRight);
 	return result;
 }
 
@@ -96,6 +128,7 @@ QList<FileAlias> FileAlias::freeDoom2Aliases()
 	{
 		FileAlias alias;
 		alias.setName(base);
+		alias.setMatchType(MatchType::LeftToRight);
 		QStringList aliases;
 		aliases << "freedoom.wad" << "freedoom2.wad";
 		alias.setAliases(aliases);
@@ -112,6 +145,16 @@ bool FileAlias::isSameName(const QString &otherName) const
 bool FileAlias::isValid() const
 {
 	return !name().isEmpty() && !aliases().isEmpty();
+}
+
+FileAlias::MatchType FileAlias::matchType() const
+{
+	return d.matchType;
+}
+
+void FileAlias::setMatchType(MatchType matchType)
+{
+	d.matchType = matchType;
 }
 
 const QString &FileAlias::name() const
@@ -135,6 +178,37 @@ QList<FileAlias> FileAlias::standardWadAliases()
 	return result;
 }
 ///////////////////////////////////////////////////////////////////////////////
+QStringList FileAliasList::aliases(const QList<FileAlias> &candidates, const QString &name)
+{
+	QStringList allAliases;
+	foreach (const FileAlias &candidate, candidates)
+	{
+		switch (candidate.matchType())
+		{
+		case FileAlias::LeftToRight:
+			if (candidate.name().compare(name, Qt::CaseInsensitive) == 0)
+				allAliases << candidate.aliases();
+			break;
+		case FileAlias::AllEqual:
+		{
+			QStringList allValidNames;
+			allValidNames << candidate.name();
+			allValidNames << candidate.aliases();
+			if (allValidNames.contains(name, Qt::CaseInsensitive))
+				allAliases << allValidNames;
+			break;
+		}
+		default:
+			assert(false && "unknown FileAlias::MatchType");
+			break;
+		}
+	}
+	// Normalize to remove duplicates and the source name.
+	allAliases.removeDuplicates();
+	allAliases.removeAll(name);
+	return allAliases;
+}
+
 QList<FileAlias> FileAliasList::mergeDuplicates(const QList<FileAlias> &input)
 {
 	QList<FileAlias> result;
@@ -144,7 +218,7 @@ QList<FileAlias> FileAliasList::mergeDuplicates(const QList<FileAlias> &input)
 		for (int i = 0; i < result.size(); ++i)
 		{
 			FileAlias &aliasOnList = result[i];
-			if (aliasOnList.isSameName(alias.name()))
+			if (aliasOnList.isSameName(alias.name()) && aliasOnList.matchType() == alias.matchType())
 			{
 				aliasOnList.addAliases(alias.aliases());
 				merged = true;

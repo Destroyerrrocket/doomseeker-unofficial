@@ -34,9 +34,11 @@ public:
 	enum Columns
 	{
 		ColWad,
-		ColAliases
+		ColAliases,
+		ColMatchType
 	};
 
+	QString matchTypeHelp;
 	QTimer resizeTimer;
 };
 
@@ -57,7 +59,15 @@ CFGWadAlias::CFGWadAlias(QWidget *parent)
 #else
 	header->setResizeMode(PrivData<CFGWadAlias>::ColAliases, QHeaderView::Stretch);
 #endif
+	header->resizeSection(PrivData<CFGWadAlias>::ColMatchType, 110);
+
 	d->table->sortByColumn(PrivData<CFGWadAlias>::ColWad, Qt::AscendingOrder);
+
+	d->matchTypeHelp = tr("Left-to-Right will use the alias files instead of "
+		"the main file but not vice-versa.");
+	d->matchTypeHelp += "\n\n";
+	d->matchTypeHelp += tr("All Equal will treat all files as equal and try to "
+		"match them in any combination.");
 }
 
 CFGWadAlias::~CFGWadAlias()
@@ -73,7 +83,7 @@ void CFGWadAlias::addAliasToTable(const FileAlias &alias)
 	if (row < 0)
 	{
 		row = d->table->rowCount();
-		d->table->insertRow(row);
+		addNewEntry();
 		applyAliasToRow(row, alias);
 	}
 	else
@@ -106,6 +116,7 @@ void CFGWadAlias::addNewEntry()
 	d->table->insertRow(row);
 	d->table->setItem(row, PrivData<CFGWadAlias>::ColWad, new QTableWidgetItem());
 	d->table->setItem(row, PrivData<CFGWadAlias>::ColAliases, new QTableWidgetItem());
+	mkMatchTypeComboBox(row);
 
 	d->table->setSortingEnabled(wasSortingEnabled);
 	resizeRowsToContents();
@@ -137,6 +148,10 @@ FileAlias CFGWadAlias::aliasFromRow(int row) const
 			alias.addAlias(candidateAlias.trimmed());
 		}
 	}
+	QComboBox *cboMatchType = qobject_cast<QComboBox*>(d->table->cellWidget(
+		row, PrivData<CFGWadAlias>::ColMatchType));
+	alias.setMatchType(static_cast<FileAlias::MatchType>(
+		cboMatchType->itemData(cboMatchType->currentIndex()).toInt()));
 	return alias;
 }
 
@@ -144,6 +159,11 @@ void CFGWadAlias::applyAliasToRow(int row, const FileAlias &alias)
 {
 	d->table->setItem(row, PrivData<CFGWadAlias>::ColWad, toolTipItem(alias.name()));
 	d->table->setItem(row, PrivData<CFGWadAlias>::ColAliases, toolTipItem(alias.aliases().join("; ")));
+
+	QComboBox *cboMatchType = qobject_cast<QComboBox*>(
+		d->table->cellWidget(row, PrivData<CFGWadAlias>::ColMatchType));
+	int matchTypeIdx = qMax(0, cboMatchType->findData(alias.matchType()));
+	cboMatchType->setCurrentIndex(matchTypeIdx);
 }
 
 int CFGWadAlias::findRowWithWad(const QString &wadName)
@@ -164,8 +184,21 @@ QIcon CFGWadAlias::icon() const
 	return QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon);
 }
 
+QComboBox *CFGWadAlias::mkMatchTypeComboBox(int row)
+{
+	QComboBox *cboMatchType = new QComboBox();
+	cboMatchType->setToolTip(d->matchTypeHelp);
+	cboMatchType->addItem(tr("Left-to-Right"), FileAlias::LeftToRight);
+	cboMatchType->addItem(tr("All Equal"), FileAlias::AllEqual);
+	d->table->setCellWidget(row, PrivData<CFGWadAlias>::ColMatchType, cboMatchType);
+	return cboMatchType;
+}
+
 void CFGWadAlias::readSettings()
 {
+	bool wasSortingEnabled = d->table->isSortingEnabled();
+	d->table->setSortingEnabled(false);
+
 	while (d->table->rowCount() > 0)
 	{
 		d->table->removeRow(0);
@@ -179,6 +212,8 @@ void CFGWadAlias::readSettings()
 			addAliasToTable(alias);
 		}
 	}
+
+	d->table->setSortingEnabled(wasSortingEnabled);
 }
 
 void CFGWadAlias::removeSelected()

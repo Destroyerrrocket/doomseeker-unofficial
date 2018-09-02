@@ -25,6 +25,7 @@
 
 #include "gui/configuration/configpage.h"
 #include "dptr.h"
+#include <QComboBox>
 
 class FileAlias;
 class QTableWidgetItem;
@@ -54,6 +55,7 @@ class CFGWadAlias : public ConfigPage
 		void applyAliasToRow(int row, const FileAlias &alias);
 		QList<FileAlias> aliases() const;
 		int findRowWithWad(const QString &wadName);
+		QComboBox *mkMatchTypeComboBox(int row);
 		void resizeRowsToContents();
 		QTableWidgetItem *toolTipItem(const QString &contents);
 
