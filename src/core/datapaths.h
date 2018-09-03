@@ -172,16 +172,11 @@ class MAIN_EXPORT DataPaths
 		/**
 		 * @brief Checks if all necessary directories exist.
 		 *
-		 * @return List of directories that DO NOT exist.
+		 * @return List of errnos Strings generated while trying to create them
+		 * please note that the errno notifying that the directory already exists
+		 * is deliberately overwritten by 0, since that means the dir does exist
 		 */
 		QStringList directoriesExist() const;
-
-		/**
-		 * @brief Checks if all necessary directories have the proper permissions.
-		 *
-		 * @return List of directiories that DO NOT have the proper permissions.
-		 */
-		QStringList directoriesWithoutPermissions() const;
 
 		/**
 		 * @brief Path to the "My Documents" directory with Doomseeker's
@@ -306,6 +301,14 @@ class MAIN_EXPORT DataPaths
 		 */
 		const QString &workingDirectory() const;
 
+		/**
+		 * @brief Return the list of all directories with doomseeker data.
+		 *
+		 * the order was decided by the inital gLogs that the program leaves
+		 * on startup
+		 */
+		QStringList listOfAllDirs() const;
+
 	protected:
 		/**
 		 * @return True if path is a directory that exists and can be written
@@ -316,7 +319,7 @@ class MAIN_EXPORT DataPaths
 		/**
 		 * @return True if path has write, read and execute permissions.
 		 */
-		static bool validatePermissions(const QString& path);
+		static int validateWorkingDir(const QString& absolutePath);
 
 		/**
 		 * @brief If directory already exists true is returned.
