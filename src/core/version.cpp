@@ -82,3 +82,8 @@ QString Version::versionRevision()
 		return version() + "-" + revision();
 	}
 }
+
+QString Version::yearSpan()
+{
+	return "2009 - 2018";
+}

@@ -143,7 +143,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPlainTextEdit" name="plainTextEdit">
+        <widget class="QPlainTextEdit" name="pteCopyrightNotice">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -160,27 +160,7 @@
           <bool>true</bool>
          </property>
          <property name="plainText">
-          <string>Copyright © 2009 - 2018 The Doomseeker Team
-
-This program is distributed under the terms of the LGPL v2.1 or later.
-
-This program uses GeoLite2 database for IP-to-Country (IP2C) purposes. Database and Contents Copyright (c) 2016 MaxMind, Inc.
-
-GeoLite2 License:
-This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
-
-GeoLite2 available at:
-https://dev.maxmind.com/geoip/geoip2/geolite2/
-
-This program uses icons (or derivates of) from following sources:
-- Aha-Soft
-- Crystal Clear by Everaldo Coelho
-- Fugue Icons (C) 2013 Yusuke Kamiyamane. All rights reserved.
-- Nuvola 1.0 (KDE 3.x icon set)
-- Oxygen Icons 4.3.1 (KDE)
-- Silk Icon Set (C) Mark James (famfamfam.com)
-- Tango Icon Library / Tango Desktop Project
-</string>
+          <string/>
          </property>
         </widget>
        </item>

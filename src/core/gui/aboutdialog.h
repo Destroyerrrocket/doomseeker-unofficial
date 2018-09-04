@@ -42,6 +42,8 @@ class AboutDialog : public QDialog
 	private:
 		DPtr<AboutDialog> d;
 
+		QString copyrightVerboseNotice() const;
+
 	private slots:
 		void showJsonLicense();
 };

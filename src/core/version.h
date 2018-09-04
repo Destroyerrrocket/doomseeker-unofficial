@@ -74,7 +74,7 @@ class MAIN_EXPORT Version
 		 */
 		static QString versionRevision();
 
-
+		static QString yearSpan();
 };
 
 #endif
