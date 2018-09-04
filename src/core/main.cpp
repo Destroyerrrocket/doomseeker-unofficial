@@ -149,14 +149,15 @@ int Main::run()
 	if (!initDataDirectories())
 	{
 		// Inform the user which directories cannot be created and QUIT.
-		QStringList DirsList = gDefaultDataPaths->listOfAllDirs();
-		QStringList errnosDirs = gDefaultDataPaths->directoriesExist();
+		QList<DataPaths::dirErrno> failedDirsErrno = gDefaultDataPaths->directoriesExist();
 		// we give a accurate error message of what is going wrong, thanks to errno.
 		QString errorMessage;
 		errorMessage = tr("Doomseeker will not run because some directories cannot be used properly.");
-		for (int numberDirectoriesErrno = 0; numberDirectoriesErrno < DirsList.size(); ++numberDirectoriesErrno) {
-			errorMessage += "\n" + DirsList.at(numberDirectoriesErrno) + ": ";
-			errorMessage += errnosDirs.at(numberDirectoriesErrno);
+		foreach(const DataPaths::dirErrno &failedDirErrno, failedDirsErrno)
+		{
+			errorMessage += "\n[" + QString::number(failedDirErrno.errnoNum) + "] ";
+			errorMessage += failedDirErrno.directory.absolutePath() + ": ";
+			errorMessage += failedDirErrno.errnoString;
 		}
 		// Prompt the errorMessage and exit.
 		QMessageBox::critical(NULL, tr("Doomseeker startup error"), errorMessage);

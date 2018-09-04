@@ -34,7 +34,7 @@
 #include <QProcessEnvironment>
 #include <cassert>
 #include <cstdlib>
-#include <errno.h>
+#include <cerrno>
 
 #if QT_VERSION >= 0x050000
 #include <QStandardPaths>
@@ -276,21 +276,25 @@ QString DataPaths::demosDirectoryPath() const
 	return d->dataDirectory.absoluteFilePath(DEMOS_DIR_NAME);
 }
 
-QStringList DataPaths::directoriesExist() const
+QList<DataPaths::dirErrno> DataPaths::directoriesExist() const
 {
-	QStringList failedList;
+	QList<dirErrno> failedList;
 	QStringList checkedList;
-	QStringList checkList = listOfAllDirs();
+	QList<QDir> checkList;
+	checkList << d->cacheDirectory << d->configDirectory << d->dataDirectory;
 
-	foreach(const QString &dataDirectory, checkList)
+	foreach(const QDir &dataDirectory, checkList)
 	{
-		if (checkedList.contains(dataDirectory))
+		if (checkedList.contains(dataDirectory.absolutePath()))
 		{
 			continue;
 		}
-		checkedList << dataDirectory;
-		int errnoDir = validateWorkingDir(dataDirectory);
-		failedList.append(strerror(errnoDir));
+		checkedList << dataDirectory.absolutePath();
+		int errnoDir = validateWorkingDir(dataDirectory.absolutePath());
+		if (errnoDir != 0) {
+			dirErrno failedDir = {dataDirectory, errnoDir, strerror(errnoDir)};
+			failedList << failedDir;
+		}
 	}
 
 	return failedList;
@@ -496,9 +500,8 @@ bool DataPaths::validateDir(const QString& path)
 	return bCondition1 && bCondition2 && bCondition3;
 }
 
-int DataPaths::validateWorkingDir(const QString& absolutePath)
+int DataPaths::validateWorkingDir(const QDir& path)
 {
-	QDir path = QDir(absolutePath);
 	int errnum = 0;
 	// We need to reset errno to prevent false positives
 	errno = 0;
@@ -513,13 +516,4 @@ int DataPaths::validateWorkingDir(const QString& absolutePath)
 const QString &DataPaths::workingDirectory() const
 {
 	return d->workingDirectory;
-}
-
-QStringList DataPaths::listOfAllDirs() const
-{
-	QStringList allPaths;
-	allPaths.append(d->cacheDirectory.absolutePath());
-	allPaths.append(d->configDirectory.absolutePath());
-	allPaths.append(d->dataDirectory.absolutePath());
-	return allPaths;
 }
