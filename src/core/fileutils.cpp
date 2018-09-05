@@ -44,6 +44,21 @@ QByteArray FileUtils::md5(const QString &path)
 	return QByteArray();
 }
 
+QString FileUtils::cdUpUntilExists(QString path)
+{
+	static const int SANITY_LOOP_LIMIT = 1000;
+	QFileInfo fileInfo(QDir::cleanPath(path));
+	for (int i = 0; i < SANITY_LOOP_LIMIT; ++i)
+	{
+		if (fileInfo.filePath().endsWith("/.."))
+			return QString();
+		if (fileInfo.exists() || fileInfo.isRoot())
+			return fileInfo.filePath();
+		fileInfo = QDir::cleanPath(fileInfo.filePath() + "/..");
+	}
+	return QString();
+}
+
 Qt::CaseSensitivity FileUtils::comparisonSensitivity()
 {
 #if defined(Q_OS_WIN32)

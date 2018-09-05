@@ -107,9 +107,9 @@ class MAIN_EXPORT DataPaths
 			QString errnoString;
 
 			DirErrno() : errnoNum(0) {}
-			
+
 			DirErrno(QDir directory, int errnoNum, QString errnoString)
-			: directory(directory), errnoNum(errnoNum), errnoString(errnoString)
+				: directory(directory), errnoNum(errnoNum), errnoString(errnoString)
 			{}
 
 			bool isError() const

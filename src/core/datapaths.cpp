@@ -24,6 +24,7 @@
 
 #include "application.h"
 #include "doomseekerfilepaths.h"
+#include "fileutils.h"
 #include "log.h"
 #include "plugins/engineplugin.h"
 #include "strings.hpp"
@@ -473,16 +474,51 @@ QString DataPaths::systemAppDataDirectory(QString append) const
 
 DataPaths::DirErrno DataPaths::tryCreateDirectory(const QDir& rootDir, const QString& dirToCreate) const
 {
+	QString fullDirPath = Strings::combinePaths(rootDir.path(), dirToCreate);
+
 	// We need to reset errno to prevent false positives
 	errno = 0;
 	if (!rootDir.mkpath(dirToCreate))
 	{
 		int errnoval = errno;
 		if (errnoval != 0)
-			return DirErrno(Strings::combinePaths(rootDir.path(), dirToCreate), errnoval, strerror(errnoval));
+		{
+			return DirErrno(fullDirPath, errnoval, strerror(errnoval));
+		}
 		else
-			return DirErrno(Strings::combinePaths(rootDir.path(), dirToCreate), DirErrno::CUSTOM_ERROR,
-				QObject::tr("cannot create directory"));
+		{
+			// Try to decipher if we have permissions.
+			// First we must find the bottom-most directory that does actually exist.
+			QString pathToBottomMostExisting = FileUtils::cdUpUntilExists(
+				Strings::combinePaths(rootDir.path(), dirToCreate));
+			// If we've found a bottom-most directory that exists, we can check its permissions.
+			if (!pathToBottomMostExisting.isEmpty())
+			{
+				QFileInfo parentDir(pathToBottomMostExisting);
+				if (parentDir.exists() && !parentDir.isDir())
+				{
+					return DirErrno(fullDirPath, DirErrno::CUSTOM_ERROR,
+						QObject::tr("parent node is not a directory: %1")
+							.arg(parentDir.filePath()));
+				}
+
+				// BLOCK - keep this to absolute mininum
+				++qt_ntfs_permission_lookup;
+				bool permissions = parentDir.isReadable()
+					&& parentDir.isWritable()
+					&& parentDir.isExecutable();
+				--qt_ntfs_permission_lookup;
+				// END OF BLOCK
+				if (!permissions)
+				{
+					return DirErrno(fullDirPath, DirErrno::CUSTOM_ERROR,
+						QObject::tr("lack of necessary permissions to the parent directory: %1")
+							.arg(parentDir.filePath()));
+				}
+			}
+			// Just give up trying to deduce a correct error.
+			return DirErrno(fullDirPath, DirErrno::CUSTOM_ERROR, QObject::tr("cannot create directory"));
+		}
 	}
 	return DirErrno();
 }

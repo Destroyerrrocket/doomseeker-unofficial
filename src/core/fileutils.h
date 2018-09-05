@@ -32,6 +32,15 @@ class FileUtils
 {
 	public:
 		static QByteArray md5(const QString &path);
+
+		/**
+		 * @brief Moves upwards the path until it finds the path that exists.
+		 *
+		 * @return A path to the first file system node that exists or an empty
+		 * string if none of the nodes exist on the path.
+		 */
+		static QString cdUpUntilExists(QString path);
+
 		/**
 		 * @brief Uses QFileInfo::operator== to see if 'path' is on
 		 * 'candidates' list.
