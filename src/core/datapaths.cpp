@@ -32,6 +32,7 @@
 #include <QDesktopServices>
 #include <QFileInfo>
 #include <QProcessEnvironment>
+#include <QSet>
 #include <cassert>
 #include <cstdlib>
 #include <cerrno>
@@ -55,6 +56,21 @@ extern Q_CORE_EXPORT int qt_ntfs_permission_lookup;
 // We'll need to declare an int with the same name to compile successfully in other platforms.
 int qt_ntfs_permission_lookup;
 #endif
+
+static QList<DataPaths::DirErrno> uniqueErrnosByDir(const QList<DataPaths::DirErrno> &errnos)
+{
+	QSet<QString> uniqueDirs;
+	QList<DataPaths::DirErrno> uniqueErrnos;
+	foreach(const DataPaths::DirErrno &dirErrno, errnos)
+	{
+		if (!uniqueDirs.contains(dirErrno.directory.path()))
+		{
+			uniqueDirs.insert(dirErrno.directory.path());
+			uniqueErrnos << dirErrno;
+		}
+	}
+	return uniqueErrnos;
+}
 
 static QStringList uniquePaths(const QStringList &paths)
 {
@@ -166,18 +182,15 @@ QStringList DataPaths::canWrite() const
 	return failedList;
 }
 
-bool DataPaths::createDirectories()
+QList<DataPaths::DirErrno> DataPaths::createDirectories()
 {
-	// This variable should only be changed to false and only if something
-	// fails.
-	bool bAllSuccessful = true;
+	QList<DirErrno> failedDirs;
 	const QDir appDataDir(systemAppDataDirectory());
 
 	// No need to bother with migrating plugin master caches
-	if (!tryCreateDirectory(d->cacheDirectory, "."))
-	{
-		bAllSuccessful = false;
-	}
+	DirErrno cacheDirError = tryCreateDirectory(d->cacheDirectory, ".");
+	if (cacheDirError.isError())
+		failedDirs << cacheDirError;
 
 	// The existential question here is needed for migration purposes,
 	// but on Windows the >=1.2 configDirectory can already exist because
@@ -185,9 +198,10 @@ bool DataPaths::createDirectories()
 	// It is necessary to ask about the .ini file.
 	if (!d->configDirectory.exists(DoomseekerFilePaths::INI_FILENAME))
 	{
-		if (!tryCreateDirectory(d->configDirectory, "."))
+		DirErrno configDirError = tryCreateDirectory(d->configDirectory, ".");
+		if (configDirError.isError())
 		{
-			bAllSuccessful = false;
+			failedDirs << configDirError;
 		}
 #if !defined(Q_OS_MAC)
 		else if (appDataDir.exists(".doomseeker"))
@@ -214,9 +228,10 @@ bool DataPaths::createDirectories()
 #else
 		const QString legacyPrefDirectory = ".doomseeker";
 #endif
-		if (!tryCreateDirectory(d->dataDirectory, "."))
+		DirErrno dataDirError = tryCreateDirectory(d->dataDirectory, ".");
+		if (dataDirError.isError())
 		{
-			bAllSuccessful = false;
+			failedDirs << dataDirError;
 		}
 		else if (appDataDir.exists(legacyPrefDirectory))
 		{
@@ -242,12 +257,13 @@ bool DataPaths::createDirectories()
 		}
 	}
 
-	if (!tryCreateDirectory(d->dataDirectory, DEMOS_DIR_NAME))
+	DirErrno demosDirError = tryCreateDirectory(d->dataDirectory, DEMOS_DIR_NAME);
+	if (demosDirError.isError())
 	{
-		bAllSuccessful = false;
+		failedDirs << demosDirError;
 	}
 
-	return bAllSuccessful;
+	return uniqueErrnosByDir(failedDirs);
 }
 
 DataPaths *DataPaths::defaultInstance()
@@ -274,30 +290,6 @@ QStringList DataPaths::defaultWadPaths() const
 QString DataPaths::demosDirectoryPath() const
 {
 	return d->dataDirectory.absoluteFilePath(DEMOS_DIR_NAME);
-}
-
-QList<DataPaths::dirErrno> DataPaths::directoriesExist() const
-{
-	QList<dirErrno> failedList;
-	QStringList checkedList;
-	QList<QDir> checkList;
-	checkList << d->cacheDirectory << d->configDirectory << d->dataDirectory;
-
-	foreach(const QDir &dataDirectory, checkList)
-	{
-		if (checkedList.contains(dataDirectory.absolutePath()))
-		{
-			continue;
-		}
-		checkedList << dataDirectory.absolutePath();
-		int errnoDir = validateWorkingDir(dataDirectory.absolutePath());
-		if (errnoDir != 0) {
-			dirErrno failedDir = {dataDirectory, errnoDir, strerror(errnoDir)};
-			failedList << failedDir;
-		}
-	}
-
-	return failedList;
 }
 
 QString DataPaths::documentsLocationPath(const QString &subpath) const
@@ -479,9 +471,20 @@ QString DataPaths::systemAppDataDirectory(QString append) const
 	return QDir(dir).absolutePath();
 }
 
-bool DataPaths::tryCreateDirectory(const QDir& rootDir, const QString& dirToCreate) const
+DataPaths::DirErrno DataPaths::tryCreateDirectory(const QDir& rootDir, const QString& dirToCreate) const
 {
-	return rootDir.mkpath(dirToCreate);
+	// We need to reset errno to prevent false positives
+	errno = 0;
+	if (!rootDir.mkpath(dirToCreate))
+	{
+		int errnoval = errno;
+		if (errnoval != 0)
+			return DirErrno(Strings::combinePaths(rootDir.path(), dirToCreate), errnoval, strerror(errnoval));
+		else
+			return DirErrno(Strings::combinePaths(rootDir.path(), dirToCreate), DirErrno::CUSTOM_ERROR,
+				QObject::tr("cannot create directory"));
+	}
+	return DirErrno();
 }
 
 bool DataPaths::validateAppDataDirectory()
@@ -498,19 +501,6 @@ bool DataPaths::validateDir(const QString& path)
 	bool bCondition3 = fileInfo.isDir();
 
 	return bCondition1 && bCondition2 && bCondition3;
-}
-
-int DataPaths::validateWorkingDir(const QDir& path)
-{
-	int errnum = 0;
-	// We need to reset errno to prevent false positives
-	errno = 0;
-	// Even if errno says the dir exists, it will output success.
-	// This way the end user knows more clearly which is the directory giving problems
-	if(!path.mkpath(".")) {
-		errnum = errno;
-	}
-	return errnum;
 }
 
 const QString &DataPaths::workingDirectory() const
