@@ -149,32 +149,17 @@ int Main::run()
 	if (!initDataDirectories())
 	{
 		// Inform the user which directories cannot be created and QUIT.
-		QStringList failedDirsToCreateList = gDefaultDataPaths->directoriesExist();
-		// Also, in case the permissions are incorrect inform more properly the user.
-		QStringList failedDirsPermissionsList = gDefaultDataPaths->directoriesWithoutPermissions();
-
-		// We will transform the list to text. In case a list is empty,
-		// we should give a more accurate error message of what is going wrong.
-		QString failedDirsToCreateString = failedDirsToCreateList.join("\n");
-		QString failedDirsPermissionsString = failedDirsPermissionsList.join("\n");
+		QList<DataPaths::dirErrno> failedDirsErrno = gDefaultDataPaths->directoriesExist();
+		// we give a accurate error message of what is going wrong, thanks to errno.
 		QString errorMessage;
-		// Case where dir cannot be created
-		if (failedDirsToCreateString != "")
+		errorMessage = tr("Doomseeker will not run because some directories cannot be used properly.");
+		foreach(const DataPaths::dirErrno &failedDirErrno, failedDirsErrno)
 		{
-			errorMessage = tr("Doomseeker will not run because following directories cannot be created:");
-			errorMessage += "\n" + failedDirsToCreateString;
+			errorMessage += "\n[" + QString::number(failedDirErrno.errnoNum) + "] ";
+			errorMessage += failedDirErrno.directory.absolutePath() + ": ";
+			errorMessage += failedDirErrno.errnoString;
 		}
-		// Case where dir has improper permissions
-		else if (failedDirsPermissionsString != "")
-		{
-			errorMessage = tr("Doomseeker will not run because following directories have incorrect permissions:");
-			errorMessage += "\n" + failedDirsPermissionsString;
-		}
-		// Other unexpected cases (These lines of code should never be reached. Left for test in Windows)
-		else
-		{
-			errorMessage = tr("Doomseeker will not run because some directories cannot be used properly.");
-		}
+		// Prompt the errorMessage and exit.
 		QMessageBox::critical(NULL, tr("Doomseeker startup error"), errorMessage);
 		return 0;
 	}

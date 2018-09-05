@@ -34,6 +34,7 @@
 #include <QProcessEnvironment>
 #include <cassert>
 #include <cstdlib>
+#include <cerrno>
 
 #if QT_VERSION >= 0x050000
 #include <QStandardPaths>
@@ -275,12 +276,11 @@ QString DataPaths::demosDirectoryPath() const
 	return d->dataDirectory.absoluteFilePath(DEMOS_DIR_NAME);
 }
 
-QStringList DataPaths::directoriesExist() const
+QList<DataPaths::dirErrno> DataPaths::directoriesExist() const
 {
-	QStringList failedList;
+	QList<dirErrno> failedList;
 	QStringList checkedList;
 	QList<QDir> checkList;
-
 	checkList << d->cacheDirectory << d->configDirectory << d->dataDirectory;
 
 	foreach(const QDir &dataDirectory, checkList)
@@ -290,33 +290,10 @@ QStringList DataPaths::directoriesExist() const
 			continue;
 		}
 		checkedList << dataDirectory.absolutePath();
-		if (!dataDirectory.exists())
-		{
-			failedList.append(dataDirectory.absolutePath());
-		}
-	}
-
-	return failedList;
-}
-
-QStringList DataPaths::directoriesWithoutPermissions() const
-{
-	QStringList failedList;
-	QStringList checkedList;
-	QList<QDir> checkList;
-
-	checkList << d->cacheDirectory << d->configDirectory << d->dataDirectory;
-
-	foreach(const QDir &dataDirectory, checkList)
-	{
-		if (checkedList.contains(dataDirectory.absolutePath()))
-		{
-			continue;
-		}
-		checkedList << dataDirectory.absolutePath();
-		if (!validatePermissions(dataDirectory.absolutePath()))
-		{
-			failedList.append(dataDirectory.absolutePath());
+		int errnoDir = validateWorkingDir(dataDirectory.absolutePath());
+		if (errnoDir != 0) {
+			dirErrno failedDir = {dataDirectory, errnoDir, strerror(errnoDir)};
+			failedList << failedDir;
 		}
 	}
 
@@ -523,17 +500,17 @@ bool DataPaths::validateDir(const QString& path)
 	return bCondition1 && bCondition2 && bCondition3;
 }
 
-bool DataPaths::validatePermissions(const QString& path)
+int DataPaths::validateWorkingDir(const QDir& path)
 {
-	++qt_ntfs_permission_lookup;
-	QFileInfo fileInfo(path);
-
-	bool bCondition1 = fileInfo.isExecutable();
-	bool bCondition2 = fileInfo.isWritable();
-	bool bCondition3 = fileInfo.isReadable();
-	--qt_ntfs_permission_lookup;
-
-	return bCondition1 && bCondition2 && bCondition3;
+	int errnum = 0;
+	// We need to reset errno to prevent false positives
+	errno = 0;
+	// Even if errno says the dir exists, it will output success.
+	// This way the end user knows more clearly which is the directory giving problems
+	if(!path.mkpath(".")) {
+		errnum = errno;
+	}
+	return errnum;
 }
 
 const QString &DataPaths::workingDirectory() const
