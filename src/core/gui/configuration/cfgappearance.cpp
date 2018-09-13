@@ -217,6 +217,7 @@ void CFGAppearance::saveSettings()
 			Localization::loadTranslation(localization);
 			gLog << tr("Program needs to be restarted to fully apply the translation");
 		}
+		emit restartNeeded();
 	}
 
 	d->resetSavedState();

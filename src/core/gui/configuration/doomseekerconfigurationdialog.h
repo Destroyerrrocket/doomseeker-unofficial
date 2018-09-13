@@ -40,6 +40,7 @@ class DoomseekerConfigurationDialog : public ConfigurationDialog
 		void initOptionsList();
 		void showPluginConfiguration(const EnginePlugin *plugin);
 		bool wasAppearanceChanged() const { return bAppearanceChanged; }
+		bool isRestartNeeded() const { return bRestartNeeded; }
 
 		static void openConfiguration(const EnginePlugin *showPlugin=NULL);
 		static bool isOpen();
@@ -49,6 +50,7 @@ class DoomseekerConfigurationDialog : public ConfigurationDialog
 
 	private:
 		bool bAppearanceChanged;
+		bool bRestartNeeded;
 		bool bCustomServersChanged;
 		ConfigPage* customServersCfgBox;
 		QStandardItem* enginesRoot;
@@ -62,6 +64,10 @@ class DoomseekerConfigurationDialog : public ConfigurationDialog
 		 *	When called, sets bAppearanceChanged to true.
 		 */
 		void appearanceChangedSlot();
+		/**
+		 *	When called, sets bRestartNeeded to true.
+		 */
+		void restartNeededSlot();
 };
 
 #endif

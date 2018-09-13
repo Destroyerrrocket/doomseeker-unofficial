@@ -151,6 +151,11 @@ class MAIN_EXPORT ConfigPage : public QWidget
 		 * program's appearance so that program can redraw affected widgets.
 		 */
 		void appearanceChanged();
+		/**
+		 * @brief Emit to tell Doomseeker to ask the user for a restart.
+		 *
+		 */
+		void restartNeeded();
 
 		/**
 		 * @brief Request that the page should be (re-)validated.

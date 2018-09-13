@@ -93,6 +93,7 @@
 #include <QProgressBar>
 #include <QToolBar>
 #include <QSizePolicy>
+#include <QMessageBox>
 
 const QString MainWindow::HELP_SITE_URL = "https://doomseeker.drdteam.org/help";
 
@@ -680,6 +681,13 @@ void MainWindow::finishConfiguration(DoomseekerConfigurationDialog &configDialog
 	{
 		updateDynamicAppearance();
 		initTrayIcon();
+	}
+
+	// If changes require a restart, tell the user
+	if (configDialog.isRestartNeeded())
+	{
+		QString warningRestartNeeded = tr("Doomseeker needs to restart to be able to apply some changes");
+		QMessageBox::warning(NULL, tr("Restart needed"), warningRestartNeeded);
 	}
 
 	// Do the following only if setting changed from false to true.

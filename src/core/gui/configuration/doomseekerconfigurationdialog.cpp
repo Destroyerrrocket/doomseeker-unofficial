@@ -49,6 +49,7 @@ DoomseekerConfigurationDialog::DoomseekerConfigurationDialog(QWidget* parent)
 {
 	this->bAppearanceChanged = false;
 	this->bCustomServersChanged = false;
+	this->bRestartNeeded = false;
 }
 
 QStandardItem* DoomseekerConfigurationDialog::addConfigPage(QStandardItem* rootItem, ConfigPage* configPage, int position)
@@ -59,6 +60,8 @@ QStandardItem* DoomseekerConfigurationDialog::addConfigPage(QStandardItem* rootI
 	{
 		connect(configPage, SIGNAL( appearanceChanged() ),
 			SLOT( appearanceChangedSlot() ) );
+		connect(configPage, SIGNAL( restartNeeded() ),
+			SLOT( restartNeededSlot() ) );
 	}
 
 	return pItem;
@@ -77,6 +80,11 @@ void DoomseekerConfigurationDialog::appearanceChangedSlot()
 {
 	this->bAppearanceChanged = true;
 	emit appearanceChanged();
+}
+
+void DoomseekerConfigurationDialog::restartNeededSlot()
+{
+	this->bRestartNeeded = true;
 }
 
 void DoomseekerConfigurationDialog::appendFilePathsConfigurationBoxes()
