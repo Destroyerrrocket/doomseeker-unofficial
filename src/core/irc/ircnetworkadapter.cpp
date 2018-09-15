@@ -329,7 +329,7 @@ void IRCNetworkAdapter::helloClient(const QString& nickname)
 	connectionInfo.nick = nickname;
 	IRCNetworkEntity& network = connectionInfo.networkEntity;
 
-	gLog << tr("IRC: Successfuly registered on network %1 [%2:%3]").arg(network.description(), network.address()).arg(network.port());
+	gLog << tr("IRC: Successfully registered on network %1 [%2:%3]").arg(network.description(), network.address()).arg(network.port());
 
 	this->bIsJoining = false;
 
@@ -376,7 +376,7 @@ void IRCNetworkAdapter::ircServerResponse(const QString& message)
 
 	if (!result.isValid())
 	{
-		emit this->error(tr("Invalid parse result for mesage: %1").arg(message));
+		emit this->error(tr("Invalid parse result for message: %1").arg(message));
 	}
 }
 

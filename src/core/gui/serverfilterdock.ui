@@ -131,7 +131,7 @@
         <item>
          <widget class="QLineEdit" name="leWads">
           <property name="toolTip">
-           <string>Use ',' (a comma) to separate multiple wads.</string>
+           <string>Use ',' (a comma) to separate multiple WADs.</string>
           </property>
          </widget>
         </item>

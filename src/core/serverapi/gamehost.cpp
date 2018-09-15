@@ -145,7 +145,7 @@ void GameHost::addIwad_default()
 
 	if (iwadPath.isEmpty())
 	{
-		setMessage(Message::customError(tr("Iwad is not set")));
+		setMessage(Message::customError(tr("IWAD is not set")));
 		return;
 	}
 
@@ -153,7 +153,7 @@ void GameHost::addIwad_default()
 
 	if (!fi.isFile())
 	{
-		QString error = tr("Iwad Path error:\n\"%1\" doesn't exist or is a directory!").arg(iwadPath);
+		QString error = tr("IWAD Path error:\n\"%1\" doesn't exist or is a directory!").arg(iwadPath);
 		setMessage(Message::customError(error));
 	}
 
@@ -439,7 +439,7 @@ bool GameHost::verifyPwadPaths()
 		QFileInfo fi(pwad);
 		if (!fi.isFile())
 		{
-			QString error = tr("Pwad path error:\n\"%1\" doesn't exist or is a directory!").arg(pwad);
+			QString error = tr("PWAD path error:\n\"%1\" doesn't exist or is a directory!").arg(pwad);
 			setMessage(Message::customError(error));
 			return false;
 		}

@@ -38,3 +38,4 @@ PROTOCOL_VERSION=1
 
 # country ip2c name;language_country;nice name
 POL;pl_PL;Polski
+ESP;es_ES;Español
