@@ -148,8 +148,11 @@ find Doomseeker.app/Contents -name '*.dSYM' | xargs rm -rf
 find Doomseeker.app/Contents/plugins -name '*_debug*' | xargs rm -rf
 cp -R {build/,Doomseeker.app/Contents/MacOS/}engines
 cp -R {build/,Doomseeker.app/Contents/MacOS/}translations
+cp {${QTPLPATH},Doomseeker.app/Contents/MacOS/}translations/qt_es.qm
 cp {${QTPLPATH},Doomseeker.app/Contents/MacOS/}translations/qt_pl.qm
+cp {${QTPLPATH},Doomseeker.app/Contents/MacOS/}translations/qtbase_es.qm
 cp {${QTPLPATH},Doomseeker.app/Contents/MacOS/}translations/qtbase_pl.qm
+cp {${QTPLPATH},Doomseeker.app/Contents/MacOS/}translations/qtmultimedia_es.qm
 cp {${QTPLPATH},Doomseeker.app/Contents/MacOS/}translations/qtmultimedia_pl.qm
 cp {../../media/,Doomseeker.app/Contents/}Info.plist
 cp {../../media/,Doomseeker.app/Contents/Resources/}icon-osx.icns

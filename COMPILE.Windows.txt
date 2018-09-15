@@ -47,6 +47,19 @@ This guide will not describe how to modify environment variables in Windows.
 Once you modify the PATH variable you may have to reboot your system.
 
 ================================================================================
+3.1. Extra Qt translation files.
+
+If your Qt installation happens to not come with certain translation files,
+you can fetch them from here:
+
+  https://doomseeker.drdteam.org/files/translations/
+
+Qt translation sets are in "qt_*.zip" files. Download whatever you are
+missing and then unpack it directly, with no subdirectories, to:
+
+  X:\QT_BASE\5.7\msvc2013\translations\
+
+================================================================================
 4. OpenSSL
 
 Link:

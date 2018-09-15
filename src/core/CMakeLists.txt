@@ -120,8 +120,8 @@ qt4_add_resources(doomseekerResources
 
 # Translations
 set (TRANSLATIONS_FILES
-	translations/pl_PL.ts
 	translations/es_ES.ts
+	translations/pl_PL.ts
 )
 
 option (UPDATE_TRANSLATIONS "Update source translation translations/*.ts files (WARNING: make clean will delete the source .ts files! Danger!)")
@@ -150,6 +150,7 @@ if (WIN32 AND NOT Qt5Widgets_FOUND)
 	# WARNING: This should always be defined after UPDATE_TRANSLATIONS "if".
 	set(TRANSLATIONS_FILES
 		${TRANSLATIONS_FILES}
+		${QT_TRANSLATIONS_DIR}/qt_es.ts
 		${QT_TRANSLATIONS_DIR}/qt_pl.ts)
 endif()
 
@@ -163,7 +164,9 @@ if (WIN32 AND Qt5Widgets_FOUND)
 		OUTPUT_STRIP_TRAILING_WHITESPACE)
 	set(QM_FILES
 		${QM_FILES}
+		${QT_TRANSLATIONS_DIR}/qtbase_es.qm
 		${QT_TRANSLATIONS_DIR}/qtbase_pl.qm
+		${QT_TRANSLATIONS_DIR}/qtmultimedia_es.qm
 		${QT_TRANSLATIONS_DIR}/qtmultimedia_pl.qm)
 endif ()
 
