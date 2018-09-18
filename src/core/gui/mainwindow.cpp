@@ -686,8 +686,8 @@ void MainWindow::finishConfiguration(DoomseekerConfigurationDialog &configDialog
 	// If changes require a restart, tell the user
 	if (configDialog.isRestartNeeded())
 	{
-		QString warningRestartNeeded = tr("Doomseeker needs to restart to be able to apply some changes");
-		QMessageBox::warning(NULL, tr("Restart needed"), warningRestartNeeded);
+		QString warningRestartNeeded = tr("Doomseeker needs to be restarted for some changes to be applied.");
+		d->importantMessagesWidget->addMessage(warningRestartNeeded);
 	}
 
 	// Do the following only if setting changed from false to true.
