@@ -41,7 +41,7 @@
     <message>
         <location filename="../turok2exgameinfo.cpp" line="41"/>
         <source>Frag limit</source>
-        <translation>límite de frags</translation>
+        <translation>Límite de frags</translation>
     </message>
     <message>
         <location filename="../turok2exgameinfo.cpp" line="42"/>
@@ -51,7 +51,7 @@
     <message>
         <location filename="../turok2exgameinfo.cpp" line="43"/>
         <source>Point limit</source>
-        <translation>límite de puntos</translation>
+        <translation>Límite de puntos</translation>
     </message>
     <message>
         <location filename="../turok2exgameinfo.cpp" line="44"/>
@@ -61,7 +61,7 @@
     <message>
         <location filename="../turok2exgameinfo.cpp" line="45"/>
         <source>PFM overlap threshold</source>
-        <translation>margen de superposición PFM</translation>
+        <translation>Margen de superposición PFM</translation>
     </message>
 </context>
 </TS>

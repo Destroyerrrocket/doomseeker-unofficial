@@ -213,7 +213,7 @@ https://dev.maxmind.com/geoip/geoip2/geolite2/
     <message>
         <location filename="../../../build/src/core/ui_aboutdialog.h" line="457"/>
         <source>JSON library on BSD License (c) Eeli Reilin 2011 :</source>
-        <translation>librería JSON bajo licencia BSD (c) Eeli Reilin 2011 :</translation>
+        <translation>Librería JSON bajo licencia BSD (c) Eeli Reilin 2011 :</translation>
     </message>
     <message>
         <location filename="../../../build/src/core/ui_aboutdialog.h" line="458"/>
@@ -419,7 +419,7 @@ no puede ser ejecutado</translation>
     <message>
         <location filename="../updater/autoupdater.cpp" line="203"/>
         <source>Cannot parse updater info file.</source>
-        <translation>no se puede procesar el archivo con los datos de actualización.</translation>
+        <translation>No se puede procesar el archivo con los datos de actualización.</translation>
     </message>
     <message>
         <location filename="../updater/autoupdater.cpp" line="205"/>
@@ -557,12 +557,12 @@ no puede ser ejecutado</translation>
     <message>
         <location filename="../serverapi/broadcastmanager.cpp" line="50"/>
         <source>%1 LAN server gone: %2, %3:%4</source>
-        <translation>servidor LAN %1 desaparecido: %2, %3:%4</translation>
+        <translation>Servidor LAN %1 desaparecido: %2, %3:%4</translation>
     </message>
     <message>
         <location filename="../serverapi/broadcastmanager.cpp" line="63"/>
         <source>New %1 LAN server detected: %2:%3</source>
-        <translation>nuevo servidor LAN %1 detectado: %2:%3</translation>
+        <translation>Nuevo servidor LAN %1 detectado: %2:%3</translation>
     </message>
 </context>
 <context>
@@ -625,7 +625,7 @@ no puede ser ejecutado</translation>
     <message>
         <location filename="../../../build/src/core/ui_cfgappearance.h" line="249"/>
         <source>Lookup server hosts</source>
-        <translation>buscar servidores host</translation>
+        <translation>Buscar servidores host</translation>
     </message>
     <message>
         <location filename="../../../build/src/core/ui_cfgappearance.h" line="251"/>
@@ -1224,7 +1224,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../../build/src/core/ui_cfgircsounds.h" line="167"/>
         <source>Private message:</source>
-        <translation>mensaje privado:</translation>
+        <translation>Mensaje privado:</translation>
     </message>
     <message>
         <location filename="../../../build/src/core/ui_cfgircsounds.h" line="170"/>
@@ -1755,7 +1755,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/configuration/irc/cfgchatlogspage.h" line="41"/>
         <source>Logging</source>
-        <translation>registro</translation>
+        <translation>Registro</translation>
     </message>
     <message>
         <location filename="../gui/configuration/irc/cfgchatlogspage.h" line="43"/>
@@ -2503,7 +2503,7 @@ es un directorio o no existe.</translation>
     <message>
         <location filename="../gui/freedoomdialog.cpp" line="163"/>
         <source>Missing</source>
-        <translation>ausente</translation>
+        <translation>Ausente</translation>
     </message>
     <message>
         <location filename="../gui/freedoomdialog.cpp" line="170"/>
@@ -3023,7 +3023,7 @@ Ejecutable: %3</translation>
     <message>
         <location filename="../ip2c/ip2cparser.cpp" line="49"/>
         <source>Parsing IP2C database: %1</source>
-        <translation>analizando base de datos IP2C:%1</translation>
+        <translation>Analizando base de datos IP2C:%1</translation>
     </message>
     <message>
         <location filename="../ip2c/ip2cparser.cpp" line="55"/>
@@ -3656,7 +3656,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../../build/src/core/ui_ircnetworkselectionbox.h" line="247"/>
         <source>User name</source>
-        <translation>nombre de usuario</translation>
+        <translation>Nombre de usuario</translation>
     </message>
     <message>
         <location filename="../../../build/src/core/ui_ircnetworkselectionbox.h" line="249"/>
