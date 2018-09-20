@@ -43,6 +43,7 @@ set(HEADER_FILES
 )
 
 set(TRANSLATIONS_FILES
+	translations/srb2_es_ES.ts
 	translations/srb2_pl_PL.ts
 )
 set(FILES_TO_TRANSLATE

@@ -93,6 +93,7 @@ set(HEADER_FILES
 )
 
 set(TRANSLATIONS_FILES
+	translations/zandronum_es_ES.ts
 	translations/zandronum_pl_PL.ts
 )
 set(FILES_TO_TRANSLATE
@@ -103,9 +104,9 @@ set(FILES_TO_TRANSLATE
 
 include(../Translation.cmake)
 
-add_library(${PLUGIN_NAME} 
-	MODULE 
-	${ZANDRONUM_FILES} 
+add_library(${PLUGIN_NAME}
+	MODULE
+	${ZANDRONUM_FILES}
 	${HEADER_FILES}
 	${ZANDRONUM_UI_FILES}
 	${QM_FILES}
