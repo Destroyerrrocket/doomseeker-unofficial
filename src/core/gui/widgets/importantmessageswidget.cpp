@@ -80,14 +80,11 @@ void ImportantMessagesWidget::addMessage(const QString& message, const QDateTime
 
 	QString formattedMessage = "<p>" + strTimestamp + message + "</p>";
 
-	QFont font;
-	font.setPointSize(qMax(1, font.pointSize() - 1));
-
 	QLabel* pNewLabel = new QLabel(this);
-	pNewLabel->setFont(font);
 	pNewLabel->setText(formattedMessage);
 	pNewLabel->setTextInteractionFlags(pNewLabel->textInteractionFlags()
 		| Qt::TextSelectableByMouse);
+	pNewLabel->setCursor(Qt::IBeamCursor);
 	pNewLabel->setWordWrap(true);
 
 	d->labelWidgets << PrivData<ImportantMessagesWidget>::MessageLabel(pNewLabel);
