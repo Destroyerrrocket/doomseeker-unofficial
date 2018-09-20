@@ -4,8 +4,12 @@ pipelines:
   default:
     - step:
         script:
-          - mkdir -p build
-          - cd build
+          - mkdir -p build_qt4 build_qt5
+          - cd build_qt4
+          - cmake -DFORCE_QT4=true ..
+          - make -j$(nproc)
+          - make install
+          - cd ../build_qt5
           - cmake ..
           - make -j$(nproc)
           - make install

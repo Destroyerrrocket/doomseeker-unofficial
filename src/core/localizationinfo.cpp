@@ -21,6 +21,7 @@
 #include "localizationinfo.h"
 
 #include <QLocale>
+#include <QStringList>
 
 const LocalizationInfo LocalizationInfo::DEFAULT = {
 	"GBR", "en", "English"
