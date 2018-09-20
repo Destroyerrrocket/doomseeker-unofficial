@@ -29,6 +29,9 @@ QString CmdArgsHelp::argsHelp()
 		"--connect protocol://ip[:port]\n"
 		"    Attempts to connect to the specified server.\n");
 	help += tr(
+		"--create-game\n"
+		"    Launches Doomseeker in \"Create Game\" mode.\n");
+	help += tr(
 		"--datadir [directory]\n"
 		"    Sets an explicit search location for\n"
 		"    IP2C data along with plugins.\n"

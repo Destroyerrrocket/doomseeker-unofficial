@@ -113,7 +113,7 @@ void IwadPicker::loadIwads()
 		if (selectionIdx >= 0)
 			d->cboIwad->setCurrentIndex(selectionIdx);
 		else
-			d->cboIwad->setCurrentText(currentSelection);
+			d->cboIwad->setEditText(currentSelection);
 	}
 }
 
