@@ -95,6 +95,7 @@ void IwadPicker::loadIwads()
 		"freedoom1.wad", "freedoom2.wad", "strife1.wad", ""
 	};
 
+	QString currentSelection = d->cboIwad->currentText();
 	d->cboIwad->clear();
 	for (int i = 0; !iwads[i].isEmpty(); ++i)
 	{
@@ -105,6 +106,14 @@ void IwadPicker::loadIwads()
 		{
 			d->cboIwad->addItem(path);
 		}
+	}
+	if (!currentSelection.isEmpty())
+	{
+		int selectionIdx = d->cboIwad->findText(currentSelection);
+		if (selectionIdx >= 0)
+			d->cboIwad->setCurrentIndex(selectionIdx);
+		else
+			d->cboIwad->setCurrentText(currentSelection);
 	}
 }
 

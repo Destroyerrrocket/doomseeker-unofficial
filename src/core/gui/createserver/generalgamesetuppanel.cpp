@@ -160,6 +160,12 @@ void GeneralGameSetupPanel::saveConfig(Ini &config)
 	general["upnpPort"] = d->spinUpnpPort->value();
 }
 
+void GeneralGameSetupPanel::reloadAppConfig()
+{
+	d->executableInput->reloadExecutables();
+	d->iwadPicker->loadIwads();
+}
+
 void GeneralGameSetupPanel::setupForEngine(EnginePlugin *engine)
 {
 	d->currentEngine = engine;

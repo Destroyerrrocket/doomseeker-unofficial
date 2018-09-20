@@ -126,12 +126,14 @@ class Main : public QObject
 		QString rconPluginName; /// If not empty assume we want to launch an rcon client.
 		QString rconAddress;
 		unsigned short rconPort;
+		bool startCreateGame;
 		bool startRcon;
 		int updateFailedCode;
 		QUrl connectUrl;
 		bool bPortableMode;
 
 	private slots:
+		void runCreateGame();
 		void runRemoteConsole();
 };
 

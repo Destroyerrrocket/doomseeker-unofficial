@@ -167,12 +167,13 @@ bool DoomseekerConfigurationDialog::isOpen()
 	return false;
 }
 
-void DoomseekerConfigurationDialog::openConfiguration(const EnginePlugin *openPlugin)
+void DoomseekerConfigurationDialog::openConfiguration(QWidget *parent, const EnginePlugin *openPlugin)
 {
-	MainWindow *mw = gApp->mainWindow();
+	DoomseekerConfigurationDialog configDialog(parent);
 
-	DoomseekerConfigurationDialog configDialog(mw);
-	mw->connect(&configDialog, SIGNAL(appearanceChanged()), SLOT(updateDynamicAppearance()));
+	MainWindow *mainWindow = gApp->mainWindow();
+	if (mainWindow != NULL)
+		mainWindow->connect(&configDialog, SIGNAL(appearanceChanged()), SLOT(updateDynamicAppearance()));
 
 	configDialog.initOptionsList();
 
@@ -189,7 +190,8 @@ void DoomseekerConfigurationDialog::openConfiguration(const EnginePlugin *openPl
 	DoomseekerConfig::AutoUpdates::UpdateMode updateModeBefore = gConfig.autoUpdates.updateMode;
 	UpdateChannel updateChannelBefore = UpdateChannel::fromName(gConfig.autoUpdates.updateChannelName);
 	// Stop the auto refresh timer during configuration.
-	mw->stopAutoRefreshTimer();
+	if (mainWindow != NULL)
+		mainWindow->stopAutoRefreshTimer();
 
 	if(openPlugin)
 		configDialog.showPluginConfiguration(openPlugin);
@@ -197,7 +199,8 @@ void DoomseekerConfigurationDialog::openConfiguration(const EnginePlugin *openPl
 	configDialog.exec();
 
 	// Do some cleanups after config box finishes.
-	mw->initAutoRefreshTimer();
+	if (mainWindow != NULL)
+		mainWindow->initAutoRefreshTimer();
 
 	// If update channel or update mode changed then we should discard the
 	// current updates.
@@ -205,12 +208,14 @@ void DoomseekerConfigurationDialog::openConfiguration(const EnginePlugin *openPl
 	if (updateChannelBefore != updateChannelAfter
 		|| updateModeBefore != gConfig.autoUpdates.updateMode)
 	{
-		mw->abortAutoUpdater();
+		if (mainWindow != NULL)
+			mainWindow->abortAutoUpdater();
 		gConfig.autoUpdates.bPerformUpdateOnNextRun = false;
 		gConfig.saveToFile();
 	}
 
-	mw->finishConfiguration(configDialog, !bLookupHostsSettingBefore && gConfig.doomseeker.bLookupHosts);
+	if (mainWindow != NULL)
+		mainWindow->finishConfiguration(configDialog, !bLookupHostsSettingBefore && gConfig.doomseeker.bLookupHosts);
 }
 
 void DoomseekerConfigurationDialog::showPluginConfiguration(const EnginePlugin *plugin)

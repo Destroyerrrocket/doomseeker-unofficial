@@ -47,6 +47,7 @@ public:
 	void fillInParams(GameCreateParams &params);
 	void loadConfig(Ini &config, bool loadingPrevious);
 	QString mapName() const;
+	void reloadAppConfig();
 	void saveConfig(Ini &config);
 	void setupForEngine(EnginePlugin *engine);
 	void setupForRemoteGame();

@@ -33,6 +33,8 @@ them from configuration.
 - File aliases can now be either configured as "left-to-right" where a single
 file (WAD) can be replaced by one of aliases, or can be marked as equal where
 each file is replaceable by any other file on the same list. (addresses 2740).
+- '--create-game' argument added; it launches Doomseeker into the
+"Create Game" box, omitting the main window altogether. (addresses 3479)
 - IRC: User name can now be specified (this is different than nick name).
 - Windows: cacerts.pem database with "DST Root CA X3" and
 "DigiCert High Assurance EV Root CA" certificates.

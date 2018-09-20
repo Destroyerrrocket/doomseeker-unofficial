@@ -38,6 +38,7 @@ public:
 	GameExecutablePicker(QWidget *parent);
 	~GameExecutablePicker();
 
+	void reloadExecutables();
 	QString path() const;
 	void setPath(const QString &path);
 	/**
@@ -52,7 +53,6 @@ private:
 
 	void add(const QString &path);
 	GameFileList gameExecutables() const;
-	void reloadExecutables();
 	void showWarning(const QString &msg);
 
 private slots:

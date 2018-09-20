@@ -71,6 +71,11 @@ void Application::destroy()
 	d->running = false;
 }
 
+QIcon Application::icon()
+{
+	return QIcon(":/icon.png");
+}
+
 bool Application::isInit()
 {
 	return staticInstance != NULL;

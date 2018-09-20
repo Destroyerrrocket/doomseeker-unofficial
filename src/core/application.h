@@ -27,6 +27,7 @@
 #include "dptr.h"
 
 #include <QApplication>
+#include <QIcon>
 
 #define gApp (Application::instance())
 
@@ -64,6 +65,7 @@ class MAIN_EXPORT Application : public QApplication
 		static bool isInit();
 		static void init(int &argc, char **argv);
 		static Application *instance();
+		static QIcon icon();
 
 		virtual ~Application();
 

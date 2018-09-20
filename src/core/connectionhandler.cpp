@@ -28,6 +28,7 @@
 #include "strings.hpp"
 #include "configuration/doomseekerconfig.h"
 #include "gui/configuration/doomseekerconfigurationdialog.h"
+#include "gui/mainwindow.h"
 #include "plugins/engineplugin.h"
 #include "plugins/pluginloader.h"
 #include "refresher/canrefreshserver.h"
@@ -35,6 +36,7 @@
 #include "serverapi/gameclientrunner.h"
 #include "serverapi/message.h"
 #include "serverapi/server.h"
+#include "application.h"
 #include "apprunner.h"
 #include "gamedemo.h"
 #include <QDesktopServices>
@@ -164,7 +166,7 @@ void ConnectionHandler::onCommandLineBuildFinished()
 		}
 		if (builder->isConfigurationError())
 		{
-			DoomseekerConfigurationDialog::openConfiguration(d->server->plugin());
+			DoomseekerConfigurationDialog::openConfiguration(gApp->mainWindow(), d->server->plugin());
 		}
 	}
 	builder->deleteLater();

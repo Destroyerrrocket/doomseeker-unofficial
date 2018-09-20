@@ -40,12 +40,12 @@ public:
 
 	void addIwad(const QString &path);
 	QString currentIwad() const;
+	void loadIwads();
 	void setIwadByName(const QString &iwad);
 
 private:
-	void loadIwads();
-
 	DPtr<IwadPicker> d;
+
 private slots:
 	void browse();
 };

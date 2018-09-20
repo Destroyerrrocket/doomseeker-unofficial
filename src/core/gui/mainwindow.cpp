@@ -64,6 +64,7 @@
 #include "updater/updatechannel.h"
 #include "updater/updateinstaller.h"
 #include "updater/updatepackage.h"
+#include "application.h"
 #include "apprunner.h"
 #include "commandline.h"
 #include "connectionhandler.h"
@@ -288,7 +289,7 @@ MainWindow::MainWindow(QApplication* application, int argc, char** argv)
 		d->serverList->registerServer(server);
 	}
 
-	setWindowIcon(QIcon(":/icon.png"));
+	setWindowIcon(Application::icon());
 
 	// Auto refresh timer
 	initAutoRefreshTimer();
@@ -1123,7 +1124,7 @@ void MainWindow::menuManageDemos()
 
 void MainWindow::menuOptionsConfigure()
 {
-	DoomseekerConfigurationDialog::openConfiguration();
+	DoomseekerConfigurationDialog::openConfiguration(this);
 }
 
 void MainWindow::menuRecordDemo()

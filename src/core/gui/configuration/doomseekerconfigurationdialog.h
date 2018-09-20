@@ -42,7 +42,7 @@ class DoomseekerConfigurationDialog : public ConfigurationDialog
 		bool wasAppearanceChanged() const { return bAppearanceChanged; }
 		bool isRestartNeeded() const { return bRestartNeeded; }
 
-		static void openConfiguration(const EnginePlugin *showPlugin=NULL);
+		static void openConfiguration(QWidget *parent, const EnginePlugin *showPlugin=NULL);
 		static bool isOpen();
 
 	signals:

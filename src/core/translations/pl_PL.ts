@@ -2386,7 +2386,7 @@ Domyślny plik zotanie użyty.</translation>
     </message>
     <message>
         <source>If locked, executable won&apos;t change when new config for the same engine is loaded</source>
-        <translation type="obsolete">Gdyi zakluczone, plik wykonywalny pozostanie taki sam po załadowaniu innej konfiguracji dla tej samej gry</translation>
+        <translation type="obsolete">Gdy zakluczone, plik wykonywalny pozostanie taki sam po załadowaniu innej konfiguracji dla tej samej gry</translation>
     </message>
     <message>
         <source>Lock</source>
@@ -3430,7 +3430,7 @@ Nastąpił błąd:
     <message>
         <location filename="../../../../vs2013_5_7_0/src/core/ui_generalgamesetuppanel.h" line="283"/>
         <source>If locked, executable won&apos;t change when new config for the same engine is loaded</source>
-        <translation>Gdyi zakluczone, plik wykonywalny pozostanie taki sam po załadowaniu innej konfiguracji dla tej samej gry</translation>
+        <translation>Gdy zakluczone, plik wykonywalny pozostanie taki sam po załadowaniu innej konfiguracji dla tej samej gry</translation>
     </message>
     <message>
         <location filename="../../../../vs2013_5_7_0/src/core/ui_generalgamesetuppanel.h" line="285"/>

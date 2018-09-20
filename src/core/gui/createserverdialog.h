@@ -49,6 +49,7 @@ class CreateServerDialog : public QDialog
 		void makeRemoteGameSetupDialog(const EnginePlugin *plugin);
 		MapListPanel *mapListPanel();
 		QString mapName() const;
+		void setConfigureButtonVisible(bool visible);
 		void setIwadByName(const QString &iwad);
 
 	private slots:
@@ -66,6 +67,7 @@ class CreateServerDialog : public QDialog
 		 */
 		void initEngineSpecific(EnginePlugin *engineInfo);
 		void initGamemodeSpecific(const GameMode &gameMode);
+		void showConfiguration();
 
 	private:
 		static const QString TEMP_SERVER_CONFIG_FILENAME;

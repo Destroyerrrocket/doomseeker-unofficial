@@ -26,6 +26,7 @@
 #include "configuration/doomseekerconfig.h"
 #include "copytextdlg.h"
 #include "gui/widgets/createserverdialogpage.h"
+#include "gui/configuration/doomseekerconfigurationdialog.h"
 #include "datapaths.h"
 #include "ini/ini.h"
 #include "ini/settingsproviderqt.h"
@@ -63,6 +64,7 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 	d->currentEngine = NULL;
 
 	d->setupUi(this);
+	setConfigureButtonVisible(false);
 
 	d->generalSetupPanel->setCreateServerDialog(this);
 	d->rulesPanel->setCreateServerDialog(this);
@@ -415,4 +417,15 @@ bool CreateServerDialog::saveConfig(const QString& filename)
 void CreateServerDialog::setIwadByName(const QString &iwad)
 {
 	d->generalSetupPanel->setIwadByName(iwad);
+}
+
+void CreateServerDialog::setConfigureButtonVisible(bool visible)
+{
+	d->btnConfigure->setVisible(visible);
+}
+
+void CreateServerDialog::showConfiguration()
+{
+	DoomseekerConfigurationDialog::openConfiguration(this, d->currentEngine);
+	d->generalSetupPanel->reloadAppConfig();
 }

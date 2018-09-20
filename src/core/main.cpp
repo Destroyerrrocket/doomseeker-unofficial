@@ -39,6 +39,7 @@
 #include "configuration/passwordscfg.h"
 #include "configuration/queryspeed.h"
 #include "connectionhandler.h"
+#include "gui/createserverdialog.h"
 #include "gui/mainwindow.h"
 #include "gui/remoteconsole.h"
 #include "ip2c/ip2c.h"
@@ -70,7 +71,7 @@ QList<LocalizationInfo> Main::localizations;
 
 Main::Main(int argc, char* argv[])
 : arguments(argv), argumentsCount(argc),
-  startRcon(false)
+  startCreateGame(false), startRcon(false)
 {
 	bIsFirstRun = false;
 	bTestMode = false;
@@ -180,7 +181,11 @@ int Main::run()
 	initPluginConfig();
 	initIRCConfig();
 
-	if (startRcon)
+	if (startCreateGame)
+	{
+		QTimer::singleShot(0, this, SLOT(runCreateGame()));
+	}
+	else if (startRcon)
 	{
 		QTimer::singleShot(0, this, SLOT(runRemoteConsole()));
 	}
@@ -316,6 +321,15 @@ void Main::createMainWindow()
 	{
 		gApp->mainWindow()->notifyFirstRun();
 	}
+}
+
+void Main::runCreateGame()
+{
+	gLog << tr("Starting Create Game box.");
+	CreateServerDialog* dialog = new CreateServerDialog(NULL);
+	dialog->setConfigureButtonVisible(true);
+	dialog->setWindowIcon(Application::icon());
+	dialog->show();
 }
 
 void Main::runRemoteConsole()
@@ -546,14 +560,15 @@ int Main::installPendingUpdates()
 
 bool Main::interpretCommandLineParameters()
 {
+	QString failure;
 	//first argument is the command to run the program, example: ./doomseeker. better use 1 instead of 0
-	for(int i = 1; i < argumentsCount; ++i)
+	for (int i = 1; i < argumentsCount && failure.isEmpty(); ++i)
 	{
 		const char* arg = arguments[i];
 
-		if(strcmp(arg, "--connect") == 0)
+		if (strcmp(arg, "--connect") == 0)
 		{
-			if (i+1 < argumentsCount)
+			if (i + 1 < argumentsCount)
 			{
 				++i;
 				connectUrl = QUrl(arguments[i]);
@@ -561,15 +576,16 @@ bool Main::interpretCommandLineParameters()
 			else
 			{
 				//basically prevent the program from running if there are no arguments given.
-				gLog.setTimestampsEnabled(false);
-				gLog << tr("doomseeker: expected one argument in option %1").arg(arg);
-				logHelpOnBadRun();
-				return false;
+				failure = tr("doomseeker: expected one argument in option %1").arg(arg);
 			}
 		}
-		else if(strcmp(arg, "--datadir") == 0)
+		else if (strcmp(arg, "--create-game") == 0)
 		{
-			if (i+1 < argumentsCount)
+			startCreateGame = true;
+		}
+		else if (strcmp(arg, "--datadir") == 0)
+		{
+			if (i + 1 < argumentsCount)
 			{
 				++i;
 				dataDirectories.prepend(arguments[i]);
@@ -577,29 +593,23 @@ bool Main::interpretCommandLineParameters()
 			}
 			else
 			{
-				gLog.setTimestampsEnabled(false);
-				gLog << tr("doomseeker: expected one argument in option %1").arg(arg);
-				logHelpOnBadRun();
-				return false;
+				failure = tr("doomseeker: expected one argument in option %1").arg(arg);
 			}
 		}
-		else if(strcmp(arg, "--rcon") == 0)
+		else if (strcmp(arg, "--rcon") == 0)
 		{
 			startRcon = true;
-			if(i+2 < argumentsCount)
+			if (i + 2 < argumentsCount)
 			{
 				rconPluginName = arguments[++i];
 				Strings::translateServerAddress(arguments[++i], rconAddress, rconPort, "localhost:10666");
 			}
 			else
 			{
-				gLog.setTimestampsEnabled(false);
-				gLog << tr("doomseeker: expected two arguments in option %1").arg(arg);
-				logHelpOnBadRun();
-				return false;
+				failure = tr("doomseeker: expected two arguments in option %1").arg(arg);
 			}
 		}
-		else if(strcmp(arg, "--help") == 0)
+		else if (strcmp(arg, "--help") == 0)
 		{
 			gLog.setTimestampsEnabled(false);
 			// Print information to the log and terminate.
@@ -640,24 +650,32 @@ bool Main::interpretCommandLineParameters()
 					versionDumpFile = filename;
 				}
 			}
-
 		}
 		else
 		{
-			gLog.setTimestampsEnabled(false);
-			gLog << tr("doomseeker: unrecognized option '%1'").arg(arg);
-			logHelpOnBadRun();
-			return false;
+			failure = tr("doomseeker: unrecognized option '%1'").arg(arg);
 		}
 	}
 
+	QList<bool> exclusives;
+	exclusives << !connectUrl.isEmpty() << startCreateGame << startRcon;
+	if (exclusives.count(true) > 1)
+		failure = tr("doomseeker: `--connect`, `--create-game` and `--rcon` are mutually exclusive");
+
+	if (!failure.isEmpty())
+	{
+		gLog.setTimestampsEnabled(false);
+		gLog << failure;
+		logHelpOnBadRun();
+		return false;
+	}
 	return true;
 }
 
 void Main::logHelpOnBadRun()
 {
-    gLog << tr("Available command line parameters:\n");
-    gLog << CmdArgsHelp::argsHelp();
+	gLog << tr("Available command line parameters:\n");
+	gLog << CmdArgsHelp::argsHelp();
 }
 
 void Main::setupRefreshingThread()

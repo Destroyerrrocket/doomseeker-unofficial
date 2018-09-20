@@ -77,6 +77,17 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_6">
      <item>
+      <widget class="QPushButton" name="btnConfigure">
+       <property name="toolTip">
+        <string>Configure</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../media/resources.qrc">
+         <normaloff>:/icons/preferences-system-4.png</normaloff>:/icons/preferences-system-4.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="btnLoad">
        <property name="toolTip">
         <string>Load previously saved server configuration.</string>
@@ -184,6 +195,16 @@
    </slots>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>btnConfigure</tabstop>
+  <tabstop>btnLoad</tabstop>
+  <tabstop>btnSave</tabstop>
+  <tabstop>btnPlayOffline</tabstop>
+  <tabstop>btnCommandLine</tabstop>
+  <tabstop>btnStartServer</tabstop>
+  <tabstop>btnCancel</tabstop>
+ </tabstops>
  <resources>
   <include location="../../../media/resources.qrc"/>
  </resources>
@@ -316,6 +337,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnConfigure</sender>
+   <signal>clicked()</signal>
+   <receiver>CreateServerDialog</receiver>
+   <slot>showConfiguration()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>23</x>
+     <y>496</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>305</x>
+     <y>259</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>initGamemodeSpecific(GameMode)</slot>
@@ -325,5 +362,6 @@
   <slot>btnPlayOfflineClicked()</slot>
   <slot>btnSaveClicked()</slot>
   <slot>btnStartServerClicked()</slot>
+  <slot>showConfiguration()</slot>
  </slots>
 </ui>
