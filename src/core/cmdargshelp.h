@@ -9,13 +9,13 @@
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the GNU
 // Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301  USA
+// 02110-1301	USA
 //
 //------------------------------------------------------------------------------
 // Copyright (C) 2015 "Zalewa" <zalewapl@gmail.com>
@@ -30,34 +30,34 @@ class CmdArgsHelp : public QObject
 Q_OBJECT
 
 public:
-  /**
-   * @brief Returns all the options that Doomseeker accepts,
-   *        excluding the ones for internal use.
-   */
-  static QString argsHelp();
+	/**
+	 * @brief Returns all the options that Doomseeker accepts,
+	 *        excluding the ones for internal use.
+	 */
+	static QString argsHelp();
 
-  /**
-   * @brief Prepends "Available command line parameters" to
-   *        argsHelp().
-   */
-  static QString avaliableCommands();
+	/**
+	 * @brief Prepends "Available command line parameters" to
+	 *        argsHelp().
+	 */
+	static QString avaliableCommands();
 
-  /**
-   * @brief Returns a string informing about the lack of arguments,
-   *        followed by avaliableCommands().
-   *
-   * @param ExpectedArguments Number of expected arguments.
-   * @param option Option that doesn't have enough arguments.
-   */
-  static QString missingArgs(int expectedArguments, QString option);
+	/**
+	 * @brief Returns a string informing about the lack of arguments,
+	 *        followed by avaliableCommands().
+	 *
+	 * @param ExpectedArguments Number of expected arguments.
+	 * @param option Option that doesn't have enough arguments.
+	 */
+	static QString missingArgs(int expectedArguments, QString option);
 
-  /**
-   * @brief Returns a string informing about the use of an unkown
-   *        option, followed by avaliableCommands().
-   *
-   * @param option Unknown option.
-   */
-  static QString unrecognizedOption(QString option);
+	/**
+	 * @brief Returns a string informing about the use of an unkown
+	 *        option, followed by avaliableCommands().
+	 *
+	 * @param option Unknown option.
+	 */
+	static QString unrecognizedOption(QString option);
 };
 
 #endif
