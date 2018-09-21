@@ -7,6 +7,7 @@
  */
 
 #define _CRT_SECURE_NO_DEPRECATE
+#define _XOPEN_SOURCE 700
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -158,7 +159,7 @@ int main(int argc, char **argv)
 			hash, vertag, hash, lastlog);
 
 		// [BB] Also save out hg info.
-		fprintf (stream, "#define HG_REVISION_NUMBER %lu\n", hgdate);
+		fprintf (stream, "#define HG_REVISION_NUMBER %lld\n", (long long) hgdate);
 		// [BB] We use the short hash.
 		hash[12] = 0;
 		fprintf (stream, "#define HG_REVISION_HASH_STRING \"%s\"\n", hash);
