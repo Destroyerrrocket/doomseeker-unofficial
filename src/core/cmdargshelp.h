@@ -40,20 +40,20 @@ public:
 	 * @brief Prepends "Available command line parameters" to
 	 *        argsHelp().
 	 */
-	static QString avaliableCommands();
+	static QString availableCommands();
 
 	/**
 	 * @brief Returns a string informing about the lack of arguments,
-	 *        followed by avaliableCommands().
+	 *        followed by availableCommands().
 	 *
-	 * @param ExpectedArguments Number of expected arguments.
+	 * @param expectedArguments Number of expected arguments.
 	 * @param option Option that doesn't have enough arguments.
 	 */
 	static QString missingArgs(int expectedArguments, QString option);
 
 	/**
-	 * @brief Returns a string informing about the use of an unkown
-	 *        option, followed by avaliableCommands().
+	 * @brief Returns a string informing about the use of an unknown
+	 *        option, followed by availableCommands().
 	 *
 	 * @param option Unknown option.
 	 */
