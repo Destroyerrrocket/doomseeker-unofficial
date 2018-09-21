@@ -576,7 +576,7 @@ bool Main::interpretCommandLineParameters()
 			else
 			{
 				//basically prevent the program from running if there are no arguments given.
-				failure = tr("doomseeker: expected one argument in option %1").arg(arg);
+				failure = CmdArgsHelp::missingArgs(1, arg);
 			}
 		}
 		else if (strcmp(arg, "--create-game") == 0)
@@ -593,7 +593,7 @@ bool Main::interpretCommandLineParameters()
 			}
 			else
 			{
-				failure = tr("doomseeker: expected one argument in option %1").arg(arg);
+				failure = CmdArgsHelp::missingArgs(1, arg);
 			}
 		}
 		else if (strcmp(arg, "--rcon") == 0)
@@ -606,15 +606,14 @@ bool Main::interpretCommandLineParameters()
 			}
 			else
 			{
-				failure = tr("doomseeker: expected two arguments in option %1").arg(arg);
+				failure = CmdArgsHelp::missingArgs(2, arg);
 			}
 		}
 		else if (strcmp(arg, "--help") == 0)
 		{
 			gLog.setTimestampsEnabled(false);
 			// Print information to the log and terminate.
-			gLog << tr("Available command line parameters:\n");
-			gLog << CmdArgsHelp::argsHelp();
+			gLog << CmdArgsHelp::avaliableCommands();
 			return false;
 		}
 		else if (strcmp(arg, "--update-failed") == 0)
@@ -653,7 +652,7 @@ bool Main::interpretCommandLineParameters()
 		}
 		else
 		{
-			failure = tr("doomseeker: unrecognized option '%1'").arg(arg);
+			failure = CmdArgsHelp::unrecognizedOption(arg);
 		}
 	}
 
@@ -666,16 +665,9 @@ bool Main::interpretCommandLineParameters()
 	{
 		gLog.setTimestampsEnabled(false);
 		gLog << failure;
-		logHelpOnBadRun();
 		return false;
 	}
 	return true;
-}
-
-void Main::logHelpOnBadRun()
-{
-	gLog << tr("Available command line parameters:\n");
-	gLog << CmdArgsHelp::argsHelp();
 }
 
 void Main::setupRefreshingThread()

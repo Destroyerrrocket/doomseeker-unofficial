@@ -111,7 +111,6 @@ class Main : public QObject
 		 *		returns.
 		 */
 		bool interpretCommandLineParameters();
-		void logHelpOnBadRun();
 		void setupRefreshingThread();
 		bool shouldLogToStderr() const;
 

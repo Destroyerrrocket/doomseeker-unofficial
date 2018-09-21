@@ -30,7 +30,34 @@ class CmdArgsHelp : public QObject
 Q_OBJECT
 
 public:
-	static QString argsHelp();
+  /**
+   * @brief Returns all the options that Doomseeker accepts,
+   *        excluding the ones for internal use.
+   */
+  static QString argsHelp();
+
+  /**
+   * @brief Prepends "Available command line parameters" to
+   *        argsHelp().
+   */
+  static QString avaliableCommands();
+
+  /**
+   * @brief Returns a string informing about the lack of arguments,
+   *        followed by avaliableCommands().
+   *
+   * @param ExpectedArguments Number of expected arguments.
+   * @param option Option that doesn't have enough arguments.
+   */
+  static QString missingArgs(int expectedArguments, QString option);
+
+  /**
+   * @brief Returns a string informing about the use of an unkown
+   *        option, followed by avaliableCommands().
+   *
+   * @param option Unknown option.
+   */
+  static QString unrecognizedOption(QString option);
 };
 
 #endif
