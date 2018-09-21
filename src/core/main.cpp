@@ -613,7 +613,7 @@ bool Main::interpretCommandLineParameters()
 		{
 			gLog.setTimestampsEnabled(false);
 			// Print information to the log and terminate.
-			gLog << CmdArgsHelp::avaliableCommands();
+			gLog << CmdArgsHelp::availableCommands();
 			return false;
 		}
 		else if (strcmp(arg, "--update-failed") == 0)

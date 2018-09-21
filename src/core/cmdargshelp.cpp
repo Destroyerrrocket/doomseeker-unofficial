@@ -66,7 +66,7 @@ QString CmdArgsHelp::argsHelp()
 	return help;
 }
 
-QString CmdArgsHelp::avaliableCommands()
+QString CmdArgsHelp::availableCommands()
 {
 	QString help = tr("Available command line parameters:\n");
 	help += argsHelp();
@@ -76,13 +76,13 @@ QString CmdArgsHelp::avaliableCommands()
 QString CmdArgsHelp::missingArgs(int expectedArguments, QString option)
 {
 	QString help = tr("doomseeker: expected %n argument(s) in option %1\n\n", NULL, expectedArguments).arg(option);
-	help += avaliableCommands();
+	help += availableCommands();
 	return help;
 }
 
 QString CmdArgsHelp::unrecognizedOption(QString option)
 {
-	QString help = tr("doomseeker: doomseeker: unrecognized option '%1'\n\n").arg(option);
-	help += avaliableCommands();
+	QString help = tr("doomseeker: unrecognized option '%1'\n\n").arg(option);
+	help += availableCommands();
 	return help;
 }
