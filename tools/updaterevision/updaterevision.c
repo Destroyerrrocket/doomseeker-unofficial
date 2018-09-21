@@ -7,6 +7,7 @@
  */
 
 #define _CRT_SECURE_NO_DEPRECATE
+#define _XOPEN_SOURCE 700
 
 #include <stdio.h>
 #include <stdlib.h>
