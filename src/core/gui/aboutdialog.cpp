@@ -92,7 +92,9 @@ QString AboutDialog::copyrightVerboseNotice() const
 	QStringList paragraphs;
 
 	// License
-	paragraphs << tr("Copyright © %1 The Doomseeker Team").arg(Version::yearSpan());
+	QChar copyrightChar(0x00a9);
+	paragraphs << tr("Copyright %1 %2 The Doomseeker Team")
+		.arg(copyrightChar).arg(Version::yearSpan());
 	paragraphs << tr("This program is distributed under the terms of the LGPL v2.1 or later.");
 
 	// GeoLite2
