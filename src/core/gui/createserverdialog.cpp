@@ -52,7 +52,7 @@ DClass<CreateServerDialog> : public Ui::CreateServerDialog
 
 DPointered(CreateServerDialog)
 
-const QString CreateServerDialog::TEMP_SERVER_CONFIG_FILENAME = "/tmpserver.ini";
+const QString CreateServerDialog::TEMP_GAME_CONFIG_FILENAME = "/tmpserver.ini";
 
 CreateServerDialog::CreateServerDialog(QWidget* parent)
 : QDialog(parent)
@@ -70,8 +70,8 @@ CreateServerDialog::CreateServerDialog(QWidget* parent)
 	d->rulesPanel->setCreateServerDialog(this);
 
 	// This is a crude solution to the problem where message boxes appear
-	// before the actual Create Server dialog. We need to give some time
-	// for the Dialog to appear. Unfortunately reimplementing
+	// before the actual Create Game dialog. We need to give some time
+	// for the dialog to appear. Unfortunately reimplementing
 	// QDialog::showEvent() didn't work very well.
 	QTimer::singleShot(1, this, SLOT(firstLoadConfigTimer()) );
 }
@@ -80,25 +80,10 @@ CreateServerDialog::~CreateServerDialog()
 {
 }
 
-void CreateServerDialog::btnCommandLineClicked()
-{
-	QString executable;
-	QStringList args;
-	if(commandLineArguments(executable, args))
-	{
-		// Lines below directly modify the passed values.
-		CommandLine::escapeExecutable(executable);
-		CommandLine::escapeArgs(args);
-
-		CopyTextDlg ctd(executable + " " + args.join(" "), "Host server command line:", this);
-		ctd.exec();
-	}
-}
-
 void CreateServerDialog::btnLoadClicked()
 {
 	QString dialogDir = gConfig.doomseeker.previousCreateServerConfigDir;
-	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - load server config"), dialogDir, tr("Config files (*.ini)"));
+	QString strFile = QFileDialog::getOpenFileName(this, tr("Doomseeker - load game setup config"), dialogDir, tr("Config files (*.ini)"));
 
 	if (!strFile.isEmpty())
 	{
@@ -117,7 +102,7 @@ void CreateServerDialog::btnPlayOfflineClicked()
 void CreateServerDialog::btnSaveClicked()
 {
 	QString dialogDir = gConfig.doomseeker.previousCreateServerConfigDir;
-	QString strFile = QFileDialog::getSaveFileName(this, tr("Doomseeker - save server config"), dialogDir, tr("Config files (*.ini)"));
+	QString strFile = QFileDialog::getSaveFileName(this, tr("Doomseeker - save game setup config"), dialogDir, tr("Config files (*.ini)"));
 	if (!strFile.isEmpty())
 	{
 		QFileInfo fi(strFile);
@@ -130,7 +115,7 @@ void CreateServerDialog::btnSaveClicked()
 
 		if (!saveConfig(strFile))
 		{
-			QMessageBox::critical(NULL, tr("Doomseeker - save server config"), tr("Unable to save server configuration!"));
+			QMessageBox::critical(NULL, tr("Doomseeker - save game setup config"), tr("Unable to save game setup configuration!"));
 		}
 	}
 
@@ -144,17 +129,17 @@ void CreateServerDialog::btnStartServerClicked()
 		accept();
 }
 
-bool CreateServerDialog::commandLineArguments(QString &executable, QStringList &args)
+bool CreateServerDialog::commandLineArguments(QString &executable, QStringList &args, bool offline)
 {
 	const QString errorCapt = tr("Doomseeker - create game");
 	if (d->currentEngine == NULL)
 	{
-		QMessageBox::critical(NULL, errorCapt, tr("No engine selected"));
+		QMessageBox::critical(NULL, errorCapt, tr("No game selected"));
 		return false;
 	}
 
 	GameCreateParams gameParams;
-	if (createHostInfo(gameParams, false))
+	if (createHostInfo(gameParams, offline))
 	{
 		CommandLineInfo cli;
 		QString error;
@@ -222,12 +207,12 @@ GameMode CreateServerDialog::currentGameMode() const
 void CreateServerDialog::firstLoadConfigTimer()
 {
 	initEngineSpecific(d->generalSetupPanel->currentPlugin());
-	QString tmpServerCfgPath = gDefaultDataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
+	QString tmpGameCfgPath = gDefaultDataPaths->programsDataDirectoryPath() + TEMP_GAME_CONFIG_FILENAME;
 
-	QFileInfo fi(tmpServerCfgPath);
+	QFileInfo fi(tmpGameCfgPath);
 	if (fi.exists())
 	{
-		loadConfig(tmpServerCfgPath, true);
+		loadConfig(tmpGameCfgPath, true);
 	}
 }
 
@@ -360,7 +345,7 @@ void CreateServerDialog::runGame(bool offline)
 	const QString errorCapt = tr("Doomseeker - create game");
 	if (d->currentEngine == NULL)
 	{
-		QMessageBox::critical(NULL, errorCapt, tr("No engine selected"));
+		QMessageBox::critical(NULL, errorCapt, tr("No game selected"));
 		return;
 	}
 
@@ -380,8 +365,8 @@ void CreateServerDialog::runGame(bool offline)
 		}
 		else
 		{
-			QString tmpServerConfigPath = gDefaultDataPaths->programsDataDirectoryPath() + TEMP_SERVER_CONFIG_FILENAME;
-			saveConfig(tmpServerConfigPath);
+			QString tmpGameConfigPath = gDefaultDataPaths->programsDataDirectoryPath() + TEMP_GAME_CONFIG_FILENAME;
+			saveConfig(tmpGameConfigPath);
 		}
 	}
 }
@@ -428,4 +413,32 @@ void CreateServerDialog::showConfiguration()
 {
 	DoomseekerConfigurationDialog::openConfiguration(this, d->currentEngine);
 	d->generalSetupPanel->reloadAppConfig();
+}
+
+void CreateServerDialog::showCommandLine(bool offline)
+{
+	QString executable;
+	QStringList args;
+	if (commandLineArguments(executable, args, offline))
+	{
+		// Lines below directly modify the passed values.
+		CommandLine::escapeExecutable(executable);
+		CommandLine::escapeArgs(args);
+
+		QString title = offline ? 
+			tr("Run game command line:") :
+			tr("Host server command line:");
+		CopyTextDlg ctd(executable + " " + args.join(" "), title, this);
+		ctd.exec();
+	}
+}
+
+void CreateServerDialog::showHostCommandLine()
+{
+	showCommandLine(false);
+}
+
+void CreateServerDialog::showOfflineCommandLine()
+{
+	showCommandLine(true);
 }

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>612</width>
+    <width>761</width>
     <height>519</height>
    </rect>
   </property>
@@ -78,6 +78,12 @@
     <layout class="QHBoxLayout" name="horizontalLayout_6">
      <item>
       <widget class="QPushButton" name="btnConfigure">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="toolTip">
         <string>Configure</string>
        </property>
@@ -89,6 +95,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnLoad">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="toolTip">
         <string>Load previously saved server configuration.</string>
        </property>
@@ -99,6 +111,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnSave">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="toolTip">
         <string>Save current server configuration.</string>
        </property>
@@ -125,24 +143,90 @@
       </spacer>
      </item>
      <item>
+      <widget class="Line" name="line_3">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>10</height>
+        </size>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnCommandLineOffline">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Obtain command line required to launch this server.</string>
+       </property>
+       <property name="text">
+        <string>Offline command line</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="btnPlayOffline">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Play offline</string>
        </property>
       </widget>
      </item>
      <item>
+      <widget class="Line" name="line">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>10</height>
+        </size>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="btnCommandLine">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="toolTip">
         <string>Obtain command line required to launch this server.</string>
        </property>
        <property name="text">
-        <string>Command Line</string>
+        <string>Host command line</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btnStartServer">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Start server</string>
        </property>
@@ -150,6 +234,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnCancel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Close</string>
        </property>
@@ -248,8 +338,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>578</x>
-     <y>500</y>
+     <x>667</x>
+     <y>507</y>
     </hint>
     <hint type="destinationlabel">
      <x>305</x>
@@ -261,11 +351,11 @@
    <sender>btnCommandLine</sender>
    <signal>clicked()</signal>
    <receiver>CreateServerDialog</receiver>
-   <slot>btnCommandLineClicked()</slot>
+   <slot>showHostCommandLine()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>399</x>
-     <y>500</y>
+     <x>505</x>
+     <y>507</y>
     </hint>
     <hint type="destinationlabel">
      <x>305</x>
@@ -280,8 +370,8 @@
    <slot>btnLoadClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>31</x>
-     <y>500</y>
+     <x>75</x>
+     <y>507</y>
     </hint>
     <hint type="destinationlabel">
      <x>305</x>
@@ -296,8 +386,8 @@
    <slot>btnPlayOfflineClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>297</x>
-     <y>500</y>
+     <x>413</x>
+     <y>507</y>
     </hint>
     <hint type="destinationlabel">
      <x>305</x>
@@ -312,8 +402,8 @@
    <slot>btnSaveClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>98</x>
-     <y>501</y>
+     <x>199</x>
+     <y>508</y>
     </hint>
     <hint type="destinationlabel">
      <x>305</x>
@@ -328,8 +418,8 @@
    <slot>btnStartServerClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>501</x>
-     <y>500</y>
+     <x>586</x>
+     <y>507</y>
     </hint>
     <hint type="destinationlabel">
      <x>305</x>
@@ -353,15 +443,32 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnCommandLineOffline</sender>
+   <signal>clicked()</signal>
+   <receiver>CreateServerDialog</receiver>
+   <slot>showOfflineCommandLine()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>287</x>
+     <y>493</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>676</x>
+     <y>476</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>initGamemodeSpecific(GameMode)</slot>
   <slot>initEngineSpecific(EnginePlugin*)</slot>
-  <slot>btnCommandLineClicked()</slot>
+  <slot>showHostCommandLine()</slot>
   <slot>btnLoadClicked()</slot>
   <slot>btnPlayOfflineClicked()</slot>
   <slot>btnSaveClicked()</slot>
   <slot>btnStartServerClicked()</slot>
   <slot>showConfiguration()</slot>
+  <slot>showOfflineCommandLine()</slot>
  </slots>
 </ui>

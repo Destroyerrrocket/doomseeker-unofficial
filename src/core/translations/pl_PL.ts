@@ -2353,7 +2353,7 @@ Domyślny plik zotanie użyty.</translation>
         <translation>Stwórz grę</translation>
     </message>
     <message>
-        <source>Engine:</source>
+        <source>Game:</source>
         <translation type="obsolete">Gra:</translation>
     </message>
     <message>
@@ -2785,7 +2785,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="122"/>
-        <source>Engines</source>
+        <source>Games</source>
         <translation>Gry</translation>
     </message>
 </context>
@@ -3411,7 +3411,7 @@ Nastąpił błąd:
     </message>
     <message>
         <location filename="../../../../vs2013_5_7_0/src/core/ui_generalgamesetuppanel.h" line="280"/>
-        <source>Engine:</source>
+        <source>Game:</source>
         <translation>Gra:</translation>
     </message>
     <message>

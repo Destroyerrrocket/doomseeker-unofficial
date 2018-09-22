@@ -35,7 +35,7 @@ class Message;
 class Server;
 
 /**
- * @brief Dialog window allowing user to host a game.
+ * @brief Dialog window allowing user to create a game.
  */
 class CreateServerDialog : public QDialog
 {
@@ -45,7 +45,7 @@ class CreateServerDialog : public QDialog
 		CreateServerDialog(QWidget* parent = NULL);
 		virtual ~CreateServerDialog();
 
-		bool commandLineArguments(QString &executable, QStringList &args);
+		bool commandLineArguments(QString &executable, QStringList &args, bool offline);
 		void makeRemoteGameSetupDialog(const EnginePlugin *plugin);
 		MapListPanel *mapListPanel();
 		QString mapName() const;
@@ -53,7 +53,6 @@ class CreateServerDialog : public QDialog
 		void setIwadByName(const QString &iwad);
 
 	private slots:
-		void btnCommandLineClicked();
 		void btnLoadClicked();
 		void btnPlayOfflineClicked();
 		void btnSaveClicked();
@@ -61,16 +60,18 @@ class CreateServerDialog : public QDialog
 		void firstLoadConfigTimer();
 
 		/**
-		 *	Called each time when a new engine in engine combo box is selected.
-		 *	Resets most of the controls and puts engine specific information
-		 *	and controls where applicable.
+		 * Called each time when a new engine in engine combo box is selected.
+		 * Resets most of the controls and puts engine specific information
+		 * and controls where applicable.
 		 */
 		void initEngineSpecific(EnginePlugin *engineInfo);
 		void initGamemodeSpecific(const GameMode &gameMode);
 		void showConfiguration();
+		void showHostCommandLine();
+		void showOfflineCommandLine();
 
 	private:
-		static const QString TEMP_SERVER_CONFIG_FILENAME;
+		static const QString TEMP_GAME_CONFIG_FILENAME;
 
 		DPtr<CreateServerDialog> d;
 
@@ -108,6 +109,7 @@ class CreateServerDialog : public QDialog
 		bool loadConfig(const QString& filename, bool loadingPrevious);
 		void runGame(bool offline);
 		bool saveConfig(const QString& filename);
+		void showCommandLine(bool offline);
 };
 
 #endif

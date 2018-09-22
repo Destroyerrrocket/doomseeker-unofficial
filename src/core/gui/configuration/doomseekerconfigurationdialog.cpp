@@ -128,7 +128,7 @@ void DoomseekerConfigurationDialog::doSaveSettings()
 
 void DoomseekerConfigurationDialog::initOptionsList()
 {
-	enginesRoot = addLabel(NULL, tr("Engines"));
+	enginesRoot = addLabel(NULL, tr("Games"));
 	enginesRoot->setIcon(QIcon(":/icons/joystick.png"));
 
 	ConfigPage* configPage = NULL;
