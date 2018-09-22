@@ -216,6 +216,7 @@ void GameRulesPanel::setupDifficulty(const EnginePlugin *engine)
 
 void GameRulesPanel::setupModifiers(const EnginePlugin *engine)
 {
+	QString selectedModifier = d->cboModifier->currentText();
 	d->cboModifier->clear();
 	d->gameModifiers.clear();
 
@@ -232,6 +233,12 @@ void GameRulesPanel::setupModifiers(const EnginePlugin *engine)
 		{
 			d->cboModifier->addItem(cvar.name());
 			d->gameModifiers << cvar;
+		}
+		if (!selectedModifier.isEmpty())
+		{
+			int modifierIndex = d->cboModifier->findText(selectedModifier);
+			if (modifierIndex >= 0)
+				d->cboModifier->setCurrentIndex(modifierIndex);
 		}
 	}
 	else

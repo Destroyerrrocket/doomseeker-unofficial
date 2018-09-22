@@ -148,7 +148,9 @@ program. (addresses #3260)
 necessary to explicitly mention it in the .def file. It is now
 available by default regardless if there are any .def files or if any
 of those files contain it. This change should be backward-compatible
-with .def files that define localization for the invalid 'en_EN' locale.
+with .def files that define localization for the invalid 'en_EN' locale
+- Try to remember previously selected game modifier when the "Rules" panel
+in Create Game box resets upon actions such as game or game mode change.
 - IRC: connect to networks by using the hostnames directly, allowing
 Qt to choose the most appropriate address. This should prefer IPv6 connectivity
 when available.
