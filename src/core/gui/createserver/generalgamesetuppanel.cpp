@@ -112,7 +112,9 @@ void GeneralGameSetupPanel::loadConfig(Ini &config, bool loadingPrevious)
 
 	d->leServername->setText(general["name"]);
 	d->spinPort->setValue(general["port"]);
-	d->cboGamemode->setCurrentIndex(general["gamemode"]);
+	int gameModeIndex = d->cboGamemode->findData(static_cast<gamemode_id>(general["gamemode"]));
+	if (gameModeIndex >= 0)
+		d->cboGamemode->setCurrentIndex(gameModeIndex);
 	d->leMap->setText(general["map"]);
 
 	if (!(loadingPrevious && d->iwadSetExplicitly))
@@ -143,7 +145,7 @@ void GeneralGameSetupPanel::saveConfig(Ini &config)
 	general["executable"] = pathToExe();
 	general["name"] = d->leServername->text();
 	general["port"] = d->spinPort->value();
-	general["gamemode"] = d->cboGamemode->currentIndex();
+	general["gamemode"] = d->cboGamemode->itemData(d->cboGamemode->currentIndex()).toInt();
 	general["map"] = d->leMap->text();
 	general["iwad"] = d->iwadPicker->currentIwad();
 
@@ -180,13 +182,12 @@ void GeneralGameSetupPanel::setupForEngine(EnginePlugin *engine)
 	d->spinPort->setValue(d->currentEngine->data()->defaultServerPort);
 
 	d->cboGamemode->clear();
+	d->cboGamemode->addItem(tr("< NONE >"), GameMode::SGM_Unknown);
+
 	QList<GameMode> gameModes = d->currentEngine->gameModes();
-	if (!gameModes.isEmpty())
+	for (int i = 0; i < gameModes.count(); ++i)
 	{
-		for (int i = 0; i < gameModes.count(); ++i)
-		{
-			d->cboGamemode->addItem(gameModes[i].name(), i);
-		}
+		d->cboGamemode->addItem(gameModes[i].name(), gameModes[i].index());
 	}
 }
 
@@ -236,8 +237,7 @@ void GeneralGameSetupPanel::onGameModeChanged(int index)
 {
 	if (index >= 0)
 	{
-		QList<GameMode> gameModes = d->currentEngine->gameModes();
-		emit gameModeChanged(gameModes[index]);
+		emit gameModeChanged(currentGameMode());
 	}
 }
 
@@ -246,12 +246,12 @@ GameMode GeneralGameSetupPanel::currentGameMode() const
 	QList<GameMode> gameModes = d->currentEngine->gameModes();
 	foreach (const GameMode& mode, gameModes)
 	{
-		if (mode.name().compare(d->cboGamemode->currentText()) == 0)
+		if (mode.index() == d->cboGamemode->itemData(d->cboGamemode->currentIndex()).toInt())
 		{
 			return mode;
 		}
 	}
-	return GameMode();
+	return GameMode::mkUnknown();
 }
 
 EnginePlugin *GeneralGameSetupPanel::currentPlugin() const

@@ -312,7 +312,7 @@ QList<GameCVar> GameCVarProvider::get(const QVariant &context)
 DClass<GameMode>
 {
 	public:
-		int index;
+		gamemode_id index;
 		QString name;
 		bool teamgame;
 };
@@ -321,11 +321,11 @@ DPointered(GameMode)
 
 GameMode::GameMode()
 {
-	d->index = -1;
+	d->index = SGM_Unknown;
 	d->teamgame = false;
 }
 
-GameMode::GameMode(int index, const QString &name)
+GameMode::GameMode(gamemode_id index, const QString &name)
 {
 	d->index = index;
 	d->name = name;
@@ -343,7 +343,7 @@ GameMode GameMode::ffaGame(int index, const QString &name)
 	return result;
 }
 
-int GameMode::index() const
+gamemode_id GameMode::index() const
 {
 	return d->index;
 }

@@ -43,7 +43,8 @@ void Turok2ExGameHost::addExtra()
 	args() << "+shufflemaplist" << QString::number( static_cast<int>(params().isRandomMapRotation()) );
 
 	unsigned int modeNum = params().gameMode().index();;
-	args() << "+sv_gamemode" << QString::number(modeNum);
+	if (modeNum != GameMode::SGM_Unknown)
+		args() << "+sv_gamemode" << QString::number(modeNum);
 
 	if (!params().map().isEmpty())
 	{

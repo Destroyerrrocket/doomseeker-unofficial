@@ -97,7 +97,8 @@ void Srb2GameHost::addExtra()
 		case GameMode::SGM_TeamDeathmatch: modeNum = 4; break;
 		case GameMode::SGM_CTF: modeNum = 7; break;
 	}
-	args() << "-gametype" << QString::number(modeNum);
+	if (modeNum != GameMode::SGM_Unknown)
+		args() << "-gametype" << QString::number(modeNum);
 	args() << "+servername" << params().name();
 	args() << "+maxplayers" << QString::number(params().maxPlayers());
 

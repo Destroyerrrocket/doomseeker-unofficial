@@ -79,7 +79,8 @@ void ZandronumGameHost::addExtra()
 		case ZandronumGameInfo::GAMEMODE_TEAMPOSSESSION:	gameModeStr = "+teampossession"; break;
 		case ZandronumGameInfo::GAMEMODE_TERMINATOR:		gameModeStr = "+terminator"; break;
 	}
-	args() << gameModeStr << "1";
+	if (!gameModeStr.isEmpty())
+		args() << gameModeStr << "1";
 
 	args() << "+sv_hostemail" << strArg(params().email());
 

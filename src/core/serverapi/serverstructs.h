@@ -328,6 +328,26 @@ private:
 
 /**
  * @ingroup group_pluginapi
+ * @brief Unique identifier of a GameMode within the plugin.
+ *
+ * This is an integral value that can be cast to GameMode::StandardGameMode
+ * or whatever other integral value the plugin provides. It is used to
+ * uniquely identify the GameMode and is stored in game setup configurations
+ * created by "Create Game" dialog box.
+ *
+ * gamemode_id should be a small integer that can be safely cast to int
+ * regardless of the underlying CPU architecture. Plugins should not change
+ * ID of a GameMode in their version history once a concrete value is decided
+ * upon. Plugins also should not overlap GameMode::StandardGameMode values.
+ *
+ * When hosting a game, plugin should be prepared that the passed gamemode_id
+ * will be GameMode::SGM_Unknown, upon which plugin should leave it up to the
+ * game to pick the game mode.
+ */
+typedef int gamemode_id;
+
+/**
+ * @ingroup group_pluginapi
  * @brief Game mode representation.
  *
  * The only available constructor will create an invalid object (returns false
@@ -412,7 +432,7 @@ class MAIN_EXPORT GameMode
 		/**
 		 * @brief Index, either a StandardGameMode or custom defined by plugin.
 		 */
-		int index() const;
+		gamemode_id index() const;
 
 		/**
 		 * @brief User-friendly name to display for game mode.
@@ -433,7 +453,7 @@ class MAIN_EXPORT GameMode
 	private:
 		DPtr<GameMode> d;
 
-		GameMode(int index, const QString &name);
+		GameMode(gamemode_id index, const QString &name);
 
 		void setTeamGame(bool b);
 };
