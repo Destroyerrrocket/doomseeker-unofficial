@@ -28,6 +28,7 @@
 #include "serverapi/gamecreateparams.h"
 #include "serverapi/serverstructs.h"
 
+#include <QVariant>
 #include <climits>
 
 DClass<GameRulesPanel> : public Ui::GameRulesPanel
@@ -45,7 +46,6 @@ public:
 	QList<GameCVar> gameModifiers;
 	QList<GameLimitWidget*> limitWidgets;
 	QMap<QString, QMap<QString, int> > memorizedLimits;
-	QVariant memorizedDifficulty;
 };
 
 DPointered(GameRulesPanel)
@@ -64,7 +64,7 @@ GameRulesPanel::~GameRulesPanel()
 
 void GameRulesPanel::fillInParams(GameCreateParams &params)
 {
-	params.setSkill(d->cboDifficulty->currentIndex());
+	params.setSkill(d->cboDifficulty->itemData(d->cboDifficulty->currentIndex()).toInt());
 	params.setMaxClients(d->spinMaxClients->value());
 	params.setMaxPlayers(d->spinMaxPlayers->value());
 
@@ -134,7 +134,8 @@ void GameRulesPanel::loadConfig(Ini &config)
 {
 	IniSection section = config.section("Rules");
 
-	d->cboDifficulty->setCurrentIndex(section["difficulty"]);
+	int difficultyIndex = d->cboDifficulty->findData(static_cast<int>(section["difficulty"]));
+	d->cboDifficulty->setCurrentIndex(qMax(0, difficultyIndex));
 	d->cboModifier->setCurrentIndex(section["modifier"]);
 	d->spinMaxClients->setValue(section["maxClients"]);
 	d->spinMaxPlayers->setValue(section["maxPlayers"]);
@@ -150,7 +151,7 @@ void GameRulesPanel::saveConfig(Ini &config)
 {
 	IniSection section = config.section("Rules");
 
-	section["difficulty"] = d->cboDifficulty->currentIndex();
+	section["difficulty"] = d->cboDifficulty->itemData(d->cboDifficulty->currentIndex()).toInt();
 	section["modifier"] = d->cboModifier->currentIndex();
 	section["maxClients"] = d->spinMaxClients->value();
 	section["maxPlayers"] = d->spinMaxPlayers->value();
@@ -197,24 +198,20 @@ void GameRulesPanel::setupForRemoteGame()
 
 void GameRulesPanel::setupDifficulty(const EnginePlugin *engine)
 {
-	QVariant oldLevel = d->cboDifficulty->itemData(d->cboDifficulty->currentIndex());
-	if (oldLevel.isValid())
-	{
-		d->memorizedDifficulty = oldLevel;
-	}
+	QVariant oldDifficulty = d->cboDifficulty->itemData(d->cboDifficulty->currentIndex());
 	d->cboDifficulty->clear();
 
 	QList<GameCVar> levels = engine->data()->difficulty->get(QVariant());
 	d->labelDifficulty->setVisible(!levels.isEmpty());
 	d->cboDifficulty->setVisible(!levels.isEmpty());
+	d->cboDifficulty->addItem(tr("< NONE >"), Skill::UNDEFINED);
 	foreach (const GameCVar &level, levels)
 	{
 		d->cboDifficulty->addItem(level.name(), level.value());
-		if (level.value() == d->memorizedDifficulty)
-		{
-			d->cboDifficulty->setCurrentIndex(d->cboDifficulty->count() - 1);
-		}
 	}
+	int memorizedIndex = d->cboDifficulty->findData(oldDifficulty);
+	if (memorizedIndex >= 0)
+		d->cboDifficulty->setCurrentIndex(memorizedIndex);
 }
 
 void GameRulesPanel::setupModifiers(const EnginePlugin *engine)

@@ -35,7 +35,8 @@ ChocolateDoomGameHost::ChocolateDoomGameHost()
 
 void ChocolateDoomGameHost::addExtra()
 {
-	args() << "-skill" << QString::number(params().skill() + 1); // from 1 to 5
+	if (params().skill() != Skill::UNDEFINED)
+		args() << "-skill" << QString::number(params().skill() + 1); // from 1 to 5
 
 	switch(params().gameMode().index())
 	{

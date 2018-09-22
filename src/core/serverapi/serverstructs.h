@@ -27,6 +27,7 @@
 #include <QList>
 #include <QObject>
 #include <QVariant>
+#include <climits>
 
 #include "dptr.h"
 #include "global.h"
@@ -483,6 +484,20 @@ class MAIN_EXPORT PWad
 
 	private:
 		DPtr<PWad> d;
+};
+
+/**
+ * @ingroup group_pluginapi
+ * @brief Game difficulty setting.
+ */
+class Skill
+{
+public:
+	/**
+	 * Undefined difficulty; when creating a game, the skill setting
+	 * should be omitted upon encountering this value.
+	 */
+	static const unsigned char UNDEFINED = CHAR_MAX;
 };
 
 #endif
