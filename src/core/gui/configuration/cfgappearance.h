@@ -54,6 +54,7 @@ class CFGAppearance : public ConfigPage
 
 	private slots:
 		void dynamicAppearanceChange();
+		void setVisibilityOfLanguageChangeNotificationIfNeeded();
 };
 
 #endif /* __CFG_APPEARANCE_H__ */

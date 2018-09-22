@@ -67,6 +67,7 @@ CFGAppearance::CFGAppearance(QWidget *parent)
 	set_reject(&CFGAppearance::reject_);
 	d->setupUi(this);
 	d->readingSettings = false;
+	d->translationRestartNotifierWidget->setVisible(false);
 }
 
 CFGAppearance::~CFGAppearance()
@@ -232,4 +233,10 @@ void CFGAppearance::saveDynamicSettings()
 	gConfig.doomseeker.customServersColor = d->btnCustomServersColor->colorHtml();
 	gConfig.doomseeker.lanServersColor = d->btnLanServersColor->colorHtml();
 	gConfig.doomseeker.slotStyle = d->slotStyle->itemData(d->slotStyle->currentIndex()).toString();
+}
+
+void CFGAppearance::setVisibilityOfLanguageChangeNotificationIfNeeded()
+{
+	QString localization = d->cboLanguage->itemData(d->cboLanguage->currentIndex()).toString();
+	d->translationRestartNotifierWidget->setVisible(localization != gConfig.doomseeker.localization);
 }

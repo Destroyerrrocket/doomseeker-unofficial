@@ -81,6 +81,8 @@ on the list if master server also reports it.
 - Several appearance settings, such as server table colors, player slots
 style and grid will now be dynamically applied as the user changes them
 in the configuration box. This allows for quick preview (addresses 3306).
+- When user changes the language, inform that full translation is only applied
+after the restart of the program (addresses 3482).
 - Linux: Also try to look for WADs in /usr/[local]/share/games/doom.
 - Linux: Explicit "Copy (text)" actions shall store the data both in keyboard
 and mouse selection clipboards, allowing it to be pasted with either keyboard

@@ -109,11 +109,11 @@ icons/preferences-system-4.png
   <http://creativecommons.org/licenses/by/3.0/>
 
 	link: http://p.yusukekamiyamane.com
-	alt. link: http://www.iconarchive.com/show/fugue-icons-by-yusuke-kamiyamane/tick-shield-icon.html
 	license: CC BY 3.0
 	license link: https://creativecommons.org/licenses/by/3.0/
 
-icons/shield.png
+icons/information-frame.png
+icons/shield.png (alt. link: http://www.iconarchive.com/show/fugue-icons-by-yusuke-kamiyamane/tick-shield-icon.html)
 
 
 - Tango Icon Library 0.8.90 (tango)
