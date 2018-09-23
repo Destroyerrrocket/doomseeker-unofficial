@@ -2061,8 +2061,8 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/createserverdialog.cpp" line="238"/>
         <location filename="../../../build/src/core/ui_createserverdialog.h" line="187"/>
         <source>Flags</source>
-        <translatorcomment>There&apos;s no good translation for the meaning of &quot;flag&quot; in this context</translatorcomment>
-        <translation>Flags</translation>
+        <translatorcomment>There&apos;s no good translation for the meaning of &quot;flag&quot; in this context. &quot;Indicadores&quot; is close enough.</translatorcomment>
+        <translation>Indicadores</translation>
     </message>
     <message>
         <location filename="../../../build/src/core/ui_createserverdialog.h" line="183"/>

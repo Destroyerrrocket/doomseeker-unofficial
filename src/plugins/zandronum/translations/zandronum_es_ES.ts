@@ -752,7 +752,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../../../build/src/plugins/zandronum/ui_flagspage.h" line="2015"/>
         <source>LMS</source>
-        <translation type="unfinished">LMS</translation>
+        <translation>LMS</translation>
     </message>
     <message>
         <location filename="../../../../build/src/plugins/zandronum/ui_flagspage.h" line="2017"/>
@@ -1173,27 +1173,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../../../build/src/plugins/zandronum/ui_flagspage.h" line="2153"/>
         <source>dmflags</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../build/src/plugins/zandronum/ui_flagspage.h" line="2154"/>
         <source>dmflags2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../build/src/plugins/zandronum/ui_flagspage.h" line="2156"/>
         <source>zandronum compatflags</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../build/src/plugins/zandronum/ui_flagspage.h" line="2158"/>
         <source>compatflags</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../../../build/src/plugins/zandronum/ui_flagspage.h" line="2161"/>
         <source>compatflags2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1350,47 +1350,47 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../zandronum2dmflags.cpp" line="43"/>
         <source>Don&apos;t fix loop index for stair building</source>
-        <translation type="unfinished">No arreglar el índice del bucle para la construcción de escaleras</translation>
+        <translation>No arreglar el índice del bucle para la construcción de escaleras</translation>
     </message>
     <message>
         <location filename="../zandronum2dmflags.cpp" line="45"/>
         <source>Pain elemental is limited to 20 lost souls</source>
-        <translation type="unfinished">Pain elemental está limitado a 20 almas perdidas</translation>
+        <translation>Pain elemental está limitado a 20 almas perdidas</translation>
     </message>
     <message>
         <location filename="../zandronum2dmflags.cpp" line="47"/>
         <source>Pickups are only heard locally</source>
-        <translation type="unfinished"></translation>
+        <translation>Recoger artículos solo se pueden escuchar localmente</translation>
     </message>
     <message>
         <location filename="../zandronum2dmflags.cpp" line="49"/>
         <source>Infinitely tall actors</source>
-        <translation type="unfinished"></translation>
+        <translation>Actores infinitamente altos</translation>
     </message>
     <message>
         <location filename="../zandronum2dmflags.cpp" line="51"/>
         <source>Limit actors to only one sound</source>
-        <translation type="unfinished"></translation>
+        <translation>Limitar los actores a un solo sonido</translation>
     </message>
     <message>
         <location filename="../zandronum2dmflags.cpp" line="53"/>
         <source>Enable wallrunning</source>
-        <translation type="unfinished"></translation>
+        <translation>Habilitar wallrunning</translation>
     </message>
     <message>
         <location filename="../zandronum2dmflags.cpp" line="55"/>
         <source>Dropped items spawn on floor</source>
-        <translation type="unfinished"></translation>
+        <translation>Los objetos soltados aparecen en el suelo</translation>
     </message>
     <message>
         <location filename="../zandronum2dmflags.cpp" line="57"/>
         <source>Special lines block use line</source>
-        <translation type="unfinished"></translation>
+        <translation>Líneas especiales bloquean el uso de líneas</translation>
     </message>
     <message>
         <location filename="../zandronum2dmflags.cpp" line="59"/>
         <source>Disable BOOM local door light effect</source>
-        <translation type="unfinished"></translation>
+        <translation>Deshabilitar el efecto de luz de puerta local BOOM</translation>
     </message>
     <message>
         <location filename="../zandronum2dmflags.cpp" line="61"/>
@@ -2676,7 +2676,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../zandronumbinaries.cpp" line="160"/>
         <source>&lt;p&gt;Installation of testing binaries for version %1 can potentially &lt;b&gt;overwrite&lt;/b&gt; your files.&lt;/p&gt;&lt;p&gt;Game will be installed to:&lt;br&gt;%2&lt;/p&gt;&lt;p&gt;Do you want Doomseeker to extract Zandronum files, potentially &lt;b&gt;overwriting existing ones&lt;/b&gt;, and to copy all your configuration files from your base directory?&lt;/p&gt;</source>
-        <translation type="unfinished">&lt;p&gt;La instalación de los binarios de prueba para la versión %1 puede potencialmente &lt;b&gt;rescribir&lt;/b&gt; tus archivos.&lt;/p&gt;&lt;p&gt;El juego se instalará en:&lt;br&gt;%2&lt;/p&gt;&lt;p&gt;Quieres que Doomseeker extraiga los archivos de Zandronum, potencialmente &lt;b&gt;reescribiendo los archivos ya existentes&lt;/b&gt;, y copiar todos los archivos de configración de tu directorio base?&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;La instalación de los binarios de prueba para la versión %1 puede potencialmente &lt;b&gt;rescribir&lt;/b&gt; tus archivos.&lt;/p&gt;&lt;p&gt;El juego se instalará en:&lt;br&gt;%2&lt;/p&gt;&lt;p&gt;Quieres que Doomseeker extraiga los archivos de Zandronum, potencialmente &lt;b&gt;reescribiendo los archivos ya existentes&lt;/b&gt;, y copiar todos los archivos de configración de tu directorio base?&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../zandronumbinaries.cpp" line="171"/>
@@ -2686,7 +2686,7 @@ Game will be installed to:
 %2
 
 Do you want Doomseeker to install that version and copy all your configuration files from your base directory?</source>
-        <translation type="unfinished">La versión de prueba de Zandronum %1 puede instalarse.
+        <translation>La versión de prueba de Zandronum %1 puede instalarse.
 
 El juego puede instalarse en:
 %2
@@ -2696,14 +2696,14 @@ Quieres que Doomseeker instale esta versión y copie todos tus archivos de confi
     <message>
         <location filename="../zandronumbinaries.cpp" line="178"/>
         <source>Doomseeker - install Zandronum testing version</source>
-        <translation type="unfinished">Doomseeker - instalar la versión de prueba de Zandronum</translation>
+        <translation>Doomseeker - instalar la versión de prueba de Zandronum</translation>
     </message>
     <message>
         <location filename="../zandronumbinaries.cpp" line="214"/>
         <source>%1
 doesn&apos;t exist.
 You need to install new testing binaries.</source>
-        <translation type="unfinished">%1
+        <translation>%1
 No existe.
 Debe instalar los nuevos ejecutables de prueba.</translation>
     </message>
@@ -2712,7 +2712,7 @@ Debe instalar los nuevos ejecutables de prueba.</translation>
         <source>%1
 exists but is NOT a directory.
 Cannot proceed.</source>
-        <translation type="unfinished">%1
+        <translation>%1
 existe pero NO es un directorio.
 No se puede proceder.</translation>
     </message>
@@ -2722,57 +2722,65 @@ No se puede proceder.</translation>
 exists but doesn&apos;t contain Zandronum executable.
 
 Doomseeker can still install the game there if you want.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1
+existe, pero no contiene el ejecutable de Zandronum.
+
+Doomseeker puede instalar el juego allí igualmente si lo desea.</translation>
     </message>
     <message>
         <location filename="../zandronumbinaries.cpp" line="300"/>
         <source>Downloading Zandronum testing binary from URL: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Descargando el archivo binario de prueba de Zandronum desde la URL: %1</translation>
     </message>
     <message>
         <location filename="../zandronumbinaries.cpp" line="305"/>
         <source>Doomseeker - download failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker - descarga fallida</translation>
     </message>
     <message>
         <location filename="../zandronumbinaries.cpp" line="306"/>
         <source>Failed to download testing binary.
 
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al descargar el binario de la versión de prueba.
+
+%1</translation>
     </message>
     <message>
         <location filename="../zandronumbinaries.cpp" line="331"/>
         <source>Unpacking file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Desempaquetando archivo: %1</translation>
     </message>
     <message>
         <location filename="../zandronumbinaries.cpp" line="363"/>
         <source>%1
  should be a script file but is a directory!</source>
-        <translation type="unfinished"></translation>
+        <translation>%1
+ debería ser un script, pero es un directorio!</translation>
     </message>
     <message>
         <location filename="../zandronumbinaries.cpp" line="372"/>
         <source>You don&apos;t have permissions to execute file: %1
 </source>
-        <translation type="unfinished"></translation>
+        <translation>No tienes permisos para ejecutar el archivo: %1
+</translation>
     </message>
     <message>
         <location filename="../zandronumbinaries.cpp" line="419"/>
         <source>Couldn&apos;t open batch file &quot;%1&quot; for writing</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo abrir el script &quot;%1&quot; para escribir</translation>
     </message>
     <message>
         <location filename="../zandronumbinaries.cpp" line="426"/>
         <source>Error while writing batch file &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al escribir el script &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../zandronumbinaries.cpp" line="436"/>
         <source>Cannot set permissions for file:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pueden definir los permisos para el archivo:
+%1</translation>
     </message>
 </context>
 <context>
