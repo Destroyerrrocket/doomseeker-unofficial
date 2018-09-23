@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>596</width>
-    <height>383</height>
+    <height>391</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -156,14 +156,14 @@
      <item row="6" column="1">
       <widget class="QComboBox" name="cboGamemode"/>
      </item>
-     <item row="7" column="0">
+     <item row="8" column="0">
       <widget class="QLabel" name="label_10">
        <property name="text">
         <string>Map:</string>
        </property>
       </widget>
      </item>
-     <item row="7" column="1">
+     <item row="8" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QLineEdit" name="leMap"/>
@@ -195,15 +195,32 @@
        </item>
       </layout>
      </item>
-     <item row="8" column="0">
+     <item row="9" column="0">
       <widget class="QLabel" name="labelIwad">
        <property name="text">
         <string>IWAD:</string>
        </property>
       </widget>
      </item>
-     <item row="8" column="1">
+     <item row="9" column="1">
       <widget class="IwadPicker" name="iwadPicker" native="true"/>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLabel" name="labelDifficulty">
+       <property name="text">
+        <string>Difficulty:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="QComboBox" name="cboDifficulty">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -316,6 +333,20 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>cboEngine</tabstop>
+  <tabstop>cbLockExecutable</tabstop>
+  <tabstop>leServername</tabstop>
+  <tabstop>spinPort</tabstop>
+  <tabstop>cbAllowTheGameToChoosePort</tabstop>
+  <tabstop>cboGamemode</tabstop>
+  <tabstop>cboDifficulty</tabstop>
+  <tabstop>leMap</tabstop>
+  <tabstop>cbBroadcastToLAN</tabstop>
+  <tabstop>cbBroadcastToMaster</tabstop>
+  <tabstop>cbUpnp</tabstop>
+  <tabstop>spinUpnpPort</tabstop>
+ </tabstops>
  <resources>
   <include location="../../../../media/resources.qrc"/>
  </resources>

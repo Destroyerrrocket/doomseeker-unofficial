@@ -32,7 +32,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_3">
+     <widget class="QWidget" name="tabRules">
       <attribute name="title">
        <string>Rules</string>
       </attribute>

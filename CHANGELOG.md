@@ -83,6 +83,10 @@ style and grid will now be dynamically applied as the user changes them
 in the configuration box. This allows for quick preview (addresses 3306).
 - When user changes the language, inform that full translation is only applied
 after the restart of the program (addresses 3482).
+- Create Game box: moved difficulty setting from the Rules tab to the General
+tab. This allows to disable the Rules tab fully for Chocolate Doom for which no
+other widgets are present on this tab. The setting also fits better when its
+grouped with game mode and map selection (related to 3480).
 - Linux: Also try to look for WADs in /usr/[local]/share/games/doom.
 - Linux: Explicit "Copy (text)" actions shall store the data both in keyboard
 and mouse selection clipboards, allowing it to be pasted with either keyboard

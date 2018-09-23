@@ -43,6 +43,7 @@ public:
 	~GameRulesPanel();
 
 	void fillInParams(GameCreateParams &params);
+	bool isAnythingAvailable() const;
 	MapListPanel *mapListPanel();
 	void loadConfig(Ini &config);
 	void saveConfig(Ini &config);
@@ -58,7 +59,6 @@ private:
 	void memorizeLimits();
 	void loadMemorizedLimits(const EnginePlugin *engine);
 	void removeLimitWidgets();
-	void setupDifficulty(const EnginePlugin *engine);
 	void setupLimitWidgets(const EnginePlugin *engine, const GameMode &gameMode);
 	void setupModifiers(const EnginePlugin *engine);
 };

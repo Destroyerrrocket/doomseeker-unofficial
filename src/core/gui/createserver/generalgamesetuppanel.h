@@ -69,6 +69,7 @@ private:
 	QString pathToExe();
 
 	bool setEngine(const QString &engineName);
+	void setupDifficulty(const EnginePlugin *engine);
 
 private slots:
 	void onGameModeChanged(int);

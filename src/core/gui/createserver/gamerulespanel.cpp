@@ -42,6 +42,7 @@ public:
 			GameCVar limit;
 	};
 
+	bool anythingAvailable;
 	const EnginePlugin *engine;
 	QList<GameCVar> gameModifiers;
 	QList<GameLimitWidget*> limitWidgets;
@@ -54,6 +55,7 @@ GameRulesPanel::GameRulesPanel(QWidget *parent)
 : QWidget(parent)
 {
 	d->setupUi(this);
+	d->anythingAvailable = true;
 	d->engine = NULL;
 }
 
@@ -64,7 +66,6 @@ GameRulesPanel::~GameRulesPanel()
 
 void GameRulesPanel::fillInParams(GameCreateParams &params)
 {
-	params.setSkill(d->cboDifficulty->itemData(d->cboDifficulty->currentIndex()).toInt());
 	params.setMaxClients(d->spinMaxClients->value());
 	params.setMaxPlayers(d->spinMaxPlayers->value());
 
@@ -92,6 +93,11 @@ void GameRulesPanel::fillInModifiers(GameCreateParams &params)
 		d->gameModifiers[modIndex].setValue(1);
 		params.cvars() << d->gameModifiers[modIndex];
 	}
+}
+
+bool GameRulesPanel::isAnythingAvailable() const
+{
+	return d->anythingAvailable;
 }
 
 MapListPanel *GameRulesPanel::mapListPanel()
@@ -134,8 +140,6 @@ void GameRulesPanel::loadConfig(Ini &config)
 {
 	IniSection section = config.section("Rules");
 
-	int difficultyIndex = d->cboDifficulty->findData(static_cast<int>(section["difficulty"]));
-	d->cboDifficulty->setCurrentIndex(qMax(0, difficultyIndex));
 	d->cboModifier->setCurrentIndex(section["modifier"]);
 	d->spinMaxClients->setValue(section["maxClients"]);
 	d->spinMaxPlayers->setValue(section["maxPlayers"]);
@@ -151,7 +155,6 @@ void GameRulesPanel::saveConfig(Ini &config)
 {
 	IniSection section = config.section("Rules");
 
-	section["difficulty"] = d->cboDifficulty->itemData(d->cboDifficulty->currentIndex()).toInt();
 	section["modifier"] = d->cboModifier->currentIndex();
 	section["maxClients"] = d->spinMaxClients->value();
 	section["maxPlayers"] = d->spinMaxPlayers->value();
@@ -170,19 +173,24 @@ void GameRulesPanel::setCreateServerDialog(CreateServerDialog *dialog)
 
 void GameRulesPanel::setupForEngine(const EnginePlugin *engine, const GameMode &gameMode)
 {
-	setupDifficulty(engine);
+	d->anythingAvailable = false;
 	setupModifiers(engine);
 
 	d->mapListBox->setVisible(engine->data()->hasMapList);
 	d->mapListPanel->setupForEngine(engine);
+	d->anythingAvailable = engine->data()->hasMapList || d->anythingAvailable;
 
 	d->labelMaxClients->setVisible(engine->data()->allowsClientSlots);
 	d->spinMaxClients->setVisible(engine->data()->allowsClientSlots);
+	d->anythingAvailable = engine->data()->allowsClientSlots || d->anythingAvailable;
 
 	d->labelMaxPlayers->setVisible(engine->data()->allowsPlayerSlots);
 	d->spinMaxPlayers->setVisible(engine->data()->allowsPlayerSlots);
+	d->anythingAvailable = engine->data()->allowsPlayerSlots || d->anythingAvailable;
 
 	setupLimitWidgets(engine, gameMode);
+	d->anythingAvailable = !d->limitWidgets.isEmpty() || d->anythingAvailable;
+	
 	d->engine = engine;
 }
 
@@ -194,24 +202,6 @@ void GameRulesPanel::setupForRemoteGame()
 	};
 	for (int i = 0; disableControls[i]; ++i)
 		disableControls[i]->setDisabled(true);
-}
-
-void GameRulesPanel::setupDifficulty(const EnginePlugin *engine)
-{
-	QVariant oldDifficulty = d->cboDifficulty->itemData(d->cboDifficulty->currentIndex());
-	d->cboDifficulty->clear();
-
-	QList<GameCVar> levels = engine->data()->difficulty->get(QVariant());
-	d->labelDifficulty->setVisible(!levels.isEmpty());
-	d->cboDifficulty->setVisible(!levels.isEmpty());
-	d->cboDifficulty->addItem(tr("< NONE >"), Skill::UNDEFINED);
-	foreach (const GameCVar &level, levels)
-	{
-		d->cboDifficulty->addItem(level.name(), level.value());
-	}
-	int memorizedIndex = d->cboDifficulty->findData(oldDifficulty);
-	if (memorizedIndex >= 0)
-		d->cboDifficulty->setCurrentIndex(memorizedIndex);
 }
 
 void GameRulesPanel::setupModifiers(const EnginePlugin *engine)

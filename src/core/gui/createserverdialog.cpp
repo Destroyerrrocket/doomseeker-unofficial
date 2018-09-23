@@ -278,6 +278,7 @@ void CreateServerDialog::initInfoAndPassword()
 void CreateServerDialog::initRules()
 {
 	d->rulesPanel->setupForEngine(d->currentEngine, currentGameMode());
+	d->tabWidget->setTabEnabled(d->tabWidget->indexOf(d->tabRules), d->rulesPanel->isAnythingAvailable());
 }
 
 bool CreateServerDialog::loadConfig(const QString& filename, bool loadingPrevious)

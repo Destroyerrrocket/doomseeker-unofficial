@@ -80,6 +80,7 @@ void GeneralGameSetupPanel::fillInParams(GameCreateParams &params)
 	params.setName(d->leServername->text());
 	params.setPort(d->spinPort->isEnabled() ? d->spinPort->value() : 0);
 	params.setGameMode(currentGameMode());
+	params.setSkill(d->cboDifficulty->itemData(d->cboDifficulty->currentIndex()).toInt());
 	params.setUpnp(d->cbUpnp->isChecked());
 	params.setUpnpPort(d->spinUpnpPort->value());
 }
@@ -112,9 +113,15 @@ void GeneralGameSetupPanel::loadConfig(Ini &config, bool loadingPrevious)
 
 	d->leServername->setText(general["name"]);
 	d->spinPort->setValue(general["port"]);
+
 	int gameModeIndex = d->cboGamemode->findData(static_cast<gamemode_id>(general["gamemode"]));
 	if (gameModeIndex >= 0)
 		d->cboGamemode->setCurrentIndex(gameModeIndex);
+
+	int difficultyIndex = d->cboDifficulty->findData(static_cast<int>(general["difficulty"]));
+	d->cboDifficulty->setCurrentIndex(qMax(0, difficultyIndex));
+
+
 	d->leMap->setText(general["map"]);
 
 	if (!(loadingPrevious && d->iwadSetExplicitly))
@@ -147,6 +154,7 @@ void GeneralGameSetupPanel::saveConfig(Ini &config)
 	general["port"] = d->spinPort->value();
 	general["gamemode"] = d->cboGamemode->itemData(d->cboGamemode->currentIndex()).toInt();
 	general["map"] = d->leMap->text();
+	general["difficulty"] = d->cboDifficulty->itemData(d->cboDifficulty->currentIndex()).toInt();
 	general["iwad"] = d->iwadPicker->currentIwad();
 
 	general["pwads"] = d->wadsPicker->filePaths().join(";");
@@ -166,6 +174,24 @@ void GeneralGameSetupPanel::reloadAppConfig()
 {
 	d->executableInput->reloadExecutables();
 	d->iwadPicker->loadIwads();
+}
+
+void GeneralGameSetupPanel::setupDifficulty(const EnginePlugin *engine)
+{
+	QVariant oldDifficulty = d->cboDifficulty->itemData(d->cboDifficulty->currentIndex());
+	d->cboDifficulty->clear();
+
+	QList<GameCVar> levels = engine->data()->difficulty->get(QVariant());
+	d->labelDifficulty->setVisible(!levels.isEmpty());
+	d->cboDifficulty->setVisible(!levels.isEmpty());
+	d->cboDifficulty->addItem(tr("< NONE >"), Skill::UNDEFINED);
+	foreach(const GameCVar &level, levels)
+	{
+		d->cboDifficulty->addItem(level.name(), level.value());
+	}
+	int memorizedIndex = d->cboDifficulty->findData(oldDifficulty);
+	if (memorizedIndex >= 0)
+		d->cboDifficulty->setCurrentIndex(memorizedIndex);
 }
 
 void GeneralGameSetupPanel::setupForEngine(EnginePlugin *engine)
@@ -189,6 +215,7 @@ void GeneralGameSetupPanel::setupForEngine(EnginePlugin *engine)
 	{
 		d->cboGamemode->addItem(gameModes[i].name(), gameModes[i].index());
 	}
+	setupDifficulty(engine);
 }
 
 void GeneralGameSetupPanel::setupForRemoteGame()
