@@ -35,33 +35,20 @@ else
 fi
 
 # Get the version number
-version_info=`grep --only-matching -E '([0-9]+\.[0-9]+)|Beta|Alpha' ../src/core/versiondefs.h`
-version=""
-tag=""
-for i in $version_info
-do
-	if [ $i == "Beta" ]
-	then
-		tag="b"
-	elif [ $i == "Alpha" ]
-	then
-		tag="a"
-	else
-		if [ "$version" == "" ]
-		then
-			version=$i
-		fi
-	fi
-done
-if [ "$version" == "" ]
-then
-	version="0.0"
+version=$(
+	cmake -P /dev/stdin 2>&1 <<-'EOF'
+		include("../src/core/versiondefs.cmake")
+		message("${VERSION_STRING}")
+	EOF
+)
+if [[ -z $version ]]; then
+	echo 'ERROR: Failed to get version number.' >&2
+	exit 1
 fi
 
 NUM_CPU_CORES=`system_profiler SPHardwareDataType | awk '/Total Number of Cores/ {print $5};'`
 
 echo "Version: $version"
-echo "Tag: $tag"
 echo "Building with $NUM_CPU_CORES jobs!"
 echo
 
