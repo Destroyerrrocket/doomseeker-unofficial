@@ -3,10 +3,9 @@
 Visit this file cleanly formatted in repository:
 <https://bitbucket.org/Doomseeker/doomseeker/src/default/CHANGELOG.md>
 
-This file follows recommendations in accordance to:
-<http://keepachangelog.com/>
+This file follows the format of [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/), and this project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Development][development]
+## [Unreleased][unreleased]
 ### Added
 - List the '--help' argument in the help.
 - '--version-json' argument can now write to stdout if file is not specified
@@ -351,7 +350,7 @@ archives. Fixes extraction of e1m4b.wad and e1m8b.wad. Thanks, John Romero!
 - Zandronum:  Fixed "Sucide" typo in one of the Create Game's flags pages.
 
 ## [1.0] - 2015-03-22
-- Version 1.0 released. No changelog was kept before.
+- Version 1.0 released. No change log was kept before.
 
 
 Copyright (this file)
@@ -364,7 +363,7 @@ notice and this notice are preserved.  This file is offered as-is,
 without any warranty.
 
 
-[development]: https://bitbucket.org/Doomseeker/doomseeker/commits/all
+[unreleased]: https://bitbucket.org/Doomseeker/doomseeker/commits/all
 [1.1-p1]: https://bitbucket.org/Doomseeker/doomseeker/commits/tag/1.1-p1
 [1.1]: https://bitbucket.org/Doomseeker/doomseeker/commits/tag/1.1
 [1.0]: https://bitbucket.org/Doomseeker/doomseeker/commits/tag/1.0
