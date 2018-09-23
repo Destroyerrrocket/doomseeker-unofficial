@@ -1866,6 +1866,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../cmdargshelp.cpp" line="31"/>
+        <source>--create-game
+    Launches Doomseeker in &quot;Create Game&quot; mode.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../cmdargshelp.cpp" line="34"/>
         <source>--datadir [directory]
     Sets an explicit search location for
     IP2C data along with plugins.
@@ -1878,7 +1885,7 @@ p, li { white-space: pre-wrap; }
 </translation>
     </message>
     <message>
-        <location filename="../cmdargshelp.cpp" line="36"/>
+        <location filename="../cmdargshelp.cpp" line="39"/>
         <source>--help
     Prints this list of command line arguments.
 </source>
@@ -1888,7 +1895,7 @@ p, li { white-space: pre-wrap; }
 </translation>
     </message>
     <message>
-        <location filename="../cmdargshelp.cpp" line="39"/>
+        <location filename="../cmdargshelp.cpp" line="42"/>
         <source>--rcon [plugin] [ip]
     Launch the rcon client for the specified ip.
 </source>
@@ -1897,7 +1904,7 @@ p, li { white-space: pre-wrap; }
 </translation>
     </message>
     <message>
-        <location filename="../cmdargshelp.cpp" line="42"/>
+        <location filename="../cmdargshelp.cpp" line="45"/>
         <source>--portable
     Starts application in portable mode.
     In portable mode Doomseeker saves all configuration files
@@ -1913,7 +1920,7 @@ p, li { white-space: pre-wrap; }
 </translation>
     </message>
     <message>
-        <location filename="../cmdargshelp.cpp" line="48"/>
+        <location filename="../cmdargshelp.cpp" line="51"/>
         <source>--version-json [file|-]
     Prints version info on Doomseeker and all
     plugins in JSON format to specified file,
@@ -1931,7 +1938,7 @@ p, li { white-space: pre-wrap; }
 </translation>
     </message>
     <message>
-        <location filename="../cmdargshelp.cpp" line="55"/>
+        <location filename="../cmdargshelp.cpp" line="58"/>
         <source>--verbose
     Forces verbose logging to stderr.
     This is the default in most cases.
@@ -1943,7 +1950,7 @@ p, li { white-space: pre-wrap; }
 </translation>
     </message>
     <message>
-        <location filename="../cmdargshelp.cpp" line="59"/>
+        <location filename="../cmdargshelp.cpp" line="62"/>
         <source>--quiet
     Forces no logging to stderr.
     This is the default when dumping versions.
@@ -1953,6 +1960,30 @@ p, li { white-space: pre-wrap; }
      Este es el predeterminado en versiones
      lanzadas.
 </translation>
+    </message>
+    <message>
+        <location filename="../cmdargshelp.cpp" line="71"/>
+        <source>Available command line parameters:
+</source>
+        <translation type="unfinished">Parámetros de línea de comandos disponibles:
+</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../cmdargshelp.cpp" line="78"/>
+        <source>doomseeker: expected %n argument(s) in option %1
+
+</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../cmdargshelp.cpp" line="85"/>
+        <source>doomseeker: unrecognized option &apos;%1&apos;
+
+</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1966,33 +1997,33 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConnectionHandler</name>
     <message>
-        <location filename="../connectionhandler.cpp" line="80"/>
-        <location filename="../connectionhandler.cpp" line="84"/>
+        <location filename="../connectionhandler.cpp" line="82"/>
+        <location filename="../connectionhandler.cpp" line="86"/>
         <source>Doomseeker - join server</source>
         <translation>Doomseeker - unirse al servidor</translation>
     </message>
     <message>
-        <location filename="../connectionhandler.cpp" line="81"/>
+        <location filename="../connectionhandler.cpp" line="83"/>
         <source>Connection to server timed out.</source>
         <translation>Se ha excedido el límite de tiempo de conexión al servidor.</translation>
     </message>
     <message>
-        <location filename="../connectionhandler.cpp" line="85"/>
+        <location filename="../connectionhandler.cpp" line="87"/>
         <source>An error occured while trying to connect to server.</source>
         <translation>Se produjo un error al conectarse al servidor.</translation>
     </message>
     <message>
-        <location filename="../connectionhandler.cpp" line="163"/>
+        <location filename="../connectionhandler.cpp" line="165"/>
         <source>Doomseeker - join game</source>
         <translation>Doomseeker - unirse al juego</translation>
     </message>
     <message>
-        <location filename="../connectionhandler.cpp" line="179"/>
+        <location filename="../connectionhandler.cpp" line="181"/>
         <source>Error while launching executable for server &quot;%1&quot;, game &quot;%2&quot;: %3</source>
         <translation>Error al ejecutar ejecutable para el servidor &quot;%1&quot;, juego &quot;%2&quot;: %3</translation>
     </message>
     <message>
-        <location filename="../connectionhandler.cpp" line="181"/>
+        <location filename="../connectionhandler.cpp" line="183"/>
         <source>Doomseeker - launch executable</source>
         <translation>Doomseeker - ejecutar ejecutable</translation>
     </message>
@@ -2018,119 +2049,160 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CreateServerDialog</name>
     <message>
-        <location filename="../gui/createserverdialog.cpp" line="99"/>
         <source>Doomseeker - load server config</source>
-        <translation>Doomseeker - cargar la configuración del servidor</translation>
+        <translation type="vanished">Doomseeker - cargar la configuración del servidor</translation>
     </message>
     <message>
-        <location filename="../gui/createserverdialog.cpp" line="99"/>
-        <location filename="../gui/createserverdialog.cpp" line="118"/>
+        <location filename="../gui/createserverdialog.cpp" line="86"/>
+        <location filename="../gui/createserverdialog.cpp" line="105"/>
         <source>Config files (*.ini)</source>
         <translation>Archivos de configuración (*.ini)</translation>
     </message>
     <message>
-        <location filename="../gui/createserverdialog.cpp" line="118"/>
-        <location filename="../gui/createserverdialog.cpp" line="131"/>
         <source>Doomseeker - save server config</source>
-        <translation>Doomseeker - guardar la configuración del servidor</translation>
+        <translation type="vanished">Doomseeker - guardar la configuración del servidor</translation>
     </message>
     <message>
-        <location filename="../gui/createserverdialog.cpp" line="131"/>
         <source>Unable to save server configuration!</source>
-        <translation>¡No se puede guardar la configuración del servidor!</translation>
+        <translation type="vanished">¡No se puede guardar la configuración del servidor!</translation>
     </message>
     <message>
-        <location filename="../gui/createserverdialog.cpp" line="147"/>
-        <location filename="../gui/createserverdialog.cpp" line="358"/>
+        <location filename="../gui/createserverdialog.cpp" line="134"/>
+        <location filename="../gui/createserverdialog.cpp" line="345"/>
         <source>Doomseeker - create game</source>
         <translation>Doomseeker - crear juego</translation>
     </message>
     <message>
-        <location filename="../gui/createserverdialog.cpp" line="150"/>
-        <location filename="../gui/createserverdialog.cpp" line="361"/>
         <source>No engine selected</source>
-        <translation>Ningún motor seleccionado</translation>
+        <translation type="vanished">Ningún motor seleccionado</translation>
     </message>
     <message>
-        <location filename="../gui/createserverdialog.cpp" line="167"/>
-        <location filename="../gui/createserverdialog.cpp" line="377"/>
+        <location filename="../gui/createserverdialog.cpp" line="86"/>
+        <source>Doomseeker - load game setup config</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/createserverdialog.cpp" line="105"/>
+        <location filename="../gui/createserverdialog.cpp" line="118"/>
+        <source>Doomseeker - save game setup config</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/createserverdialog.cpp" line="118"/>
+        <source>Unable to save game setup configuration!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/createserverdialog.cpp" line="137"/>
+        <location filename="../gui/createserverdialog.cpp" line="348"/>
+        <source>No game selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/createserverdialog.cpp" line="154"/>
+        <location filename="../gui/createserverdialog.cpp" line="364"/>
         <source>Doomseeker - error</source>
         <translation>Doomseeker - error</translation>
     </message>
     <message>
-        <location filename="../gui/createserverdialog.cpp" line="238"/>
-        <location filename="../../../build/src/core/ui_createserverdialog.h" line="187"/>
+        <location filename="../gui/createserverdialog.cpp" line="225"/>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="249"/>
         <source>Flags</source>
         <translatorcomment>There&apos;s no good translation for the meaning of &quot;flag&quot; in this context. &quot;Indicadores&quot; is close enough.</translatorcomment>
         <translation>Indicadores</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_createserverdialog.h" line="183"/>
+        <location filename="../gui/createserverdialog.cpp" line="429"/>
+        <source>Run game command line:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/createserverdialog.cpp" line="430"/>
+        <source>Host server command line:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="245"/>
         <source>Create Game</source>
         <translation>Crear juego</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_createserverdialog.h" line="184"/>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="246"/>
         <source>General</source>
         <translation>General</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_createserverdialog.h" line="185"/>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="247"/>
         <source>Rules</source>
         <translation>Reglas</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_createserverdialog.h" line="186"/>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="248"/>
         <source>Misc.</source>
         <translation>Diverso.</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_createserverdialog.h" line="188"/>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="250"/>
         <source>Custom parameters</source>
         <translation>Parámetros personalizados</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_createserverdialog.h" line="190"/>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="252"/>
+        <source>Configure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="255"/>
         <source>Load previously saved server configuration.</source>
         <translation>Cargar la configuración del servidor previamente guardada.</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_createserverdialog.h" line="192"/>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="257"/>
         <source>Load</source>
         <translation>Cargar</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_createserverdialog.h" line="194"/>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="259"/>
         <source>Save current server configuration.</source>
         <translation>Guardar la configuración actual del servidor.</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_createserverdialog.h" line="196"/>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="261"/>
         <source>Save</source>
         <translation>Guardar</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_createserverdialog.h" line="197"/>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="265"/>
+        <source>Offline command line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="266"/>
         <source>Play offline</source>
         <translation>Jugar fuera de línea</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_createserverdialog.h" line="199"/>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="270"/>
+        <source>Host command line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="263"/>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="268"/>
         <source>Obtain command line required to launch this server.</source>
         <translation>Obtener la línea de comandos requerida para iniciar este servidor.</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_createserverdialog.h" line="201"/>
         <source>Command Line</source>
-        <translation>Línea de comandos</translation>
+        <translation type="vanished">Línea de comandos</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_createserverdialog.h" line="202"/>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="271"/>
         <source>Start server</source>
         <translation>Iniciar el servidor</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_createserverdialog.h" line="203"/>
+        <location filename="../../../build/src/core/ui_createserverdialog.h" line="272"/>
         <source>Close</source>
         <translation>Cerrar</translation>
     </message>
@@ -2356,8 +2428,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="131"/>
+        <source>Games</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Engines</source>
-        <translation>Motores</translation>
+        <translation type="vanished">Motores</translation>
     </message>
 </context>
 <context>
@@ -2759,7 +2835,8 @@ Ejecutable: %3</translation>
 <context>
     <name>GameRulesPanel</name>
     <message>
-        <location filename="../gui/createserver/gamerulespanel.cpp" line="232"/>
+        <location filename="../gui/createserver/gamerulespanel.cpp" line="207"/>
+        <location filename="../gui/createserver/gamerulespanel.cpp" line="230"/>
         <source>&lt; NONE &gt;</source>
         <translation>&lt; NADA &gt;</translation>
     </message>
@@ -2792,19 +2869,28 @@ Ejecutable: %3</translation>
 <context>
     <name>GeneralGameSetupPanel</name>
     <message>
-        <location filename="../gui/createserver/generalgamesetuppanel.cpp" line="260"/>
+        <location filename="../gui/createserver/generalgamesetuppanel.cpp" line="185"/>
+        <source>&lt; NONE &gt;</source>
+        <translation type="unfinished">&lt; NADA &gt;</translation>
+    </message>
+    <message>
+        <location filename="../gui/createserver/generalgamesetuppanel.cpp" line="266"/>
         <source>Doomseeker - load server config</source>
         <translation>Doomseeker - carga la configuración del servidor</translation>
     </message>
     <message>
-        <location filename="../gui/createserver/generalgamesetuppanel.cpp" line="261"/>
+        <location filename="../gui/createserver/generalgamesetuppanel.cpp" line="267"/>
         <source>Plugin for engine &quot;%1&quot; is not present!</source>
         <translation>¡El complemento para el motor &quot;%1&quot; no está presente!</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="277"/>
         <source>Engine:</source>
-        <translation>Motor:</translation>
+        <translation type="vanished">Motor:</translation>
+    </message>
+    <message>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="277"/>
+        <source>Game:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="278"/>
@@ -3950,72 +4036,77 @@ Operación fallida.</translation>
 <context>
     <name>Main</name>
     <message>
-        <location filename="../main.cpp" line="411"/>
+        <location filename="../main.cpp" line="425"/>
         <source>Doomseeker startup error</source>
         <translation>Error de inicio de Doomseeker</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="219"/>
+        <location filename="../main.cpp" line="224"/>
         <source>Init finished.</source>
         <translation>Init finalizado.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="234"/>
+        <location filename="../main.cpp" line="239"/>
         <source>Doomseeker - Updates Install Failure</source>
         <translation>Doomseeker - Instalación de actualizaciones fallas</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="280"/>
+        <location filename="../main.cpp" line="285"/>
         <source>Failed to open file &apos;%1&apos;.</source>
         <translation>Error al abrir el archivo &apos;%1&apos;.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="288"/>
+        <location filename="../main.cpp" line="293"/>
         <source>Failed to open stdout.</source>
         <translation>Error al abrir stdout.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="298"/>
+        <location filename="../main.cpp" line="303"/>
         <source>Dumping version info to file in JSON format.</source>
         <translation>Depositando la información de la versión al archivo en formato JSON.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="310"/>
+        <location filename="../main.cpp" line="315"/>
         <source>Preparing GUI.</source>
         <translation>Preparando GUI.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="323"/>
+        <location filename="../main.cpp" line="328"/>
+        <source>Starting Create Game box.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="337"/>
         <source>Starting RCon client.</source>
         <translation>Iniciando el cliente RCon.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="338"/>
+        <location filename="../main.cpp" line="352"/>
         <source>None of the currently loaded game plugins supports RCon.</source>
         <translation>Ninguno de los complementos de juegos cargados actualmente admite RCon.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="340"/>
+        <location filename="../main.cpp" line="354"/>
         <source>Doomseeker RCon</source>
         <translation>Doomseeker RCon</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="354"/>
+        <location filename="../main.cpp" line="368"/>
         <source>Couldn&apos;t find specified plugin: </source>
         <translation>No se pudo encontrar el complemento especificado: </translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="364"/>
+        <location filename="../main.cpp" line="378"/>
         <source>Plugin does not support RCon.</source>
         <translation>El complemento no es compatible con RCon.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="381"/>
+        <location filename="../main.cpp" line="395"/>
         <source>Loading extra CA certificates from &apos;%1&apos;.</source>
         <translation>Cargando certificados CA adicionales de &apos;%1&apos;.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../main.cpp" line="386"/>
+        <location filename="../main.cpp" line="400"/>
         <source>Appending %n extra CA certificate(s).</source>
         <translation>
             <numerusform>Anexando %n certificado(s) CA adicionales.</numerusform>
@@ -4023,88 +4114,87 @@ Operación fallida.</translation>
         </translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="403"/>
+        <location filename="../main.cpp" line="417"/>
         <source>Doomseeker will not run because some directories cannot be used properly.
 </source>
         <translation>Doomseeker no se ejecutará porque algunos directorios no se pueden usar correctamente.
 </translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="435"/>
+        <location filename="../main.cpp" line="449"/>
         <source>Initializing IP2C database.</source>
         <translation>Inicializando la base de datos IP2C.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="443"/>
+        <location filename="../main.cpp" line="457"/>
         <source>Initializing IRC configuration file.</source>
         <translation>Inicializando el archivo de configuración de IRC.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="461"/>
+        <location filename="../main.cpp" line="475"/>
         <source>Loading translations definitions</source>
         <translation>Cargando definiciones de traducción</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="469"/>
+        <location filename="../main.cpp" line="483"/>
         <source>Loading translation &quot;%1&quot;.</source>
         <translation>Cargando la traducción &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="473"/>
+        <location filename="../main.cpp" line="487"/>
         <source>Translation loaded.</source>
         <translation>Traducción cargada.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="477"/>
+        <location filename="../main.cpp" line="491"/>
         <source>Failed to load translation.</source>
         <translation>Error al cargar la traducción.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="484"/>
+        <location filename="../main.cpp" line="498"/>
         <source>Initializing configuration file.</source>
         <translation>Inicializando archivo de configuración.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="493"/>
+        <location filename="../main.cpp" line="507"/>
         <source>Could not get an access to the settings directory. Configuration will not be saved.</source>
         <translation>No se pudo obtener acceso al directorio de configuraciones. La configuración no se guardará.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="512"/>
+        <location filename="../main.cpp" line="526"/>
         <source>Initializing passwords configuration file.</source>
         <translation>Inicializando el archivo de configuración de contraseñas.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="525"/>
+        <location filename="../main.cpp" line="539"/>
         <source>Initializing configuration for plugins.</source>
         <translation>Inicializando la configuración para complementos.</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="565"/>
-        <location filename="../main.cpp" line="581"/>
+        <location filename="../main.cpp" line="662"/>
+        <source>doomseeker: `--connect`, `--create-game` and `--rcon` are mutually exclusive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>doomseeker: expected one argument in option %1</source>
-        <translation>doomseeker: se esperaba un argumento en la opción %1</translation>
+        <translation type="vanished">doomseeker: se esperaba un argumento en la opción %1</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="597"/>
         <source>doomseeker: expected two arguments in option %1</source>
-        <translation>doomseeker: se esperaban dos argumentos en la opción %1</translation>
+        <translation type="vanished">doomseeker: se esperaban dos argumentos en la opción %1</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="606"/>
-        <location filename="../main.cpp" line="659"/>
         <source>Available command line parameters:
 </source>
-        <translation>Parámetros de línea de comandos disponibles:
+        <translation type="vanished">Parámetros de línea de comandos disponibles:
 </translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="648"/>
         <source>doomseeker: unrecognized option &apos;%1&apos;</source>
-        <translation>doomseeker: opción no reconocida &apos;%1&apos;</translation>
+        <translation type="vanished">doomseeker: opción no reconocida &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="665"/>
+        <location filename="../main.cpp" line="675"/>
         <source>Starting refreshing thread.</source>
         <translation>Iniciando hilo de refresco.</translation>
     </message>
@@ -4112,32 +4202,32 @@ Operación fallida.</translation>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="423"/>
+        <location filename="../gui/mainwindow.cpp" line="424"/>
         <source>Doomseeker - Auto Update</source>
         <translation>Doomseeker - Actualización automática</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="424"/>
+        <location filename="../gui/mainwindow.cpp" line="425"/>
         <source>Update is already in progress.</source>
         <translation>La actualización ya está en progreso.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="433"/>
+        <location filename="../gui/mainwindow.cpp" line="434"/>
         <source>Removing old update packages from local temporary space.</source>
         <translation>Eliminando paquetes de actualización antiguos del espacio temporal local.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="438"/>
+        <location filename="../gui/mainwindow.cpp" line="439"/>
         <source>Checking for updates...</source>
         <translation>Comprobando actualizaciones...</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="653"/>
+        <location filename="../gui/mainwindow.cpp" line="654"/>
         <source>All WADs found</source>
         <translation>Todos los WADs encontrados</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="653"/>
+        <location filename="../gui/mainwindow.cpp" line="654"/>
         <source>All of the WADs used by this server are present.</source>
         <translation>Todos los WAD utilizados por este servidor están presentes.</translation>
     </message>
@@ -4150,7 +4240,7 @@ Operación fallida.</translation>
         <translation type="vanished">Reinicio necesario</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="738"/>
+        <location filename="../gui/mainwindow.cpp" line="739"/>
         <source>Doomseeker is unable to proceed with the refresh operation because the following problem has occured:
 
 </source>
@@ -4159,82 +4249,82 @@ Operación fallida.</translation>
 </translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="743"/>
+        <location filename="../gui/mainwindow.cpp" line="744"/>
         <source>Plugins are missing from the &quot;engines/&quot; directory.</source>
         <translation>Los complementos faltan en el directorio &quot;engines/&quot;.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="747"/>
+        <location filename="../gui/mainwindow.cpp" line="748"/>
         <source>No master servers are enabled in the &quot;Query&quot; menu.</source>
         <translation>No hay servidores maestros habilitados en el menú &quot;Consulta&quot;.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="751"/>
+        <location filename="../gui/mainwindow.cpp" line="752"/>
         <source>Unknown error occured.</source>
         <translation>Se produjo un error desconocido.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="755"/>
+        <location filename="../gui/mainwindow.cpp" line="756"/>
         <source>Doomseeker - refresh problem</source>
         <translation>Doomseeker - problema de actualización</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="761"/>
+        <location filename="../gui/mainwindow.cpp" line="762"/>
         <source>Total refresh initialized!</source>
         <translation>Actualización total inicializada!</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="771"/>
+        <location filename="../gui/mainwindow.cpp" line="772"/>
         <source>Warning: No master servers were enabled for this refresh. Check your Query menu or &quot;engines/&quot; directory.</source>
         <translation>Advertencia: No se habilitaron servidores maestros para esta actualización. Verifique su menú de consulta o el directorio &quot;engines /&quot;.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="839"/>
+        <location filename="../gui/mainwindow.cpp" line="840"/>
         <source>Auto Updater:</source>
         <translation>Actualizador automático:</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="854"/>
+        <location filename="../gui/mainwindow.cpp" line="855"/>
         <source>Abort update.</source>
         <translation>Cancelar actualización.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="866"/>
+        <location filename="../gui/mainwindow.cpp" line="867"/>
         <source>IP2C Update</source>
         <translation>Actualización de IP2C</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="877"/>
+        <location filename="../gui/mainwindow.cpp" line="878"/>
         <source>&amp;IRC</source>
         <translation>&amp;IRC</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="878"/>
+        <location filename="../gui/mainwindow.cpp" line="879"/>
         <source>CTRL+I</source>
         <translation>CTRL+I</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="893"/>
+        <location filename="../gui/mainwindow.cpp" line="894"/>
         <source>&amp;Log</source>
         <translation>&amp;Log</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="894"/>
+        <location filename="../gui/mainwindow.cpp" line="895"/>
         <source>CTRL+L</source>
         <translation>CTRL+L</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="910"/>
+        <location filename="../gui/mainwindow.cpp" line="911"/>
         <source>Servers</source>
         <translation>Servidores</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="923"/>
+        <location filename="../gui/mainwindow.cpp" line="924"/>
         <source>Server &amp;Details</source>
         <translation>&amp;Detalles Servidor</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="924"/>
+        <location filename="../gui/mainwindow.cpp" line="925"/>
         <source>CTRL+D</source>
         <translation>CTRL+D</translation>
     </message>
@@ -4247,80 +4337,80 @@ Operación fallida.</translation>
         <translation type="vanished">CTRL+F</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="689"/>
+        <location filename="../gui/mainwindow.cpp" line="690"/>
         <source>Doomseeker needs to be restarted for some changes to be applied.</source>
         <translation>Doomseeker necesita reiniciarse para que algunos de los cambios se apliquen.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1038"/>
+        <location filename="../gui/mainwindow.cpp" line="1039"/>
         <source>Master server for %1: %2</source>
         <translation>Servidor maestro para %1: %2</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1042"/>
+        <location filename="../gui/mainwindow.cpp" line="1043"/>
         <source>Error: %1</source>
         <translation>Error: %1</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1051"/>
+        <location filename="../gui/mainwindow.cpp" line="1052"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1082"/>
-        <location filename="../gui/mainwindow.cpp" line="1090"/>
+        <location filename="../gui/mainwindow.cpp" line="1083"/>
+        <location filename="../gui/mainwindow.cpp" line="1091"/>
         <source>Help error</source>
         <translation>Error en ayuda</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1082"/>
+        <location filename="../gui/mainwindow.cpp" line="1083"/>
         <source>No help found.</source>
         <translation>No se encontró ayuda.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1090"/>
+        <location filename="../gui/mainwindow.cpp" line="1091"/>
         <source>Failed to open URL:
 %1</source>
         <translation>Error al abrir la URL:
 %1</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1170"/>
+        <location filename="../gui/mainwindow.cpp" line="1171"/>
         <source>Welcome to Doomseeker</source>
         <translation>Bienvenido a Doomseeker</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1171"/>
+        <location filename="../gui/mainwindow.cpp" line="1172"/>
         <source>Before you start browsing for servers, please ensure that Doomseeker is properly configured.</source>
         <translation>Antes de comenzar a buscar servidores, asegúrese de que Doomseeker esté configurado correctamente.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1188"/>
+        <location filename="../gui/mainwindow.cpp" line="1189"/>
         <source>Program update detection &amp; download finished with status: [%1] %2</source>
         <translation>La detección y descarga de la actualización del programa terminó con el estado: [%1]%2</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1198"/>
+        <location filename="../gui/mainwindow.cpp" line="1199"/>
         <source>Updates will be installed on next program start.</source>
         <translation>Las actualizaciones se instalarán en el próximo inicio del programa.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1205"/>
+        <location filename="../gui/mainwindow.cpp" line="1206"/>
         <source>Update channel was changed during update process. Discarding update.</source>
         <translation>El canal de actualización cambió durante el proceso de actualización. Descartando la actualización.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1249"/>
+        <location filename="../gui/mainwindow.cpp" line="1250"/>
         <source>Query on startup warning: No master servers are enabled in the Query menu.</source>
         <translation>Advertencia de consulta al inicio: no hay servidores maestros habilitados en el menú Consulta.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1267"/>
+        <location filename="../gui/mainwindow.cpp" line="1268"/>
         <source>Doomseeker critical error</source>
         <translation>Error crítico de Doomseeker</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1268"/>
+        <location filename="../gui/mainwindow.cpp" line="1269"/>
         <source>Doomseeker was unable to find any plugin libraries.
 Although the application will still work it will not be possible to fetch any server info or launch any game.
 
@@ -4333,62 +4423,62 @@ Compruebe si hay archivos en el directorio &quot;motores/&quot;.
 Para solucionar este problema, puede intentar descargar Doomseeker nuevamente desde el sitio especificado en el cuadro Ayuda | Acerca de y volver a instalar Doomseeker.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1318"/>
+        <location filename="../gui/mainwindow.cpp" line="1319"/>
         <source>Querying...</source>
         <translation>Consultando...</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1327"/>
+        <location filename="../gui/mainwindow.cpp" line="1328"/>
         <source>Done</source>
         <translation>Hecho</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1415"/>
+        <location filename="../gui/mainwindow.cpp" line="1416"/>
         <source>Main Toolbar</source>
         <translation>Barra de herramientas principal</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1420"/>
+        <location filename="../gui/mainwindow.cpp" line="1421"/>
         <source>Get Servers</source>
         <translation>Obtener servidores</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1454"/>
+        <location filename="../gui/mainwindow.cpp" line="1455"/>
         <source>Search:</source>
         <translation>Buscar:</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1525"/>
+        <location filename="../gui/mainwindow.cpp" line="1526"/>
         <source>Doomseeker - show join command line</source>
         <translation>Doomseeker - mostrar comando para unirse</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1526"/>
+        <location filename="../gui/mainwindow.cpp" line="1527"/>
         <source>Command line cannot be built:
 %1</source>
         <translation>La línea de comandos no se puede construir:
 %1</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1539"/>
+        <location filename="../gui/mainwindow.cpp" line="1540"/>
         <source>Update installation problem:
 %1</source>
         <translation>Problema de instalación de actualización:
 %1</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1543"/>
+        <location filename="../gui/mainwindow.cpp" line="1544"/>
         <source>Update installation failed.</source>
         <translation>Error al instalar la actualización.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1545"/>
-        <location filename="../gui/mainwindow.cpp" line="1554"/>
+        <location filename="../gui/mainwindow.cpp" line="1546"/>
+        <location filename="../gui/mainwindow.cpp" line="1555"/>
         <source>Doomseeker - Auto Update problem</source>
         <translation>Doomseeker - Problema de actualización automática</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1546"/>
+        <location filename="../gui/mainwindow.cpp" line="1547"/>
         <source>%1
 
 Remaining updates have been discarded.</source>
@@ -4397,7 +4487,7 @@ Remaining updates have been discarded.</source>
 Las actualizaciones restantes se han descartado.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1551"/>
+        <location filename="../gui/mainwindow.cpp" line="1552"/>
         <source>Update install problem:
 %1
 
@@ -4408,33 +4498,33 @@ Remaining updates have been discarded.</source>
 Las actualizaciones restantes se han descartado.</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1644"/>
+        <location filename="../gui/mainwindow.cpp" line="1645"/>
         <source>Generic servers: %1
 </source>
         <translation>Servidores genéricos: %1
 </translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1645"/>
+        <location filename="../gui/mainwindow.cpp" line="1646"/>
         <source>Custom servers: %1
 </source>
         <translation>Servidores personalizados: %1
 </translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1646"/>
+        <location filename="../gui/mainwindow.cpp" line="1647"/>
         <source>LAN servers: %1
 </source>
         <translation>Servidores LAN: %1
 </translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1647"/>
+        <location filename="../gui/mainwindow.cpp" line="1648"/>
         <source>Human players: %1</source>
         <translation>Jugadores humanos: %1</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="1659"/>
+        <location filename="../gui/mainwindow.cpp" line="1660"/>
         <source>Finished refreshing. Servers on the list: %1 (+%2 custom, +%3 LAN). Players: %4.</source>
         <translation>Actualización finalizada. Servidores en la lista:%1 (+%2 personalizados, +%3 LAN). Jugadores: %4.</translation>
     </message>
@@ -4906,12 +4996,12 @@ Si no tiene este archivo, y pertenece a un juego comercial, necesita comprar el 
 <context>
     <name>PluginUrlHandler</name>
     <message>
-        <location filename="../connectionhandler.cpp" line="230"/>
+        <location filename="../connectionhandler.cpp" line="232"/>
         <source>Connect to server</source>
         <translation>Conectar con el servidor</translation>
     </message>
     <message>
-        <location filename="../connectionhandler.cpp" line="231"/>
+        <location filename="../connectionhandler.cpp" line="233"/>
         <source>Do you want to connect to the server at %1?</source>
         <translation>¿Desea conectarse al servidor %1?</translation>
     </message>
