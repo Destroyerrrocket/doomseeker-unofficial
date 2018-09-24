@@ -3,7 +3,10 @@
 Visit this file cleanly formatted in repository:
 <https://bitbucket.org/Doomseeker/doomseeker/src/default/CHANGELOG.md>
 
-This file follows the format of [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/), and this project does not adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+This file follows the format of
+[Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/),
+and this project does not adhere to
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 ### Added
@@ -355,7 +358,7 @@ archives. Fixes extraction of e1m4b.wad and e1m8b.wad. Thanks, John Romero!
 
 Copyright (this file)
 ---------------------
-Copyright (C) 2015 The Doomseeker Team
+Copyright (C) 2015, 2017, 2018 The Doomseeker Team
 
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
