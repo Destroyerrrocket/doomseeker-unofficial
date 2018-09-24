@@ -1,4 +1,4 @@
-# Change Log
+# Changelog
 
 Visit this file cleanly formatted in repository:
 <https://bitbucket.org/Doomseeker/doomseeker/src/default/CHANGELOG.md>
@@ -353,7 +353,7 @@ archives. Fixes extraction of e1m4b.wad and e1m8b.wad. Thanks, John Romero!
 - Zandronum:  Fixed "Sucide" typo in one of the Create Game's flags pages.
 
 ## [1.0] - 2015-03-22
-- Version 1.0 released. No change log was kept before.
+- Version 1.0 released. No changelog was kept before.
 
 
 Copyright (this file)
