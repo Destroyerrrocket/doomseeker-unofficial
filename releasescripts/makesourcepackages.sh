@@ -24,6 +24,27 @@
 
 set -o pipefail
 
+declare SignEnabled=-1
+declare SignGpgKey=""
+
+declare Arg
+for Arg in "$@"; do
+	if [[ $Arg == "--sign" || $Arg =~ ^--sign= ]]; then
+		SignEnabled=1
+		SignGpgKey=${Arg:7}
+	elif [[ $Arg == "--no-sign" ]]; then
+		SignEnabled=0
+	else
+		echo "ERROR: Unknown option $Arg" >&2
+		exit 1
+	fi
+done
+
+if (( SignEnabled < 0 )); then
+	echo 'Specify --sign or --no-sign.' >&2
+	exit 1
+fi
+
 # Process a cmake file and print the value of a given variable
 function cmake_extract_var
 {
@@ -58,6 +79,33 @@ function create_vcs_info
 	declare Ret=$?
 
 	rm -rf build
+	return "$Ret"
+}
+
+
+function sign_archive
+{
+	declare FileName=$1
+	shift
+
+	if (( ! SignEnabled )); then
+		return 0
+	fi
+
+	declare -a SignOpts=(-v)
+	if [[ $SignGpgKey ]]; then
+		SignOpts+=(-u "$SignGpgKey")
+	fi
+
+	echo "Signing $FileName..."
+	rm -f "$FileName.sig"
+	gpg "${SignOpts[@]}" --output "$FileName.sig" --detach-sig "$FileName"
+	declare Ret=$?
+
+	if (( Ret != 0 )); then
+		echo "Failed to sign $FileName!" >&2
+	fi
+
 	return "$Ret"
 }
 
@@ -96,6 +144,10 @@ else
 		echo 'Failed to create Wadseeker archive!' >&2
 		Error=1
 	fi
+fi
+
+if ! sign_archive "$doomseekerArchiveName.tar.xz" || ! sign_archive "$wadseekerArchiveName.tar.xz"; then
+	Error=1
 fi
 
 rm -rf "$doomseekerArchiveName"
