@@ -18,7 +18,7 @@
 # 02110-1301  USA
 #
 #------------------------------------------------------------------------------
-# Copyright (C) 2017 The Doomseeker Team
+# Copyright (C) 2017, 2018 The Doomseeker Team
 #------------------------------------------------------------------------------
 
 # This is a centralized location to store all version information. Make sure
@@ -32,4 +32,4 @@ set(FILEVERSION_DEF "1,2,0,HG_REVISION_NUMBER")
 set(PRODUCTVERSION_DEF "1,2,0,HG_REVISION_NUMBER")
 set(FILEVERSION_STR_DEF "1.2.0.0")
 set(PRODUCTVERSION_STR_DEF "1.2.0.0")
-set(LEGALCOPYRIGHT_DEF "The Doomseeker Team 2009 - 2017")
+set(LEGALCOPYRIGHT_DEF "The Doomseeker Team 2009 - 2018")
