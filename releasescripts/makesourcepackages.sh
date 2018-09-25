@@ -19,10 +19,14 @@
 # 02110-1301  USA
 #
 #------------------------------------------------------------------------------
-# Copyright (C) 2010 Braden "Blzut3" Obrzut <admin@maniacsvault.net>
+# Copyright (C) 2018 Braden "Blzut3" Obrzut <admin@maniacsvault.net>
 #------------------------------------------------------------------------------
 
 set -o pipefail
+
+# Send SIGINT to child process not the shell, so if the user sends SIGINT we
+# can still roll back our stack and cleanup
+trap "kill -INT -$BASHPID" INT
 
 declare SignEnabled=-1
 declare SignGpgKey=""
@@ -66,19 +70,20 @@ function create_vcs_info
 	declare SrcDir=$(realpath "$1")
 	shift
 
-	if ! mkdir build; then
+	declare BuildDir
+	if ! BuildDir=$(mktemp -d -p . build.XXXXXXXXXX); then
 		echo 'Failed to create temporary build directory.' >&2
 		exit 1
 	fi
 
 	(
-		cd build &&
+		cd "$BuildDir" &&
 			cmake "$SrcDir" &&
 			cmake --build . -- revision_check
 	)
 	declare Ret=$?
 
-	rm -rf build
+	rm -rf "$BuildDir"
 	return "$Ret"
 }
 
