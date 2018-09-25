@@ -60,6 +60,12 @@ add_custom_target(revision_check ALL
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	DEPENDS updaterevision
 )
+# In case gitinfo.h isn't yet generated create a dummy file so our file listing
+# will contain it. We can't just add it to the file listing since then CMake
+# would complain that it doesn't exist.
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/gitinfo.h")
+	file(WRITE "${CMAKE_CURRENT_SOURCE_DIR}/gitinfo.h" "")
+endif()
 
 if(NOT FORCE_QT4)
 	find_package(Qt5 COMPONENTS Widgets)
