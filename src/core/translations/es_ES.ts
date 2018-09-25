@@ -4,78 +4,84 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <location filename="../gui/aboutdialog.cpp" line="95"/>
-        <source>Copyright © %1 The Doomseeker Team</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../gui/aboutdialog.cpp" line="96"/>
+        <location filename="../gui/aboutdialog.cpp" line="98"/>
         <source>This program is distributed under the terms of the LGPL v2.1 or later.</source>
         <translation>Éste programa és distribuido bajo los términos de la licéncia LGPL v2.1 o posterior.</translation>
     </message>
     <message>
-        <location filename="../gui/aboutdialog.cpp" line="99"/>
+        <location filename="../gui/aboutdialog.cpp" line="101"/>
         <source>This program uses GeoLite2 database for IP-to-Country (IP2C) purposes. Database and Contents Copyright (c) 2016 MaxMind, Inc.</source>
         <translation>Éste programa usa la base de datos de GeoLite2 para localizar países por IP (IP2C). El contenido y la base de datos bajo Copyright (c) 2016 MaxMind, Inc.</translation>
     </message>
     <message>
-        <location filename="../gui/aboutdialog.cpp" line="101"/>
         <source>GeoLite2 License:
 This work is licensed under the Creative Commons Attribution - ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.</source>
-        <translation>Licencia de GeoLite2:
+        <translation type="vanished">Licencia de GeoLite2:
 Se encuentra bajo la licencia de la Creative Commons Attribution-ShareAlike 3.0 Unported License. Para ver una copia de esta licéncia, visita http://creativecommons.org/licenses/by-sa/3.0/.</translation>
     </message>
     <message>
-        <location filename="../gui/aboutdialog.cpp" line="104"/>
+        <location filename="../gui/aboutdialog.cpp" line="96"/>
+        <source>Copyright %1 %2 The Doomseeker Team</source>
+        <translation>Copyright %1 %2 El Equipo de Doomseeker (The Doomseeker Team)</translation>
+    </message>
+    <message>
+        <location filename="../gui/aboutdialog.cpp" line="103"/>
+        <source>GeoLite2 License:
+This work is licensed under the Creative Commons Attribution - ShareAlike 4.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.</source>
+        <translation>Licencia de GeoLite2:
+Se encuentra bajo la licencia de la Creative Commons Attribution-ShareAlike 4.0 Unported License. Para ver una copia de esta licéncia, visita http://creativecommons.org/licenses/by-sa/4.0/.</translation>
+    </message>
+    <message>
+        <location filename="../gui/aboutdialog.cpp" line="106"/>
         <source>GeoLite2 available at:
 https://dev.maxmind.com/geoip/geoip2/geolite2/</source>
         <translation>GeoLite2 available at:
 https://dev.maxmind.com/geoip/geoip2/geolite2/</translation>
     </message>
     <message>
-        <location filename="../gui/aboutdialog.cpp" line="109"/>
+        <location filename="../gui/aboutdialog.cpp" line="111"/>
         <source>- Aha-Soft</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/aboutdialog.cpp" line="110"/>
+        <location filename="../gui/aboutdialog.cpp" line="112"/>
         <source>- Crystal Clear by Everaldo Coelho</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/aboutdialog.cpp" line="111"/>
+        <location filename="../gui/aboutdialog.cpp" line="113"/>
         <source>- Fugue Icons (C) 2013 Yusuke Kamiyamane. All rights reserved.</source>
         <translation>- Fugue Icons (C) 2013 Yusuke Kamiyamane. Todos los derechos reservados.</translation>
     </message>
     <message>
-        <location filename="../gui/aboutdialog.cpp" line="112"/>
+        <location filename="../gui/aboutdialog.cpp" line="114"/>
         <source>- Nuvola 1.0 (KDE 3.x icon set)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/aboutdialog.cpp" line="113"/>
+        <location filename="../gui/aboutdialog.cpp" line="115"/>
         <source>- Oxygen Icons 4.3.1 (KDE)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/aboutdialog.cpp" line="114"/>
+        <location filename="../gui/aboutdialog.cpp" line="116"/>
         <source>- Silk Icon Set (C) Mark James (famfamfam.com)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/aboutdialog.cpp" line="115"/>
+        <location filename="../gui/aboutdialog.cpp" line="117"/>
         <source>- Tango Icon Library / Tango Desktop Project</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/aboutdialog.cpp" line="116"/>
+        <location filename="../gui/aboutdialog.cpp" line="118"/>
         <source>This program uses icons (or derivates of) from following sources:
 </source>
         <translation>This program uses icons (or derivates of) from following sources:
 </translation>
     </message>
     <message>
-        <location filename="../gui/aboutdialog.cpp" line="127"/>
+        <location filename="../gui/aboutdialog.cpp" line="129"/>
         <source>JSON library license</source>
         <translation></translation>
     </message>
@@ -573,92 +579,97 @@ no puede ser ejecutado</translation>
         <translation>Apariencia</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/cfgappearance.cpp" line="185"/>
+        <location filename="../gui/configuration/cfgappearance.cpp" line="186"/>
         <source>Unknown language definition &quot;%1&quot;</source>
         <translation>Definición de lengua desconocida &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/cfgappearance.cpp" line="216"/>
+        <location filename="../gui/configuration/cfgappearance.cpp" line="217"/>
         <source>Loading translation &quot;%1&quot;</source>
         <translation>Cargando traducción &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../gui/configuration/cfgappearance.cpp" line="218"/>
+        <location filename="../gui/configuration/cfgappearance.cpp" line="219"/>
         <source>Program needs to be restarted to fully apply the translation</source>
         <translation>El programa necesita reiniciarse para aplicar completamente la traducción</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_cfgappearance.h" line="239"/>
+        <location filename="../../../build/src/core/ui_cfgappearance.h" line="276"/>
         <source>Player slots style:</source>
         <translation>Estilo del número de jugadores:</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_cfgappearance.h" line="240"/>
+        <location filename="../../../build/src/core/ui_cfgappearance.h" line="277"/>
         <source>Marines</source>
         <translation>Marines</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_cfgappearance.h" line="241"/>
+        <location filename="../../../build/src/core/ui_cfgappearance.h" line="278"/>
         <source>Blocks</source>
         <translation>Bloques</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_cfgappearance.h" line="242"/>
+        <location filename="../../../build/src/core/ui_cfgappearance.h" line="279"/>
         <source>Numeric</source>
         <translation>Numérico</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_cfgappearance.h" line="244"/>
+        <location filename="../../../build/src/core/ui_cfgappearance.h" line="281"/>
         <source>Custom servers color:</source>
         <translation>Color servidores Customizados:</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_cfgappearance.h" line="245"/>
+        <location filename="../../../build/src/core/ui_cfgappearance.h" line="285"/>
         <source>Bots are not players</source>
         <translation>Bots no són jugadores</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_cfgappearance.h" line="247"/>
+        <location filename="../../../build/src/core/ui_cfgappearance.h" line="287"/>
         <source>Hide passwords</source>
         <translation>Ocultar contrasseñas</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_cfgappearance.h" line="249"/>
+        <location filename="../../../build/src/core/ui_cfgappearance.h" line="289"/>
         <source>Lookup server hosts</source>
         <translation>Buscar servidores host</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_cfgappearance.h" line="251"/>
+        <location filename="../../../build/src/core/ui_cfgappearance.h" line="274"/>
         <source>Language:</source>
         <translation>Lengua:</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_cfgappearance.h" line="252"/>
+        <location filename="../../../build/src/core/ui_cfgappearance.h" line="291"/>
         <source>Colorize server console</source>
         <translation>Colorear consola del servidor</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_cfgappearance.h" line="254"/>
+        <location filename="../../../build/src/core/ui_cfgappearance.h" line="293"/>
         <source>Draw grid in server table</source>
         <translation>Dibujar quadrícula en la tabla de servidores</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_cfgappearance.h" line="256"/>
+        <location filename="../../../build/src/core/ui_cfgappearance.h" line="283"/>
         <source>Servers with buddies color:</source>
         <translation>Color servidores con compañeros:</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_cfgappearance.h" line="258"/>
+        <location filename="../../../build/src/core/ui_cfgappearance.h" line="275"/>
+        <source>Restart will be required to apply the translation fully.</source>
+        <translation>Es necesario reiniciar para aplicar la traducción completamente.</translation>
+    </message>
+    <message>
+        <location filename="../../../build/src/core/ui_cfgappearance.h" line="282"/>
         <source>LAN servers color:</source>
         <translation>Color servidores LAN:</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_cfgappearance.h" line="259"/>
+        <location filename="../../../build/src/core/ui_cfgappearance.h" line="295"/>
         <source>Use tray icon</source>
         <translation>Usar icono de la bandeja del sistema</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_cfgappearance.h" line="260"/>
+        <location filename="../../../build/src/core/ui_cfgappearance.h" line="296"/>
         <source>When close button is pressed, minimize to tray icon.</source>
         <translation>Quando se presione el botón &quot;cerrar&quot;, minimizar a la bandeja del sistema.</translation>
     </message>
@@ -1482,7 +1493,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../../build/src/core/ui_cfgwadalias.h" line="119"/>
         <source>Form</source>
-        <translation>Form</translation>
+        <translation>Formulario</translation>
     </message>
     <message>
         <location filename="../../../build/src/core/ui_cfgwadalias.h" line="120"/>
@@ -1792,7 +1803,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../../build/src/core/ui_cfgchatlogspage.h" line="154"/>
         <source>Form</source>
-        <translation>Form</translation>
+        <translation>Formulario</translation>
     </message>
     <message>
         <location filename="../../../build/src/core/ui_cfgchatlogspage.h" line="155"/>
@@ -1869,7 +1880,9 @@ p, li { white-space: pre-wrap; }
         <source>--create-game
     Launches Doomseeker in &quot;Create Game&quot; mode.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>--create-game
+    Arranca Doomseeker en modo &quot;Crear Juego&quot;.
+</translation>
     </message>
     <message>
         <location filename="../cmdargshelp.cpp" line="34"/>
@@ -1965,7 +1978,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../cmdargshelp.cpp" line="71"/>
         <source>Available command line parameters:
 </source>
-        <translation type="unfinished">Parámetros de línea de comandos disponibles:
+        <translation>Parámetros de la línea de comandos disponibles:
 </translation>
     </message>
     <message numerus="yes">
@@ -1973,9 +1986,13 @@ p, li { white-space: pre-wrap; }
         <source>doomseeker: expected %n argument(s) in option %1
 
 </source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>doomseeker: se esperaba %n argumento en la opción %1
+
+</numerusform>
+            <numerusform>doomseeker: se esperaban %n argumentos en la opción %1
+
+</numerusform>
         </translation>
     </message>
     <message>
@@ -1983,7 +2000,9 @@ p, li { white-space: pre-wrap; }
         <source>doomseeker: unrecognized option &apos;%1&apos;
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>doomseeker: opción no reconocida &apos;%1&apos;
+
+</translation>
     </message>
 </context>
 <context>
@@ -2068,7 +2087,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/createserverdialog.cpp" line="134"/>
-        <location filename="../gui/createserverdialog.cpp" line="345"/>
+        <location filename="../gui/createserverdialog.cpp" line="346"/>
         <source>Doomseeker - create game</source>
         <translation>Doomseeker - crear juego</translation>
     </message>
@@ -2079,28 +2098,28 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/createserverdialog.cpp" line="86"/>
         <source>Doomseeker - load game setup config</source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker - carga la configuración del juego</translation>
     </message>
     <message>
         <location filename="../gui/createserverdialog.cpp" line="105"/>
         <location filename="../gui/createserverdialog.cpp" line="118"/>
         <source>Doomseeker - save game setup config</source>
-        <translation type="unfinished"></translation>
+        <translation>Doomseeker - guarda la configuración del juego</translation>
     </message>
     <message>
         <location filename="../gui/createserverdialog.cpp" line="118"/>
         <source>Unable to save game setup configuration!</source>
-        <translation type="unfinished"></translation>
+        <translation>No se puede guardar la configuración del juego!</translation>
     </message>
     <message>
         <location filename="../gui/createserverdialog.cpp" line="137"/>
-        <location filename="../gui/createserverdialog.cpp" line="348"/>
+        <location filename="../gui/createserverdialog.cpp" line="349"/>
         <source>No game selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Ningún juego seleccionado</translation>
     </message>
     <message>
         <location filename="../gui/createserverdialog.cpp" line="154"/>
-        <location filename="../gui/createserverdialog.cpp" line="364"/>
+        <location filename="../gui/createserverdialog.cpp" line="365"/>
         <source>Doomseeker - error</source>
         <translation>Doomseeker - error</translation>
     </message>
@@ -2112,14 +2131,14 @@ p, li { white-space: pre-wrap; }
         <translation>Indicadores</translation>
     </message>
     <message>
-        <location filename="../gui/createserverdialog.cpp" line="429"/>
+        <location filename="../gui/createserverdialog.cpp" line="430"/>
         <source>Run game command line:</source>
-        <translation type="unfinished"></translation>
+        <translation>Comando para ejecutar juego:</translation>
     </message>
     <message>
-        <location filename="../gui/createserverdialog.cpp" line="430"/>
+        <location filename="../gui/createserverdialog.cpp" line="431"/>
         <source>Host server command line:</source>
-        <translation type="unfinished"></translation>
+        <translation>Comando para ejecutar el servidor:</translation>
     </message>
     <message>
         <location filename="../../../build/src/core/ui_createserverdialog.h" line="245"/>
@@ -2149,7 +2168,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../../build/src/core/ui_createserverdialog.h" line="252"/>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurar</translation>
     </message>
     <message>
         <location filename="../../../build/src/core/ui_createserverdialog.h" line="255"/>
@@ -2174,7 +2193,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../../build/src/core/ui_createserverdialog.h" line="265"/>
         <source>Offline command line</source>
-        <translation type="unfinished"></translation>
+        <translation>Comando para el modo desconectado</translation>
     </message>
     <message>
         <location filename="../../../build/src/core/ui_createserverdialog.h" line="266"/>
@@ -2184,7 +2203,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../../build/src/core/ui_createserverdialog.h" line="270"/>
         <source>Host command line</source>
-        <translation type="unfinished"></translation>
+        <translation>Comando para el servidor</translation>
     </message>
     <message>
         <location filename="../../../build/src/core/ui_createserverdialog.h" line="263"/>
@@ -2212,7 +2231,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../../build/src/core/ui_customparamspanel.h" line="61"/>
         <source>Form</source>
-        <translation>Form</translation>
+        <translation>Formulario</translation>
     </message>
     <message>
         <location filename="../../../build/src/core/ui_customparamspanel.h" line="62"/>
@@ -2429,7 +2448,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/configuration/doomseekerconfigurationdialog.cpp" line="131"/>
         <source>Games</source>
-        <translation type="unfinished"></translation>
+        <translation>Juegos</translation>
     </message>
     <message>
         <source>Engines</source>
@@ -2521,7 +2540,7 @@ es un directorio o no existe.</translation>
     <message>
         <location filename="../../../build/src/core/ui_filepickwidget.h" line="94"/>
         <source>Form</source>
-        <translation>Form</translation>
+        <translation>Formulario</translation>
     </message>
     <message>
         <location filename="../../../build/src/core/ui_filepickwidget.h" line="95"/>
@@ -2758,7 +2777,7 @@ Ejecutable: %3</translation>
     <message>
         <location filename="../../../build/src/core/ui_gameexecutablepicker.h" line="89"/>
         <source>Form</source>
-        <translation>Form</translation>
+        <translation>Formulario</translation>
     </message>
     <message>
         <location filename="../../../build/src/core/ui_gameexecutablepicker.h" line="90"/>
@@ -2835,33 +2854,31 @@ Ejecutable: %3</translation>
 <context>
     <name>GameRulesPanel</name>
     <message>
-        <location filename="../gui/createserver/gamerulespanel.cpp" line="207"/>
-        <location filename="../gui/createserver/gamerulespanel.cpp" line="230"/>
+        <location filename="../gui/createserver/gamerulespanel.cpp" line="220"/>
         <source>&lt; NONE &gt;</source>
         <translation>&lt; NADA &gt;</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_gamerulespanel.h" line="142"/>
+        <location filename="../../../build/src/core/ui_gamerulespanel.h" line="128"/>
         <source>Map list</source>
         <translation>Lista de mapas</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_gamerulespanel.h" line="143"/>
         <source>Difficulty:</source>
-        <translation>Dificultad:</translation>
+        <translation type="vanished">Dificultad:</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_gamerulespanel.h" line="144"/>
+        <location filename="../../../build/src/core/ui_gamerulespanel.h" line="129"/>
         <source>Modifiers:</source>
         <translation>Modificadores:</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_gamerulespanel.h" line="145"/>
+        <location filename="../../../build/src/core/ui_gamerulespanel.h" line="130"/>
         <source>Max. clients:</source>
         <translation>Max. clientes:</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_gamerulespanel.h" line="146"/>
+        <location filename="../../../build/src/core/ui_gamerulespanel.h" line="131"/>
         <source>Max. players:</source>
         <translation>Max. Jugadores:</translation>
     </message>
@@ -2869,17 +2886,18 @@ Ejecutable: %3</translation>
 <context>
     <name>GeneralGameSetupPanel</name>
     <message>
-        <location filename="../gui/createserver/generalgamesetuppanel.cpp" line="185"/>
+        <location filename="../gui/createserver/generalgamesetuppanel.cpp" line="187"/>
+        <location filename="../gui/createserver/generalgamesetuppanel.cpp" line="211"/>
         <source>&lt; NONE &gt;</source>
-        <translation type="unfinished">&lt; NADA &gt;</translation>
+        <translation>&lt; NADA &gt;</translation>
     </message>
     <message>
-        <location filename="../gui/createserver/generalgamesetuppanel.cpp" line="266"/>
+        <location filename="../gui/createserver/generalgamesetuppanel.cpp" line="293"/>
         <source>Doomseeker - load server config</source>
         <translation>Doomseeker - carga la configuración del servidor</translation>
     </message>
     <message>
-        <location filename="../gui/createserver/generalgamesetuppanel.cpp" line="267"/>
+        <location filename="../gui/createserver/generalgamesetuppanel.cpp" line="294"/>
         <source>Plugin for engine &quot;%1&quot; is not present!</source>
         <translation>¡El complemento para el motor &quot;%1&quot; no está presente!</translation>
     </message>
@@ -2888,92 +2906,97 @@ Ejecutable: %3</translation>
         <translation type="vanished">Motor:</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="277"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="305"/>
         <source>Game:</source>
-        <translation type="unfinished"></translation>
+        <translation>Juego:</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="278"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="306"/>
         <source>Executable:</source>
         <translation>Ejecutable:</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="280"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="308"/>
         <source>If locked, executable won&apos;t change when new config for the same engine is loaded</source>
         <translation>Si está bloqueado, el ejecutable no cambiará cuando se carguen nuevas configuraciones para el mismo motor</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="282"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="310"/>
         <source>Lock</source>
         <translation>Bloquear</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="283"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="311"/>
         <source>Server name:</source>
         <translation>Nombre del servidor:</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="284"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="312"/>
         <source>Started from Doomseeker</source>
         <translation>Comenzado desde Doomseeker</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="285"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="313"/>
         <source>Port:</source>
         <translation>Puerto:</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="286"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="314"/>
         <source>Allow the game to choose port.</source>
         <translation>Permitir que el juego elegir el puerto.</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="287"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="315"/>
         <source>Game mode:</source>
         <translation>Modo de juego:</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="288"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="316"/>
         <source>Map:</source>
         <translation>Mapa:</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="290"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="318"/>
         <source>This map isn&apos;t present on map list. Game may misbehave.</source>
         <translation>Este mapa no está presente en la lista de mapas. El juego puede comportarse mal.</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="292"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="320"/>
         <source>IWAD:</source>
         <translation>IWAD:</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="293"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="321"/>
+        <source>Difficulty:</source>
+        <translation>Dificultad:</translation>
+    </message>
+    <message>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="322"/>
         <source>Additional WADs and files (check required):</source>
         <translation>WADs y archivos adicionales (se requiere verificación):</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="294"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="323"/>
         <source>Broadcast to LAN</source>
         <translation>Emitir a la LAN</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="295"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="324"/>
         <source>Broadcast to Master</source>
         <translation>Emitir a Master</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="297"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="326"/>
         <source>If checked, the game will try to tell your router to forward necessary ports.</source>
         <translation>Si está marcado, el juego intentará decirle a su ruter que reenvíe los puertos necesarios.</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="299"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="328"/>
         <source>UPnP</source>
         <translation>UPnP</translation>
     </message>
     <message>
-        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="301"/>
+        <location filename="../../../build/src/core/ui_generalgamesetuppanel.h" line="330"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;UPnP port. Set this to 0 to let Doomseeker or game decide.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;puerto UPnP. Establezca esto en 0 para permitir que Doomseeker o el juego decidan.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -3512,7 +3535,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../../build/src/core/ui_ircdocktabcontents.h" line="130"/>
         <source>Form</source>
-        <translation>Form</translation>
+        <translation>Formulario</translation>
     </message>
     <message>
         <location filename="../../../build/src/core/ui_ircdocktabcontents.h" line="131"/>
@@ -4073,7 +4096,7 @@ Operación fallida.</translation>
     <message>
         <location filename="../main.cpp" line="328"/>
         <source>Starting Create Game box.</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando la ventana de Creación del Juego.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="337"/>
@@ -4173,7 +4196,7 @@ Operación fallida.</translation>
     <message>
         <location filename="../main.cpp" line="662"/>
         <source>doomseeker: `--connect`, `--create-game` and `--rcon` are mutually exclusive</source>
-        <translation type="unfinished"></translation>
+        <translation>doomseeker: `--connect`, `--create-game` y `--rcon` se excluyen entre sí</translation>
     </message>
     <message>
         <source>doomseeker: expected one argument in option %1</source>
@@ -5252,7 +5275,7 @@ Si no tiene este archivo, y pertenece a un juego comercial, necesita comprar el 
     <message>
         <location filename="../../../build/src/core/ui_serverconsole.h" line="48"/>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulario</translation>
     </message>
 </context>
 <context>
