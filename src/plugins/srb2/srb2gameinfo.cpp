@@ -145,3 +145,8 @@ QList<GameCVar> Srb2GameInfo::limits(const GameMode &gameMode)
 	limits << GameCVar(tr("Resynch attempts before kicking clients"), "+resynchattempts", 10);
 	return limits;
 }
+
+QString Srb2AboutProvider::provide()
+{
+	return tr("This is the description of SRB2");
+}

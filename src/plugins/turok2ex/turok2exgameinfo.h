@@ -24,6 +24,7 @@
 #define __TUROK2EX_GAME_INFO_H_
 
 #include "serverapi/serverstructs.h"
+#include "serverapi/textprovider.h"
 #include <QObject>
 
 class Turok2ExGameInfo : public QObject
@@ -55,6 +56,15 @@ public:
 	{
 		return QList<GameCVar>();
 	}
+};
+
+/**
+ * @brief Provides a (translated) About text for Turok2.
+ */
+class Turok2AboutProvider : TextProvider
+{
+  public:
+	QString provide();
 };
 
 #endif

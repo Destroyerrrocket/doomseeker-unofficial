@@ -25,6 +25,7 @@
 #define __CHOCOLATEDOOM_GAME_INFO_H__
 
 #include "serverapi/serverstructs.h"
+#include "serverapi/textprovider.h"
 
 class ChocolateDoomGameInfo
 {
@@ -75,5 +76,14 @@ typedef enum
 } GameMode_t;
 
 } // close namespace
+
+/**
+ * @brief Provides a (translated) About text for Chocolatedoom.
+ */
+class ChocolateDoomAboutProvider : TextProvider
+{
+	public:
+		QString provide();
+};
 
 #endif

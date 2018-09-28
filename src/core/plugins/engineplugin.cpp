@@ -66,6 +66,7 @@ EnginePlugin::Data::Data()
 	supportsRandomMapRotation = false;
 	valid = true;
 	version = 0;
+	aboutProvider = NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -144,6 +145,9 @@ void EnginePlugin::init(const char* name, const char* const icon[], ...)
 				break;
 			case EP_Version:
 				d->version = va_arg(va, unsigned int);
+				break;
+			case EP_AboutProvider:
+				d->aboutProvider = QSharedPointer<TextProvider>(va_arg(va, TextProvider *));
 				break;
 
 			case EP_AllowsConnectPassword:

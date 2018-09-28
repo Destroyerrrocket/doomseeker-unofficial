@@ -60,3 +60,8 @@ QList<GameMode> OdamexGameInfo::gameModes()
 	gameModesList << GameMode::mkCaptureTheFlag();
 	return gameModesList;
 }
+
+QString OdamexAboutProvider::provide()
+{
+	return tr("This is the description of Odamex");
+}

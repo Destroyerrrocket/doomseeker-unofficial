@@ -24,6 +24,7 @@
 #define DOOMSEEKER_PLUGIN_ZANDRONUMGAMEINFO_H
 
 #include "serverapi/serverstructs.h"
+#include "serverapi/textprovider.h"
 #include <QObject>
 
 class ZandronumGameInfo : public QObject
@@ -84,6 +85,15 @@ class ZandronumGameInfo : public QObject
 
 		static QList<GameMode> gameModes();
 		static QList<GameCVar> gameModifiers();
+};
+
+/**
+ * @brief Provides a (translated) About text for Zandronum.
+ */
+class ZandronumAboutProvider : TextProvider
+{
+  public:
+	QString provide();
 };
 
 #endif

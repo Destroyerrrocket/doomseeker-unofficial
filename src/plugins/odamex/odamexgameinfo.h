@@ -24,6 +24,7 @@
 #define __ODAMEX_GAME_INFO_H_
 
 #include "serverapi/serverstructs.h"
+#include "serverapi/textprovider.h"
 #include <QObject>
 
 class OdamexGameInfo : public QObject
@@ -44,6 +45,15 @@ class OdamexGameInfo : public QObject
 		static QList<DMFlagsSection> dmFlags();
 		static QList<GameMode> gameModes();
 		static GameMode gameModeDuel();
+};
+
+/**
+ * @brief Provides a (translated) About text for Odamex.
+ */
+class OdamexAboutProvider : TextProvider
+{
+  public:
+	QString provide();
 };
 
 #endif

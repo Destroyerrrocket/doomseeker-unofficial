@@ -31,6 +31,7 @@
 #include "global.h"
 #include "serverapi/serverstructs.h"
 #include "serverapi/serverptr.h"
+#include "serverapi/textprovider.h"
 
 // Bump whenever the ABI changes in order to reject old plugins
 #define DOOMSEEKER_ABI_VERSION 2
@@ -67,6 +68,7 @@ class Server;
 class QHostAddress;
 class QPixmap;
 class QWidget;
+class TextProvider;
 
 /**
  * @ingroup group_pluginapi
@@ -85,6 +87,7 @@ class MAIN_EXPORT EnginePlugin
 
 			EP_Author, ///< (const char*) Author of the plugin.
 			EP_Version, ///< (unsigned int) Single version number for plugin.
+			EP_AboutProvider,
 
 			EP_AllowsConnectPassword, ///< Signifies that servers can be created with a connection password.
 			EP_AllowsEmail, ///< Signifies that servers can have an administrative contact email attached.
@@ -252,6 +255,11 @@ class MAIN_EXPORT EnginePlugin
 				unsigned int version;
 				bool demoExtensionAutomatic;
 				QString demoExtension;
+				/**
+				 * @brief Description of the plugin, intended to be displayed in
+				 * the "About" dialog.
+				 */
+				QSharedPointer<TextProvider> aboutProvider;
 				/**
 				 * @brief Controls behavior of "Create Game" dialog.
 				 *

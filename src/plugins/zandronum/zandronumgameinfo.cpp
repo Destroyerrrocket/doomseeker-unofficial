@@ -54,3 +54,8 @@ QList<GameCVar> ZandronumGameInfo::gameModifiers()
 	gameModifiersList << GameCVar("Instagib", "+instagib");
 	return gameModifiersList;
 }
+
+QString ZandronumAboutProvider::provide()
+{
+	return tr("This is the description of Zandronum");
+}

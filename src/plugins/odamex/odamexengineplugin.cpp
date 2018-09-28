@@ -42,6 +42,7 @@ OdamexEnginePlugin::OdamexEnginePlugin()
 	init("Odamex", odamex_xpm,
 		EP_Author, "The Doomseeker Team",
 		EP_Version, PLUGIN_VERSION,
+		EP_AboutProvider, new OdamexAboutProvider,
 
 		EP_AllowsURL,
 		EP_AllowsEmail,

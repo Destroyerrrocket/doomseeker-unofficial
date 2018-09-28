@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// chocolatedoomgameinfo.h
+// serversummary.h
 //------------------------------------------------------------------------------
 //
 // This library is free software; you can redistribute it and/or
@@ -18,22 +18,20 @@
 // 02110-1301  USA
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2013 Braden "Blzut3" Obrzut <admin@maniacsvault.net>
+// Copyright (C) 2018 "Pol Marcet Sardà" <polmarcetsarda@gmail.com>
 //------------------------------------------------------------------------------
+#ifndef __TEXTPROVIDER_H__
+#define __TEXTPROVIDER_H__
 
-#include "chocolatedoomgameinfo.h"
 #include <QObject>
+#include "dptr.h"
+#include "global.h"
 
-QList<GameMode> ChocolateDoomGameInfo::gameModes()
+class MAIN_EXPORT TextProvider : public QObject
 {
-	QList<GameMode> gameModesList;
-	gameModesList << GameMode::mkCooperative();
-	gameModesList << GameMode::mkDeathmatch();
-	gameModesList << GameMode::ffaGame(MODE_ALTDEATH, QObject::tr("Altdeath (Deathmatch 2.0)"));
-	return gameModesList;
-}
+	Q_OBJECT
 
-QString ChocolateDoomAboutProvider::provide()
-{
-	return tr("This is the description of Chocolate Doom");
-}
+	public:
+		virtual QString provide() = 0;
+};
+#endif

@@ -46,3 +46,7 @@ QList<GameCVar> Turok2ExGameInfo::limits(const GameMode &gameMode)
 	return limits;
 }
 
+QString Turok2AboutProvider::provide()
+{
+	return tr("This is the description of Turok2");
+}
