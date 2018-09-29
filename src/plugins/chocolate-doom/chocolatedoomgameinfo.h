@@ -80,8 +80,10 @@ typedef enum
 /**
  * @brief Provides a (translated) About text for Chocolatedoom.
  */
-class ChocolateDoomAboutProvider : TextProvider
+class ChocolateDoomAboutProvider : public TextProvider
 {
+	Q_OBJECT
+
 	public:
 		QString provide();
 };

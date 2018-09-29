@@ -90,10 +90,12 @@ class ZandronumGameInfo : public QObject
 /**
  * @brief Provides a (translated) About text for Zandronum.
  */
-class ZandronumAboutProvider : TextProvider
+class ZandronumAboutProvider : public TextProvider
 {
-  public:
-	QString provide();
+	Q_OBJECT
+
+	public:
+		QString provide();
 };
 
 #endif

@@ -61,10 +61,12 @@ public:
 /**
  * @brief Provides a (translated) About text for Turok2.
  */
-class Turok2AboutProvider : TextProvider
+class Turok2AboutProvider : public TextProvider
 {
-  public:
-	QString provide();
+	Q_OBJECT
+
+	public:
+		QString provide();
 };
 
 #endif

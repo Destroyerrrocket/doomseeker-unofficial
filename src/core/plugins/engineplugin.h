@@ -87,7 +87,6 @@ class MAIN_EXPORT EnginePlugin
 
 			EP_Author, ///< (const char*) Author of the plugin.
 			EP_Version, ///< (unsigned int) Single version number for plugin.
-			EP_AboutProvider,
 
 			EP_AllowsConnectPassword, ///< Signifies that servers can be created with a connection password.
 			EP_AllowsEmail, ///< Signifies that servers can have an administrative contact email attached.
@@ -216,7 +215,12 @@ class MAIN_EXPORT EnginePlugin
 			 *
 			 * By default this is disabled.
 			 */
-			EP_AllowsUpnpPort
+			EP_AllowsUpnpPort,
+			/**
+			 * @brief Provides a description to be shown in the "About" menu.
+			 */
+			EP_AboutProvider
+
 		};
 
 		/// Reimplement if you want to perform some ini initialization manually.
@@ -259,7 +263,7 @@ class MAIN_EXPORT EnginePlugin
 				 * @brief Description of the plugin, intended to be displayed in
 				 * the "About" dialog.
 				 */
-				QSharedPointer<TextProvider> aboutProvider;
+				QScopedPointer<TextProvider> aboutProvider;
 				/**
 				 * @brief Controls behavior of "Create Game" dialog.
 				 *

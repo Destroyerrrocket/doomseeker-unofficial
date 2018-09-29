@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// serversummary.h
+// textprovider.h
 //------------------------------------------------------------------------------
 //
 // This library is free software; you can redistribute it and/or
@@ -24,7 +24,6 @@
 #define __TEXTPROVIDER_H__
 
 #include <QObject>
-#include "dptr.h"
 #include "global.h"
 
 class MAIN_EXPORT TextProvider : public QObject

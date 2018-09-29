@@ -78,10 +78,12 @@ public:
 /**
  * @brief Provides a (translated) About text for Srb2.
  */
-class Srb2AboutProvider : TextProvider
+class Srb2AboutProvider : public TextProvider
 {
-  public:
-	QString provide();
+	Q_OBJECT
+
+	public:
+		QString provide();
 };
 
 #endif

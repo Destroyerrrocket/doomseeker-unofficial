@@ -50,10 +50,12 @@ class OdamexGameInfo : public QObject
 /**
  * @brief Provides a (translated) About text for Odamex.
  */
-class OdamexAboutProvider : TextProvider
+class OdamexAboutProvider : public TextProvider
 {
-  public:
-	QString provide();
+	Q_OBJECT
+
+	public:
+		QString provide();
 };
 
 #endif

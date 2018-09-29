@@ -57,5 +57,7 @@ QList<GameCVar> ZandronumGameInfo::gameModifiers()
 
 QString ZandronumAboutProvider::provide()
 {
-	return tr("This is the description of Zandronum");
+	QString aboutDescription = "Zandronum\n\n";
+	aboutDescription += tr("This plugin is distributed under the terms of the LGPL v2.1 or later.\n\n");
+	return aboutDescription;
 }

@@ -35,5 +35,7 @@ QList<GameMode> ChocolateDoomGameInfo::gameModes()
 
 QString ChocolateDoomAboutProvider::provide()
 {
-	return tr("This is the description of Chocolate Doom");
+	QString aboutDescription = "Chocolate Doom\n\n";
+	aboutDescription += tr("This plugin is distributed under the terms of the LGPL v2.1 or later.\n\n");
+	return aboutDescription;
 }
