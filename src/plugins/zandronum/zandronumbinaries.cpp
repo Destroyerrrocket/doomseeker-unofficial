@@ -404,7 +404,7 @@ bool ZandronumClientExeFile::spawnTestingBatchFile(const QString& versionDir, QS
 	QString cdDir = workingDirectory(message);
 
 	// Create Unix script file
-	content  = "#!/bin/bash\n";
+	content  = "#!/bin/sh\n";
 	content += "cd \"" + cdDir + "\" \n";
 	content += "export LANG=C\n";
 	#ifdef Q_OS_MAC
