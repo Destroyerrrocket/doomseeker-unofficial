@@ -48,7 +48,7 @@ QList<GameCVar> Turok2ExGameInfo::limits(const GameMode &gameMode)
 
 QString Turok2AboutProvider::provide()
 {
-	QString aboutDescription = tr("Turok 2 EX - Doomseeker plugin\n\n");
+	QString aboutDescription = tr("Turok 2 EX - Doomseeker plugin (https://www.gog.com/game/turok_2_seeds_of_evil/)\n\n");
 	aboutDescription += tr(
 		"This plugin is distributed under the terms of the LGPL v2.1 or later.\n\n"
 		"CRC code on BSD License:\n");

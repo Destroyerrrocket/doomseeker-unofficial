@@ -63,7 +63,7 @@ QList<GameMode> OdamexGameInfo::gameModes()
 
 QString OdamexAboutProvider::provide()
 {
-	QString aboutDescription = "Odamex\n\n";
+	QString aboutDescription = "Odamex (https://odamex.net/)\n\n";
 	aboutDescription += tr("This plugin is distributed under the terms of the LGPL v2.1 or later.\n\n");
 	return aboutDescription;
 }

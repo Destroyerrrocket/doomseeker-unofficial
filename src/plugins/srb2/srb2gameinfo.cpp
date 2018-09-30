@@ -148,7 +148,7 @@ QList<GameCVar> Srb2GameInfo::limits(const GameMode &gameMode)
 
 QString Srb2AboutProvider::provide()
 {
-	QString aboutDescription = "Sonic Robo Blast 2\n\n";
+	QString aboutDescription = "Sonic Robo Blast 2 (https://www.srb2.org/)\n\n";
 	aboutDescription += tr("This plugin is distributed under the terms of the LGPL v2.1 or later.\n\n");
 	return aboutDescription;
 }
