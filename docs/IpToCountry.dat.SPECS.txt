@@ -1,0 +1,86 @@
+IpToCountry.dat
+---------------
+
+IpToCountry.dat is a binary file that holds information that can match
+IPv4 addresses to geographical locations. This format was designed
+specifically for use in Doomseeker. The information stored within is
+limited to what Doomseeker needs to provide the Ip-to-Country
+functionality and doesn't contain anything else.
+
+Format
+------
+
+Legend
+
+  BYTE - 1 byte
+  USHORT - 2 bytes, unsigned
+  ULONG - 4 bytes, unsigned
+  STRING - null terminated text of arbitrary length
+  EOF - End of file
+  GeoID - a geographical or political entity that can be recognized
+          as having a set of IPv4 addresses assigned to it
+
+  All multibyte values are little-endian
+
+
+Main file structure
+
+  Field   | Size      | Description
+  ----------------------------------
+  Magic   | 4 * BYTE  | "IP2C" text
+  Version | USHORT    | Integer. Always '2'
+  Data    | Until EOF | Contains the whole database payload and
+          |           | continues until the end of file.
+
+The 'Data' structure contains a series of GeoID tables with content
+structured in the following way. The number of IP Blocks varies between
+each table.
+
+  Field           | Size        | Description
+  --------------------------------------------
+  Location Name   | STRING      | Human-readable full name of the location:
+                  |             | name of a country or of a larger geographical
+                  |             | or political structure. Doomseeker uses
+                  |             | this text for displaying the country name.
+                  |             |
+  Location ID     | STRING      | This is usually a 3-character code of
+                  |             | the location. For countries this is the
+                  |             | ISO ALPHA-3 Code. Doomseeker matches
+                  |             | country flags to IPs basing on this code.
+                  |             | Usually only the political country entities
+                  |             | are present here, however an exception for
+                  |             | this is a generic location somewhere in
+                  |             | the European Union that is expressed as
+                  |             | a 2-character STRING "EU".
+                  |             |
+  IP Blocks Count | ULONG       | Amount of IP Blocks for this GeoID
+                  |             |
+  IP Blocks       | 8 * <COUNT> | Pairs of IPs repeating as many times
+                  |             | as specified by the "Count" field.
+
+A singular "IP Block" structure denotes a range of IPs understood as a set
+of continuous integer numbers beginning from the "Begin" IPv4 and ending
+on the "End" IPv4. A GeoID can have many non-continuous IPv4 addresses
+assigned to it, so while the continuous range can be expressed as a min-max
+integer pair, the non-continuous ranges are expressed as separate blocks.
+
+  Field | Size  | Description
+  ----------------------------
+  Begin | ULONG | First IPv4 in the block, inclusive
+  End   | ULONG | Final IPv4 in the block, inclusive
+
+
+In current version (2) of the database the data is not presented in any
+particular order. Doomseeker's parser loads the data into hashtables
+where it is eventually ordered solely by the "IP Block Begin" value
+with GeoID information duplicated for each non-continuous block
+belonging to the same GeoID.
+
+
+----------------------------------------
+Copyright (C) 2018 The Doomseeker Team
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.  This file is offered as-is,
+without any warranty.
