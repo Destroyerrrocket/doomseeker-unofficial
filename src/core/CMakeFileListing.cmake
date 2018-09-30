@@ -253,6 +253,7 @@ set(HEADER_FILES
 	serverapi/serverptr.h
 	serverapi/serverstructs.h
 	serverapi/serversummary.h
+	serverapi/textprovider.h
 	serverapi/tooltips/dmflagshtmlgenerator.h
 	serverapi/tooltips/gameinfotip.h
 	serverapi/tooltips/generalinfotip.h

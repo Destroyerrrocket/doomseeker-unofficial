@@ -80,6 +80,9 @@ void AboutDialog::changePlugin(int pluginIndex)
 
 	const EnginePlugin* plug = gPlugins->plugin(pluginIndex)->info();
 
+	(plug->data()->aboutProvider.isNull()) ?
+		d->pluginDescription->setPlainText("") :
+		d->pluginDescription->setPlainText(plug->data()->aboutProvider->provide());
 	d->pluginAuthor->setText(plug->data()->author);
 	d->pluginVersion->setText(QString("Version: %1.%2").arg(plug->data()->abiVersion).arg(plug->data()->version));
 }

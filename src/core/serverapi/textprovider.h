@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// Turok2Exgameinfo.h
+// textprovider.h
 //------------------------------------------------------------------------------
 //
 // This library is free software; you can redistribute it and/or
@@ -18,55 +18,19 @@
 // 02110-1301  USA
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2017 "Edward Richardson" <Edward850@crantime.org>
+// Copyright (C) 2018 "Pol Marcet Sardà" <polmarcetsarda@gmail.com>
 //------------------------------------------------------------------------------
-#ifndef __TUROK2EX_GAME_INFO_H_
-#define __TUROK2EX_GAME_INFO_H_
+#ifndef __TEXTPROVIDER_H__
+#define __TEXTPROVIDER_H__
 
-#include "serverapi/serverstructs.h"
-#include "serverapi/textprovider.h"
 #include <QObject>
+#include "global.h"
 
-class Turok2ExGameInfo : public QObject
+class MAIN_EXPORT TextProvider : public QObject
 {
 	Q_OBJECT
 
 	public:
-		enum Turok2ExGameModes
-		{
-			MODE_SINGLEPLAYER, // start of list
-			MODE_ROKMATCH,
-			MODE_TEAMROKMATCH,
-			MODE_FRAGTAG,
-			MODE_LASTTUROKSTANDING,
-			MODE_ROKMIX,
-			MODE_INSTAROK,
-			MODE_RAPTORFEST,
-			MODE_NUMMODES // end of list
-		};
-
-		static QList<GameMode> gameModes();
-		static QList<GameCVar> limits(const GameMode &gameMode);
+		virtual QString provide() = 0;
 };
-
-class Turok2ExDifficultyProvider : GameCVarProvider
-{
-public:
-	QList<GameCVar> get(const QVariant &context)
-	{
-		return QList<GameCVar>();
-	}
-};
-
-/**
- * @brief Provides a (translated) About text for Turok2.
- */
-class Turok2AboutProvider : public TextProvider
-{
-	Q_OBJECT
-
-	public:
-		QString provide();
-};
-
 #endif

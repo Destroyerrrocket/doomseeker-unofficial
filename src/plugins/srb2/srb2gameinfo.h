@@ -24,6 +24,7 @@
 #define idbb44c6c8_a578_436c_adc7_dcba557f22ff
 
 #include "serverapi/serverstructs.h"
+#include "serverapi/textprovider.h"
 #include <QObject>
 
 class Srb2GameInfo : public QObject
@@ -72,6 +73,17 @@ public:
 	{
 		return QList<GameCVar>();
 	}
+};
+
+/**
+ * @brief Provides a (translated) About text for Srb2.
+ */
+class Srb2AboutProvider : public TextProvider
+{
+	Q_OBJECT
+
+	public:
+		QString provide();
 };
 
 #endif
