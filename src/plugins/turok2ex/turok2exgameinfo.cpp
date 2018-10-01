@@ -50,18 +50,19 @@ QString Turok2AboutProvider::provide()
 {
 	QString aboutDescription = tr("Turok 2 EX - Doomseeker plugin\n\n");
 	aboutDescription += tr(
-		"This plugin is distributed under the terms of the LGPL v2.1 or later.\n\n"
+		"This plugin is distributed under the terms of the LGPL v2.1 or later.\n\n");
+	aboutDescription += tr(
 		"CRC code on BSD License:\n");
 	aboutDescription += tr(
 		"Copyright (c) 2004-2006 Intel Corporation. "
-		"All rights reserved.\n"
+		"All rights reserved.\n\n"
 
 		"Redistribution and use in source and binary forms, with or without "
 		"modification, are permitted provided that the following conditions are met:\n\n"
 
-		"- Redistributions of source code must retain the above copyright notice, "
+		"1. Redistributions of source code must retain the above copyright notice, "
 		"this list of conditions and the following disclaimer.\n"
-		"- Redistributions in binary form must reproduce the above copyright "
+		"2. Redistributions in binary form must reproduce the above copyright "
 		"notice, this list of conditions and the following disclaimer in the "
 		"documentation and/or other materials provided with the distribution.\n\n"
 
