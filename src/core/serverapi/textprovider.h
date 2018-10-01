@@ -18,7 +18,7 @@
 // 02110-1301  USA
 //
 //------------------------------------------------------------------------------
-// Copyright (C) 2018 "Pol Marcet Sardà" <polmarcetsarda@gmail.com>
+// Copyright (C) 2018 Pol Marcet Sardà <polmarcetsarda@gmail.com>
 //------------------------------------------------------------------------------
 #ifndef __TEXTPROVIDER_H__
 #define __TEXTPROVIDER_H__
