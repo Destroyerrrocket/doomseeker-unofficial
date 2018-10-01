@@ -186,8 +186,6 @@ def reduce_block(block):
 def reduce_networks(networks):
     ipranges = networks_to_ipranges(networks)
     ipranges = merge_consecutive_ipranges(ipranges)
-    ipranges = merge_inclusive_ipranges(ipranges)
-    ipranges.sort(key=lambda el: el[0])
     return ipranges
 
 
@@ -195,46 +193,22 @@ def networks_to_ipranges(networks):
     return map(lambda net: [net.addr_int, net.addr_highest_int], networks)
 
 
+# Flattens consecutive and overlapping ipranges
 def merge_consecutive_ipranges(ipranges):
+    # By sorting by the start address we will know that as soon as we find a
+    # non-consecutive range we have finished merging the previous range.
     ipranges = sorted(ipranges, key=lambda el: el[0])
-    merged = []
-    for iprange in ipranges:
-        if merged:
-            merged_range = merged[-1]
-            if iprange[0] - merged_range[1] == 1:
-                merged_range[1] = iprange[1]
-                continue
-            if iprange[1] - merged_range[0] == -1:
-                merged_range[0] = iprange[0]
-                continue
+
+    merged = [ipranges[0]]
+    for iprange in ipranges[1:]:
+        # Check if this next range is consecutive or overlapping the last range.
+        # Given the sort we already know that iprange[0] >= merged_range[0]
+        merged_range = merged[-1]
+        if iprange[0] - merged_range[1] <= 1:
+            merged_range[1] = max(merged_range[1], iprange[1])
+            continue
+
         merged.append(iprange)
-    return merged
-
-
-def merge_inclusive_ipranges(ipranges):
-    ipranges = copy(ipranges)
-    merged = []
-    for iprange in ipranges:
-        skip = False
-        for merged_range in merged:
-            if iprange[0] > merged_range[0] and iprange[1] < merged_range[1]:
-                skip = True
-                break
-            elif iprange[0] < merged_range[0] and iprange[1] > merged_range[1]:
-                merged_range[0] = iprange[0]
-                merged_range[1] = iprange[1]
-                skip = True
-                break
-            elif iprange[0] < merged_range[0] and iprange[1] > merged_range[0]:
-                merged_range[0] = iprange[0]
-                skip = True
-                break
-            elif iprange[0] > merged_range[0] and iprange[0] < merged_range[1]:
-                merged_range[1] = iprange[1]
-                skip = True
-                break
-        if not skip:
-            merged.append(iprange)
     return merged
 
 
