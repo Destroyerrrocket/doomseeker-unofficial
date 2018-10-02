@@ -84,7 +84,7 @@
           <item>
            <widget class="QLabel" name="label_12">
             <property name="text">
-             <string>Full retranslation requires restart.</string>
+             <string>Full retranslation requires a restart.</string>
             </property>
            </widget>
           </item>
