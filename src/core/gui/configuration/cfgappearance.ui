@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>415</width>
-    <height>392</height>
+    <width>441</width>
+    <height>395</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -84,7 +84,7 @@
           <item>
            <widget class="QLabel" name="label_12">
             <property name="text">
-             <string>Restart will be required to apply the translation fully.</string>
+             <string>Full retranslation requires restart</string>
             </property>
            </widget>
           </item>
