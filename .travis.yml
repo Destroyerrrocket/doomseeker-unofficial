@@ -30,8 +30,8 @@ before_install:
 script:
 - mkdir -p build
 - cd build
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cmake -DCMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.11.2 .. fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cmake .. fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cmake -DCMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.11.2 ..; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cmake ..; fi
 - make -j$(nproc)
 
 after_success:
